@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Nuget Package Settings">
+    <Description>DotNetCore Implementation of FedEx Web Services 2020 for AddressValidation Endpoint.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bet.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Abstractions\EasyKeys.Shipping.FedEx.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

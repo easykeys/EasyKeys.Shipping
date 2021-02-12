@@ -1,0 +1,6 @@
+<Project>
+
+  <Import Project="build\settings.props" />
+  <Import Project="build\sources.props" />
+
+</Project>

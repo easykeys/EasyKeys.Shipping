@@ -1,0 +1,83 @@
+<Project>
+
+  <PropertyGroup>
+    <NetCoreVersion>3.1.7</NetCoreVersion>
+    <BetCommonVersion>3.1.7</BetCommonVersion>
+    <ServiceModelVersion>4.4.*</ServiceModelVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <NetCoreVersion>5.0.*</NetCoreVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="$(NetCoreVersion)" />
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(NetCoreVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="$(NetCoreVersion)"/>
+    <PackageReference Update="Microsoft.Extensions.Hosting" Version="$(NetCoreVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Http.Polly" Version="$(NetCoreVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Caching.Memory" Version="$(NetCoreVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Caching.StackExchangeRedis" Version="$(NetCoreVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Configuration" Version="$(NetCoreVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Label="Microsoft">
+    <PackageReference Update="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
+    <PackageReference Update="Microsoft.Azure.ServiceBus" Version="5.1.0" />
+    <PackageReference Update="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
+    <PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Update="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Update="System.Drawing.Common" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="System.ServiceModel.Duplex" Version="$(ServiceModelVersion)" />
+    <PackageReference Update="System.ServiceModel.Http" Version="$(ServiceModelVersion)" />
+    <PackageReference Update="System.ServiceModel.NetTcp" Version="$(ServiceModelVersion)" />
+    <PackageReference Update="System.ServiceModel.Security" Version="$(ServiceModelVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Label="Bet">
+    <PackageReference Update="Bet.Extensions" Version="$(BetCommonVersion)"/>
+    <PackageReference Update="Bet.Extensions.Options" Version="$(BetCommonVersion)" />
+    <PackageReference Update="Bet.Extensions.AzureVault" Version="$(BetCommonVersion)" />
+    <PackageReference Update="Bet.Extensions.Testing" Version="$(BetCommonVersion)" />
+    <PackageReference Update="Bet.Extensions.Logging" Version="$(BetCommonVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Label="Data">
+    <PackageReference Update="Dapper.Contrib" Version="2.0.35" />
+    <PackageReference Update="Dapper.SqlBuilder" Version="2.0.35" />
+    <PackageReference Update="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
+  <ItemGroup Label="Others">
+    <PackageReference Update="FluentFTP" Version="32.4.4" />
+    <PackageReference Update="SSH.NET" Version="2016.1.0" />
+    <PackageReference Update="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Update="BarcodeLib" Version="2.2.5" />
+  </ItemGroup>
+
+  <ItemGroup Label="Unit Tests">
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" Version="$(NetCoreVersion)" />
+    <PackageReference Update="Moq" Version="4.15.2" />
+    <PackageReference Update="xunit" Version="2.4.1" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.3"  PrivateAssets="All" />
+    <PackageReference Update="coverlet.collector" Version="1.3.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <ItemGroup Label="SourceLink">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup Label="Analyzers">
+    <PackageReference Include="Bet.CodeAnalyzers" Version="1.0.10" PrivateAssets="All" />
+    <PackageReference Include="Bet.EditorConfig" Version="1.0.10" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../img/icon.png" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
+
+</Project>
