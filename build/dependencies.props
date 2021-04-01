@@ -25,7 +25,7 @@
     <PackageReference Update="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
     <PackageReference Update="Microsoft.Azure.ServiceBus" Version="5.1.0" />
     <PackageReference Update="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
-    <PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.*" />
     <PackageReference Update="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Update="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
@@ -45,17 +45,8 @@
     <PackageReference Update="Bet.Extensions.Logging" Version="$(BetCommonVersion)" />
   </ItemGroup>
 
-  <ItemGroup Label="Data">
-    <PackageReference Update="Dapper.Contrib" Version="2.0.35" />
-    <PackageReference Update="Dapper.SqlBuilder" Version="2.0.35" />
-    <PackageReference Update="System.Data.SqlClient" Version="4.8.2" />
-  </ItemGroup>
-
   <ItemGroup Label="Others">
-    <PackageReference Update="FluentFTP" Version="32.4.4" />
-    <PackageReference Update="SSH.NET" Version="2016.1.0" />
     <PackageReference Update="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Update="BarcodeLib" Version="2.2.5" />
   </ItemGroup>
 
   <ItemGroup Label="Unit Tests">
