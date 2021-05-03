@@ -1,9 +1,5 @@
-﻿using AddressValidationClient.v4;
-
-using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.AddressValidation;
-
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -17,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddChangeTokenOptions<FedExOptions>(sectionName, null, (options) => { });
-
+            services.AddLogging();
             services.AddTransient<IValidationClient, ValidationClient>();
 
             return services;
