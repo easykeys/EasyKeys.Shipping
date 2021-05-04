@@ -12,11 +12,9 @@ namespace EasyKeys.Shipping.FedEx.Console
 {
     public class Main : IMain
     {
-        private ILogger<Main> _logger;
         private readonly IValidationClient _validationClient;
         private readonly IHostApplicationLifetime _applicationLifetime;
-
-        public IConfiguration Configuration { get; set; }
+        private readonly ILogger<Main> _logger;
 
         public Main(
             IValidationClient validationClient,
@@ -30,6 +28,8 @@ namespace EasyKeys.Shipping.FedEx.Console
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public IConfiguration Configuration { get; set; }
+
         public async Task<int> RunAsync()
         {
             _logger.LogInformation("Main executed");
@@ -37,8 +37,8 @@ namespace EasyKeys.Shipping.FedEx.Console
             // use this token for stopping the services
             _applicationLifetime.ApplicationStopping.ThrowIfCancellationRequested();
 
-            //var address1 = new ValidationRequest()
-            //{
+            // var address1 = new ValidationRequest()
+            // {
             //    Address = new PostalAddress
             //    {
             //        Address = "One Microsoft Way",
@@ -47,12 +47,11 @@ namespace EasyKeys.Shipping.FedEx.Console
             //        PostalCode = "98052-6399",
             //        CountryCode = "US"
             //    }
-            //};
+            // };
 
-            //var result1 = await _validationClient.ValidateAddressAsync(address1);
+            // var result1 = await _validationClient.ValidateAddressAsync(address1);
 
-            //_logger.LogInformation("{score}", result1.Score);
-
+            // _logger.LogInformation("{score}", result1.Score);
             var address2 = new ValidationRequest()
             {
                 Address = new PostalAddress

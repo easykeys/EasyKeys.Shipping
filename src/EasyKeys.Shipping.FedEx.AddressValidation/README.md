@@ -1,5 +1,8 @@
 # EasyKeys.Shipping.FedEx.AddressValidation
 
+Implements FedEx AV v4
+
+
 ## How FedEx Address Validation Works
 
 The Address Validation Service performs the following tasks:
@@ -22,3 +25,14 @@ determine the problems with the address submitted.
 succeed, the EffectiveAddress returned will be that real-world address, with a State of
 STANDARDIZED. In this case, various additional Attributes of the standardized address and how
 it was derived from the normalized address will be returned.
+
+## Address Type
+
+- RAW: The address as submitted in the request. 
+  This is returned when that address could not be normalized or if the country is not supported.
+- NORMALIZED: A formatted version of the address where elements are parsed and standard abbreviations are applied. 
+  The Normalized address is returned when the Address Validation Service supports a country for address validation, 
+  but cannot match the address against reference data. Reference data include postal data (and map data, for the US only).
+- STANDARDIZED: A formatted and validated version of the address. 
+  The standardized address is returned when the Address Validation Service can match the address against reference data. 
+  Note that the Address Validation Service may make slight changes to the address in order to find a match. 

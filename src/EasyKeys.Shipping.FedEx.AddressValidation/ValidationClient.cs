@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 using AddressValidationClient.v4;
@@ -89,9 +88,6 @@ namespace EasyKeys.Shipping.FedEx.AddressValidation
 
             try
             {
-                ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
                 var client = new AddressValidationPortTypeClient(
                         AddressValidationPortTypeClient.EndpointConfiguration.AddressValidationServicePort,
                         _options.Url);
