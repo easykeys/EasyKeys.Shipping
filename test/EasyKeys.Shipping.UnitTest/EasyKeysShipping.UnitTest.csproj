@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\EasyKeys.Shipping.FedEx.AddressValidation\EasyKeys.Shipping.FedEx.AddressValidation.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.FedEx.Rates\EasyKeys.Shipping.FedEx.Rates.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.PostalAddress\EasyKeys.Shipping.PostalAddress.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.Usps.Rates\EasyKeys.Shipping.Usps.Rates.csproj" />

@@ -6,7 +6,7 @@ namespace EasyKeys.Shipping.Abstractions.Models
 {
     public class Shipment
     {
-        public Shipment(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions options = null)
+        public Shipment(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions? options = null)
         {
             OriginAddress = originAddress ?? throw new ArgumentNullException(nameof(originAddress));
             DestinationAddress = destinationAddress ?? throw new ArgumentNullException(nameof(destinationAddress));
@@ -40,7 +40,7 @@ namespace EasyKeys.Shipping.Abstractions.Models
 
         /// <summary>
         ///     Internal library errors during interaction with service provider
-        ///     (e.g. SoapException was trown).
+        ///     (e.g. SoapException was thrown).
         /// </summary>
         public List<string> InternalErrors { get; } = new List<string>();
     }

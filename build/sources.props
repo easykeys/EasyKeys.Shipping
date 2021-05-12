@@ -5,13 +5,7 @@
     <RestoreSources>$(DotNetRestoreSources)</RestoreSources>
     <RestoreSources Condition="'$(DotNetBuildOffline)' != 'false'">
       $(RestoreSources);
-      https://dotnetfeed.blob.core.windows.net/aspnet-aspnetcore/index.json;
-      https://dotnetfeed.blob.core.windows.net/aspnet-blazor/index.json;
-      https://dotnetfeed.blob.core.windows.net/aspnet-entityframeworkcore/index.json;
-      https://dotnetfeed.blob.core.windows.net/aspnet-extensions/index.json;
-      https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json;
-      https://f.feedz.io/kdcllc/bet-aspnetcore/nuget/index.json;
-      http://www.myget.org/F/azure-appservice/api/v2;
+      https://f.feedz.io/easykeys/core/nuget/index.json;
       https://api.nuget.org/v3/index.json;
     </RestoreSources>
   </PropertyGroup>

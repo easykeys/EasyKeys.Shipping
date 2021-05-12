@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.AddressValidation;
-using EasyKeys.Shipping.FedEx.AddressValidation.Models;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -12,12 +12,12 @@ namespace EasyKeys.Shipping.FedEx.Console
 {
     public class Main : IMain
     {
-        private readonly IValidationClient _validationClient;
+        private readonly IFedExAddressValidationProvider _validationClient;
         private readonly IHostApplicationLifetime _applicationLifetime;
         private readonly ILogger<Main> _logger;
 
         public Main(
-            IValidationClient validationClient,
+            IFedExAddressValidationProvider validationClient,
             IHostApplicationLifetime applicationLifetime,
             IConfiguration configuration,
             ILogger<Main> logger)
@@ -37,36 +37,53 @@ namespace EasyKeys.Shipping.FedEx.Console
             // use this token for stopping the services
             _applicationLifetime.ApplicationStopping.ThrowIfCancellationRequested();
 
-            // var address1 = new ValidationRequest()
-            // {
-            //    Address = new PostalAddress
-            //    {
-            //        Address = "One Microsoft Way",
-            //        City = "Redmond",
-            //        StateOrProvince = "Washington",
-            //        PostalCode = "98052-6399",
-            //        CountryCode = "US"
-            //    }
-            // };
+            //var address2 = new ValidateAddress(
+            //                Guid.NewGuid().ToString(),
+            //                new Shipping.Abstractions.Address(
+            //                "One Microsoft Way",
+            //                "",
+            //                "Redmond",
+            //                "Washington",
+            //                "98052",
+            //                "US",
+            //                false));
 
-            // var result1 = await _validationClient.ValidateAddressAsync(address1);
+            //var address2 = new ValidateAddress(
+            //            Guid.NewGuid().ToString(),
+            //            new Shipping.Abstractions.Address(
+            //            "Mauerberger  Building",
+            //            "2nd floor",
+            //            "Technion City",
+            //            "Haifa",
+            //            "3200003",
+            //            "IL",
+            //            false));
 
-            // _logger.LogInformation("{score}", result1.Score);
-            var address2 = new ValidationRequest()
-            {
-                Address = new PostalAddress
-                {
-                    Address = "Mauerberger  Building",
-                    Address2 = "2nd floor",
-                    City = "Technion City",
-                    StateOrProvince = "Haifa",
-                    PostalCode = "3200003",
-                    CountryCode = "IL"
-                }
-            };
+            //var address2 = new ValidateAddress(
+            //        Guid.NewGuid().ToString(),
+            //        new Shipping.Abstractions.Address(
+            //        "100 East Capitol Street",
+            //        "Suite 1000",
+            //        "Jackson",
+            //        "MS",
+            //        "39201",
+            //        "US",
+            //        false));
+
+
+            var address2 = new ValidateAddress(
+                Guid.NewGuid().ToString(),
+                new Shipping.Abstractions.Address(
+                "1500 S STRONG DR",
+                "Apartment, suite, unit, etc. (optional)",
+                "BLOOMINGTON",
+                "IL",
+                "47403-8741",
+                "US",
+                false));
 
             var result2 = await _validationClient.ValidateAddressAsync(address2);
-            _logger.LogInformation("{score}", result2.Score);
+            _logger.LogInformation("{isVerified}", result2.IsVerified);
 
             return await Task.FromResult(0);
         }

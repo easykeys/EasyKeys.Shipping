@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup Label="Basic Settings">
-    <VersionPrefix>1.0.0-preview1</VersionPrefix>
+    <VersionPrefix>1.0.0-preview2</VersionPrefix>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     <NoWarn>$(NoWarn);CS1591;NU1605;DS126858;DS137138</NoWarn>
@@ -35,7 +35,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 
-     <!-- https://github.com/kdcllc/Bet.AspNetCore/issues/103 -->
+    <!-- https://github.com/kdcllc/Bet.AspNetCore/issues/103 -->
     <DebugType>Embedded</DebugType>
     <EmbedAllSources>True</EmbedAllSources>
   </PropertyGroup>

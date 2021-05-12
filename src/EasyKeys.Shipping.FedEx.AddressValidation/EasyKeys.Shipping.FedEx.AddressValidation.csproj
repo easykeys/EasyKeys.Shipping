@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
     <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Abstractions\EasyKeys.Shipping.FedEx.Abstractions.csproj" />
   </ItemGroup>
 

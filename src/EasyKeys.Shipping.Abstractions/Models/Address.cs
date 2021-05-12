@@ -12,49 +12,47 @@ namespace EasyKeys.Shipping.Abstractions
 
         public Address(
             string city,
-            string state,
+            string stateOrProvince,
             string postalCode,
             string countryCode)
-            : this(string.Empty, string.Empty, string.Empty, city, state, postalCode, countryCode)
+            : this(string.Empty, string.Empty, city, stateOrProvince, postalCode, countryCode)
         {
         }
 
         public Address(
-            string line1,
+            string streetLine,
             string city,
-            string state,
+            string stateOrProvince,
             string postalCode,
             string countryCode)
-            : this(line1, string.Empty, string.Empty, city, state, postalCode, countryCode)
+            : this(streetLine, string.Empty, city, stateOrProvince, postalCode, countryCode)
         {
         }
 
         public Address(
-            string line1,
+            string streetLine,
             string city,
-            string state,
+            string stateOrProvince,
             string postalCode,
             string countryCode,
             bool isResidential)
-        : this(line1, string.Empty, string.Empty, city, state, postalCode, countryCode, isResidential)
+        : this(streetLine, string.Empty, city, stateOrProvince, postalCode, countryCode, isResidential)
         {
         }
 
         public Address(
-            string line1,
-            string line2,
-            string line3,
+            string streetLine,
+            string streetLine1,
             string city,
-            string state,
+            string stateOrProvince,
             string postalCode,
             string countryCode,
             bool isResidential = false)
         {
-            Line1 = line1;
-            Line2 = line2;
-            Line3 = line3;
+            StreetLine = streetLine;
+            StreetLine1 = streetLine1;
             City = city;
-            State = state;
+            StateOrProvice = stateOrProvince;
             PostalCode = postalCode;
             CountryCode = countryCode;
             IsResidential = isResidential;
@@ -66,15 +64,13 @@ namespace EasyKeys.Shipping.Abstractions
 
         public string CountryName { get; set; } = string.Empty;
 
-        public string Line1 { get; set; } = string.Empty;
+        public string StreetLine { get; set; } = string.Empty;
 
-        public string Line2 { get; set; } = string.Empty;
-
-        public string Line3 { get; set; } = string.Empty;
+        public string StreetLine1 { get; set; } = string.Empty;
 
         public string PostalCode { get; set; } = string.Empty;
 
-        public string State { get; set; } = string.Empty;
+        public string StateOrProvice { get; set; } = string.Empty;
 
         public bool IsResidential { get; set; }
 

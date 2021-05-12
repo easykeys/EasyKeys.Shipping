@@ -270,7 +270,7 @@ namespace EasyKeysShipping.UnitTest
         public async Task Return_FedEx_Canada()
         {
             var rateService = _sp.GetRequiredService<IFedExRateProvider>();
-            var destination = new Address("550 WELLINGTON RD Dock G", "Honeywell Department", "", "LONDON", "ON", "N6C 0A7", "CA", isResidential: false);
+            var destination = new Address("550 WELLINGTON RD Dock G", "Honeywell Department", "LONDON", "ON", "N6C 0A7", "CA", isResidential: false);
             var package = FedExRateConfigurator.GetFedExEnvelop(0.03M, 7.90m, true);
             var config = new FedExRateConfigurator(_origin, destination, package, DateTime.Now);
             foreach (var (shipment, serviceType) in config.Shipments)
