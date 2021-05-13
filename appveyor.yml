@@ -5,9 +5,9 @@ branches:
 pull_requests:
   do_not_increment_build_number: true
 image: Visual Studio 2019
-## temporary until 5.0.103 sdk is installed
+## temporary until 5.0.203 sdk is installed
 install:
-  - ps: $urlCurrent = "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/5.0.103/dotnet-sdk-5.0.103-win-x64.zip"
+  - ps: $urlCurrent = "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/5.0.203/dotnet-sdk-5.0.203-win-x64.zip"
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
   - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
   - ps: $tempFileCurrent = [System.IO.Path]::GetTempFileName()
@@ -20,9 +20,9 @@ nuget:
 
 build_script:
   - ps: dotnet nuget locals --clear all
-  - ps: dotnet restore EasyKeys.Shipping.FedEx.sln -v quiet
-  - ps: dotnet build EasyKeys.Shipping.FedEx.sln  --no-restore -p:configuration=Release -p:Version=$($env:appveyor_build_version) -p:GeneratePackageOnBuild=true
-  - ps: dotnet pack EasyKeys.Shipping.FedEx.sln  --no-build -p:configuration=Release -p:Version=$($env:appveyor_build_version) -o packages
+  - ps: dotnet restore EasyKeys.Shipping.sln -v quiet
+  - ps: dotnet build EasyKeys.Shipping.sln  --no-restore -p:configuration=Release -p:Version=$($env:appveyor_build_version) -p:GeneratePackageOnBuild=true
+  - ps: dotnet pack EasyKeys.Shipping.sln  --no-build -p:configuration=Release -p:Version=$($env:appveyor_build_version) -o packages
 
 #test_script:
 #  - ps: dotnet test test/EasyKeys.Extensions.UnitTest/EasyKeys.Extensions.UnitTest.csproj -c Release --no-build
