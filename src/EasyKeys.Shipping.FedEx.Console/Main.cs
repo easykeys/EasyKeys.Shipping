@@ -83,7 +83,8 @@ namespace EasyKeys.Shipping.FedEx.Console
                 false));
 
             var result2 = await _validationClient.ValidateAddressAsync(address2);
-            _logger.LogInformation("{isVerified}", result2.IsVerified);
+            result2.ValidationBag.TryGetValue("State", out var v);
+            _logger.LogInformation("{isVerified}", v);
 
             return await Task.FromResult(0);
         }

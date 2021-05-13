@@ -1,11 +1,16 @@
 # EasyKeys.Shipping.FedEx.Rates
 
+[![Build status](https://ci.appveyor.com/api/projects/status/xp52rbpa9vmr1ck9?svg=true)](https://ci.appveyor.com/project/easykeys/easykeys-shipping)
+[![NuGet](https://img.shields.io/nuget/v/EasyKeys.Shipping.FedEx.Rates.svg)](https://www.nuget.org/packages?q=EasyKeys.Shipping.FedEx.Rates)
+![Nuget](https://img.shields.io/nuget/dt/EasyKeys.Shipping.FedEx.Rates)
+[![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https://f.feedz.io/easykeys/core/shield/EasyKeys.Shipping.FedEx.Rates/latest)](https://f.feedz.io/easykeys/core/packages/EasyKeys.Shipping.FedEx.Rates/latest/download)
+
 ## Rate Service Details
 The Rate and Rate Available Services operations provide a shipping rate quote for a specific service
 combination depending on the origin and destination information supplied in the request. The
 following details apply:
 - Discount rates are available for all services and origin/destination pairs.
-- FedEx list rates are available for FedEx Express®, FedEx Ground®, FedEx SmartPost® and FedEx Freight®
+- FedEx list rates are available for FedEx Expressï¿½, FedEx Groundï¿½, FedEx SmartPostï¿½ and FedEx Freightï¿½
 services. When list rates are requested, both account specific rates and standard list
 rates are returned. Note: List rates are not available for all FedEx Freight accounts.
 

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -65,14 +63,14 @@ namespace EasyKeys.Shipping.FedEx.AddressValidation
                         effectiveAddress?.StateOrProvinceCode ?? string.Empty,
                         effectiveAddress?.PostalCode ?? string.Empty,
                         effectiveAddress?.CountryCode ?? string.Empty,
-                        effectiveAddress.Residential);
+                        effectiveAddress?.Residential ?? true);
 
                     if (lines.Length == 2)
                     {
                         request.ProposedAddress.StreetLine1 = lines[1];
                     }
 
-                    request.ProposedAddress.IsResidential = effectiveAddress.Residential;
+                    request.ProposedAddress.IsResidential = effectiveAddress?.Residential ?? true;
 
                     request.ValidationBag.Add("Classification", addressResults.Classification.ToString());
                     request.ValidationBag.Add("State", addressResults.State.ToString());
