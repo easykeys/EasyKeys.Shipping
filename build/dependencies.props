@@ -50,12 +50,12 @@
   </ItemGroup>
 
   <ItemGroup Label="Unit Tests">
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.8.0" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Update="Microsoft.AspNetCore.TestHost" Version="$(NetCoreVersion)" />
-    <PackageReference Update="Moq" Version="4.15.2" />
+    <PackageReference Update="Moq" Version="4.16.1" />
     <PackageReference Update="xunit" Version="2.4.1" />
     <PackageReference Update="xunit.runner.visualstudio" Version="2.4.3"  PrivateAssets="All" />
-    <PackageReference Update="coverlet.collector" Version="1.3.0" PrivateAssets="All"/>
+    <PackageReference Update="coverlet.collector" Version="3.0.3" PrivateAssets="All"/>
   </ItemGroup>
 
   <ItemGroup Label="SourceLink">
