@@ -15,7 +15,7 @@ namespace EasyKeys.Shipping.Abstractions
             var streetLines = new List<string>
             {
                 address.StreetLine.Trim(),
-                address.StreetLine1.Trim()
+                address.StreetLine2.Trim()
             };
             streetLines = streetLines.Where(l => !string.IsNullOrEmpty(l)).ToList();
             return streetLines.Any() ? streetLines.ToArray() : new string[] { string.Empty };
