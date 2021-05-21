@@ -19,7 +19,7 @@ namespace EasyKeys.Shipping.FedEx.Extensions
             {
                 StreetLines = address.GetStreetLines(),
                 City = address.City?.Trim(),
-                StateOrProvinceCode = address.StateOrProvice?.Trim(),
+                StateOrProvinceCode = address.StateOrProvince?.Trim(),
                 PostalCode = address.PostalCode?.Trim(),
                 CountryCode = address.CountryCode?.Trim(),
                 CountryName = address.GetCountryName(),

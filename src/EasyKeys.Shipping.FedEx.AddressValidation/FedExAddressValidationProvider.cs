@@ -55,7 +55,7 @@ namespace EasyKeys.Shipping.FedEx.AddressValidation
                     var addressResults = result.AddressResults[0];
                     var effectiveAddress = addressResults.EffectiveAddress;
                     var parsedAddress = addressResults.ParsedAddressPartsDetail;
-                    var lines = effectiveAddress?.StreetLines ?? new string[1] { "" };
+                    var lines = effectiveAddress?.StreetLines ?? new string[1] { string.Empty};
 
                     request.ProposedAddress = new Address(
                         lines[0],
@@ -67,10 +67,15 @@ namespace EasyKeys.Shipping.FedEx.AddressValidation
 
                     if (lines.Length == 2)
                     {
-                        request.ProposedAddress.StreetLine1 = lines[1];
+                        request.ProposedAddress.StreetLine2 = lines[1];
                     }
 
-                    request.ProposedAddress.IsResidential = effectiveAddress?.Residential ?? true;
+                    request.ProposedAddress.IsResidential = addressResults.Classification switch
+                    {
+                        v4.FedExAddressClassificationType.MIXED => false,
+                        v4.FedExAddressClassificationType.BUSINESS => false,
+                        _ => true,
+                    };
 
                     request.ValidationBag.Add("Classification", addressResults.Classification.ToString());
                     request.ValidationBag.Add("State", addressResults.State.ToString());
@@ -142,7 +147,7 @@ namespace EasyKeys.Shipping.FedEx.AddressValidation
                             StreetLines = address?.GetStreetLines(),
                             PostalCode = address?.PostalCode,
                             City = address?.City,
-                            StateOrProvinceCode = address?.StateOrProvice,
+                            StateOrProvinceCode = address?.StateOrProvince,
                             CountryCode = address?.CountryCode
                         }
                     }

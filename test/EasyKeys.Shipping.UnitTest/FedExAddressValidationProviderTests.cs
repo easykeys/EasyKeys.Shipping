@@ -45,7 +45,7 @@ namespace EasyKeysShipping.UnitTest
 
             Assert.NotNull(proposed);
             Assert.Equal("", proposed?.StreetLine);
-            Assert.Equal(string.Empty, proposed?.StreetLine1);
+            Assert.Equal(string.Empty, proposed?.StreetLine2);
             Assert.Equal("52722", proposed?.PostalCode);
 
             // BUSINESS, RESIDENTIAL
@@ -79,7 +79,7 @@ namespace EasyKeysShipping.UnitTest
 
             Assert.NotNull(proposed);
             Assert.Equal("11435 W BUCKEYE RD", proposed?.StreetLine);
-            Assert.Equal(string.Empty, proposed?.StreetLine1);
+            Assert.Equal(string.Empty, proposed?.StreetLine2);
             Assert.Equal("85323-6812", proposed?.PostalCode);
 
             // BUSINESS, RESIDENTIAL
@@ -113,7 +113,7 @@ namespace EasyKeysShipping.UnitTest
 
             Assert.NotNull(proposed);
             Assert.Equal("5 HOOD RD", proposed?.StreetLine);
-            Assert.Equal(string.Empty, proposed?.StreetLine1);
+            Assert.Equal(string.Empty, proposed?.StreetLine2);
             Assert.Equal("03038-2012", proposed?.PostalCode);
 
             // BUSINESS, RESIDENTIAL
@@ -147,7 +147,7 @@ namespace EasyKeysShipping.UnitTest
 
             Assert.NotNull(proposed);
             Assert.Equal("39W210 E BURNHAM LN", proposed?.StreetLine);
-            Assert.Equal(string.Empty, proposed?.StreetLine1);
+            Assert.Equal(string.Empty, proposed?.StreetLine2);
             Assert.Equal("60134-4915", proposed?.PostalCode);
 
             // BUSINESS, RESIDENTIAL
@@ -181,7 +181,7 @@ namespace EasyKeysShipping.UnitTest
 
             Assert.NotNull(proposed);
             Assert.Equal("W2155 COUNTY ROAD HH", proposed?.StreetLine);
-            Assert.Equal(string.Empty, proposed?.StreetLine1);
+            Assert.Equal(string.Empty, proposed?.StreetLine2);
 
             // BUSINESS, RESIDENTIAL
             // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
@@ -214,7 +214,7 @@ namespace EasyKeysShipping.UnitTest
 
             Assert.NotNull(proposed);
             Assert.Equal("2139 45TH RD", proposed?.StreetLine);
-            Assert.Equal("FL 1", proposed?.StreetLine1);
+            Assert.Equal("FL 1", proposed?.StreetLine2);
 
             // BUSINESS, RESIDENTIAL
             // MIXED (If it is a multi-tenant based address and contains both business and residential units.)

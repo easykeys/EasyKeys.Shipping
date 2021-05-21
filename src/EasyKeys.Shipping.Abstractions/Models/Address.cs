@@ -50,9 +50,9 @@ namespace EasyKeys.Shipping.Abstractions
             bool isResidential = false)
         {
             StreetLine = streetLine;
-            StreetLine1 = streetLine1;
+            StreetLine2 = streetLine1;
             City = city;
-            StateOrProvice = stateOrProvince;
+            StateOrProvince = stateOrProvince;
             PostalCode = postalCode;
             CountryCode = countryCode;
             IsResidential = isResidential;
@@ -66,11 +66,11 @@ namespace EasyKeys.Shipping.Abstractions
 
         public string StreetLine { get; set; } = string.Empty;
 
-        public string StreetLine1 { get; set; } = string.Empty;
+        public string StreetLine2 { get; set; } = string.Empty;
 
         public string PostalCode { get; set; } = string.Empty;
 
-        public string StateOrProvice { get; set; } = string.Empty;
+        public string StateOrProvince { get; set; } = string.Empty;
 
         public bool IsResidential { get; set; }
 
