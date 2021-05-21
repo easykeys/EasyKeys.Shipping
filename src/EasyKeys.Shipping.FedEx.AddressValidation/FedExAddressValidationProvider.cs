@@ -70,7 +70,12 @@ namespace EasyKeys.Shipping.FedEx.AddressValidation
                         request.ProposedAddress.StreetLine2 = lines[1];
                     }
 
-                    request.ProposedAddress.IsResidential = effectiveAddress?.Residential ?? true;
+                    request.ProposedAddress.IsResidential = addressResults.Classification switch
+                    {
+                        v4.FedExAddressClassificationType.MIXED => false,
+                        v4.FedExAddressClassificationType.BUSINESS => false,
+                        _ => true,
+                    };
 
                     request.ValidationBag.Add("Classification", addressResults.Classification.ToString());
                     request.ValidationBag.Add("State", addressResults.State.ToString());

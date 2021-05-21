@@ -83,10 +83,5 @@ namespace EasyKeys.Shipping.Abstractions
         ///     Currency code, if applicable.
         /// </summary>
         public string CurrencyCode { get; }
-
-        /// <summary>
-        /// Provides with ability to pass the flag of free option, if the rules engine decides it can be free.
-        /// </summary>
-        public bool HasFreeOption { get; set; }
     }
 }
