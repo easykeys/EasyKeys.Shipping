@@ -1,6 +1,4 @@
-﻿using System;
-
-using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.AddressValidation;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;

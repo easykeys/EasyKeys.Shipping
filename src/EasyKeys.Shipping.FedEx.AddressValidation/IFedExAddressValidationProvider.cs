@@ -1,12 +1,14 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 
-using EasyKeys.Shipping.Abstractions.Models;
+namespace EasyKeys.Shipping.FedEx.AddressValidation;
 
-namespace EasyKeys.Shipping.FedEx.AddressValidation
+public interface IFedExAddressValidationProvider
 {
-    public interface IFedExAddressValidationProvider
-    {
-        Task<ValidateAddress> ValidateAddressAsync(ValidateAddress request, CancellationToken cancellationToken = default);
-    }
+    /// <summary>
+    /// Validates USA based address and other countries, please refer to the manual.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<ValidateAddress> ValidateAddressAsync(ValidateAddress request, CancellationToken cancellationToken = default);
 }

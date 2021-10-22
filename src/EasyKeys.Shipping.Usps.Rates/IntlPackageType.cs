@@ -1,13 +1,12 @@
-﻿namespace EasyKeys.Shipping.Usps.Rates
+﻿namespace EasyKeys.Shipping.Usps.Rates;
+
+public enum IntlPackageType
 {
-    public enum IntlPackageType
-    {
-        ALL,
-        PACKAGE,
-        POSTCARDS,
-        ENVELOPE,
-        LETTER,
-        LARGEENVELOPE,
-        FLATRATE,
-    }
+    ALL,
+    PACKAGE,
+    POSTCARDS,
+    ENVELOPE,
+    LETTER,
+    LARGEENVELOPE,
+    FLATRATE,
 }

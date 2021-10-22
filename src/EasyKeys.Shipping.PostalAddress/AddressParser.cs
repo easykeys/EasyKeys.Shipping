@@ -1,40 +1,38 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace EasyKeys.Shipping.PostalAddress
+namespace EasyKeys.Shipping.PostalAddress;
+
+/// <summary>
+///     <para>
+///         This is an attempt at a port of the Perl CPAN module Geo::StreetAddress::US
+///         to C#. It's a regex-based street address and street intersection parser for the
+///         United States.
+///     </para>
+///     <para>
+///         The original Perl version was written and is copyrighted by
+///         Schuyler D. Erle &lt;schuyler@geocoder.us&gt; and is accessible at
+///         <a href="http://search.cpan.org/~timb/Geo-StreetAddress-US-1.03/US.pm">CPAN</a>.
+///     </para>
+///     <para>
+///         It says that "this library is free software; you can redistribute it and/or modify
+///         it under the same terms as Perl itself, either Perl version 5.8.4 or, at
+///         your option, any later version of Perl 5 you may have available.".
+///     </para>
+///     <para>
+///         According to the <a href="http://dev.perl.org/licenses/">Perl licensing page</a>,
+///         that seems to mean you have a choice between GPL V1 (or at your option, a later version)
+///         or the Artistic License.
+///     </para>
+/// </summary>
+public class AddressParser : IAddressParser
 {
     /// <summary>
-    ///     <para>
-    ///         This is an attempt at a port of the Perl CPAN module Geo::StreetAddress::US
-    ///         to C#. It's a regex-based street address and street intersection parser for the
-    ///         United States.
-    ///     </para>
-    ///     <para>
-    ///         The original Perl version was written and is copyrighted by
-    ///         Schuyler D. Erle &lt;schuyler@geocoder.us&gt; and is accessible at
-    ///         <a href="http://search.cpan.org/~timb/Geo-StreetAddress-US-1.03/US.pm">CPAN</a>.
-    ///     </para>
-    ///     <para>
-    ///         It says that "this library is free software; you can redistribute it and/or modify
-    ///         it under the same terms as Perl itself, either Perl version 5.8.4 or, at
-    ///         your option, any later version of Perl 5 you may have available.".
-    ///     </para>
-    ///     <para>
-    ///         According to the <a href="http://dev.perl.org/licenses/">Perl licensing page</a>,
-    ///         that seems to mean you have a choice between GPL V1 (or at your option, a later version)
-    ///         or the Artistic License.
-    ///     </para>
+    /// Maps directional names (north, northeast, etc.) to abbreviations (N, NE, etc.).
     /// </summary>
-    public class AddressParser : IAddressParser
-    {
-        /// <summary>
-        /// Maps directional names (north, northeast, etc.) to abbreviations (N, NE, etc.).
-        /// </summary>
-        private readonly Dictionary<string, string> _directionals =
-            new Dictionary<string, string>()
-            {
+    private readonly Dictionary<string, string> _directionals =
+        new Dictionary<string, string>()
+        {
                 { "NORTH", "N" },
                 { "NORTHEAST", "NE" },
                 { "EAST", "E" },
@@ -43,15 +41,15 @@ namespace EasyKeys.Shipping.PostalAddress
                 { "SOUTHWEST", "SW" },
                 { "WEST", "W" },
                 { "NORTHWEST", "NW" }
-            };
+        };
 
-        /// <summary>
-        /// Maps lowercased US state and territory names to their canonical two-letter
-        /// postal abbreviations.
-        /// </summary>
-        private readonly Dictionary<string, string> _states =
-            new Dictionary<string, string>()
-            {
+    /// <summary>
+    /// Maps lowercased US state and territory names to their canonical two-letter
+    /// postal abbreviations.
+    /// </summary>
+    private readonly Dictionary<string, string> _states =
+        new Dictionary<string, string>()
+        {
                 { "ALABAMA", "AL" },
                 { "ALASKA", "AK" },
                 { "AMERICAN SAMOA", "AS" },
@@ -111,15 +109,15 @@ namespace EasyKeys.Shipping.PostalAddress
                 { "WEST VIRGINIA", "WV" },
                 { "WISCONSIN", "WI" },
                 { "WYOMING", "WY" }
-            };
+        };
 
-        /// <summary>
-        /// Maps lowerecased USPS standard street suffixes to their canonical postal
-        /// abbreviations as found in TIGER/Line.
-        /// </summary>
-        private readonly Dictionary<string, string> _suffixes =
-            new Dictionary<string, string>()
-            {
+    /// <summary>
+    /// Maps lowerecased USPS standard street suffixes to their canonical postal
+    /// abbreviations as found in TIGER/Line.
+    /// </summary>
+    private readonly Dictionary<string, string> _suffixes =
+        new Dictionary<string, string>()
+        {
                 { "ALLEE", "ALY" },
                 { "ALLEY", "ALY" },
                 { "ALLY", "ALY" },
@@ -482,14 +480,14 @@ namespace EasyKeys.Shipping.PostalAddress
                 { "WELL", "WL" },
                 { "WELLS", "WLS" },
                 { "WY", "WAY" }
-            };
+        };
 
-        /// <summary>
-        /// Secondary units that require a number after them.
-        /// </summary>
-        private readonly Dictionary<string, string> _rangedSecondaryUnits =
-            new Dictionary<string, string>()
-            {
+    /// <summary>
+    /// Secondary units that require a number after them.
+    /// </summary>
+    private readonly Dictionary<string, string> _rangedSecondaryUnits =
+        new Dictionary<string, string>()
+        {
                 { @"SU?I?TE", "STE" },
                 { @"(?:AP)(?:AR)?T(?:ME?NT)?", "APT" },
                 { @"(?:DEP)(?:AR)?T(?:ME?NT)?", "DEPT" },
@@ -506,14 +504,14 @@ namespace EasyKeys.Shipping.PostalAddress
                 { @"STOP", "STOP" },
                 { @"TRA?I?LE?R", "TRLR" },
                 { @"BOX", "BOX" }
-            };
+        };
 
-        /// <summary>
-        /// Secondary units that do not require a number after them.
-        /// </summary>
-        private readonly Dictionary<string, string> _rangelessSecondaryUnits =
-            new Dictionary<string, string>()
-            {
+    /// <summary>
+    /// Secondary units that do not require a number after them.
+    /// </summary>
+    private readonly Dictionary<string, string> _rangelessSecondaryUnits =
+        new Dictionary<string, string>()
+        {
                 { "BA?SE?ME?N?T", "BSMT" },
                 { "FRO?NT", "FRNT" },
                 { "LO?BBY", "LBBY" },
@@ -523,20 +521,20 @@ namespace EasyKeys.Shipping.PostalAddress
                 { "REAR", "REAR" },
                 { "SIDE", "SIDE" },
                 { "UPPE?R", "UPPR" }
-            };
+        };
 
-        /// <summary>
-        /// A combined dictionary of the ranged and rangeless secondary units.
-        /// </summary>
-        private readonly Dictionary<string, string> _allSecondaryUnits;
+    /// <summary>
+    /// A combined dictionary of the ranged and rangeless secondary units.
+    /// </summary>
+    private readonly Dictionary<string, string> _allSecondaryUnits;
 
-        /// <summary>
-        /// In the <see cref="M:addressRegex"/> member, these are the names
-        /// of the groups in the result that we care to inspect.
-        /// </summary>
-        private readonly string[] _fields =
-            new[]
-            {
+    /// <summary>
+    /// In the <see cref="M:addressRegex"/> member, these are the names
+    /// of the groups in the result that we care to inspect.
+    /// </summary>
+    private readonly string[] _fields =
+        new[]
+        {
                 "NUMBER",
                 "PREDIRECTIONAL",
                 "STREET",
@@ -548,224 +546,224 @@ namespace EasyKeys.Shipping.PostalAddress
                 "ZIP",
                 "SECONDARYUNIT",
                 "SECONDARYNUMBER"
-            };
+        };
 
-        /// <summary>
-        /// The gigantic regular expression that actually extracts the bits and pieces
-        /// from a given address.
-        /// </summary>
-        private Regex _addressRegex;
+    /// <summary>
+    /// The gigantic regular expression that actually extracts the bits and pieces
+    /// from a given address.
+    /// </summary>
+    private Regex _addressRegex;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AddressParser"/> class.
-        /// Initializes the <see cref="AddressParser"/> class.
-        /// </summary>
-        public AddressParser()
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AddressParser"/> class.
+    /// Initializes the <see cref="AddressParser"/> class.
+    /// </summary>
+    public AddressParser()
+    {
+        // Build a combined dictionary of both the ranged and rangeless secondary units.
+        // This is used by the Normalize() method to convert the unit into the USPS
+        // standardized form.
+        _allSecondaryUnits = new[] { _rangedSecondaryUnits, _rangelessSecondaryUnits }
+            .SelectMany(x => x)
+            .ToDictionary(y => y.Key, y => y.Value);
+
+        // Build the giant regex
+        InitializeRegex();
+    }
+
+    /// <summary>
+    /// Attempts to parse the given input as a US address.
+    /// </summary>
+    /// <param name="input">The input string.</param>
+    /// <param name="result"></param>
+    /// <returns>The parsed address, or null if the address could not be parsed.</returns>
+    public bool TryParseAddress(string input, out AddressParseResult? result)
+    {
+        if (!string.IsNullOrWhiteSpace(input))
         {
-            // Build a combined dictionary of both the ranged and rangeless secondary units.
-            // This is used by the Normalize() method to convert the unit into the USPS
-            // standardized form.
-            _allSecondaryUnits = new[] { _rangedSecondaryUnits, _rangelessSecondaryUnits }
-                .SelectMany(x => x)
-                .ToDictionary(y => y.Key, y => y.Value);
-
-            // Build the giant regex
-            InitializeRegex();
+            var match = _addressRegex.Match(input.ToUpperInvariant());
+            if (match.Success)
+            {
+                var extracted = GetApplicableFields(match);
+                result = new AddressParseResult(Normalize(extracted));
+                return true;
+            }
         }
 
-        /// <summary>
-        /// Attempts to parse the given input as a US address.
-        /// </summary>
-        /// <param name="input">The input string.</param>
-        /// <param name="result"></param>
-        /// <returns>The parsed address, or null if the address could not be parsed.</returns>
-        public bool TryParseAddress(string input, out AddressParseResult? result)
+        result = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Given a successful <see cref="Match"/>, this method creates a dictionary
+    /// consisting of the fields that we actually care to extract from the address.
+    /// </summary>
+    /// <param name="match">The successful <see cref="Match"/> instance.</param>
+    /// <returns>A dictionary in which the keys are the name of the fields and the values
+    /// are pulled from the input address.</returns>
+    private Dictionary<string, string> GetApplicableFields(Match match)
+    {
+        var applicable = new Dictionary<string, string>();
+
+        foreach (var field in _addressRegex.GetGroupNames())
         {
-            if (!string.IsNullOrWhiteSpace(input))
+            if (_fields.Contains(field))
             {
-                var match = _addressRegex.Match(input.ToUpperInvariant());
-                if (match.Success)
+                if (match.Groups[field].Success)
                 {
-                    var extracted = GetApplicableFields(match);
-                    result = new AddressParseResult(Normalize(extracted));
-                    return true;
+                    applicable[field] = match.Groups[field].Value;
                 }
             }
-
-            result = null;
-            return false;
         }
 
-        /// <summary>
-        /// Given a successful <see cref="Match"/>, this method creates a dictionary
-        /// consisting of the fields that we actually care to extract from the address.
-        /// </summary>
-        /// <param name="match">The successful <see cref="Match"/> instance.</param>
-        /// <returns>A dictionary in which the keys are the name of the fields and the values
-        /// are pulled from the input address.</returns>
-        private Dictionary<string, string> GetApplicableFields(Match match)
-        {
-            var applicable = new Dictionary<string, string>();
+        return applicable;
+    }
 
-            foreach (var field in _addressRegex.GetGroupNames())
+    /// <summary>
+    /// Given a dictionary that maps regular expressions to USPS abbreviations,
+    /// this function finds the first entry whose regular expression matches the given
+    /// input value and supplies the corresponding USPS abbreviation as its output. If
+    /// no match is found, the original value is returned.
+    /// </summary>
+    /// <param name="map">The dictionary that maps regular expressions to USPS abbreviations.</param>
+    /// <param name="input">The value to test against the regular expressions.</param>
+    /// <returns>The correct USPS abbreviation, or the original value if no regular expression
+    /// matched successfully.</returns>
+    private string GetNormalizedValueByRegexLookup(
+        Dictionary<string, string> map,
+        string input)
+    {
+        var output = input;
+
+        foreach (var pair in map)
+        {
+            var pattern = pair.Key;
+            if (Regex.IsMatch(input, pattern))
             {
-                if (_fields.Contains(field))
+                output = pair.Value;
+                break;
+            }
+        }
+
+        return output;
+    }
+
+    /// <summary>
+    /// Given a dictionary that maps strings to USPS abbreviations,
+    /// this function finds the first entry whose key matches the given
+    /// input value and supplies the corresponding USPS abbreviation as its output. If
+    /// no match is found, the original value is returned.
+    /// </summary>
+    /// <param name="map">The dictionary that maps strings to USPS abbreviations.</param>
+    /// <param name="input">The value to search for in the list of strings.</param>
+    /// <returns>The correct USPS abbreviation, or the original value if no string
+    /// matched successfully.</returns>
+    private string GetNormalizedValueByStaticLookup(
+        Dictionary<string, string> map,
+        string input)
+    {
+        if (!map.TryGetValue(input, out var output))
+        {
+            output = input;
+        }
+
+        return output;
+    }
+
+    /// <summary>
+    /// Given a field type and an input value, this method returns the proper USPS
+    /// abbreviation for it (or the original value if no substitution can be found or is
+    /// necessary).
+    /// </summary>
+    /// <param name="field">The type of the field.</param>
+    /// <param name="input">The value of the field.</param>
+    /// <returns>The normalized value.</returns>
+    private string GetNormalizedValueForField(
+        string field,
+        string input)
+    {
+        var output = input;
+
+        switch (field)
+        {
+            case "PREDIRECTIONAL":
+            case "POSTDIRECTIONAL":
+                output = GetNormalizedValueByStaticLookup(_directionals, input);
+                break;
+            case "SUFFIX":
+                output = GetNormalizedValueByStaticLookup(_suffixes, input);
+                break;
+            case "SECONDARYUNIT":
+                output = GetNormalizedValueByRegexLookup(_allSecondaryUnits, input);
+                break;
+            case "STATE":
+                output = GetNormalizedValueByStaticLookup(_states, input);
+                break;
+            case "NUMBER":
+                if (!input.Contains('/'))
                 {
-                    if (match.Groups[field].Success)
-                    {
-                        applicable[field] = match.Groups[field].Value;
-                    }
+                    output = input.Replace(" ", string.Empty);
                 }
-            }
 
-            return applicable;
+                break;
+            default:
+                break;
         }
 
-        /// <summary>
-        /// Given a dictionary that maps regular expressions to USPS abbreviations,
-        /// this function finds the first entry whose regular expression matches the given
-        /// input value and supplies the corresponding USPS abbreviation as its output. If
-        /// no match is found, the original value is returned.
-        /// </summary>
-        /// <param name="map">The dictionary that maps regular expressions to USPS abbreviations.</param>
-        /// <param name="input">The value to test against the regular expressions.</param>
-        /// <returns>The correct USPS abbreviation, or the original value if no regular expression
-        /// matched successfully.</returns>
-        private string GetNormalizedValueByRegexLookup(
-            Dictionary<string, string> map,
-            string input)
-        {
-            var output = input;
+        return output;
+    }
 
-            foreach (var pair in map)
-            {
-                var pattern = pair.Key;
-                if (Regex.IsMatch(input, pattern))
+    /// <summary>
+    /// Builds the gigantic regular expression stored in the addressRegex
+    /// member that actually does the parsing.
+    /// </summary>
+    private void InitializeRegex()
+    {
+        var suffixPattern = new Regex(
+            string.Join(
+                "|",
+                new[]
                 {
-                    output = pair.Value;
-                    break;
-                }
-            }
-
-            return output;
-        }
-
-        /// <summary>
-        /// Given a dictionary that maps strings to USPS abbreviations,
-        /// this function finds the first entry whose key matches the given
-        /// input value and supplies the corresponding USPS abbreviation as its output. If
-        /// no match is found, the original value is returned.
-        /// </summary>
-        /// <param name="map">The dictionary that maps strings to USPS abbreviations.</param>
-        /// <param name="input">The value to search for in the list of strings.</param>
-        /// <returns>The correct USPS abbreviation, or the original value if no string
-        /// matched successfully.</returns>
-        private string GetNormalizedValueByStaticLookup(
-            Dictionary<string, string> map,
-            string input)
-        {
-            if (!map.TryGetValue(input, out var output))
-            {
-                output = input;
-            }
-
-            return output;
-        }
-
-        /// <summary>
-        /// Given a field type and an input value, this method returns the proper USPS
-        /// abbreviation for it (or the original value if no substitution can be found or is
-        /// necessary).
-        /// </summary>
-        /// <param name="field">The type of the field.</param>
-        /// <param name="input">The value of the field.</param>
-        /// <returns>The normalized value.</returns>
-        private string GetNormalizedValueForField(
-            string field,
-            string input)
-        {
-            var output = input;
-
-            switch (field)
-            {
-                case "PREDIRECTIONAL":
-                case "POSTDIRECTIONAL":
-                    output = GetNormalizedValueByStaticLookup(_directionals, input);
-                    break;
-                case "SUFFIX":
-                    output = GetNormalizedValueByStaticLookup(_suffixes, input);
-                    break;
-                case "SECONDARYUNIT":
-                    output = GetNormalizedValueByRegexLookup(_allSecondaryUnits, input);
-                    break;
-                case "STATE":
-                    output = GetNormalizedValueByStaticLookup(_states, input);
-                    break;
-                case "NUMBER":
-                    if (!input.Contains('/'))
-                    {
-                        output = input.Replace(" ", string.Empty);
-                    }
-
-                    break;
-                default:
-                    break;
-            }
-
-            return output;
-        }
-
-        /// <summary>
-        /// Builds the gigantic regular expression stored in the addressRegex
-        /// member that actually does the parsing.
-        /// </summary>
-        private void InitializeRegex()
-        {
-            var suffixPattern = new Regex(
-                string.Join(
-                    "|",
-                    new[]
-                    {
                         string.Join("|", _suffixes.Keys),
                         string.Join("|", _suffixes.Values.Distinct())
-                    }),
-                RegexOptions.Compiled);
+                }),
+            RegexOptions.Compiled);
 
-            var statePattern =
-                @"\b(?:" +
-                string.Join(
-                    "|",
-                    new[]
-                    {
+        var statePattern =
+            @"\b(?:" +
+            string.Join(
+                "|",
+                new[]
+                {
                         string.Join("|", _states.Keys.Select(x => Regex.Escape(x))),
                         string.Join("|", _states.Values)
-                    }) +
-                @")\b";
+                }) +
+            @")\b";
 
-            var directionalPattern =
-                string.Join(
-                    "|",
-                    new[]
-                    {
+        var directionalPattern =
+            string.Join(
+                "|",
+                new[]
+                {
                         string.Join("|", _directionals.Keys),
                         string.Join("|", _directionals.Values),
                         string.Join("|", _directionals.Values.Select(x => Regex.Replace(x, @"(\w)", @"$1\.")))
-                    });
+                });
 
-            var zipPattern = @"\d{5}(?:-?\d{4})?";
+        var zipPattern = @"\d{5}(?:-?\d{4})?";
 
-            var numberPattern =
-                @"(
+        var numberPattern =
+            @"(
                     ((?<NUMBER>\d+)(?<SECONDARYNUMBER>(-[0-9])|(\-?[A-Z]))(?=\b))    # Unit-attached
                     |(?<NUMBER>\d+[\-\ ]?\d+\/\d+)                                   # Fractional
                     |(?<NUMBER>\d+-?\d*)                                             # Normal Number
                     |(?<NUMBER>[NSWE]\ ?\d+\ ?[NSWE]\ ?\d+)                          # Wisconsin/Illinois
                   )";
 
-            var streetPattern =
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    @"
+        var streetPattern =
+            string.Format(
+                CultureInfo.InvariantCulture,
+                @"
                         (?:
                           # special case for addresses like 100 South Street
                           (?:(?<STREET>{0})\W+
@@ -786,22 +784,22 @@ namespace EasyKeys.Shipping.PostalAddress
                           )
                         )
                     ",
-                    directionalPattern,
-                    suffixPattern);
+                directionalPattern,
+                suffixPattern);
 
-            var rangedSecondaryUnitPattern =
-                "(?<SECONDARYUNIT>" +
-                string.Join("|", _rangedSecondaryUnits.Keys) +
-                ")(?![a-z])";
-            var rangelessSecondaryUnitPattern =
-                "(?<SECONDARYUNIT>" +
-                string.Join(
-                    "|",
-                    string.Join("|", _rangelessSecondaryUnits.Keys)) +
-                @")\b";
-            var allSecondaryUnitPattern = string.Format(
-                CultureInfo.InvariantCulture,
-                @"
+        var rangedSecondaryUnitPattern =
+            "(?<SECONDARYUNIT>" +
+            string.Join("|", _rangedSecondaryUnits.Keys) +
+            ")(?![a-z])";
+        var rangelessSecondaryUnitPattern =
+            "(?<SECONDARYUNIT>" +
+            string.Join(
+                "|",
+                string.Join("|", _rangelessSecondaryUnits.Keys)) +
+            @")\b";
+        var allSecondaryUnitPattern = string.Format(
+            CultureInfo.InvariantCulture,
+            @"
                     (
                         (:?
                             (?: (?:{0} \W*)
@@ -812,30 +810,30 @@ namespace EasyKeys.Shipping.PostalAddress
                         |{1}
                     ),?
                 ",
-                rangedSecondaryUnitPattern,
-                rangelessSecondaryUnitPattern);
+            rangedSecondaryUnitPattern,
+            rangelessSecondaryUnitPattern);
 
-            var cityAndStatePattern = string.Format(
-                CultureInfo.InvariantCulture,
-                @"
+        var cityAndStatePattern = string.Format(
+            CultureInfo.InvariantCulture,
+            @"
                     (?:
                         (?<CITY>[^\d,]+?)\W+
                         (?<STATE>{0})
                     )
                 ",
-                statePattern);
-            var placePattern = string.Format(
-                CultureInfo.InvariantCulture,
-                @"
+            statePattern);
+        var placePattern = string.Format(
+            CultureInfo.InvariantCulture,
+            @"
                     (?:{0}\W*)?
                     (?:(?<ZIP>{1}))?
                 ",
-                cityAndStatePattern,
-                zipPattern);
+            cityAndStatePattern,
+            zipPattern);
 
-            var addressPattern = string.Format(
-                CultureInfo.InvariantCulture,
-                @"
+        var addressPattern = string.Format(
+            CultureInfo.InvariantCulture,
+            @"
                     ^
                     # Special case for APO/FPO/DPO addresses
                     (
@@ -865,55 +863,54 @@ namespace EasyKeys.Shipping.PostalAddress
                     )
                     $           # right up to end of string
                 ",
-                numberPattern,
-                streetPattern,
-                allSecondaryUnitPattern,
-                placePattern,
-                zipPattern);
-            _addressRegex = new Regex(
-                addressPattern,
-                RegexOptions.Compiled |
-                RegexOptions.Singleline |
-                RegexOptions.IgnorePatternWhitespace);
-        }
+            numberPattern,
+            streetPattern,
+            allSecondaryUnitPattern,
+            placePattern,
+            zipPattern);
+        _addressRegex = new Regex(
+            addressPattern,
+            RegexOptions.Compiled |
+            RegexOptions.Singleline |
+            RegexOptions.IgnorePatternWhitespace);
+    }
 
-        /// <summary>
-        /// Given a set of fields pulled from a successful match, this normalizes each value
-        /// by stripping off some punctuation and, if applicable, converting it to a standard
-        /// USPS abbreviation.
-        /// </summary>
-        /// <param name="extracted">The dictionary of extracted fields.</param>
-        /// <returns>A dictionary of the extracted fields with normalized values.</returns>
-        private Dictionary<string, string> Normalize(Dictionary<string, string> extracted)
+    /// <summary>
+    /// Given a set of fields pulled from a successful match, this normalizes each value
+    /// by stripping off some punctuation and, if applicable, converting it to a standard
+    /// USPS abbreviation.
+    /// </summary>
+    /// <param name="extracted">The dictionary of extracted fields.</param>
+    /// <returns>A dictionary of the extracted fields with normalized values.</returns>
+    private Dictionary<string, string> Normalize(Dictionary<string, string> extracted)
+    {
+        var normalized = new Dictionary<string, string>();
+
+        foreach (var pair in extracted)
         {
-            var normalized = new Dictionary<string, string>();
+            var key = pair.Key;
+            var value = pair.Value;
 
-            foreach (var pair in extracted)
-            {
-                var key = pair.Key;
-                var value = pair.Value;
+            // Strip off some punctuation
+            value = Regex.Replace(
+                value,
+                @"^\s+|\s+$|[^\/\w\s\-\#\&]",
+                string.Empty);
 
-                // Strip off some punctuation
-                value = Regex.Replace(
-                    value,
-                    @"^\s+|\s+$|[^\/\w\s\-\#\&]",
-                    string.Empty);
+            // Normalize to official abbreviations where appropriate
+            value = GetNormalizedValueForField(key, value);
 
-                // Normalize to official abbreviations where appropriate
-                value = GetNormalizedValueForField(key, value);
-
-                normalized[key] = value;
-            }
-
-            // Special case for an attached unit
-            if (extracted.ContainsKey("SECONDARYNUMBER") &&
-                (!extracted.ContainsKey("SECONDARYUNIT") ||
-                 string.IsNullOrWhiteSpace(extracted["SECONDARYUNIT"])))
-            {
-                normalized["SECONDARYUNIT"] = "APT";
-            }
-
-            return normalized;
+            normalized[key] = value;
         }
+
+        // Special case for an attached unit
+        if (extracted.ContainsKey("SECONDARYNUMBER") &&
+            (!extracted.ContainsKey("SECONDARYUNIT") ||
+             string.IsNullOrWhiteSpace(extracted["SECONDARYUNIT"])))
+        {
+            normalized["SECONDARYUNIT"] = "APT";
+        }
+
+        return normalized;
     }
 }
