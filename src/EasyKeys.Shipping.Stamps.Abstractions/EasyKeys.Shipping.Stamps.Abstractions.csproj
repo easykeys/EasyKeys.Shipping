@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Nuget Package Settings">
-    <Description>DotNetCore Implementation of FedEx Web Services 2020 of WCF.</Description>
-    <PackageTags>DotNetCore, FedEx 2020 WCF</PackageTags>
+    <Description>DotNetCore Implementation of Stamps.com SWS/IM API.</Description>
+    <PackageTags>DotNetCore, Stamps.com WCF, Stamps.com SWS/IM API</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +18,10 @@
     <PackageReference Include="System.ServiceModel.Http" />
     <PackageReference Include="System.ServiceModel.NetTcp" />
     <PackageReference Include="System.ServiceModel.Security" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.ServiceModel" />
   </ItemGroup>
 
   <ItemGroup>

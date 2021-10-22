@@ -49,9 +49,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Abstracti
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Usps", "Usps", "{8820A422-5EB7-4291-9F01-00B9BBA4302E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Usps.Rates", "src\EasyKeys.Shipping.Usps.Rates\EasyKeys.Shipping.Usps.Rates.csproj", "{E1E3FBBD-DE40-4742-B22A-C6C078D6C660}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Usps.Rates", "src\EasyKeys.Shipping.Usps.Rates\EasyKeys.Shipping.Usps.Rates.csproj", "{E1E3FBBD-DE40-4742-B22A-C6C078D6C660}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Usps.Abstractions", "src\EasyKeys.Shipping.Usps.Abstractions\EasyKeys.Shipping.Usps.Abstractions.csproj", "{43B95498-1D1F-4884-AE14-9001D0A6FA4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Usps.Abstractions", "src\EasyKeys.Shipping.Usps.Abstractions\EasyKeys.Shipping.Usps.Abstractions.csproj", "{43B95498-1D1F-4884-AE14-9001D0A6FA4E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Stamps", "Stamps", "{C8221B09-84F2-4A06-A6CA-7E89238E5EB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.Abstractions", "src\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj", "{5686FBAB-91C3-4211-A460-E6C9903E0CE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +199,18 @@ Global
 		{43B95498-1D1F-4884-AE14-9001D0A6FA4E}.Release|x64.Build.0 = Release|Any CPU
 		{43B95498-1D1F-4884-AE14-9001D0A6FA4E}.Release|x86.ActiveCfg = Release|Any CPU
 		{43B95498-1D1F-4884-AE14-9001D0A6FA4E}.Release|x86.Build.0 = Release|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Debug|x64.Build.0 = Debug|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Debug|x86.Build.0 = Debug|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Release|x64.ActiveCfg = Release|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Release|x64.Build.0 = Release|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Release|x86.ActiveCfg = Release|Any CPU
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -213,6 +229,8 @@ Global
 		{8820A422-5EB7-4291-9F01-00B9BBA4302E} = {BCBBDD1A-FF30-41E8-B7C1-9BB2A441FF83}
 		{E1E3FBBD-DE40-4742-B22A-C6C078D6C660} = {8820A422-5EB7-4291-9F01-00B9BBA4302E}
 		{43B95498-1D1F-4884-AE14-9001D0A6FA4E} = {8820A422-5EB7-4291-9F01-00B9BBA4302E}
+		{C8221B09-84F2-4A06-A6CA-7E89238E5EB2} = {BCBBDD1A-FF30-41E8-B7C1-9BB2A441FF83}
+		{5686FBAB-91C3-4211-A460-E6C9903E0CE3} = {C8221B09-84F2-4A06-A6CA-7E89238E5EB2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0FBE81B8-162F-4342-BABD-0FFFD0C99331}
