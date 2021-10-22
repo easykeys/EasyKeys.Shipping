@@ -77,12 +77,22 @@ namespace EasyKeys.Shipping.FedEx.AddressValidation
                         _ => true,
                     };
 
-                    request.ValidationBag.Add("Classification", addressResults.Classification.ToString());
-                    request.ValidationBag.Add("State", addressResults.State.ToString());
+                    if (!request.ValidationBag.ContainsKey("Classification"))
+                    {
+                        request.ValidationBag.Add("Classification", addressResults.Classification.ToString());
+                    }
+
+                    if (!request.ValidationBag.ContainsKey("State"))
+                    {
+                        request.ValidationBag.Add("State", addressResults.State.ToString());
+                    }
 
                     foreach (var a in addressResults.Attributes)
                     {
-                        request.ValidationBag.Add(a.Name, a.Value);
+                        if (!request.ValidationBag.ContainsKey(a.Name))
+                        {
+                            request.ValidationBag.Add(a.Name, a.Value);
+                        }
                     }
                 }
                 else
