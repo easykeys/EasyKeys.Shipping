@@ -1,9 +1,8 @@
-﻿namespace EasyKeys.Shipping.FedEx.Rates
+﻿namespace EasyKeys.Shipping.FedEx.Rates;
+
+public enum FedExPackageType
 {
-    public enum FedExPackageType
-    {
-        FEDEX_ENVELOPE,
-        YOUR_PACKAGING,
-        FEDEX_PAK
-    }
+    FEDEX_ENVELOPE,
+    YOUR_PACKAGING,
+    FEDEX_PAK
 }

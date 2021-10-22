@@ -1,43 +1,44 @@
 <Project>
 
   <PropertyGroup Label="Basic Settings">
-    <VersionPrefix>1.0.2-preview1</VersionPrefix>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
-    <NoWarn>$(NoWarn);CS1591;NU1605;DS126858;DS137138</NoWarn>
+	<VersionPrefix>1.0.2-preview2</VersionPrefix>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+	<NoWarn>$(NoWarn);CS1591;NU1605;DS126858;DS137138</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <LangVersion>preview</LangVersion>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Label="Ownership Settings">
-    <Company>easykeys.com</Company>
-    <Authors>kdcllc;easykeys.com</Authors>
-    <Copyright>Copyright © EasyKeys.com Inc.</Copyright>
+	<Company>easykeys.com</Company>
+	<Authors>kdcllc;easykeys.com</Authors>
+	<Copyright>Copyright © EasyKeys.com Inc.</Copyright>
   </PropertyGroup>
 
 
   <PropertyGroup Label="Nuget Package Settings">
-    <PackageProjectUrl>https://github.com/easykeys/EasyKeys.Shipping.FedEx</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/easykeys/EasyKeys.Shipping.FedEx.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicense>https://github.com/easykeys/EasyKeys.Shipping.FedEx/master/LICENSE</PackageLicense>
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageTags>EasyKeys.com, Extensions, Azure, AspNetCore, Shipment, Shipping, FedEx Web Services</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageProjectUrl>https://github.com/easykeys/EasyKeys.Shipping.FedEx</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/easykeys/EasyKeys.Shipping.FedEx.git</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicense>https://github.com/easykeys/EasyKeys.Shipping.FedEx/master/LICENSE</PackageLicense>
+	<PackageIcon>icon.png</PackageIcon>
+	<PackageTags>EasyKeys.com, Extensions, Azure, AspNetCore, Shipment, Shipping, FedEx Web Services</PackageTags>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Label="SourceLink Settings">
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<PublishRepositoryUrl>true</PublishRepositoryUrl>
+	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 
-    <!-- https://github.com/kdcllc/Bet.AspNetCore/issues/103 -->
-    <DebugType>Embedded</DebugType>
-    <EmbedAllSources>True</EmbedAllSources>
+	<!-- https://github.com/kdcllc/Bet.AspNetCore/issues/103 -->
+	<DebugType>Embedded</DebugType>
+	<EmbedAllSources>True</EmbedAllSources>
   </PropertyGroup>
 
 </Project>
