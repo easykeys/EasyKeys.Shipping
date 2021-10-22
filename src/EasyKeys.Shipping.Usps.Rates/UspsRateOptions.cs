@@ -1,13 +1,10 @@
-﻿using System;
+﻿namespace EasyKeys.Shipping.Usps.Rates;
 
-namespace EasyKeys.Shipping.Usps.Rates
+public class UspsRateOptions
 {
-    public class UspsRateOptions
-    {
-        public bool BaseRatesOnly { get; set; }
+    public bool BaseRatesOnly { get; set; }
 
-        public string ServiceName { get; set; } = string.Empty;
+    public string ServiceName { get; set; } = string.Empty;
 
-        public DateTime? DefaultGuaranteedDelivery { get; set; }
-    }
+    public DateTime? DefaultGuaranteedDelivery { get; set; }
 }
