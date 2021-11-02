@@ -1,12 +1,11 @@
 ﻿using System.Xml.Serialization;
 
+#nullable disable
 namespace EasyKeys.Shipping.Usps.Tracking.Models
 {
     [XmlRoot(ElementName = "PTSRreRequest")]
     public class PTSRreRequest
     {
-        private PTSRreRequest() { }
-
         public PTSRreRequest(string trackingNumber)
         {
             TrackId = trackingNumber;
@@ -19,6 +18,8 @@ namespace EasyKeys.Shipping.Usps.Tracking.Models
             FirstName = firstName;
             LastName = lastName;
         }
+
+        private PTSRreRequest() { }
 
         [XmlElement(ElementName = "TrackId")]
         public string TrackId { get; set; }

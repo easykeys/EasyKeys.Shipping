@@ -1,5 +1,7 @@
 ﻿using System.Xml.Serialization;
 
+#nullable disable
+
 namespace EasyKeys.Shipping.Usps.Tracking.Models
 {
     [XmlRoot(ElementName = "PTSTPodRequest")]

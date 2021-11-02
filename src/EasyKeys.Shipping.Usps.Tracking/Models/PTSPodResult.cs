@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 
+#nullable disable
 namespace EasyKeys.Shipping.Usps.Tracking.Models
 {
     [XmlRoot(ElementName = "PTSPODRESULT")]
@@ -11,5 +12,4 @@ namespace EasyKeys.Shipping.Usps.Tracking.Models
         [XmlElement(ElementName = "ReturnCode")]
         public string ReturnCode { get; set; }
     }
-
 }

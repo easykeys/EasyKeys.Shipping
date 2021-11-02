@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
+#nullable disable
 namespace EasyKeys.Shipping.Usps.Tracking.Models
 {
     [XmlRoot(ElementName = "TrackFieldRequest")]
