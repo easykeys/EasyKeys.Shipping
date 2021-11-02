@@ -1,7 +1,7 @@
 <Project>
 
 	<PropertyGroup>
-		<NetCoreVersion>3.1.20</NetCoreVersion>
+		<NetCoreVersion>3.1.*</NetCoreVersion>
 		<BetCommonVersion>4.0.0</BetCommonVersion>
 		<ServiceModelVersion>4.4.*</ServiceModelVersion>
 	</PropertyGroup>
@@ -17,7 +17,7 @@
 	<ItemGroup>
 		<PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(NetCoreVersion)" />
-		<PackageReference Update="Microsoft.Extensions.Logging" Version="$(NetCoreVersion)"/>
+		<PackageReference Update="Microsoft.Extensions.Logging" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.Hosting" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.Http.Polly" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.Caching.Memory" Version="$(NetCoreVersion)" />
@@ -42,7 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup Label="Bet">
-		<PackageReference Update="Bet.Extensions" Version="$(BetCommonVersion)"/>
+		<PackageReference Update="Bet.Extensions" Version="$(BetCommonVersion)" />
 		<PackageReference Update="Bet.Extensions.Options" Version="$(BetCommonVersion)" />
 		<PackageReference Update="Bet.Extensions.AzureVault" Version="$(BetCommonVersion)" />
 		<PackageReference Update="Bet.Extensions.Testing" Version="$(BetCommonVersion)" />
@@ -58,8 +58,8 @@
 		<PackageReference Update="Microsoft.AspNetCore.TestHost" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Moq" Version="4.16.1" />
 		<PackageReference Update="xunit" Version="2.4.1" />
-		<PackageReference Update="xunit.runner.visualstudio" Version="2.4.3"  PrivateAssets="All" />
-		<PackageReference Update="coverlet.collector" Version="3.1.0" PrivateAssets="All"/>
+		<PackageReference Update="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="All" />
+		<PackageReference Update="coverlet.collector" Version="3.1.0" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup Label="SourceLink">
