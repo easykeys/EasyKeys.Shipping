@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net5.0;net6.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Bet.Extensions.Options" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\EasyKeys.Shipping.Usps.Abstractions\EasyKeys.Shipping.Usps.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>
