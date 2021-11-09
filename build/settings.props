@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup Label="Basic Settings">
-	<VersionPrefix>1.0.3-preview1</VersionPrefix>
+	<VersionPrefix>1.0.4-preview1</VersionPrefix>
 	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 	<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
 	<NoWarn>$(NoWarn);CS1591;NU1605;DS126858;DS137138</NoWarn>
@@ -26,7 +26,7 @@
 	<RepositoryType>git</RepositoryType>
 	<PackageLicense>https://github.com/easykeys/EasyKeys.Shipping.FedEx/master/LICENSE</PackageLicense>
 	<PackageIcon>icon.png</PackageIcon>
-	<PackageTags>EasyKeys.com, Extensions, Azure, AspNetCore, Shipment, Shipping, FedEx Web Services</PackageTags>
+	<PackageTags>EasyKeys.com, LockSmith, Extensions, Azure, AspNetCore, Shipment, Shipping, FedEx Web Services</PackageTags>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
