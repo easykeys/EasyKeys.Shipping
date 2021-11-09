@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<NetCoreVersion>3.1.*</NetCoreVersion>
-		<BetCommonVersion>4.0.0</BetCommonVersion>
+		<BetCommonVersion>4.0.1</BetCommonVersion>
 		<ServiceModelVersion>4.4.*</ServiceModelVersion>
 	</PropertyGroup>
 
@@ -11,7 +11,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
-		<NetCoreVersion>6.0.0-rc.2.*</NetCoreVersion>
+		<NetCoreVersion>6.0.*</NetCoreVersion>
+		<ServiceModelVersion>4.9.*</ServiceModelVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -54,7 +55,7 @@
 	</ItemGroup>
 
 	<ItemGroup Label="Unit Tests">
-		<PackageReference Update="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+		<PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.0.0" />
 		<PackageReference Update="Microsoft.AspNetCore.TestHost" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Moq" Version="4.16.1" />
 		<PackageReference Update="xunit" Version="2.4.1" />
