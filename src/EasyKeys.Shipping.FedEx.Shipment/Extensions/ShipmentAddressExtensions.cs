@@ -9,11 +9,11 @@ namespace EasyKeys.Shipping.FedEx.Shipment.Extensions
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        public static RateClient.v28.Address GetFedExAddress(this Address address)
+        public static ShipClient.v25.Address GetFedExAddress(this Address address)
         {
             address = address ?? throw new ArgumentNullException(nameof(address));
 
-            return new RateClient.v28.Address
+            return new ShipClient.v25.Address
             {
                 StreetLines = address.GetStreetLines(),
                 City = address.City?.Trim(),

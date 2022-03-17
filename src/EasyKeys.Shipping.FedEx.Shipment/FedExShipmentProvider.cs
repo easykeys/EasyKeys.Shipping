@@ -1,12 +1,13 @@
 ﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Rates;
+using EasyKeys.Shipping.FedEx.Shipment.Extensions;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using ShipClient.v25;
 
-namespace EasyKeys.Shipping.FedEx.ShipmentProcessor
+namespace EasyKeys.Shipping.FedEx.Shipment
 {
     public class FedExShipmentProvider : IFedExShipmentProvider
     {
@@ -22,7 +23,7 @@ namespace EasyKeys.Shipping.FedEx.ShipmentProcessor
         }
 
         public Task<ProcessShipmentReply> ProcessShipmentAsync(
-            Shipment shipment,
+            Shipping.Abstractions.Models.Shipment shipment,
             ServiceType serviceType = ServiceType.DEFAULT,
             CancellationToken cancellationToken = default)
         {
@@ -43,7 +44,7 @@ namespace EasyKeys.Shipping.FedEx.ShipmentProcessor
         }
 
         private ProcessShipmentRequest CreateShipmentRequest(
-            Shipment shipment,
+            Shipping.Abstractions.Models.Shipment shipment,
             ServiceType serviceType)
         {
             var request = new ProcessShipmentRequest
@@ -79,7 +80,7 @@ namespace EasyKeys.Shipping.FedEx.ShipmentProcessor
 
         private void SetShipmentDetails(
             ProcessShipmentRequest reqest,
-            Shipment shipment,
+            Shipping.Abstractions.Models.Shipment shipment,
             ServiceType serviceType)
         {
             reqest.RequestedShipment = new RequestedShipment
@@ -100,11 +101,13 @@ namespace EasyKeys.Shipping.FedEx.ShipmentProcessor
                 // PackageDetail ?
                 // PackageDetailSpecified ?
             };
+
+            SetSender(reqest, shipment);
         }
 
         private void SetSender(
             ProcessShipmentRequest request,
-            Shipment shipment)
+            Shipping.Abstractions.Models.Shipment shipment)
         {
             request.RequestedShipment.Shipper = new Party
             {
@@ -117,9 +120,24 @@ namespace EasyKeys.Shipping.FedEx.ShipmentProcessor
                     // TODO: Verify this is correct
                     EMailAddress = "info@easykeys.com"
                 },
-                Address = shipment.OriginAddress
-            }
+                Address = shipment.OriginAddress.GetFedExAddress()
+            };
         }
+
+        private void SetRecipient(
+            ProcessShipmentRequest request,
+            Shipping.Abstractions.Models.Shipment shipment)
+        {
+            request.RequestedShipment.Recipient = new Party
+            {
+                // TODO: need a input for contact
+                Contact = new Contact
+                {
+                    PersonName = String.Empty
+                }
+            };
+        }
+
         private IEnumerable<RateRequestType> GetRateRequestTypes()
         {
             yield return RateRequestType.LIST;

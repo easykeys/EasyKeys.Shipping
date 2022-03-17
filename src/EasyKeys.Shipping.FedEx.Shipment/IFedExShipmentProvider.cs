@@ -1,14 +1,13 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
-using EasyKeys.Shipping.FedEx.Rates;
+﻿using EasyKeys.Shipping.FedEx.Rates;
 
 using ShipClient.v25;
 
-namespace EasyKeys.Shipping.FedEx.ShipmentProcessor
+namespace EasyKeys.Shipping.FedEx.Shipment
 {
     public interface IFedExShipmentProvider
     {
         Task<ProcessShipmentReply> ProcessShipmentAsync(
-            Shipment shipment,
+            Shipping.Abstractions.Models.Shipment shipment,
             ServiceType serviceType = ServiceType.DEFAULT,
             CancellationToken cancellationToken = default);
     }
