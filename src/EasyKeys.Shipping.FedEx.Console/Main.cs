@@ -1,21 +1,25 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.AddressValidation;
+using EasyKeys.Shipping.FedEx.Rates;
 
 namespace EasyKeys.Shipping.FedEx.Console;
 
 public class Main : IMain
 {
     private readonly IFedExAddressValidationProvider _validationClient;
+    private readonly IFedExRateProvider _fedexRateProvider;
     private readonly IHostApplicationLifetime _applicationLifetime;
     private readonly ILogger<Main> _logger;
 
     public Main(
         IFedExAddressValidationProvider validationClient,
+        IFedExRateProvider fedExRateProvider,
         IHostApplicationLifetime applicationLifetime,
         IConfiguration configuration,
         ILogger<Main> logger)
     {
         _validationClient = validationClient ?? throw new ArgumentNullException(nameof(validationClient));
+        _fedexRateProvider = fedExRateProvider ?? throw new ArgumentNullException(nameof(fedExRateProvider));
         _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
         Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -52,16 +56,16 @@ public class Main : IMain
         //            "IL",
         //            false));
 
-        // var address2 = new ValidateAddress(
-        //        Guid.NewGuid().ToString(),
-        //        new Shipping.Abstractions.Address(
-        //        "100 East Capitol Street",
-        //        "Suite 1000",
-        //        "Jackson",
-        //        "MS",
-        //        "39201",
-        //        "US",
-        //        false));
+        var address3 = new ValidateAddress(
+               Guid.NewGuid().ToString(),
+               new Shipping.Abstractions.Address(
+               "100 East Capitol Street",
+               "Suite 1000",
+               "Jackson",
+               "MS",
+               "39201",
+               "US",
+               false));
         var address2 = new ValidateAddress(
             Guid.NewGuid().ToString(),
             new Shipping.Abstractions.Address(
@@ -77,6 +81,24 @@ public class Main : IMain
         result2.ValidationBag.TryGetValue("State", out var v);
         _logger.LogInformation("{isVerified}", v);
 
+        var shipment = new Shipment(
+            originAddress: address2?.ProposedAddress,
+            destinationAddress: address3?.ProposedAddress,
+            new List<Shipping.Abstractions.Package>()
+            {
+                new Shipping.Abstractions.Package(
+                    new Shipping.Abstractions.Dimensions()
+                {
+                    Height = 20.00M,
+                    Width = 20.00M,
+                    Length = 20.00M
+                },
+                    125.0M)
+            });
+
+        var rates = await _fedexRateProvider.GetRatesAsync(
+            shipment,
+            ServiceType.FEDEX_2_DAY);
         return await Task.FromResult(0);
     }
 }

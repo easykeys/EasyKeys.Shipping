@@ -1,0 +1,128 @@
+﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
+using EasyKeys.Shipping.FedEx.Rates;
+
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+using ShipClient.v25;
+
+namespace EasyKeys.Shipping.FedEx.ShipmentProcessor
+{
+    public class FedExShipmentProvider : IFedExShipmentProvider
+    {
+        private readonly FedExOptions _options;
+        private readonly ILogger<FedExShipmentProvider> _logger;
+
+        public FedExShipmentProvider(
+            IOptionsSnapshot<FedExOptions> options,
+            ILogger<FedExShipmentProvider> logger)
+        {
+            _options = options.Value;
+            _logger = logger ?? throw new ArgumentException(nameof(logger));
+        }
+
+        public Task<ProcessShipmentReply> ProcessShipmentAsync(
+            Shipment shipment,
+            ServiceType serviceType = ServiceType.DEFAULT,
+            CancellationToken cancellationToken = default)
+        {
+            var client = new ShipPortTypeClient(
+                ShipPortTypeClient.EndpointConfiguration.ShipServicePort,
+                _options.Url);
+
+            try
+            {
+                var request = CreateShipmentRequest(shipment, serviceType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+
+            return Task.FromResult<ProcessShipmentReply>(new ProcessShipmentReply());
+        }
+
+        private ProcessShipmentRequest CreateShipmentRequest(
+            Shipment shipment,
+            ServiceType serviceType)
+        {
+            var request = new ProcessShipmentRequest
+            {
+                WebAuthenticationDetail = new WebAuthenticationDetail
+                {
+                    UserCredential = new WebAuthenticationCredential
+                    {
+                        Key = _options.FedExKey,
+                        Password = _options.FedExPassword
+                    }
+                },
+                ClientDetail = new ClientDetail
+                {
+                    // TODO: update this if client chooses to use their own
+                    AccountNumber = _options.FedExAccountNumber,
+                    MeterNumber = _options.FedExMeterNumber
+                },
+                TransactionDetail = new TransactionDetail
+                {
+                    CustomerTransactionId = $"Process Shipment Request: {Guid.NewGuid()}"
+                },
+                Version = new VersionId()
+            };
+            SetShipmentDetails(
+                request,
+                shipment,
+                serviceType);
+
+
+            return new ProcessShipmentRequest();
+        }
+
+        private void SetShipmentDetails(
+            ProcessShipmentRequest reqest,
+            Shipment shipment,
+            ServiceType serviceType)
+        {
+            reqest.RequestedShipment = new RequestedShipment
+            {
+                // TODO: Verify that this is correct.
+                ShipTimestamp = shipment.Options.ShippingDate ?? DateTime.Now,
+                DropoffType = DropoffType.REGULAR_PICKUP,
+                ServiceType = serviceType.ToString(),
+                PackagingType = shipment.Options.PackagingType,
+                PackageCount = shipment.Packages.Count().ToString(),
+                TotalWeight = new Weight
+                {
+                    Value = shipment.Packages.Sum(x => x.Weight),
+                    Units = WeightUnits.LB
+                },
+                RateRequestTypes = GetRateRequestTypes().ToArray(),
+
+                // PackageDetail ?
+                // PackageDetailSpecified ?
+            };
+        }
+
+        private void SetSender(
+            ProcessShipmentRequest request,
+            Shipment shipment)
+        {
+            request.RequestedShipment.Shipper = new Party
+            {
+                Contact = new Contact
+                {
+                    PersonName = "EasyKeys.com Customer Support",
+                    CompanyName = "EasyKeys.com",
+                    PhoneNumber = "8778395397",
+
+                    // TODO: Verify this is correct
+                    EMailAddress = "info@easykeys.com"
+                },
+                Address = shipment.OriginAddress
+            }
+        }
+        private IEnumerable<RateRequestType> GetRateRequestTypes()
+        {
+            yield return RateRequestType.LIST;
+        }
+    }
+}
