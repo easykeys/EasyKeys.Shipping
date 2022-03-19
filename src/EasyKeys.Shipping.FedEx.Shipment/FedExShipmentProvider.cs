@@ -1,4 +1,5 @@
-﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using EasyKeys.Shipping.Abstractions.Extensions;
+using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment.Extensions;
 
@@ -22,9 +23,10 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             _logger = logger ?? throw new ArgumentException(nameof(logger));
         }
 
-        public Task<ProcessShipmentReply> ProcessShipmentAsync(
+        public async Task<ProcessShipmentReply> ProcessShipmentAsync(
             Shipping.Abstractions.Models.Shipment shipment,
             ServiceType serviceType = ServiceType.DEFAULT,
+            bool CODShipment = false,
             CancellationToken cancellationToken = default)
         {
             var client = new ShipPortTypeClient(
@@ -33,19 +35,35 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
             try
             {
-                var request = CreateShipmentRequest(shipment, serviceType);
+                var request = CreateShipmentRequest(
+                    shipment,
+                    serviceType,
+                    CODShipment);
+
+                LogXML(request, typeof(ProcessShipmentRequest));
+                var shipmentRequest = new processShipmentRequest1(request);
+                LogXML(shipmentRequest, typeof(processShipmentRequest1));
+                var reply = await client.processShipmentAsync(shipmentRequest);
+
+                if (reply.ProcessShipmentReply != null)
+                {
+                    _logger.LogCritical("it worked..");
+                    return reply.ProcessShipmentReply;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+
+                _logger.LogError(ex.Data.ToString());
             }
 
-            return Task.FromResult<ProcessShipmentReply>(new ProcessShipmentReply());
+            return new ProcessShipmentReply();
         }
 
         private ProcessShipmentRequest CreateShipmentRequest(
             Shipping.Abstractions.Models.Shipment shipment,
-            ServiceType serviceType)
+            ServiceType serviceType,
+            bool codShipment)
         {
             var request = new ProcessShipmentRequest
             {
@@ -65,7 +83,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 },
                 TransactionDetail = new TransactionDetail
                 {
-                    CustomerTransactionId = $"Process Shipment Request: {Guid.NewGuid()}"
+                    CustomerTransactionId = $"Process Shipment Request: {Guid.NewGuid().ToString()}"
                 },
                 Version = new VersionId()
             };
@@ -74,26 +92,44 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 shipment,
                 serviceType);
 
+            SetpackageLineItems(
+                request,
+                shipment,
+                codShipment);
 
-            return new ProcessShipmentRequest();
+            _logger.LogCritical("Create Shipment Request Complete");
+            return request;
+        }
+
+        private void LogXML(Object obj, Type type)
+        {
+            var serializer =
+                new System.Xml.Serialization.XmlSerializer(type);
+            TextWriter writer = new StreamWriter("..\\access.log", true);
+            writer.WriteLine("-------------" + DateTime.Now.ToString() + "-------------");
+            serializer.Serialize(writer, obj);
+            writer.WriteLine();
+            writer.WriteLine("____________________________________________________");
+            writer.WriteLine();
+            writer.Close();
         }
 
         private void SetShipmentDetails(
-            ProcessShipmentRequest reqest,
+            ProcessShipmentRequest request,
             Shipping.Abstractions.Models.Shipment shipment,
             ServiceType serviceType)
         {
-            reqest.RequestedShipment = new RequestedShipment
+            request.RequestedShipment = new RequestedShipment
             {
                 // TODO: Verify that this is correct.
                 ShipTimestamp = shipment.Options.ShippingDate ?? DateTime.Now,
                 DropoffType = DropoffType.REGULAR_PICKUP,
-                ServiceType = serviceType.ToString(),
-                PackagingType = shipment.Options.PackagingType,
+                ServiceType = ServiceType.FEDEX_2_DAY.ToString(),
+                PackagingType = FedExPackageType.YOUR_PACKAGING.ToString(),
                 PackageCount = shipment.Packages.Count().ToString(),
                 TotalWeight = new Weight
                 {
-                    Value = shipment.Packages.Sum(x => x.Weight),
+                    Value = 500.00M,
                     Units = WeightUnits.LB
                 },
                 RateRequestTypes = GetRateRequestTypes().ToArray(),
@@ -102,7 +138,10 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 // PackageDetailSpecified ?
             };
 
-            SetSender(reqest, shipment);
+            SetSender(request, shipment);
+            SetRecipient(request, shipment);
+            SetPayment(request);
+            SetLabelDetails(request);
         }
 
         private void SetSender(
@@ -122,6 +161,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 },
                 Address = shipment.OriginAddress.GetFedExAddress()
             };
+            _logger.LogCritical("Set Sender Complete");
         }
 
         private void SetRecipient(
@@ -130,12 +170,124 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         {
             request.RequestedShipment.Recipient = new Party
             {
+
                 // TODO: need a input for contact
                 Contact = new Contact
                 {
-                    PersonName = String.Empty
+                    PersonName = "brandon",
+                    CompanyName = "mcm",
+                    PhoneNumber = "999-888-7777",
+                    EMailAddress = "bmoff@gmail.com"
+                },
+                Address = shipment.DestinationAddress.GetFedExAddress()
+            };
+
+            // TODO: Set up Special Services
+            _logger.LogCritical("Set Recipient Complete");
+        }
+
+        private void SetPayment(ProcessShipmentRequest request)
+        {
+            // TODO: logic for account number to switch
+            request.RequestedShipment.ShippingChargesPayment = new Payment
+            {
+                PaymentType = PaymentType.SENDER,
+                Payor = new Payor()
+                {
+                    ResponsibleParty = new Party()
+                    {
+                        AccountNumber = request.ClientDetail.AccountNumber,
+                    }
                 }
             };
+            _logger.LogCritical("Set Payment Complete");
+        }
+
+        private void SetLabelDetails(ProcessShipmentRequest request)
+        {
+            request.RequestedShipment.LabelSpecification = new LabelSpecification
+            {
+                LabelFormatType = LabelFormatType.COMMON2D,
+                ImageType = ShippingDocumentImageType.PDF,
+                ImageTypeSpecified = true,
+                PrintedLabelOrigin = new ContactAndAddress
+                {
+                    Contact = new Contact
+                    {
+                        CompanyName = "Fulfillment Center",
+                        PhoneNumber = "888.888.8888"
+                    },
+                    // verify this is correct
+                    Address = request.RequestedShipment.Shipper.Address
+                }
+            };
+            _logger.LogCritical("Set Label Details Complete");
+        }
+
+        private void SetpackageLineItems(
+            ProcessShipmentRequest request,
+            Shipping.Abstractions.Models.Shipment shipment,
+            bool codShipment)
+        {
+            request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[shipment.Packages.Count()];
+            var i = 0;
+            foreach (var package in shipment.Packages)
+            {
+                request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem()
+                {
+                    SequenceNumber = (i + 1).ToString(),
+                    GroupPackageCount = "1",
+
+                    Weight = new Weight()
+                    {
+                        Units = WeightUnits.LB,
+                        Value = package.RoundedWeight,
+                    },
+
+                    Dimensions = new Dimensions()
+                    {
+                        Length = package.Dimensions.RoundedLength.ToString(),
+                        Width = package.Dimensions.RoundedWidth.ToString(),
+                        Height = package.Dimensions.RoundedHeight.ToString(),
+                        Units = LinearUnits.IN
+                    }
+                };
+
+                request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money
+                {
+                    Amount = package.InsuredValue,
+                    Currency = shipment.Options.GetCurrencyCode()
+                };
+
+                if (package.SignatureRequiredOnDelivery)
+                {
+                    var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.INDIRECT };
+                    request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested() { SignatureOptionDetail = signatureOptionDetail };
+                }
+
+                // TODO: set up customer references
+
+                if (codShipment)
+                {
+                    request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
+                    {
+                        // TODO: Special Service Types ?
+                        CodDetail = new CodDetail
+                        {
+                            CollectionType = CodCollectionType.GUARANTEED_FUNDS,
+                            CodCollectionAmount = new Money()
+                            {
+                                Amount = 250,
+                                Currency = "USD"
+                            }
+                        }
+                    };
+                }
+
+                i++;
+            }
+
+            _logger.LogCritical("Set Package Line Items Details Complete");
         }
 
         private IEnumerable<RateRequestType> GetRateRequestTypes()

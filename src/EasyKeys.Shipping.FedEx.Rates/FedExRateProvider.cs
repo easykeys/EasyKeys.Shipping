@@ -36,6 +36,7 @@ public class FedExRateProvider : IFedExRateProvider
         try
         {
             var request = CreateRateRequest(shipment, serviceType);
+            LogXML(request, typeof(RateRequest));
 
             var serviceRequest = new getRatesRequest(request);
 
@@ -57,6 +58,19 @@ public class FedExRateProvider : IFedExRateProvider
         }
 
         return shipment;
+    }
+
+    private void LogXML(Object obj, Type type)
+    {
+        var serializer =
+            new System.Xml.Serialization.XmlSerializer(type);
+        TextWriter writer = new StreamWriter("..\\access.log", true);
+        writer.WriteLine("-------------" + DateTime.Now.ToString() + "-------------");
+        serializer.Serialize(writer, obj);
+        writer.WriteLine();
+        writer.WriteLine("____________________________________________________");
+        writer.WriteLine();
+        writer.Close();
     }
 
     private RateRequest CreateRateRequest(Shipment shipment, ServiceType serviceType)

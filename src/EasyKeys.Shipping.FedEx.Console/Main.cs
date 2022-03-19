@@ -1,6 +1,7 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.AddressValidation;
 using EasyKeys.Shipping.FedEx.Rates;
+using EasyKeys.Shipping.FedEx.Shipment;
 
 namespace EasyKeys.Shipping.FedEx.Console;
 
@@ -8,18 +9,21 @@ public class Main : IMain
 {
     private readonly IFedExAddressValidationProvider _validationClient;
     private readonly IFedExRateProvider _fedexRateProvider;
+    private readonly IFedExShipmentProvider _fedExShipmentProvider;
     private readonly IHostApplicationLifetime _applicationLifetime;
     private readonly ILogger<Main> _logger;
 
     public Main(
         IFedExAddressValidationProvider validationClient,
         IFedExRateProvider fedExRateProvider,
+        IFedExShipmentProvider fedExShipmentProvider,
         IHostApplicationLifetime applicationLifetime,
         IConfiguration configuration,
         ILogger<Main> logger)
     {
         _validationClient = validationClient ?? throw new ArgumentNullException(nameof(validationClient));
         _fedexRateProvider = fedExRateProvider ?? throw new ArgumentNullException(nameof(fedExRateProvider));
+        _fedExShipmentProvider = fedExShipmentProvider ?? throw new ArgumentNullException(nameof(fedExShipmentProvider));
         _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
         Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -81,7 +85,7 @@ public class Main : IMain
         result2.ValidationBag.TryGetValue("State", out var v);
         _logger.LogInformation("{isVerified}", v);
 
-        var shipment = new Shipment(
+        var shipment = new Shipping.Abstractions.Models.Shipment(
             originAddress: address2?.ProposedAddress,
             destinationAddress: address3?.ProposedAddress,
             new List<Shipping.Abstractions.Package>()
@@ -99,6 +103,13 @@ public class Main : IMain
         var rates = await _fedexRateProvider.GetRatesAsync(
             shipment,
             ServiceType.FEDEX_2_DAY);
+
+        var result = await _fedExShipmentProvider.ProcessShipmentAsync(
+            shipment,
+            ServiceType.DEFAULT,
+            false);
+
+
         return await Task.FromResult(0);
     }
 }
