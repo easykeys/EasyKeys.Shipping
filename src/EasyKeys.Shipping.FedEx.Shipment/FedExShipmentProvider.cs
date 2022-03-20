@@ -26,7 +26,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         public async Task<ProcessShipmentReply> ProcessShipmentAsync(
             Shipping.Abstractions.Models.Shipment shipment,
             ServiceType serviceType = ServiceType.DEFAULT,
-            bool CODShipment = false,
+            bool isCodShipment = false,
             CancellationToken cancellationToken = default)
         {
             var client = new ShipPortTypeClient(
@@ -38,23 +38,31 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 var request = CreateShipmentRequest(
                     shipment,
                     serviceType,
-                    CODShipment);
+                    isCodShipment);
 
+                // for testing purposes
                 LogXML(request, typeof(ProcessShipmentRequest));
                 var shipmentRequest = new processShipmentRequest1(request);
-                LogXML(shipmentRequest, typeof(processShipmentRequest1));
-                var reply = await client.processShipmentAsync(shipmentRequest);
+                var response = await client.processShipmentAsync(shipmentRequest);
+                var reply = response?.ProcessShipmentReply;
 
-                if (reply.ProcessShipmentReply != null)
+                if ((reply?.HighestSeverity != NotificationSeverityType.ERROR)
+                    && (reply?.HighestSeverity != NotificationSeverityType.FAILURE))
                 {
-                    _logger.LogCritical("it worked..");
-                    return reply.ProcessShipmentReply;
+                    // for testing purposes
+                    ShowShipmentLabels(
+                        isCodShipment,
+                        reply.CompletedShipmentDetail,
+                        reply.CompletedShipmentDetail
+                            .CompletedPackageDetails
+                                .FirstOrDefault());
+                    return reply;
                 }
             }
             catch (Exception ex)
             {
-
-                _logger.LogError(ex.Data.ToString());
+                // this does not explain fault exceptions well, must debug handler
+                _logger.LogError(ex.Message);
             }
 
             return new ProcessShipmentReply();
@@ -63,7 +71,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         private ProcessShipmentRequest CreateShipmentRequest(
             Shipping.Abstractions.Models.Shipment shipment,
             ServiceType serviceType,
-            bool codShipment)
+            bool isCodShipment)
         {
             var request = new ProcessShipmentRequest
             {
@@ -90,33 +98,22 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             SetShipmentDetails(
                 request,
                 shipment,
+                isCodShipment,
                 serviceType);
 
             SetpackageLineItems(
                 request,
                 shipment,
-                codShipment);
+                isCodShipment);
 
             _logger.LogCritical("Create Shipment Request Complete");
             return request;
         }
 
-        private void LogXML(Object obj, Type type)
-        {
-            var serializer =
-                new System.Xml.Serialization.XmlSerializer(type);
-            TextWriter writer = new StreamWriter("..\\access.log", true);
-            writer.WriteLine("-------------" + DateTime.Now.ToString() + "-------------");
-            serializer.Serialize(writer, obj);
-            writer.WriteLine();
-            writer.WriteLine("____________________________________________________");
-            writer.WriteLine();
-            writer.Close();
-        }
-
         private void SetShipmentDetails(
             ProcessShipmentRequest request,
             Shipping.Abstractions.Models.Shipment shipment,
+            bool isCodShipment,
             ServiceType serviceType)
         {
             request.RequestedShipment = new RequestedShipment
@@ -124,23 +121,23 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 // TODO: Verify that this is correct.
                 ShipTimestamp = shipment.Options.ShippingDate ?? DateTime.Now,
                 DropoffType = DropoffType.REGULAR_PICKUP,
+
+                // does not work with default
                 ServiceType = ServiceType.FEDEX_2_DAY.ToString(),
                 PackagingType = FedExPackageType.YOUR_PACKAGING.ToString(),
                 PackageCount = shipment.Packages.Count().ToString(),
                 TotalWeight = new Weight
                 {
-                    Value = 500.00M,
+                    Value = shipment.Packages.Sum(x => x.Weight),
                     Units = WeightUnits.LB
                 },
                 RateRequestTypes = GetRateRequestTypes().ToArray(),
 
-                // PackageDetail ?
-                // PackageDetailSpecified ?
             };
 
             SetSender(request, shipment);
             SetRecipient(request, shipment);
-            SetPayment(request);
+            SetPayment(request, isCodShipment);
             SetLabelDetails(request);
         }
 
@@ -182,13 +179,29 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 Address = shipment.DestinationAddress.GetFedExAddress()
             };
 
-            // TODO: Set up Special Services
+            // TODO: Set up Special Services - email
             _logger.LogCritical("Set Recipient Complete");
         }
 
-        private void SetPayment(ProcessShipmentRequest request)
+        private void SetPayment(ProcessShipmentRequest request, bool isCodShipment)
         {
-            // TODO: logic for account number to switch
+            // TODO: logic to receive user account number
+            if (isCodShipment)
+            {
+                request.RequestedShipment.ShippingChargesPayment = new Payment
+                {
+                    PaymentType = PaymentType.RECIPIENT,
+                    Payor = new Payor()
+                    {
+                        ResponsibleParty = new Party()
+                        {
+                            AccountNumber = "234564646346345" // input for recipent account number
+                        }
+                    }
+                };
+                return;
+            }
+
             request.RequestedShipment.ShippingChargesPayment = new Payment
             {
                 PaymentType = PaymentType.SENDER,
@@ -217,6 +230,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                         CompanyName = "Fulfillment Center",
                         PhoneNumber = "888.888.8888"
                     },
+
                     // verify this is correct
                     Address = request.RequestedShipment.Shipper.Address
                 }
@@ -227,7 +241,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         private void SetpackageLineItems(
             ProcessShipmentRequest request,
             Shipping.Abstractions.Models.Shipment shipment,
-            bool codShipment)
+            bool isCodShipment)
         {
             request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[shipment.Packages.Count()];
             var i = 0;
@@ -266,8 +280,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 }
 
                 // TODO: set up customer references
-
-                if (codShipment)
+                if (isCodShipment)
                 {
                     request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
                     {
@@ -293,6 +306,57 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         private IEnumerable<RateRequestType> GetRateRequestTypes()
         {
             yield return RateRequestType.LIST;
+        }
+
+        private void ShowShipmentLabels(bool isisCodShipment, CompletedShipmentDetail completedShipmentDetail, CompletedPackageDetail packageDetail)
+        {
+            if (packageDetail.Label.Parts[0].Image != null)
+            {
+                // Save outbound shipping label
+                var labelPath = "..\\EasyKeys.Shipping.FedEx.Shipment\\Labels\\";
+
+                var labelFileName = labelPath + packageDetail.TrackingIds[0].TrackingNumber + ".pdf";
+                SaveLabel(labelFileName, packageDetail.Label.Parts[0].Image);
+                if (isisCodShipment)
+                {
+                    // Save COD Return label
+                    labelFileName = labelPath + completedShipmentDetail.AssociatedShipments[0].TrackingId.TrackingNumber + "CR" + ".pdf";
+                    SaveLabel(labelFileName, completedShipmentDetail.AssociatedShipments[0].Label.Parts[0].Image);
+                }
+            }
+        }
+
+        private void SaveLabel(string labelFileName, byte[] labelBuffer)
+        {
+            // Save label buffer to file
+            var labelFile = new FileStream(labelFileName, FileMode.Create);
+            labelFile.Write(labelBuffer, 0, labelBuffer.Length);
+            labelFile.Close();
+            _logger.LogInformation("Label saved to {location}", labelFile);
+
+            // Display label in Acrobat
+            DisplayLabel(labelFileName);
+        }
+
+        private void DisplayLabel(string labelFileName)
+        {
+            var info = new System.Diagnostics.ProcessStartInfo(labelFileName);
+            info.UseShellExecute = true;
+            info.Verb = "open";
+            System.Diagnostics.Process.Start(info);
+        }
+
+        private void LogXML(Object obj, Type type)
+        {
+            var serializer =
+                new System.Xml.Serialization.XmlSerializer(type);
+            TextWriter writer = new StreamWriter("..\\access.log", true);
+            writer.WriteLine("-------------" + DateTime.Now.ToString() + "-------------");
+            serializer.Serialize(writer, obj);
+            writer.WriteLine();
+            writer.WriteLine("____________________________________________________");
+            writer.WriteLine();
+            writer.Close();
         }
     }
 }

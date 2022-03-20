@@ -19,4 +19,8 @@
 	  <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Rates\EasyKeys.Shipping.FedEx.Rates.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Labels\" />
+	</ItemGroup>
+
 </Project>

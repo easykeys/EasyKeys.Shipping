@@ -9,7 +9,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         Task<ProcessShipmentReply> ProcessShipmentAsync(
             Shipping.Abstractions.Models.Shipment shipment,
             ServiceType serviceType = ServiceType.DEFAULT,
-            bool CODShipment = false,
+            bool isCodShipment = false,
             CancellationToken cancellationToken = default);
     }
 }

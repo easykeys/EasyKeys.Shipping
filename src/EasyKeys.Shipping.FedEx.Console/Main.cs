@@ -49,27 +49,37 @@ public class Main : IMain
         //                "US",
         //                false));
 
-        // var address2 = new ValidateAddress(
-        //            Guid.NewGuid().ToString(),
-        //            new Shipping.Abstractions.Address(
-        //            "Mauerberger  Building",
-        //            "2nd floor",
-        //            "Technion City",
-        //            "Haifa",
-        //            "3200003",
-        //            "IL",
-        //            false));
+        //var address2 = new ValidateAddress(
+        //           Guid.NewGuid().ToString(),
+        //           new Shipping.Abstractions.Address(
+        //           "Mauerberger  Building",
+        //           "2nd floor",
+        //           "Technion City",
+        //           "Haifa",
+        //           "3200003",
+        //           "IL",
+        //           false));
 
+        //var address3 = new ValidateAddress(
+        //       Guid.NewGuid().ToString(),
+        //       new Shipping.Abstractions.Address(
+        //       "100 East Capitol Street",
+        //       "Suite 1000",
+        //       "Jackson",
+        //       "MS",
+        //       "39201",
+        //       "US",
+        //       false));
         var address3 = new ValidateAddress(
-               Guid.NewGuid().ToString(),
-               new Shipping.Abstractions.Address(
-               "100 East Capitol Street",
-               "Suite 1000",
-               "Jackson",
-               "MS",
-               "39201",
-               "US",
-               false));
+           Guid.NewGuid().ToString(),
+           new Shipping.Abstractions.Address(
+           "1550 Central Ave",
+           "Apt 35",
+           "Riverside",
+           "CA",
+           "92507",
+           "US",
+           false));
         var address2 = new ValidateAddress(
             Guid.NewGuid().ToString(),
             new Shipping.Abstractions.Address(
