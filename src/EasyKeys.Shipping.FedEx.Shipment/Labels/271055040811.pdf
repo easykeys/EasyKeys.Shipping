@@ -121,12 +121,15 @@ endobj
 <<
 /CreationDate (D:2003)
 /Producer (FedEx Services)
-/Title (FedEx Shipping Label)/Creator (FedEx Customer Automation)/Author (CLS Version 5120135)
+/Title (FedEx Shipping Label)
+/Creator (FedEx Customer Automation)
+/Author (CLS Version 5120135)
 >>
 endobj
 18 0 obj
 <<
-/Type /Page/Parent 3 0 R
+/Type /Page
+/Parent 3 0 R
 /Resources << /ProcSet 4 0 R 
  /Font << /F1 5 0 R 
 /F2 6 0 R 

@@ -132,7 +132,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                     Units = WeightUnits.LB
                 },
                 RateRequestTypes = GetRateRequestTypes().ToArray(),
-
             };
 
             SetSender(request, shipment);
@@ -167,7 +166,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         {
             request.RequestedShipment.Recipient = new Party
             {
-
                 // TODO: need a input for contact
                 Contact = new Contact
                 {

@@ -119,7 +119,6 @@ public class Main : IMain
             ServiceType.DEFAULT,
             false);
 
-
         return await Task.FromResult(0);
     }
 }
