@@ -1,6 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
-using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment.Extensions;
 
 using Microsoft.Extensions.Logging;
@@ -23,10 +22,9 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             _logger = logger ?? throw new ArgumentException(nameof(logger));
         }
 
-        public async Task<ProcessShipmentReply> ProcessShipmentAsync(
+        public async Task<Label> ProcessShipmentAsync(
             Shipping.Abstractions.Models.Shipment shipment,
-            ServiceType serviceType = ServiceType.DEFAULT,
-            bool isCodShipment = false,
+            LabelOptions labelOptions,
             CancellationToken cancellationToken = default)
         {
             var client = new ShipPortTypeClient(
@@ -37,8 +35,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             {
                 var request = CreateShipmentRequest(
                     shipment,
-                    serviceType,
-                    isCodShipment);
+                    labelOptions);
 
                 // for testing purposes
                 LogXML(request, typeof(ProcessShipmentRequest));
@@ -54,13 +51,26 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 {
                     // for testing purposes
                     ShowShipmentLabels(
-                        isCodShipment,
+                        labelOptions,
                         reply.CompletedShipmentDetail,
                         reply.CompletedShipmentDetail
                             .CompletedPackageDetails
                                 .FirstOrDefault());
-                    return reply;
+                    return new Label()
+                    {
+                        ShippingDocumentImageType = reply.CompletedShipmentDetail
+                                    .CompletedPackageDetails
+                                    .FirstOrDefault()
+                                    .Label.ImageType,
+
+                        Bytes = reply.CompletedShipmentDetail
+                                    .CompletedPackageDetails
+                                    .FirstOrDefault()
+                                    .Label.Parts[0].Image
+                    };
                 }
+
+                _logger.LogInformation(reply.Notifications[0].Message);
             }
             catch (Exception ex)
             {
@@ -68,13 +78,12 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 _logger.LogError(ex.Message);
             }
 
-            return new ProcessShipmentReply();
+            return new Label();
         }
 
         private ProcessShipmentRequest CreateShipmentRequest(
             Shipping.Abstractions.Models.Shipment shipment,
-            ServiceType serviceType,
-            bool isCodShipment)
+            LabelOptions labelOptions)
         {
             var request = new ProcessShipmentRequest
             {
@@ -101,13 +110,12 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             SetShipmentDetails(
                 request,
                 shipment,
-                isCodShipment,
-                serviceType);
+                labelOptions);
 
             SetpackageLineItems(
                 request,
                 shipment,
-                isCodShipment);
+                labelOptions);
 
             _logger.LogCritical("Create Shipment Request Complete");
             return request;
@@ -116,48 +124,40 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         private void SetShipmentDetails(
             ProcessShipmentRequest request,
             Shipping.Abstractions.Models.Shipment shipment,
-            bool isCodShipment,
-            ServiceType serviceType)
+            LabelOptions labelOptions)
         {
             request.RequestedShipment = new RequestedShipment
             {
                 // TODO: Verify that this is correct.
                 ShipTimestamp = shipment.Options.ShippingDate ?? DateTime.Now,
-                DropoffType = DropoffType.REGULAR_PICKUP,
+                DropoffType = labelOptions.DropoffType,
 
                 // does not work with default
-                ServiceType = ServiceType.FEDEX_2_DAY.ToString(),
-                PackagingType = FedExPackageType.YOUR_PACKAGING.ToString(),
+                ServiceType = labelOptions.ServiceType.ToString(),
+                PackagingType = labelOptions.PackageType.ToString(),
                 PackageCount = shipment.Packages.Count().ToString(),
                 TotalWeight = new Weight
                 {
                     Value = shipment.Packages.Sum(x => x.Weight),
-                    Units = WeightUnits.LB
+                    Units = labelOptions.Units
                 },
                 RateRequestTypes = GetRateRequestTypes().ToArray(),
             };
 
-            SetSender(request, shipment);
-            SetRecipient(request, shipment);
-            SetPayment(request, isCodShipment);
-            SetLabelDetails(request);
+            SetSender(request, shipment, labelOptions);
+            SetRecipient(request, shipment, labelOptions);
+            SetPayment(request, labelOptions);
+            SetLabelDetails(request, labelOptions);
         }
 
         private void SetSender(
             ProcessShipmentRequest request,
-            Shipping.Abstractions.Models.Shipment shipment)
+            Shipping.Abstractions.Models.Shipment shipment,
+            LabelOptions labelOptions)
         {
             request.RequestedShipment.Shipper = new Party
             {
-                Contact = new Contact
-                {
-                    PersonName = "EasyKeys.com Customer Support",
-                    CompanyName = "EasyKeys.com",
-                    PhoneNumber = "8778395397",
-
-                    // TODO: Verify this is correct
-                    EMailAddress = "info@easykeys.com"
-                },
+                Contact = labelOptions.ShipperContact,
                 Address = shipment.OriginAddress.GetFedExAddress()
             };
             _logger.LogCritical("Set Sender Complete");
@@ -165,18 +165,13 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
         private void SetRecipient(
             ProcessShipmentRequest request,
-            Shipping.Abstractions.Models.Shipment shipment)
+            Shipping.Abstractions.Models.Shipment shipment,
+            LabelOptions labelOptions)
         {
             request.RequestedShipment.Recipient = new Party
             {
                 // TODO: need a input for contact
-                Contact = new Contact
-                {
-                    PersonName = "brandon",
-                    CompanyName = "mcm",
-                    PhoneNumber = "999-888-7777",
-                    EMailAddress = "bmoff@gmail.com"
-                },
+                Contact = labelOptions.RecipientContact,
                 Address = shipment.DestinationAddress.GetFedExAddress()
             };
 
@@ -184,57 +179,52 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             _logger.LogCritical("Set Recipient Complete");
         }
 
-        private void SetPayment(ProcessShipmentRequest request, bool isCodShipment)
+        private void SetPayment(
+            ProcessShipmentRequest request,
+            LabelOptions labelOptions)
         {
             // TODO: logic to receive user account number
-            if (isCodShipment)
+            switch (labelOptions.PaymentType)
             {
-                request.RequestedShipment.ShippingChargesPayment = new Payment
-                {
-                    PaymentType = PaymentType.RECIPIENT,
-                    Payor = new Payor()
+                case PaymentType.SENDER:
+                    request.RequestedShipment.ShippingChargesPayment = new Payment()
                     {
-                        ResponsibleParty = new Party()
+                        PaymentType = labelOptions.PaymentType,
+                        Payor = new Payor()
                         {
-                            AccountNumber = "234564646346345" // input for recipent account number
+                            ResponsibleParty = new Party()
+                            {
+                                AccountNumber = request.ClientDetail.AccountNumber,
+                            }
                         }
-                    }
-                };
-                return;
+                    };
+                    break;
+
+                default:
+                    request.RequestedShipment.ShippingChargesPayment = new Payment()
+                    {
+                        PaymentType = labelOptions.PaymentType,
+                        Payor = new Payor()
+                        {
+                            ResponsibleParty = labelOptions.ResponsibleParty
+                        }
+                    };
+                    break;
             }
 
-            request.RequestedShipment.ShippingChargesPayment = new Payment
-            {
-                PaymentType = PaymentType.SENDER,
-                Payor = new Payor()
-                {
-                    ResponsibleParty = new Party()
-                    {
-                        AccountNumber = request.ClientDetail.AccountNumber,
-                    }
-                }
-            };
             _logger.LogCritical("Set Payment Complete");
         }
 
-        private void SetLabelDetails(ProcessShipmentRequest request)
+        private void SetLabelDetails(
+            ProcessShipmentRequest request,
+            LabelOptions labelOptions)
         {
             request.RequestedShipment.LabelSpecification = new LabelSpecification
             {
-                LabelFormatType = LabelFormatType.COMMON2D,
-                ImageType = ShippingDocumentImageType.PDF,
+                LabelFormatType = labelOptions.LabelFormatType,
+                ImageType = labelOptions.ShippingDocumentImageType,
                 ImageTypeSpecified = true,
-                PrintedLabelOrigin = new ContactAndAddress
-                {
-                    Contact = new Contact
-                    {
-                        CompanyName = "Fulfillment Center",
-                        PhoneNumber = "888.888.8888"
-                    },
-
-                    // verify this is correct
-                    Address = request.RequestedShipment.Shipper.Address
-                }
+                PrintedLabelOrigin = labelOptions.FulfillmentContactAndAddress
             };
             _logger.LogCritical("Set Label Details Complete");
         }
@@ -242,7 +232,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         private void SetpackageLineItems(
             ProcessShipmentRequest request,
             Shipping.Abstractions.Models.Shipment shipment,
-            bool isCodShipment)
+            LabelOptions labelOptions)
         {
             request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[shipment.Packages.Count()];
 
@@ -257,7 +247,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
                     Weight = new Weight()
                     {
-                        Units = WeightUnits.LB,
+                        Units = labelOptions.Units,
                         Value = package.RoundedWeight,
                     },
 
@@ -278,25 +268,17 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
                 if (package.SignatureRequiredOnDelivery)
                 {
-                    var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.INDIRECT };
+                    var signatureOptionDetail = new SignatureOptionDetail { OptionType = labelOptions.SignatureOptionType };
                     request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested() { SignatureOptionDetail = signatureOptionDetail };
                 }
 
                 // TODO: set up customer references
-                if (isCodShipment)
+                if (labelOptions.IsCodShipment)
                 {
                     request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
                     {
                         // TODO: Special Service Types ?
-                        CodDetail = new CodDetail
-                        {
-                            CollectionType = CodCollectionType.GUARANTEED_FUNDS,
-                            CodCollectionAmount = new Money()
-                            {
-                                Amount = 250,
-                                Currency = "USD"
-                            }
-                        }
+                        CodDetail = labelOptions.CodDetail
                     };
                 }
 
@@ -311,19 +293,31 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             yield return RateRequestType.LIST;
         }
 
-        private void ShowShipmentLabels(bool isisCodShipment, CompletedShipmentDetail completedShipmentDetail, CompletedPackageDetail packageDetail)
+        private void ShowShipmentLabels(LabelOptions labelOptions, CompletedShipmentDetail completedShipmentDetail, CompletedPackageDetail packageDetail)
         {
             if (packageDetail.Label.Parts[0].Image != null)
             {
                 // Save outbound shipping label
                 var labelPath = "..\\EasyKeys.Shipping.FedEx.Shipment\\Labels\\";
+                var labelFileName = string.Empty;
+                switch (labelOptions.ShippingDocumentImageType)
+                {
+                    case ShippingDocumentImageType.PDF:
+                        labelFileName = labelPath + packageDetail.TrackingIds[0].TrackingNumber + ".pdf";
+                        break;
+                    case ShippingDocumentImageType.PNG:
+                        labelFileName = labelPath + packageDetail.TrackingIds[0].TrackingNumber + ".png";
+                        break;
+                    case ShippingDocumentImageType.EPL2:
+                        labelFileName = labelPath + packageDetail.TrackingIds[0].TrackingNumber + ".epl2";
+                        break;
+                }
 
-                var labelFileName = labelPath + packageDetail.TrackingIds[0].TrackingNumber + ".pdf";
                 SaveLabel(labelFileName, packageDetail.Label.Parts[0].Image);
-                if (isisCodShipment)
+                if (labelOptions.IsCodShipment)
                 {
                     // Save COD Return label
-                    labelFileName = labelPath + completedShipmentDetail.AssociatedShipments[0].TrackingId.TrackingNumber + "CR" + ".pdf";
+                    labelFileName = labelPath + completedShipmentDetail.AssociatedShipments[0].TrackingId.TrackingNumber + "CR" + ".png";
                     SaveLabel(labelFileName, completedShipmentDetail.AssociatedShipments[0].Label.Parts[0].Image);
                 }
             }

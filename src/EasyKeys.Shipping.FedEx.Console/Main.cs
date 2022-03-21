@@ -110,14 +110,44 @@ public class Main : IMain
                     125.0M)
             });
 
+        var options = new LabelOptions()
+        {
+            DropoffType = ShipClient.v25.DropoffType.REGULAR_PICKUP,
+            ServiceType = ServiceType.FEDEX_2_DAY,
+            PackageType = FedExPackageType.YOUR_PACKAGING,
+            ShipperContact = new ShipClient.v25.Contact()
+            {
+                PersonName = "Brandon Moffett",
+                CompanyName = "EasyKeys.com",
+                EMailAddress = "bmoffett@easykeys.com",
+                PhoneNumber = "888-888-8888"
+            },
+            RecipientContact = new ShipClient.v25.Contact()
+            {
+                PersonName = "Ed Banister",
+                CompanyName = "US GOV",
+                EMailAddress = "ed@gov.mil",
+                PhoneNumber = "444-444-4444"
+            },
+            PaymentType = ShipClient.v25.PaymentType.SENDER,
+            LabelFormatType = ShipClient.v25.LabelFormatType.COMMON2D,
+            ShippingDocumentImageType = ShipClient.v25.ShippingDocumentImageType.PDF,
+            FulfillmentContactAndAddress = new ShipClient.v25.ContactAndAddress()
+            {
+                Contact = new ShipClient.v25.Contact()
+                {
+                    PersonName = "fulfillment center",
+                    PhoneNumber = "555-555-5555"
+                }
+            }
+        };
         var rates = await _fedexRateProvider.GetRatesAsync(
             shipment,
             ServiceType.FEDEX_2_DAY);
 
         var result = await _fedExShipmentProvider.ProcessShipmentAsync(
             shipment,
-            ServiceType.DEFAULT,
-            false);
+            options);
 
         return await Task.FromResult(0);
     }

@@ -1,15 +1,16 @@
-﻿using EasyKeys.Shipping.FedEx.Rates;
-
-using ShipClient.v25;
-
-namespace EasyKeys.Shipping.FedEx.Shipment
+﻿namespace EasyKeys.Shipping.FedEx.Shipment
 {
     public interface IFedExShipmentProvider
-    {
-        Task<ProcessShipmentReply> ProcessShipmentAsync(
+    {/// <summary>
+     /// Processes fedex shipping and returns a shipping label.
+     /// </summary>
+     /// <param name="shipment"></param>
+     /// <param name="labelOptions"></param>
+     /// <param name="cancellationToken"></param>
+     /// <returns></returns>
+        Task<Label> ProcessShipmentAsync(
             Shipping.Abstractions.Models.Shipment shipment,
-            ServiceType serviceType = ServiceType.DEFAULT,
-            bool isCodShipment = false,
+            LabelOptions labelOptions,
             CancellationToken cancellationToken = default);
     }
 }
