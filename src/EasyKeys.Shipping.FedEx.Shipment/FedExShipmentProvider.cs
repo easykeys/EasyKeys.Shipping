@@ -42,8 +42,11 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
                 // for testing purposes
                 LogXML(request, typeof(ProcessShipmentRequest));
+
                 var shipmentRequest = new processShipmentRequest1(request);
+
                 var response = await client.processShipmentAsync(shipmentRequest);
+
                 var reply = response?.ProcessShipmentReply;
 
                 if ((reply?.HighestSeverity != NotificationSeverityType.ERROR)
@@ -242,7 +245,9 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             bool isCodShipment)
         {
             request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[shipment.Packages.Count()];
+
             var i = 0;
+
             foreach (var package in shipment.Packages)
             {
                 request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem()
