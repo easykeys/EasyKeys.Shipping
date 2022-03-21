@@ -52,6 +52,45 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         public LabelFormatType LabelFormatType { get; set; }
 
         /// <summary>
+        /// THERMAL PRINTERS:
+        /// Optional for each label request, however required to print the labels requested.
+        /// Valid values are:
+        /// • PAPER_4X6
+        /// • PAPER_4X6.75
+        /// • PAPER_4X8
+        /// • PAPER_4X9
+        /// • PAPER_7X4.75
+        /// • PAPER_8.5X11_BOTTOM_HALF_LABEL
+        /// • PAPER_8.5X11_TOP_HALF_LABEL
+        /// • STOCK_4X6
+        /// • STOCK_4X6.75
+        /// • STOCK_4X6.75_LEADING_DOC_TAB
+        /// • STOCK_4X6.75_TRAILING_DOC_TAB
+        /// • STOCK_4X8
+        /// • STOCK_4X9
+        /// • STOCK_4X9_LEADING_DOC_TAB
+        /// • STOCK_4X9_TRAILING_DOC_TAB.
+        /// Note: STOCK_4X6 and STOCK_4X8 are designed for
+        /// both thermal labels and pdf labels to be printed on a
+        /// thermal printer.
+        ///
+        /// LASER PRINTERS:
+        /// Required for all label types.
+        /// When using an ImageType of PDF or PNG
+        /// • these values display a thermal format label:
+        /// o PAPER_4X6
+        /// o PAPER_4X8
+        /// o PAPER_4X9
+        /// • These values display a plain paper format shipping
+        /// label:
+        /// o PAPER_7X4.75
+        /// o PAPER_8.5X11_BOTTOM_HALF_LABEL
+        /// o PAPER_8.5X11_TOP_HALF_LABEL
+        /// </summary>
+
+        public LabelStockType LabelStockType { get; set; }
+
+        /// <summary>
         /// Required to indicate label formatting. Type of data stream or bitmap to be returned:
         /// Valid values are:
         /// • PDF — plain paper
@@ -62,6 +101,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         /// • EPL2
         /// • ZPLII.
         /// </summary>
+
         public ShippingDocumentImageType ShippingDocumentImageType { get; set; }
 
         /// <summary>

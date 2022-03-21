@@ -31,6 +31,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 ShipPortTypeClient.EndpointConfiguration.ShipServicePort,
                 _options.Url);
 
+            var label = new Label();
             try
             {
                 var request = CreateShipmentRequest(
@@ -50,35 +51,35 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                     && (reply?.HighestSeverity != NotificationSeverityType.FAILURE))
                 {
                     // for testing purposes
-                    ShowShipmentLabels(
-                        labelOptions,
-                        reply.CompletedShipmentDetail,
-                        reply.CompletedShipmentDetail
-                            .CompletedPackageDetails
-                                .FirstOrDefault());
-                    return new Label()
-                    {
-                        ShippingDocumentImageType = reply.CompletedShipmentDetail
-                                    .CompletedPackageDetails
-                                    .FirstOrDefault()
-                                    .Label.ImageType,
+                    //ShowShipmentLabels(
+                    //    labelOptions,
+                    //    reply.CompletedShipmentDetail,
+                    //    reply.CompletedShipmentDetail
+                    //        .CompletedPackageDetails
+                    //            .FirstOrDefault());
 
-                        Bytes = reply.CompletedShipmentDetail
-                                    .CompletedPackageDetails
-                                    .FirstOrDefault()
-                                    .Label.Parts[0].Image
-                    };
+                    label.ShippingDocumentImageType = reply.CompletedShipmentDetail
+                                .CompletedPackageDetails
+                                .FirstOrDefault()
+                                .Label.ImageType;
+
+                    label.Bytes = reply.CompletedShipmentDetail
+                                .CompletedPackageDetails
+                                .FirstOrDefault()
+                                .Label.Parts[0].Image;
+
+                    return label;
                 }
 
-                _logger.LogInformation(reply.Notifications[0].Message);
+                label.InternalErrors.Add(reply.Notifications[0].Message);
             }
             catch (Exception ex)
             {
                 // this does not explain fault exceptions well, must debug handler
-                _logger.LogError(ex.Message);
+                label.InternalErrors.Add($"FedEx provider exception: {ex.Message}");
             }
 
-            return new Label();
+            return label;
         }
 
         private ProcessShipmentRequest CreateShipmentRequest(
@@ -117,7 +118,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 shipment,
                 labelOptions);
 
-            _logger.LogCritical("Create Shipment Request Complete");
             return request;
         }
 
@@ -160,7 +160,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 Contact = labelOptions.ShipperContact,
                 Address = shipment.OriginAddress.GetFedExAddress()
             };
-            _logger.LogCritical("Set Sender Complete");
         }
 
         private void SetRecipient(
@@ -176,7 +175,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             };
 
             // TODO: Set up Special Services - email
-            _logger.LogCritical("Set Recipient Complete");
         }
 
         private void SetPayment(
@@ -211,8 +209,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                     };
                     break;
             }
-
-            _logger.LogCritical("Set Payment Complete");
         }
 
         private void SetLabelDetails(
@@ -224,9 +220,9 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 LabelFormatType = labelOptions.LabelFormatType,
                 ImageType = labelOptions.ShippingDocumentImageType,
                 ImageTypeSpecified = true,
-                PrintedLabelOrigin = labelOptions.FulfillmentContactAndAddress
+                PrintedLabelOrigin = labelOptions.FulfillmentContactAndAddress,
+                LabelStockType = labelOptions.LabelStockType
             };
-            _logger.LogCritical("Set Label Details Complete");
         }
 
         private void SetpackageLineItems(
@@ -284,8 +280,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
                 i++;
             }
-
-            _logger.LogCritical("Set Package Line Items Details Complete");
         }
 
         private IEnumerable<RateRequestType> GetRateRequestTypes()
