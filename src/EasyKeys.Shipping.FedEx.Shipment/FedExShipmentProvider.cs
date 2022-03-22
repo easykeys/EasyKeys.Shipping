@@ -253,7 +253,9 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             request.RequestedShipment.LabelSpecification = new LabelSpecification
             {
                 // TODO: replace and update this
-                LabelFormatType = labelOptions.LabelFormatType == "COMMON2D" ? LabelFormatType.COMMON2D : LabelFormatType.LABEL_DATA_ONLY,
+                LabelFormatType = labelOptions.LabelFormatType == "COMMON2D" ? LabelFormatType.COMMON2D :
+                                  labelOptions.LabelFormatType == "LABEL_DATA_ONLY" ? LabelFormatType.LABEL_DATA_ONLY :
+                                  LabelFormatType.COMMON2D,
                 ImageType = labelOptions.ImageType == "RTF" ? ShippingDocumentImageType.RTF :
                             labelOptions.ImageType == "EPL2" ? ShippingDocumentImageType.EPL2 :
                             labelOptions.ImageType == "DOC" ? ShippingDocumentImageType.DOC :
