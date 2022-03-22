@@ -108,44 +108,38 @@ public class Main : IMain
                     Length = 20.00M
                 },
                     125.0M)
+            },
+            options: new ShipmentOptions()
+            {
+                PackagingType = FedExPackageType.YOUR_PACKAGING.ToString()
             });
 
         var options = new LabelOptions()
         {
-            DropoffType = ShipClient.v25.DropoffType.REGULAR_PICKUP,
-            ServiceType = ServiceType.FEDEX_2_DAY,
-            PackageType = FedExPackageType.YOUR_PACKAGING,
-            ShipperContact = new ShipClient.v25.Contact()
+            Shipper = new Contact
             {
-                PersonName = "Brandon Moffett",
+                FullName = "Brandon Moffett",
                 CompanyName = "EasyKeys.com",
-                EMailAddress = "bmoffett@easykeys.com",
+                Email = "bmoffett@easykeys.com",
                 PhoneNumber = "888-888-8888"
             },
-            RecipientContact = new ShipClient.v25.Contact()
+            Recipient = new Contact
             {
-                PersonName = "Ed Banister",
+                FullName = "Ed Banister",
                 CompanyName = "US GOV",
-                EMailAddress = "ed@gov.mil",
+                Email = "ed@gov.mil",
                 PhoneNumber = "444-444-4444"
             },
-            PaymentType = ShipClient.v25.PaymentType.SENDER,
-            LabelFormatType = ShipClient.v25.LabelFormatType.COMMON2D,
-            ShippingDocumentImageType = ShipClient.v25.ShippingDocumentImageType.PDF,
-            FulfillmentContactAndAddress = new ShipClient.v25.ContactAndAddress()
-            {
-                Contact = new ShipClient.v25.Contact()
-                {
-                    PersonName = "fulfillment center",
-                    PhoneNumber = "555-555-5555"
-                }
-            }
+            PaymentType = "sender",
+            LabelFormatType = "COMMON2D",
+            ImageType = "PNG",
         };
         var rates = await _fedexRateProvider.GetRatesAsync(
             shipment,
             ServiceType.FEDEX_2_DAY);
 
         var result = await _fedExShipmentProvider.ProcessShipmentAsync(
+            ServiceType.FEDEX_2_DAY,
             shipment,
             options);
 

@@ -1,12 +1,10 @@
-﻿using ShipClient.v25;
-
-namespace EasyKeys.Shipping.FedEx.Shipment
+﻿namespace EasyKeys.Shipping.Abstractions.Models
 {
     public class Label
     {
-        public ShippingDocumentImageType ShippingDocumentImageType { get; set; }
+        public string ImageType { get; set; } = String.Empty;
 
-        public byte[] Bytes { get; set; }
+        public byte[]? Bytes { get; set; }
 
         /// <summary>
         ///     Internal library errors during interaction with service provider

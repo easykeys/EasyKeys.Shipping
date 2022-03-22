@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasyKeys.Shipping.Abstractions.Models
+﻿namespace EasyKeys.Shipping.Abstractions.Models
 {
     public class ShipmentOptions
     {
@@ -25,5 +23,10 @@ namespace EasyKeys.Shipping.Abstractions.Models
         /// Can be different packaging types.
         /// </summary>
         public string PackagingType { get; set; }
+
+        /// <summary>
+        /// Type of drop off, default is regular pickup.
+        /// </summary>
+        public string DropOffType { get; set; } = "RegularPickup";
     }
 }
