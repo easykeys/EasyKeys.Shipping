@@ -18,17 +18,8 @@
         public string LabelSize { get; set; } = "4x6";
 
         /// <summary>
-        /// shipper information on label.
-        /// </summary>
-        public Contact Shipper { get; set; } = new Contact();
-
-        /// <summary>
-        /// recipient information on label.
-        /// </summary>
-        public Contact Recipient { get; set; } = new Contact();
-
-        /// <summary>
         /// Default payment type would be sender unless its a COD.
+        /// Sender, ThirdParty, Recipient
         /// </summary>
         public string PaymentType { get; set; } = "Sender";
 

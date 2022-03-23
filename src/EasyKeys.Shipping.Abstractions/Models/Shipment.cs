@@ -15,9 +15,19 @@ namespace EasyKeys.Shipping.Abstractions.Models
         public ReadOnlyCollection<Package> Packages { get; }
 
         /// <summary>
+        /// recipient information on label.
+        /// </summary>
+        public Contact Recipient { get; set; } = new Contact();
+
+        /// <summary>
         /// Destination Address of the shipment.
         /// </summary>
         public Address DestinationAddress { get; }
+
+        /// <summary>
+        /// shipper information on label.
+        /// </summary>
+        public Contact Shipper { get; set; } = new Contact();
 
         /// <summary>
         /// Origin of the shipment.

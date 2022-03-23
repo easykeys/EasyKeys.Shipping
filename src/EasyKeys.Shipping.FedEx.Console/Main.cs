@@ -73,8 +73,8 @@ public class Main : IMain
         var address3 = new ValidateAddress(
            Guid.NewGuid().ToString(),
            new Shipping.Abstractions.Address(
-           "1550 Central Ave",
-           "Apt 35",
+           "5925 sycamore canyon blvd",
+           "Apt 2105",
            "Riverside",
            "CA",
            "92507",
@@ -98,6 +98,7 @@ public class Main : IMain
         var shipment = new Shipping.Abstractions.Models.Shipment(
             originAddress: address2?.ProposedAddress,
             destinationAddress: address3?.ProposedAddress,
+            // many packages
             new List<Shipping.Abstractions.Package>()
             {
                 new Shipping.Abstractions.Package(
@@ -112,24 +113,26 @@ public class Main : IMain
             options: new ShipmentOptions()
             {
                 PackagingType = FedExPackageType.YOUR_PACKAGING.ToString()
-            });
-
-        var options = new LabelOptions()
+            })
         {
             Shipper = new Contact
             {
-                FullName = "Brandon Moffett",
+                FullName = "keiko moffett",
                 CompanyName = "EasyKeys.com",
-                Email = "bmoffett@easykeys.com",
+                Email = "keiko@easykeys.com",
                 PhoneNumber = "888-888-8888"
             },
             Recipient = new Contact
             {
-                FullName = "Ed Banister",
-                CompanyName = "US GOV",
-                Email = "ed@gov.mil",
+                FullName = "Ed Moicoachv",
+                CompanyName = "companyname",
+                Email = "moincoachv@easykeys.com",
                 PhoneNumber = "444-444-4444"
-            },
+            }
+        };
+
+        var options = new LabelOptions()
+        {
             PaymentType = "sender",
             LabelFormatType = "COMMON2D",
             ImageType = "PNG",
@@ -142,7 +145,7 @@ public class Main : IMain
             ServiceType.FEDEX_2_DAY,
             shipment,
             options);
-
+        // save bytes
         return await Task.FromResult(0);
     }
 }

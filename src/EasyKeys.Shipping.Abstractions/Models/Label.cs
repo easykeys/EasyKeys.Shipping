@@ -2,9 +2,7 @@
 {
     public class Label
     {
-        public string ImageType { get; set; } = String.Empty;
-
-        public byte[]? Bytes { get; set; }
+        public List<LabelDetails> LabelDetails { get; set; } = new List<LabelDetails>();
 
         /// <summary>
         ///     Internal library errors during interaction with service provider
