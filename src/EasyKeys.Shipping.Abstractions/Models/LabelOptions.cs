@@ -19,7 +19,7 @@
 
         /// <summary>
         /// Default payment type would be sender unless its a COD.
-        /// Sender, ThirdParty, Recipient
+        /// Sender, ThirdParty, Recipient.
         /// </summary>
         public string PaymentType { get; set; } = "Sender";
 

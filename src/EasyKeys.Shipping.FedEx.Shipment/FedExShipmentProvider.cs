@@ -54,7 +54,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                     reply?.CompletedShipmentDetail.CompletedPackageDetails.ToList().
                         ForEach(x =>
                         {
-                            SaveShipmentLabels(labelOptions, reply.CompletedShipmentDetail, x);
                             label.LabelDetails.Add(
                                 new LabelDetails
                                 {
@@ -147,23 +146,24 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 _ => DropoffType.REGULAR_PICKUP
             };
 
-            SetSender(request, shipment, labelOptions);
-            SetRecipient(request, shipment, labelOptions);
+            SetSender(request, shipment);
+            SetRecipient(request, shipment);
             SetPayment(request, shipment, labelOptions);
             SetLabelDetails(request, shipment, labelOptions);
         }
 
         private void SetSender(
             ProcessShipmentRequest request,
-            Shipping.Abstractions.Models.Shipment shipment,
-            LabelOptions labelOptions)
+            Shipping.Abstractions.Models.Shipment shipment)
         {
             request.RequestedShipment.Shipper = new Party
             {
                 Contact = new ShipClient.v25.Contact()
                 {
-                    CompanyName = "Fulfillment Center",
-                    PhoneNumber = "888.888.888"
+                    PersonName = shipment.Shipper.FullName,
+                    CompanyName = shipment.Shipper.CompanyName,
+                    PhoneNumber = shipment.Shipper.PhoneNumber,
+                    EMailAddress = shipment.Shipper.Email
                 },
                 Address = shipment.OriginAddress.GetFedExAddress()
             };
@@ -171,8 +171,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
         private void SetRecipient(
             ProcessShipmentRequest request,
-            Shipping.Abstractions.Models.Shipment shipment,
-            LabelOptions labelOptions)
+            Shipping.Abstractions.Models.Shipment shipment)
         {
             request.RequestedShipment.Recipient = new Party
             {
@@ -185,8 +184,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 },
                 Address = shipment.DestinationAddress.GetFedExAddress()
             };
-
-            // TODO: Set up Special Services - email
         }
 
         private void SetPayment(
@@ -194,7 +191,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             Shipping.Abstractions.Models.Shipment shipment,
             LabelOptions labelOptions)
         {
-            // TODO:
             switch (labelOptions.PaymentType.ToLower())
             {
                 case "sender":
@@ -310,10 +306,16 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                     Currency = shipment.Options.GetCurrencyCode()
                 };
 
+                // defaults to default for specified service
                 if (package.SignatureRequiredOnDelivery)
                 {
                     // default to direct signature
-                    var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.DIRECT };
+                    var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.SERVICE_DEFAULT };
+                    request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested() { SignatureOptionDetail = signatureOptionDetail };
+                }
+                else
+                {
+                    var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.NO_SIGNATURE_REQUIRED };
                     request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested() { SignatureOptionDetail = signatureOptionDetail };
                 }
 
@@ -399,35 +401,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         private IEnumerable<RateRequestType> GetRateRequestTypes()
         {
             yield return RateRequestType.LIST;
-        }
-
-        private void SaveShipmentLabels(LabelOptions labelOptions, CompletedShipmentDetail completedShipmentDetail, CompletedPackageDetail packageDetail)
-        {
-            if (packageDetail.Label.Parts[0].Image != null)
-            {
-                // Save outbound shipping label
-                var labelPath = "..\\EasyKeys.Shipping.FedEx.Shipment\\Labels\\";
-                var labelFileName = string.Empty;
-
-                labelFileName = labelPath + packageDetail.TrackingIds[0].TrackingNumber + ".txt";
-
-                SaveLabel(labelFileName, packageDetail.Label.Parts[0].Image);
-                if (labelOptions.CollectOnDelivery.Activated)
-                {
-                    // Save COD Return label
-                    labelFileName = labelPath + completedShipmentDetail.AssociatedShipments[0].TrackingId.TrackingNumber + "CR" + ".txt";
-                    SaveLabel(labelFileName, completedShipmentDetail.AssociatedShipments[0].Label.Parts[0].Image);
-                }
-            }
-        }
-
-        private void SaveLabel(string labelFileName, byte[] labelBuffer)
-        {
-            // Save label buffer to file
-            var labelFile = new FileStream(labelFileName, FileMode.Create);
-            labelFile.Write(labelBuffer, 0, labelBuffer.Length);
-            labelFile.Close();
-            _logger.LogInformation("Label saved to {location}", labelFile);
         }
     }
 }
