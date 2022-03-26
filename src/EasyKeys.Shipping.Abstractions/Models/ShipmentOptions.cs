@@ -17,7 +17,7 @@
         /// <summary>
         /// Preferred currency code, applies to FedEx only.
         /// </summary>
-        public string PreferredCurrencyCode { get; set; }
+        public string PreferredCurrencyCode { get; set; } = string.Empty;
 
         /// <summary>
         /// • YOUR_PACKAGING

@@ -56,21 +56,31 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                         ForEach(x =>
                         {
                             charges.SurCharges = new Dictionary<string, decimal>();
+
                             charges.BaseCharge = x.PackageRating.PackageRateDetails[0].BaseCharge.Amount;
+
                             charges.NetCharge = x.PackageRating.PackageRateDetails[0].NetCharge.Amount;
+
                             x.PackageRating.PackageRateDetails[0].Surcharges.ToList().
                                 ForEach(x => charges.SurCharges[x.Description] = x.Amount.Amount);
+
                             charges.TotalSurCharges = x.PackageRating.PackageRateDetails[0].TotalSurcharges.Amount;
+
                             label.LabelDetails.Add(
                                 new LabelDetails
                                 {
                                     Charges = charges,
+
                                     TrackingId = x.TrackingIds[0].ToString(),
+
                                     ImageType = x.Label.ImageType.ToString(),
+
                                     Bytes = x.Label.Parts.Select(x => x.Image).ToList()
                                 });
                         });
+
                     label.MasterTrackingNumber = reply.CompletedShipmentDetail.MasterTrackingId.TrackingNumber;
+
                     return label;
                 }
 
@@ -441,7 +451,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 {
                     request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
                     {
-                        // TODO: update cod detail information
                         SpecialServiceTypes = specialServiceTypes.Append("COD").ToArray(),
                         CodDetail = new CodDetail()
                         {
