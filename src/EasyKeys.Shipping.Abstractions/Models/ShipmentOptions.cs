@@ -20,13 +20,43 @@
         public string PreferredCurrencyCode { get; set; }
 
         /// <summary>
-        /// Can be different packaging types.
+        /// • YOUR_PACKAGING
+        /// • FEDEX_10KG_BOX
+        /// • FEDEX_25KG_BOX
+        /// • FEDEX_BOX
+        /// • FEDEX_ENVELOPE
+        /// • FEDEX_EXTRA_LARGE_BOX
+        /// • FEDEX_LARGE_BOX
+        /// • FEDEX_MEDIUM_BOX
+        /// • FEDEX_PAK
+        /// • FEDEX_SMALL_BOX
+        /// • FEDEX_TUBE.
         /// </summary>
-        public string PackagingType { get; set; }
+        public string PackagingType { get; set; } = "YOUR_PACKAGING";
 
         /// <summary>
-        /// Type of drop off, default is regular pickup.
+        /// RegularPickup,
+        /// DropBox,
+        /// BusinessServiceCenter,
+        /// RequestCourier,
+        /// Station.
         /// </summary>
         public string DropOffType { get; set; } = "RegularPickup";
+
+        /// <summary>
+        /// set email specifications.
+        /// </summary>
+        public EmailNotification EmailNotification { get; set; } = new EmailNotification();
+
+        /// <summary>
+        /// customer_reference,
+        /// department_number,
+        /// intracountry_regulatory_reference,
+        /// invoice_number,
+        /// po_number,
+        /// rma_association,
+        /// shipment_integrity.
+        /// </summary>
+        public string CustomerReferenceType { get; set; } = "customer_reference";
     }
 }

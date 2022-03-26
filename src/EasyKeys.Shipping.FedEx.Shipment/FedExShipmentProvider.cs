@@ -136,13 +136,13 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 },
                 RateRequestTypes = GetRateRequestTypes().ToArray(),
             };
-            request.RequestedShipment.DropoffType = shipment.Options.DropOffType switch
+            request.RequestedShipment.DropoffType = shipment.Options.DropOffType.ToLower() switch
             {
-                "RegularPickup" => DropoffType.REGULAR_PICKUP,
-                "DropBox" => DropoffType.DROP_BOX,
-                "BusinessServiceCenter" => DropoffType.BUSINESS_SERVICE_CENTER,
-                "RequestCourier" => DropoffType.REQUEST_COURIER,
-                "Station" => DropoffType.STATION,
+                "regularpickup" => DropoffType.REGULAR_PICKUP,
+                "dropbox" => DropoffType.DROP_BOX,
+                "businessservicecenter" => DropoffType.BUSINESS_SERVICE_CENTER,
+                "requestcourier" => DropoffType.REQUEST_COURIER,
+                "station" => DropoffType.STATION,
                 _ => DropoffType.REGULAR_PICKUP
             };
 
@@ -175,7 +175,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         {
             request.RequestedShipment.Recipient = new Party
             {
-                // TODO: replace with labelOptions.recipient
                 Contact = new ShipClient.v25.Contact()
                 {
                     PersonName = shipment.Recipient.FullName,
@@ -191,30 +190,37 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             Shipping.Abstractions.Models.Shipment shipment,
             LabelOptions labelOptions)
         {
+            var paymentType = labelOptions.PaymentType.ToLower() switch
+            {
+                "sender" => PaymentType.SENDER,
+                "recipient" => PaymentType.RECIPIENT,
+                "third_party" => PaymentType.THIRD_PARTY,
+                "account" => PaymentType.ACCOUNT,
+                "collect" => PaymentType.COLLECT,
+                _ => PaymentType.SENDER
+            };
             switch (labelOptions.PaymentType.ToLower())
             {
                 case "sender":
                     request.RequestedShipment.ShippingChargesPayment = new Payment()
                     {
-                        // convert to correct type
-                        PaymentType = PaymentType.SENDER,
+                        PaymentType = paymentType,
                         Payor = new Payor()
                         {
                             ResponsibleParty = new Party()
                             {
                                 AccountNumber = request.ClientDetail.AccountNumber,
-                            }
+                            },
                         }
                     };
                     break;
 
-                case "recipient":
+                default:
                     request.RequestedShipment.ShippingChargesPayment = new Payment()
                     {
-                        PaymentType = PaymentType.RECIPIENT,
+                        PaymentType = paymentType,
                         Payor = new Payor()
                         {
-                            // replace with recipient contact information
                             ResponsibleParty = new Party()
                             {
                                 Contact = new ShipClient.v25.Contact()
@@ -224,7 +230,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                                     PhoneNumber = shipment.Recipient.PhoneNumber
                                 },
                                 AccountNumber = shipment.Recipient.AccountNumber,
-                            }
+                            },
                         }
                     };
                     break;
@@ -239,17 +245,19 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             request.RequestedShipment.LabelSpecification = new LabelSpecification
             {
                 // TODO: replace and update this
-                LabelFormatType = labelOptions.LabelFormatType == "COMMON2D" ? LabelFormatType.COMMON2D :
-                                  labelOptions.LabelFormatType == "LABEL_DATA_ONLY" ? LabelFormatType.LABEL_DATA_ONLY :
-                                  LabelFormatType.COMMON2D,
-                ImageType = labelOptions.ImageType == "RTF" ? ShippingDocumentImageType.RTF :
-                            labelOptions.ImageType == "EPL2" ? ShippingDocumentImageType.EPL2 :
-                            labelOptions.ImageType == "DOC" ? ShippingDocumentImageType.DOC :
-                            labelOptions.ImageType == "ZPLII" ? ShippingDocumentImageType.ZPLII :
-                            labelOptions.ImageType == "TEXT" ? ShippingDocumentImageType.TEXT :
-                            labelOptions.ImageType == "PNG" ? ShippingDocumentImageType.PNG :
-                            labelOptions.ImageType == "PDF" ? ShippingDocumentImageType.PDF :
-                            ShippingDocumentImageType.PDF,
+                LabelFormatType = labelOptions.LabelFormatType.ToUpper() switch
+                {
+                    "COMMON2D" => LabelFormatType.COMMON2D,
+                    "LABEL_DATA_ONLY" => LabelFormatType.LABEL_DATA_ONLY,
+                    _ => LabelFormatType.COMMON2D,
+                },
+                ImageType = labelOptions.ImageType.ToUpper() switch
+                {
+                    "PNG" => ShippingDocumentImageType.PNG,
+                    "PDF" => ShippingDocumentImageType.PDF,
+                    _ => ShippingDocumentImageType.PDF,
+                },
+
                 ImageTypeSpecified = true,
                 PrintedLabelOrigin = new ContactAndAddress()
                 {
@@ -261,11 +269,14 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                     },
                     Address = shipment.OriginAddress.GetFedExAddress()
                 },
-                LabelStockType = labelOptions.LabelSize == "4x6" ? LabelStockType.PAPER_4X6 :
-                                 labelOptions.LabelSize == "4x675" ? LabelStockType.PAPER_4X675 :
-                                 labelOptions.LabelSize == "4x8" ? LabelStockType.PAPER_4X8 :
-                                 labelOptions.LabelSize == "Paper_Letter" ? LabelStockType.PAPER_LETTER :
-                                 LabelStockType.PAPER_4X6
+                LabelStockType = labelOptions.LabelSize.ToLower() switch
+                {
+                    "4x6" => LabelStockType.PAPER_4X6,
+                    "4x675" => LabelStockType.PAPER_4X675,
+                    "4x8" => LabelStockType.PAPER_4X8,
+                    "paper_letter" => LabelStockType.PAPER_LETTER,
+                    _ => LabelStockType.PAPER_4X6
+                }
             };
         }
 
@@ -306,10 +317,8 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                     Currency = shipment.Options.GetCurrencyCode()
                 };
 
-                // defaults to default for specified service
                 if (package.SignatureRequiredOnDelivery)
                 {
-                    // default to direct signature
                     var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.SERVICE_DEFAULT };
                     request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested() { SignatureOptionDetail = signatureOptionDetail };
                 }
@@ -320,19 +329,37 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 }
 
                 // notification event types
-                var eventTypes = new NotificationEventType[] { NotificationEventType.ON_ESTIMATED_DELIVERY, NotificationEventType.ON_SHIPMENT };
+                var eventTypes = new NotificationEventType[0];
+
+                shipment.Options.EmailNotification.EmailNotificationTypes.ForEach(x =>
+                {
+                    _ = x switch
+                    {
+                        EmailNotificationType.On_Shipment => eventTypes.Append(NotificationEventType.ON_SHIPMENT),
+                        EmailNotificationType.On_Delivery => eventTypes.Append(NotificationEventType.ON_DELIVERY),
+                        EmailNotificationType.On_Estimated_Delivery => eventTypes.Append(NotificationEventType.ON_ESTIMATED_DELIVERY),
+                        EmailNotificationType.On_Exception => eventTypes.Append(NotificationEventType.ON_EXCEPTION),
+                        EmailNotificationType.On_Pickup_Driver_Arrived => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_ARRIVED),
+                        EmailNotificationType.On_Pickup_Driver_Assigned => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_ASSIGNED),
+                        EmailNotificationType.On_Pickup_Driver_Departed => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_DEPARTED),
+                        EmailNotificationType.On_Pickup_Driver_In_Route => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_EN_ROUTE),
+                        EmailNotificationType.On_Tender => eventTypes.Append(NotificationEventType.ON_TENDER),
+                        _ => default
+                    };
+                });
+
                 request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
                 {
                     SpecialServiceTypes = new string[] { "EVENT_NOTIFICATION" },
                     EventNotificationDetail = new ShipmentEventNotificationDetail
                     {
                         // notification event message
-                        //PersonalMessage = "pacakge is shipped",
+                        PersonalMessage = shipment.Options.EmailNotification.PersonalMessage,
                         EventNotifications = new ShipmentEventNotificationSpecification[]
                         {
                             new ShipmentEventNotificationSpecification
                             {
-                                Events = eventTypes,
+                                Events = eventTypes.ToArray(),
                                 NotificationDetail = new NotificationDetail
                                 {
                                     NotificationType = NotificationType.EMAIL,
@@ -343,14 +370,27 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                                     },
                                     Localization = new Localization
                                     {
-                                        LanguageCode = "EN"
+                                        LanguageCode = shipment.Options.EmailNotification.LanguageCode
                                     }
                                 },
                                 FormatSpecification = new ShipmentNotificationFormatSpecification
                                 {
-                                    Type = NotificationFormatType.HTML,
+                                    Type = shipment.Options.EmailNotification.NotificationFormatType.ToLower() switch
+                                    {
+                                        "html" => NotificationFormatType.HTML,
+                                        "text" => NotificationFormatType.TEXT,
+                                        _ => NotificationFormatType.HTML
+                                    }
                                 },
-                                Role = ShipmentNotificationRoleType.RECIPIENT,
+                                Role = shipment.Options.EmailNotification.NotificationFormatType.ToLower() switch
+                                {
+                                        "recipient" => ShipmentNotificationRoleType.RECIPIENT,
+                                        "broker" => ShipmentNotificationRoleType.BROKER,
+                                        "shipper" => ShipmentNotificationRoleType.SHIPPER,
+                                        "third_party" => ShipmentNotificationRoleType.THIRD_PARTY,
+                                        "other" => ShipmentNotificationRoleType.OTHER,
+                                        _ => ShipmentNotificationRoleType.RECIPIENT
+                                },
                                 RoleSpecified = true
                             }
                         },
@@ -365,7 +405,17 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                         {
                             new CustomerReference
                             {
-                                CustomerReferenceType = CustomerReferenceType.CUSTOMER_REFERENCE,
+                                CustomerReferenceType = shipment.Options.CustomerReferenceType.ToLower() switch
+                                                    {
+                                                        "customer_reference" => CustomerReferenceType.CUSTOMER_REFERENCE,
+                                                        "department_number" => CustomerReferenceType.DEPARTMENT_NUMBER,
+                                                        "intracountry_regulatory_reference" => CustomerReferenceType.INTRACOUNTRY_REGULATORY_REFERENCE,
+                                                        "invoice_number" => CustomerReferenceType.INVOICE_NUMBER,
+                                                        "po_number" => CustomerReferenceType.P_O_NUMBER,
+                                                        "rma_association" => CustomerReferenceType.RMA_ASSOCIATION,
+                                                        "shipment_integrity" => CustomerReferenceType.SHIPMENT_INTEGRITY,
+                                                        _ => CustomerReferenceType.CUSTOMER_REFERENCE
+                                                    },
                                 Value = request.TransactionDetail.CustomerTransactionId
                             }
                         }
@@ -385,11 +435,14 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                                 Amount = labelOptions.CollectOnDelivery.Amount,
                                 Currency = labelOptions.CollectOnDelivery.Currency
                             },
-                            CollectionType = labelOptions.CollectOnDelivery.CollectionType == "GUARANTEED_FUNDS" ? CodCollectionType.GUARANTEED_FUNDS :
-                                             labelOptions.CollectOnDelivery.CollectionType == "CASH" ? CodCollectionType.CASH :
-                                             labelOptions.CollectOnDelivery.CollectionType == "ANY" ? CodCollectionType.ANY :
-                                             labelOptions.CollectOnDelivery.CollectionType == "COMPANY_CHECK" ? CodCollectionType.COMPANY_CHECK :
-                                             CodCollectionType.GUARANTEED_FUNDS,
+                            CollectionType = labelOptions.CollectOnDelivery.CollectionType.ToUpper() switch
+                            {
+                                "GUARANTEED_FUNDS" => CodCollectionType.GUARANTEED_FUNDS,
+                                "CASH" => CodCollectionType.CASH,
+                                "ANY" => CodCollectionType.ANY,
+                                "COMPANY_CHECK" => CodCollectionType.COMPANY_CHECK,
+                                _ => CodCollectionType.GUARANTEED_FUNDS
+                            }
                         }
                     };
                 }
