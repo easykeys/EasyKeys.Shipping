@@ -98,7 +98,7 @@ public class Main : IMain
         var shipment = new Shipping.Abstractions.Models.Shipment(
             originAddress: address2?.ProposedAddress,
             destinationAddress: address3?.ProposedAddress,
-            // many packages
+            // error for multiple packages : "The number of RequestedPackages in the RequestedShipment must be equal to 1"
             new List<Shipping.Abstractions.Package>()
             {
                 new Shipping.Abstractions.Package(
@@ -136,6 +136,7 @@ public class Main : IMain
             PaymentType = "sender",
             LabelFormatType = "COMMON2D",
             ImageType = "PNG",
+            CollectOnDelivery = new CollectOnDelivery() { Activated = true, Amount = 250, CollectionType = "guaranteed_funds", Currency = "USD" }
         };
         var rates = await _fedexRateProvider.GetRatesAsync(
             shipment,

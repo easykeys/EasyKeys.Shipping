@@ -51,16 +51,26 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 if ((reply?.HighestSeverity != NotificationSeverityType.ERROR)
                     && (reply?.HighestSeverity != NotificationSeverityType.FAILURE))
                 {
+                    var charges = new Charges();
                     reply?.CompletedShipmentDetail.CompletedPackageDetails.ToList().
                         ForEach(x =>
                         {
+                            charges.SurCharges = new Dictionary<string, decimal>();
+                            charges.BaseCharge = x.PackageRating.PackageRateDetails[0].BaseCharge.Amount;
+                            charges.NetCharge = x.PackageRating.PackageRateDetails[0].NetCharge.Amount;
+                            x.PackageRating.PackageRateDetails[0].Surcharges.ToList().
+                                ForEach(x => charges.SurCharges[x.Description] = x.Amount.Amount);
+                            charges.TotalSurCharges = x.PackageRating.PackageRateDetails[0].TotalSurcharges.Amount;
                             label.LabelDetails.Add(
                                 new LabelDetails
                                 {
+                                    Charges = charges,
+                                    TrackingId = x.TrackingIds[0].ToString(),
                                     ImageType = x.Label.ImageType.ToString(),
                                     Bytes = x.Label.Parts.Select(x => x.Image).ToList()
                                 });
                         });
+                    label.MasterTrackingNumber = reply.CompletedShipmentDetail.MasterTrackingId.TrackingNumber;
                     return label;
                 }
 
@@ -92,7 +102,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 },
                 ClientDetail = new ClientDetail
                 {
-                    // TODO: update this if client chooses to use their own
                     AccountNumber = _options.FedExAccountNumber,
                     MeterNumber = _options.FedExMeterNumber
                 },
@@ -124,7 +133,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         {
             request.RequestedShipment = new RequestedShipment
             {
-                // TODO: Verify that this is correct.
                 ShipTimestamp = shipment.Options.ShippingDate ?? DateTime.Now,
                 ServiceType = serviceType.ToString(),
                 PackagingType = shipment.Options.PackagingType,
@@ -244,7 +252,6 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         {
             request.RequestedShipment.LabelSpecification = new LabelSpecification
             {
-                // TODO: replace and update this
                 LabelFormatType = labelOptions.LabelFormatType.ToUpper() switch
                 {
                     "COMMON2D" => LabelFormatType.COMMON2D,
@@ -310,25 +317,33 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                         Units = LinearUnits.IN
                     }
                 };
-
                 request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money
                 {
                     Amount = package.InsuredValue,
                     Currency = shipment.Options.GetCurrencyCode()
                 };
 
+                var specialServiceTypes = new string[0];
+
                 if (package.SignatureRequiredOnDelivery)
                 {
                     var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.SERVICE_DEFAULT };
-                    request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested() { SignatureOptionDetail = signatureOptionDetail };
+                    request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested()
+                    {
+                        SignatureOptionDetail = signatureOptionDetail,
+                        SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray()
+                    };
                 }
                 else
                 {
                     var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.NO_SIGNATURE_REQUIRED };
-                    request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested() { SignatureOptionDetail = signatureOptionDetail };
+                    request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested()
+                    {
+                        SignatureOptionDetail = signatureOptionDetail,
+                        SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray()
+                    };
                 }
 
-                // notification event types
                 var eventTypes = new NotificationEventType[0];
 
                 shipment.Options.EmailNotification.EmailNotificationTypes.ForEach(x =>
@@ -350,7 +365,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
                 request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
                 {
-                    SpecialServiceTypes = new string[] { "EVENT_NOTIFICATION" },
+                    SpecialServiceTypes = specialServiceTypes.Append("EVENT_NOTIFICATION").ToArray(),
                     EventNotificationDetail = new ShipmentEventNotificationDetail
                     {
                         // notification event message
@@ -427,7 +442,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                     request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
                     {
                         // TODO: update cod detail information
-                        SpecialServiceTypes = new string[] { "COD" },
+                        SpecialServiceTypes = specialServiceTypes.Append("COD").ToArray(),
                         CodDetail = new CodDetail()
                         {
                             CodCollectionAmount = new Money()
