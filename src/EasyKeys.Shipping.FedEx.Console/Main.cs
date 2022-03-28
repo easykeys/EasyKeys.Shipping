@@ -107,7 +107,6 @@ public class Main : IMain
             // • In the master package reply, assign the tracking number of the first package in the
             // MasterTrackingID element for all subsequent packages.You must return the master tracking
             // number and increment the package number(SequenceID) for subsequent packages
-            // error for multiple packages : "The number of RequestedPackages in the RequestedShipment must be equal to 1"
             new List<Shipping.Abstractions.Package>()
             {
                 new Shipping.Abstractions.Package(
@@ -116,7 +115,14 @@ public class Main : IMain
                     Height = 20.00M,
                     Width = 20.00M,
                     Length = 20.00M
-                }, 125.0M)
+                }, 125.0M),
+               new Shipping.Abstractions.Package(
+                    new Shipping.Abstractions.Dimensions()
+                {
+                    Height = 10.00M,
+                    Width = 10.00M,
+                    Length = 10.00M
+                }, 80.0M)
             },
             options: new ShipmentOptions()
             {

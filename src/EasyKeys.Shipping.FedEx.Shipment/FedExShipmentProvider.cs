@@ -35,57 +35,68 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 _options.Url);
 
             var label = new Label();
+            var masterTrackingId = new TrackingId();
             try
             {
-                var request = CreateShipmentRequest(
-                    serviceType,
-                    shipment,
-                    labelOptions);
-
-                var shipmentRequest = new processShipmentRequest1(request);
-
-                var response = await client.processShipmentAsync(shipmentRequest);
-
-                // create loop for multiple packages with i being the sequence number
-                var reply = response?.ProcessShipmentReply;
-
-                if ((reply?.HighestSeverity != NotificationSeverityType.ERROR)
-                    && (reply?.HighestSeverity != NotificationSeverityType.FAILURE))
+                for (var i = 0; i < shipment.Packages.Count(); i++)
                 {
-                    var charges = new Charges();
-                    reply?.CompletedShipmentDetail.CompletedPackageDetails.ToList().
-                        ForEach(x =>
-                        {
-                            charges.SurCharges = new Dictionary<string, decimal>();
+                    var request = CreateShipmentRequest(
+                            serviceType,
+                            shipment,
+                            labelOptions,
+                            i);
 
-                            charges.BaseCharge = x.PackageRating.PackageRateDetails[0].BaseCharge.Amount;
+                    if (i > 0)
+                    {
+                        // child package of main package, create multiple package service
+                        request.RequestedShipment.MasterTrackingId = masterTrackingId;
+                    }
 
-                            charges.NetCharge = x.PackageRating.PackageRateDetails[0].NetCharge.Amount;
+                    var shipmentRequest = new processShipmentRequest1(request);
 
-                            x.PackageRating.PackageRateDetails[0].Surcharges.ToList().
-                                ForEach(x => charges.SurCharges[x.Description] = x.Amount.Amount);
+                    var response = await client.processShipmentAsync(shipmentRequest);
 
-                            charges.TotalSurCharges = x.PackageRating.PackageRateDetails[0].TotalSurcharges.Amount;
+                    var reply = response?.ProcessShipmentReply;
 
-                            label.LabelDetails.Add(
-                                new LabelDetails
-                                {
-                                    Charges = charges,
+                    if ((reply?.HighestSeverity != NotificationSeverityType.ERROR)
+                             && (reply?.HighestSeverity != NotificationSeverityType.FAILURE))
+                    {
+                        var charges = new Charges();
+                        reply?.CompletedShipmentDetail.CompletedPackageDetails.ToList().
+                            ForEach(x =>
+                            {
+                                charges.SurCharges = new Dictionary<string, decimal>();
 
-                                    TrackingId = x.TrackingIds[0].ToString(),
+                                charges.BaseCharge = x.PackageRating.PackageRateDetails[0].BaseCharge.Amount;
 
-                                    ImageType = x.Label.ImageType.ToString(),
+                                charges.NetCharge = x.PackageRating.PackageRateDetails[0].NetCharge.Amount;
 
-                                    Bytes = x.Label.Parts.Select(x => x.Image).ToList()
-                                });
-                        });
+                                x.PackageRating.PackageRateDetails[0].Surcharges.ToList().
+                                    ForEach(x => charges.SurCharges[x.Description] = x.Amount.Amount);
 
-                    label.MasterTrackingNumber = reply.CompletedShipmentDetail.MasterTrackingId.TrackingNumber;
+                                charges.TotalSurCharges = x.PackageRating.PackageRateDetails[0].TotalSurcharges.Amount;
 
-                    return label;
+                                label.LabelDetails.Add(
+                                    new LabelDetails
+                                    {
+                                        Charges = charges,
+
+                                        TrackingId = x.TrackingIds[0].TrackingNumber,
+
+                                        ImageType = x.Label.ImageType.ToString(),
+
+                                        Bytes = x.Label.Parts.Select(x => x.Image).ToList()
+                                    });
+                            });
+
+                        label.MasterTrackingNumber ??= reply.CompletedShipmentDetail.MasterTrackingId.TrackingNumber;
+                        masterTrackingId = reply.CompletedShipmentDetail.MasterTrackingId;
+                    }
+
+                    label.InternalErrors.Add(reply.Notifications[0].Message);
                 }
 
-                label.InternalErrors.Add(reply.Notifications[0].Message);
+                return label;
             }
             catch (Exception ex)
             {
@@ -99,7 +110,8 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         private ProcessShipmentRequest CreateShipmentRequest(
             ServiceType serviceType,
             Shipping.Abstractions.Models.Shipment shipment,
-            LabelOptions labelOptions)
+            LabelOptions labelOptions,
+            int sequenceNumber)
         {
             var request = new ProcessShipmentRequest
             {
@@ -122,6 +134,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 },
                 Version = new VersionId()
             };
+
             SetShipmentDetails(
                 request,
                 serviceType,
@@ -131,7 +144,8 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             SetpackageLineItems(
                 request,
                 shipment,
-                labelOptions);
+                labelOptions,
+                sequenceNumber);
 
             return request;
         }
@@ -165,6 +179,12 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 _ => DropoffType.REGULAR_PICKUP
             };
 
+            request.RequestedShipment.PackageCount = shipment.Packages.Count().ToString();
+            request.RequestedShipment.TotalWeight = new Weight()
+            {
+                Units = WeightUnits.LB,
+                Value = shipment.Packages.Sum(x => x.Weight)
+            };
             SetSender(request, shipment);
             SetRecipient(request, shipment);
             SetPayment(request, shipment, labelOptions);
@@ -301,183 +321,177 @@ namespace EasyKeys.Shipping.FedEx.Shipment
         private void SetpackageLineItems(
             ProcessShipmentRequest request,
             Shipping.Abstractions.Models.Shipment shipment,
-            LabelOptions labelOptions)
+            LabelOptions labelOptions,
+            int sequenceNumber)
         {
-            request.RequestedShipment.PackageCount = shipment.Packages.Count().ToString();
-            request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[shipment.Packages.Count()];
-            var i = 0;
+            request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[1];
 
-            foreach (var package in shipment.Packages)
+            request.RequestedShipment.RequestedPackageLineItems[0] = new RequestedPackageLineItem()
             {
-                request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem()
-                {
-                    SequenceNumber = (i + 1).ToString(),
-                    GroupPackageCount = "1",
+                SequenceNumber = (sequenceNumber + 1).ToString(),
+                GroupPackageCount = "1",
 
-                    Weight = new Weight()
-                    {
-                        Units = WeightUnits.LB,
-                        Value = package.RoundedWeight,
-                    },
-
-                    Dimensions = new Dimensions()
-                    {
-                        Length = package.Dimensions.RoundedLength.ToString(),
-                        Width = package.Dimensions.RoundedWidth.ToString(),
-                        Height = package.Dimensions.RoundedHeight.ToString(),
-                        Units = LinearUnits.IN
-                    }
-                };
-                request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money
+                Weight = new Weight()
                 {
-                    Amount = package.InsuredValue,
-                    Currency = shipment.Options.GetCurrencyCode()
-                };
+                    Units = WeightUnits.LB,
+                    Value = shipment.Packages[sequenceNumber].RoundedWeight,
+                },
 
-                var specialServiceTypes = new string[0];
-                var signatureOptionDetail = new SignatureOptionDetail
+                Dimensions = new Dimensions()
                 {
-                    OptionType = shipment.Options.DeliverySignatureOptions.ToLower() switch
-                    {
-                        "service_default" => SignatureOptionType.SERVICE_DEFAULT,
-                        "adult" => SignatureOptionType.ADULT,
-                        "direct" => SignatureOptionType.DIRECT,
-                        "indirect" => SignatureOptionType.INDIRECT,
-                        "nosignaturerequired" => SignatureOptionType.NO_SIGNATURE_REQUIRED,
-                        _ => SignatureOptionType.SERVICE_DEFAULT
-                    }
-                };
-
-                if (package.SignatureRequiredOnDelivery &&
-                    signatureOptionDetail.OptionType == SignatureOptionType.NO_SIGNATURE_REQUIRED)
-                {
-                    signatureOptionDetail.OptionType = SignatureOptionType.SERVICE_DEFAULT;
+                    Length = shipment.Packages[sequenceNumber].Dimensions.RoundedLength.ToString(),
+                    Width = shipment.Packages[sequenceNumber].Dimensions.RoundedWidth.ToString(),
+                    Height = shipment.Packages[sequenceNumber].Dimensions.RoundedHeight.ToString(),
+                    Units = LinearUnits.IN
                 }
+            };
+            request.RequestedShipment.RequestedPackageLineItems[0].InsuredValue = new Money
+            {
+                Amount = shipment.Packages[sequenceNumber].InsuredValue,
+                Currency = shipment.Options.GetCurrencyCode()
+            };
 
-                request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested()
+            var specialServiceTypes = new string[0];
+            var signatureOptionDetail = new SignatureOptionDetail
+            {
+                OptionType = shipment.Options.DeliverySignatureOptions.ToLower() switch
                 {
-                    SignatureOptionDetail = signatureOptionDetail,
-                    SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray()
+                    "service_default" => SignatureOptionType.SERVICE_DEFAULT,
+                    "adult" => SignatureOptionType.ADULT,
+                    "direct" => SignatureOptionType.DIRECT,
+                    "indirect" => SignatureOptionType.INDIRECT,
+                    "nosignaturerequired" => SignatureOptionType.NO_SIGNATURE_REQUIRED,
+                    _ => SignatureOptionType.SERVICE_DEFAULT
+                }
+            };
+
+            if (shipment.Packages[sequenceNumber].SignatureRequiredOnDelivery &&
+                signatureOptionDetail.OptionType == SignatureOptionType.NO_SIGNATURE_REQUIRED)
+            {
+                signatureOptionDetail.OptionType = SignatureOptionType.SERVICE_DEFAULT;
+            }
+
+            request.RequestedShipment.RequestedPackageLineItems[0].SpecialServicesRequested = new PackageSpecialServicesRequested()
+            {
+                SignatureOptionDetail = signatureOptionDetail,
+                SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray()
+            };
+
+            var eventTypes = new NotificationEventType[0];
+
+            shipment.Options.EmailNotification.EmailNotificationTypes.ForEach(x =>
+            {
+                _ = x switch
+                {
+                    EmailNotificationType.On_Shipment => eventTypes.Append(NotificationEventType.ON_SHIPMENT),
+                    EmailNotificationType.On_Delivery => eventTypes.Append(NotificationEventType.ON_DELIVERY),
+                    EmailNotificationType.On_Estimated_Delivery => eventTypes.Append(NotificationEventType.ON_ESTIMATED_DELIVERY),
+                    EmailNotificationType.On_Exception => eventTypes.Append(NotificationEventType.ON_EXCEPTION),
+                    EmailNotificationType.On_Pickup_Driver_Arrived => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_ARRIVED),
+                    EmailNotificationType.On_Pickup_Driver_Assigned => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_ASSIGNED),
+                    EmailNotificationType.On_Pickup_Driver_Departed => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_DEPARTED),
+                    EmailNotificationType.On_Pickup_Driver_In_Route => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_EN_ROUTE),
+                    EmailNotificationType.On_Tender => eventTypes.Append(NotificationEventType.ON_TENDER),
+                    _ => default
                 };
+            });
 
-                var eventTypes = new NotificationEventType[0];
-
-                shipment.Options.EmailNotification.EmailNotificationTypes.ForEach(x =>
+            request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
+            {
+                SpecialServiceTypes = specialServiceTypes.Append("EVENT_NOTIFICATION").ToArray(),
+                EventNotificationDetail = new ShipmentEventNotificationDetail
                 {
-                    _ = x switch
+                    // notification event message
+                    PersonalMessage = shipment.Options.EmailNotification.PersonalMessage,
+                    EventNotifications = new ShipmentEventNotificationSpecification[]
                     {
-                        EmailNotificationType.On_Shipment => eventTypes.Append(NotificationEventType.ON_SHIPMENT),
-                        EmailNotificationType.On_Delivery => eventTypes.Append(NotificationEventType.ON_DELIVERY),
-                        EmailNotificationType.On_Estimated_Delivery => eventTypes.Append(NotificationEventType.ON_ESTIMATED_DELIVERY),
-                        EmailNotificationType.On_Exception => eventTypes.Append(NotificationEventType.ON_EXCEPTION),
-                        EmailNotificationType.On_Pickup_Driver_Arrived => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_ARRIVED),
-                        EmailNotificationType.On_Pickup_Driver_Assigned => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_ASSIGNED),
-                        EmailNotificationType.On_Pickup_Driver_Departed => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_DEPARTED),
-                        EmailNotificationType.On_Pickup_Driver_In_Route => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_EN_ROUTE),
-                        EmailNotificationType.On_Tender => eventTypes.Append(NotificationEventType.ON_TENDER),
-                        _ => default
-                    };
-                });
+                        new ShipmentEventNotificationSpecification
+                        {
+                            Events = eventTypes.ToArray(),
+                            NotificationDetail = new NotificationDetail
+                            {
+                                NotificationType = NotificationType.EMAIL,
+                                EmailDetail = new EMailDetail()
+                                {
+                                    EmailAddress = shipment.Recipient.Email,
+                                    Name = shipment.Recipient.FullName,
+                                },
+                                Localization = new Localization
+                                {
+                                    LanguageCode = shipment.Options.EmailNotification.LanguageCode
+                                }
+                            },
+                            FormatSpecification = new ShipmentNotificationFormatSpecification
+                            {
+                                Type = shipment.Options.EmailNotification.NotificationFormatType.ToLower() switch
+                                {
+                                    "html" => NotificationFormatType.HTML,
+                                    "text" => NotificationFormatType.TEXT,
+                                    _ => NotificationFormatType.HTML
+                                }
+                            },
+                            Role = shipment.Options.EmailNotification.NotificationFormatType.ToLower() switch
+                            {
+                                    "recipient" => ShipmentNotificationRoleType.RECIPIENT,
+                                    "broker" => ShipmentNotificationRoleType.BROKER,
+                                    "shipper" => ShipmentNotificationRoleType.SHIPPER,
+                                    "third_party" => ShipmentNotificationRoleType.THIRD_PARTY,
+                                    "other" => ShipmentNotificationRoleType.OTHER,
+                                    _ => ShipmentNotificationRoleType.RECIPIENT
+                            },
+                            RoleSpecified = true
+                        }
+                    },
+                }
+            };
 
+            request.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
+            {
+                CommercialInvoice = new CommercialInvoice
+                {
+                    CustomerReferences = new CustomerReference[]
+                    {
+                        new CustomerReference
+                        {
+                            CustomerReferenceType = shipment.Options.CustomerReferenceType.ToLower() switch
+                                                {
+                                                    "customer_reference" => CustomerReferenceType.CUSTOMER_REFERENCE,
+                                                    "department_number" => CustomerReferenceType.DEPARTMENT_NUMBER,
+                                                    "intracountry_regulatory_reference" => CustomerReferenceType.INTRACOUNTRY_REGULATORY_REFERENCE,
+                                                    "invoice_number" => CustomerReferenceType.INVOICE_NUMBER,
+                                                    "po_number" => CustomerReferenceType.P_O_NUMBER,
+                                                    "rma_association" => CustomerReferenceType.RMA_ASSOCIATION,
+                                                    "shipment_integrity" => CustomerReferenceType.SHIPMENT_INTEGRITY,
+                                                    _ => CustomerReferenceType.CUSTOMER_REFERENCE
+                                                },
+                            Value = request.TransactionDetail.CustomerTransactionId
+                        }
+                    }
+                }
+            };
+
+            if (labelOptions.CollectOnDelivery.Activated)
+            {
                 request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
                 {
-                    SpecialServiceTypes = specialServiceTypes.Append("EVENT_NOTIFICATION").ToArray(),
-                    EventNotificationDetail = new ShipmentEventNotificationDetail
+                    SpecialServiceTypes = specialServiceTypes.Append("COD").ToArray(),
+                    CodDetail = new CodDetail()
                     {
-                        // notification event message
-                        PersonalMessage = shipment.Options.EmailNotification.PersonalMessage,
-                        EventNotifications = new ShipmentEventNotificationSpecification[]
+                        CodCollectionAmount = new Money()
                         {
-                            new ShipmentEventNotificationSpecification
-                            {
-                                Events = eventTypes.ToArray(),
-                                NotificationDetail = new NotificationDetail
-                                {
-                                    NotificationType = NotificationType.EMAIL,
-                                    EmailDetail = new EMailDetail()
-                                    {
-                                        EmailAddress = shipment.Recipient.Email,
-                                        Name = shipment.Recipient.FullName,
-                                    },
-                                    Localization = new Localization
-                                    {
-                                        LanguageCode = shipment.Options.EmailNotification.LanguageCode
-                                    }
-                                },
-                                FormatSpecification = new ShipmentNotificationFormatSpecification
-                                {
-                                    Type = shipment.Options.EmailNotification.NotificationFormatType.ToLower() switch
-                                    {
-                                        "html" => NotificationFormatType.HTML,
-                                        "text" => NotificationFormatType.TEXT,
-                                        _ => NotificationFormatType.HTML
-                                    }
-                                },
-                                Role = shipment.Options.EmailNotification.NotificationFormatType.ToLower() switch
-                                {
-                                        "recipient" => ShipmentNotificationRoleType.RECIPIENT,
-                                        "broker" => ShipmentNotificationRoleType.BROKER,
-                                        "shipper" => ShipmentNotificationRoleType.SHIPPER,
-                                        "third_party" => ShipmentNotificationRoleType.THIRD_PARTY,
-                                        "other" => ShipmentNotificationRoleType.OTHER,
-                                        _ => ShipmentNotificationRoleType.RECIPIENT
-                                },
-                                RoleSpecified = true
-                            }
+                            Amount = labelOptions.CollectOnDelivery.Amount,
+                            Currency = labelOptions.CollectOnDelivery.Currency
                         },
-                    }
-                };
-
-                request.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
-                {
-                    CommercialInvoice = new CommercialInvoice
-                    {
-                        CustomerReferences = new CustomerReference[]
+                        CollectionType = labelOptions.CollectOnDelivery.CollectionType.ToUpper() switch
                         {
-                            new CustomerReference
-                            {
-                                CustomerReferenceType = shipment.Options.CustomerReferenceType.ToLower() switch
-                                                    {
-                                                        "customer_reference" => CustomerReferenceType.CUSTOMER_REFERENCE,
-                                                        "department_number" => CustomerReferenceType.DEPARTMENT_NUMBER,
-                                                        "intracountry_regulatory_reference" => CustomerReferenceType.INTRACOUNTRY_REGULATORY_REFERENCE,
-                                                        "invoice_number" => CustomerReferenceType.INVOICE_NUMBER,
-                                                        "po_number" => CustomerReferenceType.P_O_NUMBER,
-                                                        "rma_association" => CustomerReferenceType.RMA_ASSOCIATION,
-                                                        "shipment_integrity" => CustomerReferenceType.SHIPMENT_INTEGRITY,
-                                                        _ => CustomerReferenceType.CUSTOMER_REFERENCE
-                                                    },
-                                Value = request.TransactionDetail.CustomerTransactionId
-                            }
+                            "GUARANTEED_FUNDS" => CodCollectionType.GUARANTEED_FUNDS,
+                            "CASH" => CodCollectionType.CASH,
+                            "ANY" => CodCollectionType.ANY,
+                            "COMPANY_CHECK" => CodCollectionType.COMPANY_CHECK,
+                            _ => CodCollectionType.GUARANTEED_FUNDS
                         }
                     }
                 };
-
-                if (labelOptions.CollectOnDelivery.Activated)
-                {
-                    request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
-                    {
-                        SpecialServiceTypes = specialServiceTypes.Append("COD").ToArray(),
-                        CodDetail = new CodDetail()
-                        {
-                            CodCollectionAmount = new Money()
-                            {
-                                Amount = labelOptions.CollectOnDelivery.Amount,
-                                Currency = labelOptions.CollectOnDelivery.Currency
-                            },
-                            CollectionType = labelOptions.CollectOnDelivery.CollectionType.ToUpper() switch
-                            {
-                                "GUARANTEED_FUNDS" => CodCollectionType.GUARANTEED_FUNDS,
-                                "CASH" => CodCollectionType.CASH,
-                                "ANY" => CodCollectionType.ANY,
-                                "COMPANY_CHECK" => CodCollectionType.COMPANY_CHECK,
-                                _ => CodCollectionType.GUARANTEED_FUNDS
-                            }
-                        }
-                    };
-                }
-
-                i++;
             }
         }
 
