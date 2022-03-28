@@ -49,7 +49,7 @@ public class Main : IMain
         //                "US",
         //                false));
 
-        //var address2 = new ValidateAddress(
+        // var address2 = new ValidateAddress(
         //           Guid.NewGuid().ToString(),
         //           new Shipping.Abstractions.Address(
         //           "Mauerberger  Building",
@@ -60,7 +60,7 @@ public class Main : IMain
         //           "IL",
         //           false));
 
-        //var address3 = new ValidateAddress(
+        // var address3 = new ValidateAddress(
         //       Guid.NewGuid().ToString(),
         //       new Shipping.Abstractions.Address(
         //       "100 East Capitol Street",
@@ -98,6 +98,15 @@ public class Main : IMain
         var shipment = new Shipping.Abstractions.Models.Shipment(
             originAddress: address2?.ProposedAddress,
             destinationAddress: address3?.ProposedAddress,
+
+            // A multiple - package shipment(MPS) consists of two or more packages shipped to the same recipient.
+            // The first package in the shipment request is considered the master package.
+            // To create a multiple - package shipment,
+            // • Include the shipment level information such as TotalWeight, PackageCount, SignatureOptions)
+            // on the master package. The SequenceID for this package is 1.
+            // • In the master package reply, assign the tracking number of the first package in the
+            // MasterTrackingID element for all subsequent packages.You must return the master tracking
+            // number and increment the package number(SequenceID) for subsequent packages
             // error for multiple packages : "The number of RequestedPackages in the RequestedShipment must be equal to 1"
             new List<Shipping.Abstractions.Package>()
             {
@@ -107,12 +116,13 @@ public class Main : IMain
                     Height = 20.00M,
                     Width = 20.00M,
                     Length = 20.00M
-                },
-                    125.0M)
+                }, 125.0M)
             },
             options: new ShipmentOptions()
             {
-                PackagingType = FedExPackageType.YOUR_PACKAGING.ToString()
+                PackagingType = FedExPackageType.YOUR_PACKAGING.ToString(),
+                DeliverySignatureOptions = "NoSignatureRequired",
+                SaturdayDelivery = true
             })
         {
             Shipper = new Contact

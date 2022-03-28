@@ -46,6 +46,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
                 var response = await client.processShipmentAsync(shipmentRequest);
 
+                // create loop for multiple packages with i being the sequence number
                 var reply = response?.ProcessShipmentReply;
 
                 if ((reply?.HighestSeverity != NotificationSeverityType.ERROR)
@@ -302,8 +303,8 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             Shipping.Abstractions.Models.Shipment shipment,
             LabelOptions labelOptions)
         {
+            request.RequestedShipment.PackageCount = shipment.Packages.Count().ToString();
             request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[shipment.Packages.Count()];
-
             var i = 0;
 
             foreach (var package in shipment.Packages)
@@ -334,25 +335,30 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                 };
 
                 var specialServiceTypes = new string[0];
+                var signatureOptionDetail = new SignatureOptionDetail
+                {
+                    OptionType = shipment.Options.DeliverySignatureOptions.ToLower() switch
+                    {
+                        "service_default" => SignatureOptionType.SERVICE_DEFAULT,
+                        "adult" => SignatureOptionType.ADULT,
+                        "direct" => SignatureOptionType.DIRECT,
+                        "indirect" => SignatureOptionType.INDIRECT,
+                        "nosignaturerequired" => SignatureOptionType.NO_SIGNATURE_REQUIRED,
+                        _ => SignatureOptionType.SERVICE_DEFAULT
+                    }
+                };
 
-                if (package.SignatureRequiredOnDelivery)
+                if (package.SignatureRequiredOnDelivery &&
+                    signatureOptionDetail.OptionType == SignatureOptionType.NO_SIGNATURE_REQUIRED)
                 {
-                    var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.SERVICE_DEFAULT };
-                    request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested()
-                    {
-                        SignatureOptionDetail = signatureOptionDetail,
-                        SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray()
-                    };
+                    signatureOptionDetail.OptionType = SignatureOptionType.SERVICE_DEFAULT;
                 }
-                else
+
+                request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested()
                 {
-                    var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.NO_SIGNATURE_REQUIRED };
-                    request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested()
-                    {
-                        SignatureOptionDetail = signatureOptionDetail,
-                        SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray()
-                    };
-                }
+                    SignatureOptionDetail = signatureOptionDetail,
+                    SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray()
+                };
 
                 var eventTypes = new NotificationEventType[0];
 

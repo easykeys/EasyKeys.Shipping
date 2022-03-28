@@ -58,5 +58,10 @@
         /// shipment_integrity.
         /// </summary>
         public string CustomerReferenceType { get; set; } = "customer_reference";
+
+        /// <summary>
+        /// Direct, Indirect, Adult, NoSignature,Service_Default.
+        /// </summary>
+        public string DeliverySignatureOptions { get; set; } = "Service_Default";
     }
 }
