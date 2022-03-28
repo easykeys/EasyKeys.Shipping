@@ -38,6 +38,7 @@ namespace EasyKeys.Shipping.FedEx.Shipment
             var masterTrackingId = new TrackingId();
             try
             {
+                // for multiple packages, each package must have its own request.
                 for (var i = 0; i < shipment.Packages.Count(); i++)
                 {
                     var request = CreateShipmentRequest(
@@ -96,9 +97,15 @@ namespace EasyKeys.Shipping.FedEx.Shipment
 
                         masterTrackingId = reply.CompletedShipmentDetail.MasterTrackingId;
                     }
-
-                    label.InternalErrors.Add(reply.Notifications[0].Message);
+                    else
+                    {
+                        label.InternalErrors.Add(reply.Notifications[0].Message);
+                    }
                 }
+
+                label.TotalCharges.BaseCharge = label.LabelDetails.Sum(x => x.Charges.BaseCharge);
+                label.TotalCharges.NetCharge = label.LabelDetails.Sum(x => x.Charges.NetCharge);
+                label.TotalCharges.TotalSurCharges = label.LabelDetails.Sum(x => x.Charges.TotalSurCharges);
 
                 return label;
             }

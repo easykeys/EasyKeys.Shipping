@@ -2,6 +2,8 @@
 {
     public class Label
     {
+        public Charges TotalCharges { get; set; } = new Charges();
+
         public string MasterTrackingNumber { get; set; } = string.Empty;
 
         public List<LabelDetails> LabelDetails { get; set; } = new List<LabelDetails>();

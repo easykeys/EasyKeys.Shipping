@@ -122,7 +122,14 @@ public class Main : IMain
                     Height = 10.00M,
                     Width = 10.00M,
                     Length = 10.00M
-                }, 80.0M)
+                }, 80.0M),
+                new Shipping.Abstractions.Package(
+                    new Shipping.Abstractions.Dimensions()
+                {
+                    Height = 11.00M,
+                    Width = 11.00M,
+                    Length = 11.00M
+                }, 40.0M)
             },
             options: new ShipmentOptions()
             {
