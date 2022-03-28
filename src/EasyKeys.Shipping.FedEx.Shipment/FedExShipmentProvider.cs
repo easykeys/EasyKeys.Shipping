@@ -89,7 +89,11 @@ namespace EasyKeys.Shipping.FedEx.Shipment
                                     });
                             });
 
-                        label.MasterTrackingNumber ??= reply.CompletedShipmentDetail.MasterTrackingId.TrackingNumber;
+                        if (i == 0)
+                        {
+                            label.MasterTrackingNumber = reply.CompletedShipmentDetail.MasterTrackingId.TrackingNumber;
+                        }
+
                         masterTrackingId = reply.CompletedShipmentDetail.MasterTrackingId;
                     }
 
