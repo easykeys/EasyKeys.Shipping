@@ -18,6 +18,7 @@
 	<ItemGroup>
 		<PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(NetCoreVersion)" />
+		<PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.Logging" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.Hosting" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.Http.Polly" Version="$(NetCoreVersion)" />
