@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<UserSecretsId>dotnet-easykeys.shipping.stamps.console-7A678870-7B37-4774-8229-462ECD6DF7EA</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Bet.Extensions.Templating.Console" Version="2.0.*" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Rates\EasyKeys.Shipping.Stamps.Rates.csproj" />
+	</ItemGroup>
+
+</Project>

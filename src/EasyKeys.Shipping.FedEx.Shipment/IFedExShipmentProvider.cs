@@ -1,21 +1,22 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
-using EasyKeys.Shipping.FedEx.Rates;
+using EasyKeys.Shipping.FedEx.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Shipment.Models;
 
-namespace EasyKeys.Shipping.FedEx.Shipment
+namespace EasyKeys.Shipping.FedEx.Shipment;
+
+public interface IFedExShipmentProvider
 {
-    public interface IFedExShipmentProvider
-    {/// <summary>
-     /// Processes fedex shipping and returns a shipping label.
-     /// </summary>
-     /// <param name="serviceType"></param>
-     /// <param name="shipment"></param>
-     /// <param name="labelOptions"></param>
-     /// <param name="cancellationToken"></param>
-     /// <returns></returns>
-        Task<Label> ProcessShipmentAsync(
-            ServiceType serviceType,
-            Shipping.Abstractions.Models.Shipment shipment,
-            LabelOptions labelOptions,
-            CancellationToken cancellationToken = default);
-    }
+    /// <summary>
+    /// Creates a fedex shipping label.
+    /// </summary>
+    /// <param name="serviceType"></param>
+    /// <param name="shipment"></param>
+    /// <param name="shipmentDetails"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<ShipmentLabel> CreateShipmentAsync(
+        ServiceType serviceType,
+        Shipping.Abstractions.Models.Shipment shipment,
+        ShipmentDetails shipmentDetails,
+        CancellationToken cancellationToken = default);
 }

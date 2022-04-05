@@ -1,4 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions;
+using EasyKeys.Shipping.Abstractions.Models;
 
 namespace EasyKeys.Shipping.FedEx.Shipment.Extensions
 {

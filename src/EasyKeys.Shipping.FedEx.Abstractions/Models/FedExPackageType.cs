@@ -1,4 +1,4 @@
-﻿namespace EasyKeys.Shipping.FedEx.Rates;
+﻿namespace EasyKeys.Shipping.FedEx.Abstractions.Models;
 
 public enum FedExPackageType
 {

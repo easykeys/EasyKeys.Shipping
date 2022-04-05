@@ -24,7 +24,7 @@ public class FedExAddressValidationProviderTests
     {
         var request = new ValidateAddress(
             Guid.NewGuid().ToString(),
-            new EasyKeys.Shipping.Abstractions.Address(
+            new EasyKeys.Shipping.Abstractions.Models.Address(
                "ATTN John Smith 1800 ISLE PKWY",
                string.Empty,
                "BETTENDORF",
@@ -58,7 +58,7 @@ public class FedExAddressValidationProviderTests
     {
         var request = new ValidateAddress(
             Guid.NewGuid().ToString(),
-            new EasyKeys.Shipping.Abstractions.Address(
+            new EasyKeys.Shipping.Abstractions.Models.Address(
                 "11435 W Buckeye Rd Ste 104-118",
                 string.Empty,
                 "AVONDALE",
@@ -92,7 +92,7 @@ public class FedExAddressValidationProviderTests
     {
         var request = new ValidateAddress(
             Guid.NewGuid().ToString(),
-            new EasyKeys.Shipping.Abstractions.Address(
+            new EasyKeys.Shipping.Abstractions.Models.Address(
                 "5 Hood Road",
                 "Derry, NH 03038",
                 "Derry",
@@ -126,7 +126,7 @@ public class FedExAddressValidationProviderTests
     {
         var request = new ValidateAddress(
             Guid.NewGuid().ToString(),
-            new EasyKeys.Shipping.Abstractions.Address(
+            new EasyKeys.Shipping.Abstractions.Models.Address(
                 "39 W210 E BURNHAM LN",
                 "39 W210 E BURNHAM LN",
                 "GENEVA",
@@ -160,7 +160,7 @@ public class FedExAddressValidationProviderTests
     {
         var request = new ValidateAddress(
             Guid.NewGuid().ToString(),
-            new EasyKeys.Shipping.Abstractions.Address(
+            new EasyKeys.Shipping.Abstractions.Models.Address(
                 "W2155 COUNTY HH",
                 string.Empty,
                 "MALONE",
@@ -193,7 +193,7 @@ public class FedExAddressValidationProviderTests
     {
         var request = new ValidateAddress(
             Guid.NewGuid().ToString(),
-            new EasyKeys.Shipping.Abstractions.Address(
+            new EasyKeys.Shipping.Abstractions.Models.Address(
                 "2139 45TH RD.",
                 "FL 1",
                 "LONG ISLAND CITY",

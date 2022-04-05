@@ -1,0 +1,51 @@
+[
+  {
+    "StreetLine": "One Microsoft Way",
+    "StreetLine2": null,
+    "City": "Redmond",
+    "StateOrProvince": "Washington",
+    "PostalCode": "98052",
+    "CountryCode": "US",
+    "IsResidential": false
+  },
+
+  {
+    "StreetLine": "Mauerberger  Building",
+    "StreetLine2": "2nd floor",
+    "City": "Technion City",
+    "StateOrProvince": "Haifa",
+    "PostalCode": "3200003",
+    "CountryCode": "IL",
+    "IsResidential": false
+  },
+
+  {
+    "StreetLine": "5925 sycamore canyon blvd",
+    "StreetLine2": "Apt 2105",
+    "City": "Riverside",
+    "StateOrProvince": "CA",
+    "PostalCode": "92507",
+    "CountryCode": "US",
+    "IsResidential": false
+  },
+
+  {
+    "StreetLine": "100 East Capitol Street",
+    "StreetLine2": "Suite 1000",
+    "City": "Jackson",
+    "StateOrProvince": "MS",
+    "PostalCode": "39201",
+    "CountryCode": "US",
+    "IsResidential": false
+  },
+
+  {
+    "StreetLine": "1500 S STRONG DR",
+    "StreetLine2": "Apartment, suite, unit, etc. (optional)",
+    "City": "BLOOMINGTON",
+    "StateOrProvince": "IL",
+    "PostalCode": "47403-8741",
+    "CountryCode": "US",
+    "IsResidential": false
+  }
+]

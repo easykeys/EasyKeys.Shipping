@@ -31,7 +31,7 @@
 		<PackageReference Update="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
 		<PackageReference Update="Microsoft.Azure.ServiceBus" Version="5.1.0" />
 		<PackageReference Update="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
-		<PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.*" />
+		<PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.*" />
 		<PackageReference Update="Microsoft.CSharp" Version="4.8.1" />
 		<PackageReference Update="System.Drawing.Common" Version="4.8.1" />
 	</ItemGroup>
@@ -56,16 +56,16 @@
 	</ItemGroup>
 
 	<ItemGroup Label="Unit Tests">
-		<PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+		<PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 		<PackageReference Update="Microsoft.AspNetCore.TestHost" Version="$(NetCoreVersion)" />
-		<PackageReference Update="Moq" Version="4.16.1" />
+		<PackageReference Update="Moq" Version="4.17.2" />
 		<PackageReference Update="xunit" Version="2.4.1" />
 		<PackageReference Update="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="All" />
-		<PackageReference Update="coverlet.collector" Version="3.1.0" PrivateAssets="All" />
+		<PackageReference Update="coverlet.collector" Version="3.1.2" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup Label="SourceLink">
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup Label="Analyzers">

@@ -1,6 +1,7 @@
 ﻿using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Extensions;
 

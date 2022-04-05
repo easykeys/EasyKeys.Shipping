@@ -1,4 +1,4 @@
-﻿namespace EasyKeys.Shipping.FedEx.Rates;
+﻿namespace EasyKeys.Shipping.FedEx.Abstractions;
 
 // https://github.com/nguyenngocthuan/nopcommerce/blob/43f0dcc4ebdeb0a0231cdfd6962e5b7eedfc4868/Plugins/Nop.Plugin.Shipping.Fedex/Domain/FedexServices.cs
 public class FedExLookupServices

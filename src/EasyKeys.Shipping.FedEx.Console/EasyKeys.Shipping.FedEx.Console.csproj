@@ -8,7 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bet.Extensions.Templating.Console" Version="1.0.*" />
+    <Content Remove="Embeded\Addresses.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Embeded\Addresses.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bet.Extensions.Templating.Console" Version="2.0.*" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
   </ItemGroup>
