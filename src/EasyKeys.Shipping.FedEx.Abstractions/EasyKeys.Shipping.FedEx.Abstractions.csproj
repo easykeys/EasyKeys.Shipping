@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <!-- use the latest framework when generate wsdl contracts -->
-    <TargetFrameworks>netstandard2.0;net5.0;net6.0</TargetFrameworks>
+    <!--<TargetFramework>net5.0</TargetFramework>-->
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Label="Nuget Package Settings">
