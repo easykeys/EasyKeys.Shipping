@@ -68,3 +68,8 @@
     }
 
 ```
+
+## References
+
+- https://github.com/leoboles/Integration.Stamps.git
+- https://github.com/oparamo/StampsService.git
