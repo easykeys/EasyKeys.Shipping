@@ -9,6 +9,7 @@ public class Shipment
         OriginAddress = originAddress ?? throw new ArgumentNullException(nameof(originAddress));
         DestinationAddress = destinationAddress ?? throw new ArgumentNullException(nameof(destinationAddress));
         Packages = packages?.AsReadOnly() ?? throw new ArgumentNullException(nameof(packages));
+        //Commodities = commodities?.AsReadOnly() ?? throw new ArgumentNullException(nameof(commodities));
         Options = options ?? new ShipmentOptions();
     }
 
@@ -16,6 +17,12 @@ public class Shipment
     /// A collection of the packages to be shipped.
     /// </summary>
     public ReadOnlyCollection<Package> Packages { get; }
+
+    /// <summary>
+    /// Required for International Shipments Only.
+    /// A collection shipment contents that are considered to be dutiable.
+    /// </summary>
+    public IList<Commodity> Commodities { get; } = new List<Commodity>();
 
     /// <summary>
     /// Destination Address of the shipment.

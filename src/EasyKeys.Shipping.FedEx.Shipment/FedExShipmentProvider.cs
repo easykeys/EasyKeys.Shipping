@@ -39,6 +39,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             _options.Url);
 
         var label = new ShipmentLabel();
+        var masterTrackingId = default(TrackingId);
         try
         {
             // for multiple packages, each package must have its own request.
@@ -52,6 +53,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
                 var shipmentRequest = new processShipmentRequest1(request);
 
+                shipmentRequest.ProcessShipmentRequest.RequestedShipment.MasterTrackingId = masterTrackingId == default(TrackingId) ? null : masterTrackingId;
                 var response = await client.processShipmentAsync(shipmentRequest);
 
                 var reply = response?.ProcessShipmentReply;
@@ -63,33 +65,49 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
                     var packageDetails = reply?.CompletedShipmentDetail?.CompletedPackageDetails?.ToList();
 
+                    var totalShipmentDetails = reply?.CompletedShipmentDetail.ShipmentRating?.ShipmentRateDetails.ToList();
                     reply?.CompletedShipmentDetail.CompletedPackageDetails.ToList().
                         ForEach(x =>
                         {
                             charges.Surcharges = new Dictionary<string, decimal>();
 
-                            charges.BaseCharge = x.PackageRating.PackageRateDetails.Select(x => x.BaseCharge).Sum(s => s.Amount);
-                            charges.NetCharge = x.PackageRating.PackageRateDetails.Select(x => x.NetCharge).Sum(s => s.Amount);
+                            if (reply?.CompletedShipmentDetail.ShipmentRating != null)
+                            {
+                                charges.BaseCharge = totalShipmentDetails.Select(x => x.TotalBaseCharge).Sum(x => x.Amount);
+                                charges.NetCharge = totalShipmentDetails.Select(x => x.TotalNetCharge).Sum(x => x.Amount);
+                                charges.TotalSurCharges = totalShipmentDetails.Select(x => x.TotalSurcharges).Sum(x => x.Amount);
+                                totalShipmentDetails.SelectMany(x => x.Surcharges)
+                                                        .ToList()
+                                                        .ForEach(x => charges.Surcharges[x.Description] = x.Amount.Amount);
+                            }
 
-                            x.PackageRating.PackageRateDetails
-                                                .SelectMany(x => x.Surcharges)
-                                                .ToList()
-                                                .ForEach(x => charges.Surcharges[x.Description] = x.Amount.Amount);
+                            if (x.PackageRating != null)
+                            {
+                                charges.BaseCharge = x.PackageRating.PackageRateDetails.Select(x => x.BaseCharge).Sum(s => s.Amount);
+                                charges.NetCharge = x.PackageRating.PackageRateDetails.Select(x => x.NetCharge).Sum(s => s.Amount);
 
-                            charges.TotalSurCharges = x.PackageRating.PackageRateDetails.Select(x => x.TotalSurcharges).Sum(s => s.Amount);
+                                x.PackageRating.PackageRateDetails
+                                                    .SelectMany(x => x.Surcharges)
+                                                    .ToList()
+                                                    .ForEach(x => charges.Surcharges[x.Description] = x.Amount.Amount);
+
+                                charges.TotalSurCharges = x.PackageRating.PackageRateDetails.Select(x => x.TotalSurcharges).Sum(s => s.Amount);
+                            }
 
                             label.Labels.Add(
-                                new PackageLabelDetails
-                                {
-                                    Charges = charges,
+                            new PackageLabelDetails
+                            {
+                                Charges = charges,
 
-                                    TrackingId = x.TrackingIds.Select(x => x.TrackingNumber).Flatten(";"),
+                                TrackingId = x.TrackingIds.Select(x => x.TrackingNumber).Flatten(";"),
 
-                                    ImageType = x.Label.ImageType.ToString(),
+                                ImageType = x.Label.ImageType.ToString(),
 
-                                    Bytes = x.Label.Parts.Select(x => x.Image).ToList()
-                                });
+                                Bytes = x.Label.Parts.Select(x => x.Image).ToList()
+                            });
                         });
+
+                    masterTrackingId = reply?.CompletedShipmentDetail.MasterTrackingId;
                 }
                 else
                 {
@@ -257,7 +275,6 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             "collect" => PaymentType.COLLECT,
             _ => PaymentType.SENDER
         };
-
         switch (paymentType)
         {
             case PaymentType.SENDER:
@@ -268,6 +285,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     {
                         ResponsibleParty = new Party()
                         {
+                            Contact = new ShipClient.v25.Contact()
+                            {
+                                PersonName = details.Sender.FullName,
+                                EMailAddress = details.Sender.Email,
+                                PhoneNumber = details.Sender.PhoneNumber
+                            },
                             AccountNumber = request.ClientDetail.AccountNumber,
                         },
                     }
@@ -310,7 +333,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 "COMMON2D" => LabelFormatType.COMMON2D,
                 "LABEL_DATA_ONLY" => LabelFormatType.LABEL_DATA_ONLY,
                 _ => LabelFormatType.COMMON2D,
-             },
+            },
 
             ImageType = details.LabelOptions.ImageType.ToUpper() switch
             {
@@ -493,6 +516,68 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 }
             }
         };
+
+        if (shipment.DestinationAddress.CountryCode != "US")
+        {
+            request.RequestedShipment.CustomsClearanceDetail.CustomsValue = new Money() { Amount = shipment.Commodities.Sum(x => x.UnitPrice), Currency = shipment.Options.GetCurrencyCode() };
+            request.RequestedShipment.CustomsClearanceDetail.DutiesPayment = request.RequestedShipment.ShippingChargesPayment;
+            foreach (var commodity in shipment.Commodities)
+            {
+                request.RequestedShipment.CustomsClearanceDetail.Commodities = new ShipClient.v25.Commodity[]
+                {
+                    new ShipClient.v25.Commodity()
+                    {
+                        Description = commodity.Description,
+
+                        Name = commodity.Name,
+
+                        NumberOfPieces = commodity.NumberOfPieces.ToString(),
+
+                        CountryOfManufacture = commodity.CountryOfManufacturer,
+
+                        Weight = new Weight()
+                            {
+                                Units = WeightUnits.LB,
+                                Value = commodity.Weight
+                            },
+
+                        Quantity = commodity.Quantity,
+
+                        QuantityUnits = commodity.QuantityUnits,
+
+                        UnitPrice = new Money()
+                            {
+                                Amount = commodity.UnitPrice,
+                                Currency = shipment.Options.GetCurrencyCode()
+                            },
+
+                        HarmonizedCode = commodity.HarmonizedCode,
+
+                        ExportLicenseNumber = commodity.ExportLicenseNumber,
+
+                        ExportLicenseExpirationDate = commodity.ExportLicenseExpirationDate,
+
+                        PartNumber = commodity.PartNumber,
+
+                        Purpose = commodity.Purpose.ToUpper() switch
+                        {
+                            "BUSINESS" => CommodityPurposeType.BUSINESS,
+                            "CONSUMER" => CommodityPurposeType.CONSUMER,
+                            _ => CommodityPurposeType.BUSINESS
+                        },
+                        CustomsValue = new Money() { Amount = commodity.CustomsValue, Currency = shipment.Options.GetCurrencyCode() },
+
+                        CIMarksAndNumbers = commodity.CIMarksandNumbers,
+
+                        PurposeSpecified = true,
+
+                        QuantitySpecified = true,
+
+                        ExportLicenseExpirationDateSpecified = true
+                    }
+                };
+            }
+        }
 
         if (details.CollectOnDelivery.Activated)
         {

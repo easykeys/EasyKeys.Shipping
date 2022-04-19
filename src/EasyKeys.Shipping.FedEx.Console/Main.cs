@@ -62,14 +62,14 @@ public class Main : IMain
                 },
                 125.0M),
 
-            //new Shipping.Abstractions.Package(
-            //    new Shipping.Abstractions.Dimensions()
-            //    {
-            //        Height = 10.00M,
-            //        Width = 10.00M,
-            //        Length = 10.00M
-            //    },
-            //    80.0M),
+            new Shipping.Abstractions.Package(
+                new Shipping.Abstractions.Dimensions()
+                {
+                    Height = 10.00M,
+                    Width = 10.00M,
+                    Length = 10.00M
+                },
+                80.0M),
 
             //new Shipping.Abstractions.Package(
             //    new Shipping.Abstractions.Dimensions()
@@ -111,7 +111,7 @@ public class Main : IMain
 
             CollectOnDelivery = new CollectOnDelivery()
             {
-                Activated = true,
+                Activated = false,
                 Amount = 250,
                 CollectionType = "guaranteed_funds",
                 Currency = "USD"
@@ -126,6 +126,18 @@ public class Main : IMain
             }
         };
 
+        var commodity = new Commodity()
+        {
+            Name = "Keys",
+            NumberOfPieces = 3,
+            Description = "A set of 4 Steel Keys for office furniture",
+            CountryOfManufacturer = "US",
+            Weight = 10.0M,
+            Quantity = 3,
+            QuantityUnits = "EA",
+            UnitPrice = 15.0M
+        };
+
         using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly("Embeded.Addresses.json");
         var addressList = JsonSerializer.Deserialize(stream, typeof(List<Address>)) as List<Address>;
 
@@ -133,6 +145,8 @@ public class Main : IMain
         foreach (var address in addressList)
         {
             // 1. address validation
+
+            // for international orders, user must enter the provice/state code, not full name
             var validateRequest = new ValidateAddress(count.ToString(), address);
             var validationResult = await _validationClient.ValidateAddressAsync(validateRequest, cancellationToken);
             count++;
@@ -146,15 +160,22 @@ public class Main : IMain
                 packages,
                 shipmentOptions);
 
+            shipment.Commodities.Add(commodity);
+
             // 2. shipment rates
             var rates = await _fedexRateProvider.GetRatesAsync(
-                shipment,
-                ServiceType.FEDEX_2_DAY,
+                shipment: shipment,
+                serviceType: shipment.DestinationAddress.CountryCode == "US" ? ServiceType.FEDEX_2_DAY : ServiceType.INTERNATIONAL_ECONOMY,
                 cancellationToken);
+
+            if (shipment.DestinationAddress.CountryCode != "US")
+            {
+                details.CollectOnDelivery.Activated = false;
+            }
 
             // 3. get shipment label
             var result = await _fedExShipmentProvider.CreateShipmentAsync(
-                ServiceType.FEDEX_2_DAY,
+                serviceType: shipment.DestinationAddress.CountryCode == "US" ? ServiceType.FEDEX_2_DAY : ServiceType.INTERNATIONAL_ECONOMY,
                 shipment,
                 details,
                 cancellationToken);
