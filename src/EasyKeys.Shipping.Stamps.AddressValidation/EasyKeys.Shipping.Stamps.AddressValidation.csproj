@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
-    <ProjectReference Include="..\src\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
+    <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+    <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

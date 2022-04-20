@@ -14,9 +14,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\EasyKeys.Shipping.Stamps.AddressValidation\EasyKeys.Shipping.Stamps.AddressValidation.csproj" />
-	  <ProjectReference Include="..\..\EasyKeys.Shipping.Stamps.Shipment\EasyKeys.Shipping.Stamps.Shipment.csproj" />
+	  <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+	  <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
+	  <ProjectReference Include="..\EasyKeys.Shipping.Stamps.AddressValidation\EasyKeys.Shipping.Stamps.AddressValidation.csproj" />
 	  <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Rates\EasyKeys.Shipping.Stamps.Rates.csproj" />
+	  <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Shipment\EasyKeys.Shipping.Stamps.Shipment.csproj" />
 	</ItemGroup>
 
 </Project>

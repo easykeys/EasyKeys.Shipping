@@ -63,9 +63,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.Ra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.Console", "src\EasyKeys.Shipping.Stamps.Console\EasyKeys.Shipping.Stamps.Console.csproj", "{DAFA0110-5502-4778-8372-714A19143178}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.Shipment", "EasyKeys.Shipping.Stamps.Shipment\EasyKeys.Shipping.Stamps.Shipment.csproj", "{DAFCFA00-C4CB-42FB-B47B-65A548C9FFAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.Shipment", "src\EasyKeys.Shipping.Stamps.Shipment\EasyKeys.Shipping.Stamps.Shipment.csproj", "{DAFCFA00-C4CB-42FB-B47B-65A548C9FFAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.AddressValidation", "EasyKeys.Shipping.Stamps.AddressValidation\EasyKeys.Shipping.Stamps.AddressValidation.csproj", "{0759B8E0-BE7C-4771-8E13-13C83BAD3E82}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.AddressValidation", "src\EasyKeys.Shipping.Stamps.AddressValidation\EasyKeys.Shipping.Stamps.AddressValidation.csproj", "{0759B8E0-BE7C-4771-8E13-13C83BAD3E82}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
