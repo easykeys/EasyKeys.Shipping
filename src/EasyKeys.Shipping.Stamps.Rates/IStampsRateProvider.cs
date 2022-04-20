@@ -6,6 +6,6 @@ namespace EasyKeys.Shipping.Stamps.Rates
 {
     public interface IStampsRateProvider
     {
-        Task<GetRatesResponse> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default);
+        Task<List<RateV40>> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default);
     }
 }

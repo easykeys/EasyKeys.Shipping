@@ -18,9 +18,8 @@ namespace EasyKeys.Shipping.Stamps.Rates
             _logger = logger;
         }
 
-        public async Task<GetRatesResponse> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
+        public async Task<List<RateV40>> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
         {
-
             var stampsClient = _stampsClient.CreateClient();
 
             var request = new GetRatesRequest()
@@ -31,7 +30,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
                 {
                     From = new StampsClient.v111.Address()
                     {
-                        FullName = "EasyKeys",
+                        FullName = shipment.SenderInformation.FullName,
 
                         Address1 = shipment.OriginAddress.StreetLine,
 
@@ -39,11 +38,12 @@ namespace EasyKeys.Shipping.Stamps.Rates
 
                         ZIPCode = shipment.OriginAddress.PostalCode,
 
-                        EmailAddress = "bmoffett@easykeys.com"
+                        EmailAddress = shipment.SenderInformation.Email
                     },
+
                     To = new StampsClient.v111.Address()
                     {
-                        FullName = "Brandon Moffett",
+                        FullName = shipment.RecipientInformation.FullName,
 
                         Address1 = shipment.DestinationAddress.StreetLine,
 
@@ -53,17 +53,82 @@ namespace EasyKeys.Shipping.Stamps.Rates
 
                         ZIPCode = shipment.DestinationAddress.PostalCode,
 
-                        EmailAddress = "ucrengineerpy@gmail.com"
+                        EmailAddress = shipment.RecipientInformation.Email
                     },
+
+                    Amount = 0.0m,
+
+                    MaxAmount = 0.0m,
+
+                    ServiceType = ServiceType.Unknown,
+
+                    ServiceDescription = String.Empty,
+
+                    PrintLayout = string.Empty,
+
+                    DeliverDays = string.Empty,
+
                     WeightLb = (double)shipment.Packages.Sum(x => x.Weight),
 
                     WeightOz = 0.0,
 
                     PackageType = PackageTypeV11.Package,
 
+                    //RequiresAllOf =
+
+                    Length = 1.0d,
+
+                    Width = 1.0d,
+
+                    Height = 1.0d,
+
                     ShipDate = DateTime.Now,
 
-                    ContentType = ContentTypeV2.Other
+                    //DeliveryDate =
+
+                    InsuredValue = 100.0m,
+
+                    RegisteredValue = 0.0m,
+
+                    CODValue = 0.0m,
+
+                    DeclaredValue = 0.0m,
+
+                    NonMachinable = false,
+
+                    RectangularShaped = true,
+
+                    Prohibitions = String.Empty,
+
+                    Restrictions = String.Empty,
+
+                    Observations = String.Empty,
+
+                    Regulations = String.Empty,
+
+                    GEMNotes = String.Empty,
+
+                    MaxDimensions = String.Empty,
+
+                    DimWeighting = String.Empty,
+
+                    //AddOns =
+
+                    //Surcharges =
+
+                    EffectiveWeightInOunces = 0,
+
+                    Zone = 0,
+
+                    RateCategory = 0,
+
+                    CubicPricing = false,
+
+                    ContentType = ContentTypeV2.Other,
+
+                    EntryFacility = EntryFacilityV1.Unknown,
+
+                    SortType = SortTypeV1.Unknown,
                 },
                 Carrier = Carrier.USPS
             };
@@ -89,7 +154,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
                     _logger.LogInformation($" => Required Addons : {rate.RequiresAllOf?.ToString()}");
                 }
 
-                return response;
+                return response.Rates.ToList();
             }
             catch (Exception ex)
             {

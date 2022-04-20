@@ -22,7 +22,8 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
                 Item = await _stampsClient.GetTokenAsync(cancellationToken),
                 Address = new StampsClient.v111.Address()
                 {
-                    FullName = "Brandon Moffett",
+                    FullName = shipment.RecipientInformation.FullName,
+                    EmailAddress = shipment.RecipientInformation.Email,
                     Address1 = shipment.DestinationAddress.StreetLine,
                     Address2 = shipment.DestinationAddress.StreetLine2,
                     City = shipment.DestinationAddress.City,

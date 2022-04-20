@@ -1,6 +1,4 @@
 ﻿
-using System.Net;
-
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.AddressValidation;
@@ -59,7 +57,6 @@ public class Main : IMain
             postalCode: "92507",
             countryCode: "US");
 
-
         var packages = new List<EasyKeys.Shipping.Abstractions.Package>
         {
             new EasyKeys.Shipping.Abstractions.Package(
@@ -71,24 +68,37 @@ public class Main : IMain
                 },
                 50.0M),
         };
-        var shipment = new Shipment(originAddress, destinationAddress, packages);
 
-        var addressResponse = await _addressProvider.ValidateAddressAsync(shipment, cancellationToken);
-
-        _logger.LogInformation($"{shipment.DestinationAddress.IsResidential}");
-
-        var rateResponse = await _rateProvider.GetRatesAsync(shipment, cancellationToken);
-
-        var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(shipment, rateResponse?.Rates?.LastOrDefault(), cancellationToken);
-
-        _logger.LogCritical($"Label Url: {shipmentResponse.URL}");
-
-        var url = $"{shipmentResponse.URL}";
-
-        using (var client = new WebClient())
+        var sender = new SenderInformation()
         {
-            client.DownloadFile(new Uri(url), "Label.png");
-        }
+            FullName = "Brandon Moffett",
+            Company = "EasyKeys.com",
+            Email = "TestMe@EasyKeys.com",
+            Department = "Software"
+        };
+        var receiver = new RecipientInformation()
+        {
+            FullName = "Fictitious Character",
+            Company = "Marvel",
+            Email = "FictitiousCharacter@marvel.com",
+            Department = "SuperHero"
+        };
+
+        var shipment = new Shipment(originAddress, destinationAddress, packages) { RecipientInformation = receiver, SenderInformation = sender };
+
+        var adjustedShipment = await _addressProvider.ValidateAddressAsync(shipment, cancellationToken);
+
+        _logger.LogInformation($"Errors: {adjustedShipment.Errors.Count}");
+
+        var rateResponse = await _rateProvider.GetRatesAsync(adjustedShipment, cancellationToken);
+
+        var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(adjustedShipment, rateResponse.LastOrDefault(), cancellationToken);
+
+        _logger.LogCritical($"Tracking Number : {shipmentResponse.Labels[0].TrackingId}");
+
+        await File.WriteAllBytesAsync("label.png", shipmentResponse.Labels[0].Bytes[0]);
+
+        var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse, cancellationToken);
 
         return 0;
     }
