@@ -1,4 +1,7 @@
-﻿namespace Microsoft.Extensions.DependencyInjection;
+﻿using EasyKeys.Shipping.Stamps.AddressValidation.DependencyInjection;
+using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
+
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ConsoleServiceCollectionExtensions
 {
@@ -6,6 +9,12 @@ public static class ConsoleServiceCollectionExtensions
     {
         services.AddScoped<IMain, Main>();
 
+        services.AddStampsAddressProvider();
+
         services.AddStampsRateProvider();
+
+        services.AddStampsClient();
+
+        services.AddStampsShipmentProvider();
     }
 }

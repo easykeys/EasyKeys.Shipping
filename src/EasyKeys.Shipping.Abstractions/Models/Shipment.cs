@@ -9,7 +9,6 @@ public class Shipment
         OriginAddress = originAddress ?? throw new ArgumentNullException(nameof(originAddress));
         DestinationAddress = destinationAddress ?? throw new ArgumentNullException(nameof(destinationAddress));
         Packages = packages?.AsReadOnly() ?? throw new ArgumentNullException(nameof(packages));
-        //Commodities = commodities?.AsReadOnly() ?? throw new ArgumentNullException(nameof(commodities));
         Options = options ?? new ShipmentOptions();
     }
 
