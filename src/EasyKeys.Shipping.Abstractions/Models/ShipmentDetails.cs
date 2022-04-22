@@ -3,6 +3,11 @@
 public class ShipmentDetails
 {
     /// <summary>
+    /// Customer OrderId.
+    /// </summary>
+    public string OrderId { get; set; } = string.Empty;
+
+    /// <summary>
     /// A plain language description of the service returned, i.e. “USPS Priority Mail”.
     /// </summary>
     public string ServiceDescription { get; set; } = string.Empty;

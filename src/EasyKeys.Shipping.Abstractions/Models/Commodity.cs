@@ -11,14 +11,14 @@
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// Required
+        /// Required - Fedex
         /// The total number of packages within the shipment
         /// that contains this commodity (can be <= PackageCount).
         /// </summary>
         public int NumberOfPieces { get; set; }
 
         /// <summary>
-        /// Required
+        /// Required - Fedex
         /// A minimum of three characters is requred for this element. Maximum number of characters is 450.
         /// Make sure descriptions are specific to avoid any delays with customs.
         /// </summary>
@@ -32,7 +32,7 @@
         public string CountryOfManufacturer { get; set; } = string.Empty;
 
         /// <summary>
-        /// Optional
+        /// Optional - Fedex
         /// For efficient customs clearance, a Harmonized Code should be included for all commodities.
         /// Resources :
         /// https://www.fedex.com
@@ -58,7 +58,7 @@
         public string CIMarksandNumbers { get; set; } = string.Empty;
 
         /// <summary>
-        /// Required
+        /// Required - Fedex
         /// Unit of measure (for example : EA = each, DZ = dozen) for each commodity in the shipment.
         /// </summary>
         public string QuantityUnits { get; set; } = string.Empty;
@@ -70,7 +70,7 @@
         public decimal Weight { get; set; }
 
         /// <summary>
-        /// Required
+        /// Required -Fedex
         /// Customs value for each price of a particular commodity in the shipment.
         /// </summary>
         public decimal UnitPrice { get; set; }
@@ -84,19 +84,21 @@
         public decimal CustomsValue { get; set; }
 
         /// <summary>
-        /// Required
+        /// Required - Fedex
         /// At least one occurence is required for international commodity shipments.
         /// The Commodity/Amount must equal the commodity UnitPrrice x Units.
         /// </summary>
         public decimal Amount { get; set; }
 
         /// <summary>
+        /// Fedex
         /// Required only if a commodity is shipped on a commercial export license.
         /// </summary>
 
         public string ExportLicenseNumber { get; set; } = string.Empty;
 
         /// <summary>
+        /// Fedex
         /// Required only if a commodity is shipped on a commercial export license and the
         /// ExportLicenseNumber element is supplied.
         /// </summary>

@@ -18,8 +18,8 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
         public async Task<ShipmentLabel> CreateShipmentAsync(
             Shipping.Abstractions.Models.Shipment shipment,
-            Shipping.Abstractions.Models.ShipmentDetails details,
-            Shipping.Stamps.Abstractions.Models.ServiceType serviceType,
+            ShipmentDetails details,
+            Abstractions.Models.ServiceType serviceType,
             CancellationToken cancellationToken)
         {
             var client = _stampsClient.CreateClient();
@@ -38,49 +38,49 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
                 CustomerID = Guid.NewGuid().ToString(),
 
-                // for testing purposes only.
-                SampleOnly = true,
+                Customs = shipment.Commodities.Any() ? SetCustomsInformation(shipment, details) : default,
+
+                SampleOnly = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == "Development" ? true : false,
 
                 /*Normal	A regular label with postage and a valid indicium.
                  NoPostage	A regular label without postage or an indicium.
                 */
                 PostageMode = PostageMode.Normal,
 
-                // set image type
-                ImageType = ImageType.Png,
+                ImageType = details.LabelOptions.ImageType switch
+                {
+                    "png" => ImageType.Png,
+                    "pdf" => ImageType.Pdf,
+                    _ => ImageType.Png
+                },
 
-                // Resolution of shipping label for thermal printer.
-                EltronPrinterDPIType = EltronPrinterDPIType.Default,
+                EltronPrinterDPIType = details.LabelOptions.Resolution switch
+                {
+                    "default" => EltronPrinterDPIType.Default,
+                    "high" => EltronPrinterDPIType.High,
+                    _ => EltronPrinterDPIType.Default
+                },
 
-                // The memo to print at the bottom of the shipping label. The memo parameter may consist of more than one line separated by the standard carriage return/line feed, use &#xd; as carriage return and &#xa; as line feed in the request
-                memo = String.Empty,
+                memo = details.LabelOptions.Memo,
 
                 // ??
                 cost_code_id = 0,
 
-                // Set to true to send a delivery notification email back to the email address associated with the account when the shipment is delivered.
-                deliveryNotification = false,
+                deliveryNotification = true,
 
-                // Set to 0, 90, 180, or 270 to represent the number of degrees of counter-clockwise rotation for the label.
-                rotationDegrees = 0,
+                ShipmentNotification = SetShipmentNotification(shipment),
 
-                // Indicates how many units the label should be offset on the x-axis. Applies only to thermal printers
-                horizontalOffset = 0,
+                rotationDegrees = details.LabelOptions.RotationDegrees,
 
-                // Indicates how many units the label should be offset on the y-axis. Applies only to thermal printers.
-                verticalOffset = 0,
+                horizontalOffset = details.LabelOptions.HorizontalOffet,
 
-                // Density settings for thermal printers, to help control the darkness of the print.
-                printDensity = 0,
+                verticalOffset = details.LabelOptions.VerticalOffet,
 
-                // Indicates whether the memo is printed on the label. Set to true to print the memo.
-                printMemo = false,
+                printDensity = details.LabelOptions.PrintDensity,
 
-                /* This applies to domestic and international, combined and separate CP72 and CN22 layouts.
-                 * For other label types this parameter can be specified but is ignored.
-                 * If the parameter is omitted, or is set to “true”, instructions will be included as part of the label.
-                */
-                printInstructions = false,
+                printMemo = string.IsNullOrEmpty(details.LabelOptions.Memo) ? false : true,
+
+                printInstructions = details.LabelOptions.PrintInstructions,
 
                 // ??
                 requestPostageHash = false,
@@ -97,25 +97,19 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 // ?
                 OriginalPostageHash = String.Empty,
 
-                /*Determines whether the image URL or the actual image data will be returned in the response object.
-                 * If ReturnImageData is false, one or more image URL will be returned in the URL element in the response object.
-                 * Each URL will need to be queried to retrieve the actual image.
-                 * If ReturnImageData is true, the actual image data will be returned as a base64 string in the ImageData object.
-                 * The URL element will be an empty string.
-                 * This mode cannot be used on ImageType of Auto, PrintOncePDF, or EncryptedPngURL.
-                 */
                 ReturnImageData = true,
 
                 /* For International mail, shipments valued over $2500 generally require an
                     Internal Transaction Number (ITN) to be put on the CP72 form.*/
                 InternalTransactionNumber = "123",
 
-                /* Specifies the page size of PDF labels. This value only applies to PDF. If offset is specified, this value will be ignored.
-                    Default
-                    Letter85x11
-                    LabelSize
-                */
-                PaperSize = PaperSizeV1.Default,
+                PaperSize = details.LabelOptions.LabelSize.ToLower() switch
+                {
+                    "4x6" => PaperSizeV1.Default,
+                    _ => PaperSizeV1.Default
+                },
+
+                EmailLabelTo = string.IsNullOrEmpty(details.LabelOptions.EmailLabelTo) ? null : SetEmailLabelTo(details),
 
                 // ??
                 PayOnPrint = false,
@@ -123,15 +117,21 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 // ??
                 ReturnLabelExpirationDays = 1,
 
-                /* Specifies the DPI setting for the label image generated for the following ImageType values:
-                 * Gif, Jpg, Png. It applies to both the label images in the ImageData and the URL response.*/
-                ImageDpi = ImageDpi.ImageDpiDefault,
+                ImageDpi = details.LabelOptions.ImageDPI switch
+                {
+                    "ImageDpi203" => ImageDpi.ImageDpiDefault,
+                    "ImageDpi300" => ImageDpi.ImageDpi300,
+                    "ImageDpi200" => ImageDpi.ImageDpi200,
+                    "ImageDpi150" => ImageDpi.ImageDpi150,
+                    "ImageDpi96" => ImageDpi.ImageDpi96,
+                    _ => ImageDpi.ImageDpiDefault
+                },
 
                 // ??
                 RateToken = string.Empty,
 
                 // Caller defined data. Order ID associated to this print.
-                OrderId = string.Empty,
+                OrderId = details.OrderId,
 
                 // ?
                 BypassCleanseAddress = false,
@@ -164,13 +164,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 BrandingId = Guid.NewGuid(),
             };
 
-            request = SetShipmentNotification(request, shipment);
-
             request = SetOrderDetails(request, shipment);
-
-            //request = shipment.SenderInformation.Email.Any() ? SetEmailLabelTo(request, shipment) : request;
-
-            request = shipment.Commodities.Any() ? SetCustomsInformation(request, shipment) : request;
 
             try
             {
@@ -214,35 +208,89 @@ namespace EasyKeys.Shipping.Stamps.Shipment
             }
         }
 
-        /// <summary>
-        /// Customs information. Required for International.Default is false.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="shipment"></param>
-        /// <returns></returns>
-        private CreateIndiciumRequest SetCustomsInformation(CreateIndiciumRequest request, Shipping.Abstractions.Models.Shipment shipment)
+        private CustomsV7 SetCustomsInformation(Shipping.Abstractions.Models.Shipment shipment, ShipmentDetails details)
         {
             // using shipment.commodities information set request.customs
-            return request;
+
+            var customsLine = new List<CustomsLine>();
+
+            foreach (var commodity in shipment.Commodities)
+            {
+                customsLine.Add(new CustomsLine
+                {
+                    Description = commodity.Description,
+                    CountryOfOrigin = commodity.CountryOfManufacturer,
+                    Quantity = commodity.Quantity,
+                    HSTariffNumber = string.Empty,
+                    sku = commodity.PartNumber,
+                    Value = commodity.CustomsValue,
+                    WeightLb = (double)commodity.Weight,
+                    WeightOz = 0.0d
+                });
+            }
+
+            return new CustomsV7()
+            {
+                ContentType = details.ContentType.ToLower() switch
+                {
+                    "commercial_sample" => ContentTypeV2.CommercialSample,
+                    "dangerous_goods" => ContentTypeV2.DangerousGoods,
+                    "document" => ContentTypeV2.Document,
+                    "gift" => ContentTypeV2.Gift,
+                    "humanitarian" => ContentTypeV2.HumanitarianDonation,
+                    "merchandise" => ContentTypeV2.Merchandise,
+                    "returned_goods" => ContentTypeV2.ReturnedGoods,
+                    _ => ContentTypeV2.Other
+                },
+
+                Comments = shipment?.Commodities?.FirstOrDefault()?.Comments,
+
+                LicenseNumber = shipment?.Commodities?.FirstOrDefault()?.ExportLicenseNumber,
+
+                CertificateNumber = String.Empty,
+
+                InvoiceNumber = String.Empty,
+
+                OtherDescribe = String.Empty,
+
+                CustomsLines = customsLine.ToArray(),
+
+                CustomsSigner = string.Empty,
+
+                PassportNumber = String.Empty,
+
+                // PassportIssueDate =
+
+                // PassportExpiryDate =
+
+                ImportLicenseNumber = String.Empty,
+
+                SendersCustomsReference = String.Empty
+            };
         }
 
-        private CreateIndiciumRequest SetShipmentNotification(CreateIndiciumRequest request, Shipping.Abstractions.Models.Shipment shipment)
+        private ShipmentNotification SetShipmentNotification(Shipping.Abstractions.Models.Shipment shipment)
         {
             // using shipment informtion to set request.shipmentNotification
-
-            return request;
+            return new ShipmentNotification()
+            {
+                Email = shipment.RecipientContact.Email,
+                CCToAccountHolder = true,
+                UseCompanyNameInFromLine = true,
+                UseCompanyNameInSubject = true,
+            };
         }
 
-        private CreateIndiciumRequest SetEmailLabelTo(CreateIndiciumRequest request, Shipping.Abstractions.Models.Shipment shipment)
+        private LabelRecipientInfo SetEmailLabelTo(ShipmentDetails details)
         {
-
-            //EmailLabelTo = new LabelRecipientInfo()
-            return request;
+            return new LabelRecipientInfo()
+            {
+                EmailAddress = details.LabelOptions.EmailLabelTo
+            };
         }
 
         private CreateIndiciumRequest SetOrderDetails(CreateIndiciumRequest request, Shipping.Abstractions.Models.Shipment shipment)
         {
-            //request.OrderDetails
             return request;
         }
     }
