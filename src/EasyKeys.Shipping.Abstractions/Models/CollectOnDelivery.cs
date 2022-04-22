@@ -1,4 +1,4 @@
-﻿namespace EasyKeys.Shipping.FedEx.Shipment.Models;
+﻿namespace EasyKeys.Shipping.Abstractions.Models;
 
 public class CollectOnDelivery
 {

@@ -161,7 +161,7 @@ public class UspsRateProvider : IUspsRateProvider
                 {
                     writer.WriteElementString(
                         "ShipDate",
-                        shipment.Options.ShippingDate.Value.AddDays(1).ToString("yyyy-MM-dd"));
+                        shipment.Options.ShippingDate.AddDays(1).ToString("yyyy-MM-dd"));
                 }
 
                 if (package.SignatureRequiredOnDelivery)
@@ -308,7 +308,7 @@ public class UspsRateProvider : IUspsRateProvider
 
                 if (!string.IsNullOrEmpty(shipment.DestinationAddress.PostalCode))
                 {
-                    writer.WriteElementString("AcceptanceDateTime", shipment.Options.ShippingDate.Value.AddDays(1).ToString("yyyy-MM-ddTHH\\:mm\\:ssZ"));
+                    writer.WriteElementString("AcceptanceDateTime", shipment.Options.ShippingDate.AddDays(1).ToString("yyyy-MM-ddTHH\\:mm\\:ssZ"));
                     writer.WriteElementString("DestinationPostalCode", shipment.DestinationAddress.PostalCode);
                 }
 

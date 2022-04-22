@@ -1,5 +1,14 @@
 [
   {
+    "StreetLine": "1550 Central Ave",
+    "StreetLine2": "Apartment 35",
+    "City": "Riverside",
+    "StateOrProvince": "CA",
+    "PostalCode": "92507",
+    "CountryCode": "US",
+    "IsResidential": true
+  },
+  {
     "StreetLine": "512 Venture Place",
     "StreetLine2": null,
     "City": "Barrhead",

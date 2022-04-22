@@ -12,9 +12,9 @@ public class Shipment
         Options = options ?? new ShipmentOptions();
     }
 
-    public RecipientInformation RecipientInformation { get; set; } = new RecipientInformation();
+    public SenderContact SenderContact { get; set; }
 
-    public SenderInformation SenderInformation { get; set; } = new SenderInformation();
+    public RecipientContact RecipientContact { get; set; }
 
     /// <summary>
     /// A collection of the packages to be shipped.

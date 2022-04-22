@@ -7,7 +7,6 @@ using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.AddressValidation;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
-using EasyKeys.Shipping.FedEx.Shipment.Models;
 
 namespace EasyKeys.Shipping.FedEx.Console;
 
@@ -88,7 +87,7 @@ public class Main : IMain
             PreferredCurrencyCode = "USD",
         };
 
-        var details = new ShipmentDetails
+        var details = new Shipping.Abstractions.Models.ShipmentDetails
         {
             TransactionId = "1234-transaction",
             Sender = new SenderContact
@@ -140,7 +139,6 @@ public class Main : IMain
 
         using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly("Embeded.Addresses.json");
         var addressList = JsonSerializer.Deserialize(stream, typeof(List<Address>)) as List<Address>;
-
         var count = 0;
         foreach (var address in addressList)
         {

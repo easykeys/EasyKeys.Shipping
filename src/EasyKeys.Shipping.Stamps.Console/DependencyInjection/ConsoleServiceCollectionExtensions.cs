@@ -15,6 +15,8 @@ public static class ConsoleServiceCollectionExtensions
 
         services.AddStampsClient();
 
+        services.AddStampsRateV40Provider();
+
         services.AddStampsShipmentProvider();
     }
 }

@@ -12,7 +12,7 @@ public class ShipmentOptions
     /// <summary>
     /// Pickup date. Current date and time is used if not specified.
     /// </summary>
-    public DateTime? ShippingDate { get; set; }
+    public DateTime ShippingDate { get; set; } = DateTime.Now;
 
     /// <summary>
     /// Preferred currency code, applies to FedEx only.
@@ -20,6 +20,7 @@ public class ShipmentOptions
     public string PreferredCurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
+    /// Fedex Packaging Options :
     /// • YOUR_PACKAGING
     /// • FEDEX_10KG_BOX
     /// • FEDEX_25KG_BOX

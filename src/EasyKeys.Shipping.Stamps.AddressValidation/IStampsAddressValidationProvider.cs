@@ -4,6 +4,6 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
 {
     public interface IStampsAddressValidationProvider
     {
-        Task<Shipment> ValidateAddressAsync(Shipment shipmet, CancellationToken cancellationToken);
+        Task<ValidateAddress> ValidateAddressAsync(ValidateAddress validateAddress, CancellationToken cancellationToken);
     }
 }

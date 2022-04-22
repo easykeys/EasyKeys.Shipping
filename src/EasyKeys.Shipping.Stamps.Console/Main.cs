@@ -66,33 +66,41 @@ public class Main : IMain
                     Width = 20.00M,
                     Length = 20.00M
                 },
-                50.0M),
+                1.0M),
         };
 
-        var sender = new SenderInformation()
+        var sender = new SenderContact()
         {
             FullName = "Brandon Moffett",
-            Company = "EasyKeys.com",
+            CompanyName = "EasyKeys.com",
             Email = "TestMe@EasyKeys.com",
             Department = "Software"
         };
-        var receiver = new RecipientInformation()
+        var receiver = new RecipientContact()
         {
             FullName = "Fictitious Character",
-            Company = "Marvel",
+            CompanyName = "Marvel",
             Email = "FictitiousCharacter@marvel.com",
             Department = "SuperHero"
         };
 
-        var shipment = new Shipment(originAddress, destinationAddress, packages) { RecipientInformation = receiver, SenderInformation = sender };
+        var validateRequest = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
 
-        var adjustedShipment = await _addressProvider.ValidateAddressAsync(shipment, cancellationToken);
+        var validateResponse = await _addressProvider.ValidateAddressAsync(validateRequest, cancellationToken);
 
-        _logger.LogInformation($"Errors: {adjustedShipment.Errors.Count}");
+        _logger.LogInformation($"Address Validation Errors: {validateResponse.Errors?.FirstOrDefault()?.Description}");
 
-        var rateResponse = await _rateProvider.GetRatesAsync(adjustedShipment, cancellationToken);
+        var shipment = new Shipment(originAddress, validateResponse.OriginalAddress, packages) { RecipientContact = receiver, SenderContact = sender };
 
-        var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(adjustedShipment, rateResponse.LastOrDefault(), cancellationToken);
+        _logger.LogInformation($"Errors: {shipment.Errors.Count}");
+
+        var rateResponse = await _rateProvider.GetRatesAsync(shipment, new ShipmentDetails(), default, cancellationToken);
+
+        var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(
+            shipment,
+            new ShipmentDetails() { Carrier = "USPS", ServiceDescription = "USPS Priority Mail", Sender = sender, Recipient = receiver },
+            EasyKeys.Shipping.Stamps.Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL,
+            cancellationToken);
 
         _logger.LogCritical($"Tracking Number : {shipmentResponse.Labels[0].TrackingId}");
 

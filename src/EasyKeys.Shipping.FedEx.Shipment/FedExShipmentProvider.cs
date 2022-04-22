@@ -3,7 +3,6 @@ using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Shipment.Extensions;
-using EasyKeys.Shipping.FedEx.Shipment.Models;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,7 +30,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
     public async Task<ShipmentLabel> CreateShipmentAsync(
         ServiceType serviceType,
         Shipping.Abstractions.Models.Shipment shipment,
-        ShipmentDetails shipmentDetails,
+        Shipping.Abstractions.Models.ShipmentDetails shipmentDetails,
         CancellationToken cancellationToken = default)
     {
         var client = new ShipPortTypeClient(
@@ -129,7 +128,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
     private ProcessShipmentRequest CreateShipmentRequest(
         ServiceType serviceType,
         Shipping.Abstractions.Models.Shipment shipment,
-        ShipmentDetails details,
+        Shipping.Abstractions.Models.ShipmentDetails details,
         int sequenceNumber)
     {
         var request = CreateRequest(details);
@@ -149,7 +148,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         return request;
     }
 
-    private ProcessShipmentRequest CreateRequest(ShipmentDetails details)
+    private ProcessShipmentRequest CreateRequest(Shipping.Abstractions.Models.ShipmentDetails details)
     {
         return new ProcessShipmentRequest
         {
@@ -178,11 +177,11 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         ProcessShipmentRequest request,
         ServiceType serviceType,
         Shipping.Abstractions.Models.Shipment shipment,
-        ShipmentDetails details)
+        Shipping.Abstractions.Models.ShipmentDetails details)
     {
         request.RequestedShipment = new RequestedShipment
         {
-            ShipTimestamp = shipment.Options.ShippingDate ?? DateTime.Now,
+            ShipTimestamp = shipment.Options.ShippingDate,
             ServiceType = serviceType.ToString(),
             PackagingType = shipment.Options.PackagingType,
             PackageCount = shipment.Packages.Count.ToString(),
@@ -197,6 +196,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 "none" => new RateRequestType[1] { RateRequestType.NONE },
                 "list" => new RateRequestType[1] { RateRequestType.LIST },
                 "preferred" => new RateRequestType[1] { RateRequestType.PREFERRED },
+                _ => new RateRequestType[1] { RateRequestType.NONE }
             }
         };
 
@@ -264,7 +264,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
     private void SetPayment(
         ProcessShipmentRequest request,
         Shipping.Abstractions.Models.Shipment shipment,
-        ShipmentDetails details)
+        Shipping.Abstractions.Models.ShipmentDetails details)
     {
         var paymentType = details.PaymentType.ToLower() switch
         {
@@ -324,7 +324,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
     private void SetLabelDetails(
         ProcessShipmentRequest request,
         Shipping.Abstractions.Models.Shipment shipment,
-        ShipmentDetails details)
+        Shipping.Abstractions.Models.ShipmentDetails details)
     {
         request.RequestedShipment.LabelSpecification = new LabelSpecification
         {
@@ -368,7 +368,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
     private void SetpackageLineItems(
         ProcessShipmentRequest request,
         Shipping.Abstractions.Models.Shipment shipment,
-        ShipmentDetails details,
+        Shipping.Abstractions.Models.ShipmentDetails details,
         int sequenceNumber)
     {
         request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[1];
