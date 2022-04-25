@@ -8,23 +8,15 @@ namespace EasyKeys.Shipping.Stamps.Shipment
     public class StampsShipmentProvider : IStampsShipmentProvider
     {
         private readonly IStampsClientService _stampsClient;
-        private readonly IGetRatesV40 _ratesV40;
 
-        public StampsShipmentProvider(IStampsClientService stampsClientService, IGetRatesV40 ratesV40)
+        public StampsShipmentProvider(IStampsClientService stampsClientService)
         {
             _stampsClient = stampsClientService;
-            _ratesV40 = ratesV40;
         }
 
-        public async Task<ShipmentLabel> CreateShipmentAsync(
-            Shipping.Abstractions.Models.Shipment shipment,
-            Shipping.Abstractions.Models.ShipmentDetails details,
-            Shipping.Stamps.Abstractions.Models.ServiceType serviceType,
-            CancellationToken cancellationToken)
+        public async Task<ShipmentLabel> CreateShipmentAsync(Shipping.Abstractions.Models.Shipment shipment, RateV40 rate, CancellationToken cancellationToken)
         {
             var client = _stampsClient.CreateClient();
-
-            var rates = await _ratesV40.GetRatesResponseAsync(shipment, details, serviceType, cancellationToken);
 
             var request = new CreateIndiciumRequest()
             {
@@ -32,9 +24,9 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
                 IntegratorTxID = Guid.NewGuid().ToString(),
 
-                Rate = rates?.FirstOrDefault(),
+                Rate = rate,
 
-                ReturnTo = rates?.FirstOrDefault()?.From,
+                ReturnTo = rate.From,
 
                 CustomerID = Guid.NewGuid().ToString(),
 
@@ -168,9 +160,11 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
             request = SetOrderDetails(request, shipment);
 
-            //request = shipment.SenderInformation.Email.Any() ? SetEmailLabelTo(request, shipment) : request;
+            request = shipment.SenderInformation.Email.Any() ? SetEmailLabelTo(request, shipment) : request;
 
             request = shipment.Commodities.Any() ? SetCustomsInformation(request, shipment) : request;
+
+
 
             try
             {
@@ -184,7 +178,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                         {
                             ImageType = ImageType.Png.ToString(),
                             TrackingId = response.TrackingNumber.ToString(),
-                            Bytes = response.ImageData.ToList(),
+                            Bytes = response.ImageData.ToList()
                         }
                     }
                 };

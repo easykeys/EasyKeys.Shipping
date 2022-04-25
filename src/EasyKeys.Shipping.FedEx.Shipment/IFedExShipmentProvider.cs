@@ -1,5 +1,6 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Shipment.Models;
 
 namespace EasyKeys.Shipping.FedEx.Shipment;
 
@@ -16,6 +17,6 @@ public interface IFedExShipmentProvider
     Task<ShipmentLabel> CreateShipmentAsync(
         ServiceType serviceType,
         Shipping.Abstractions.Models.Shipment shipment,
-        Shipping.Abstractions.Models.ShipmentDetails shipmentDetails,
+        ShipmentDetails shipmentDetails,
         CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,4 @@
-﻿namespace EasyKeys.Shipping.Abstractions.Models;
+﻿namespace EasyKeys.Shipping.FedEx.Shipment.Models;
 
 public class ShipmentContacts
 {

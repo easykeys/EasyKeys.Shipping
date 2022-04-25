@@ -2,7 +2,6 @@
 {
     public enum ServiceType
     {
-        UNKNOWN,
         USPS_FIRST_CLASS_MAIL,
         USPS_MEDIA_MAIL,
         USPS_PRIORITY_MAIL,

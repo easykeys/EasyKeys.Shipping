@@ -14,7 +14,7 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
             _stampsClient = stampsClientService;
         }
 
-        public async Task<ValidateAddress> ValidateAddressAsync(ValidateAddress validateAddress, CancellationToken cancellationToken)
+        public async Task<Shipment> ValidateAddressAsync(Shipment shipment, CancellationToken cancellationToken)
         {
             var client = _stampsClient.CreateClient();
             var request = new CleanseAddressRequest()
@@ -22,43 +22,34 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
                 Item = await _stampsClient.GetTokenAsync(cancellationToken),
                 Address = new StampsClient.v111.Address()
                 {
-                    FullName = "This is required for address validation",
-                    Address1 = validateAddress.OriginalAddress.StreetLine,
-                    Address2 = "Front Office",
-                    City = validateAddress.OriginalAddress.City,
-                    State = validateAddress.OriginalAddress.StateOrProvince,
-                    PostalCode = validateAddress.OriginalAddress.PostalCode,
+                    FullName = shipment.RecipientInformation.FullName,
+                    EmailAddress = shipment.RecipientInformation.Email,
+                    Address1 = shipment.DestinationAddress.StreetLine,
+                    Address2 = shipment.DestinationAddress.StreetLine2,
+                    City = shipment.DestinationAddress.City,
+                    State = shipment.DestinationAddress.StateOrProvince,
+                    PostalCode = shipment.DestinationAddress.PostalCode,
                 },
             };
             try
             {
-                return VerifyAddress(await client.CleanseAddressAsync(request), validateAddress);
+                return VerifyAddress(await client.CleanseAddressAsync(request), shipment);
             }
             catch (Exception ex)
             {
-                validateAddress.InternalErrors.Add(ex.Message);
-                return validateAddress;
+                throw new Exception(ex.Message);
             }
         }
 
-        private ValidateAddress VerifyAddress(CleanseAddressResponse response, ValidateAddress validateAddress)
+        private Shipment VerifyAddress(CleanseAddressResponse response, Shipment shipment)
         {
-            if (!response.AddressMatch && !response.CityStateZipOK)
+            if (!response.AddressMatch)
             {
-                validateAddress.Errors.Add(new Error { Description = response.AddressCleansingResult });
-                validateAddress.ProposedAddress = new Shipping.Abstractions.Models.Address()
-                {
-                    StreetLine = response.CandidateAddresses[0].Address1 ?? String.Empty,
-                    StreetLine2 = response.CandidateAddresses[0].Address2 ?? String.Empty,
-                    City = response.CandidateAddresses[0].City ?? String.Empty,
-                    StateOrProvince = response.CandidateAddresses[0].State ?? String.Empty,
-                    CountryCode = response.CandidateAddresses[0].Country ?? String.Empty,
-                    PostalCode = response.CandidateAddresses[0].ZIPCode ?? String.Empty
-                };
-                return validateAddress;
+                shipment.Errors.Add(new Error { Description = response.AddressCleansingResult });
+                return shipment;
             }
 
-            return validateAddress;
+            return shipment;
         }
     }
 }

@@ -19,16 +19,4 @@ public static class StampsServiceCollectionExtensions
 
         return services;
     }
-
-    public static IServiceCollection AddStampsRateV40Provider(
-    this IServiceCollection services,
-    string sectionName = nameof(StampsOptions),
-    Action<StampsOptions, IServiceProvider>? configure = null)
-    {
-        services.AddChangeTokenOptions<StampsOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
-
-        services.TryAddScoped<IGetRatesV40, GetRatesV40>();
-
-        return services;
-    }
 }
