@@ -3,7 +3,7 @@
 public class LabelOptions
 {
     /// <summary>
-    /// Required for FedEx Shipping : COMMON2D, LABEL_DATA_ONLY.
+    /// COMMON2D, LABEL_DATA_ONLY.
     /// </summary>
     public string LabelFormatType { get; set; } = string.Empty;
 
