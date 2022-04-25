@@ -12,7 +12,7 @@ public class ShipmentOptions
     /// <summary>
     /// Pickup date. Current date and time is used if not specified.
     /// </summary>
-    public DateTime? ShippingDate { get; set; }
+    public DateTime ShippingDate { get; set; } = DateTime.Now;
 
     /// <summary>
     /// Preferred currency code, applies to FedEx only.

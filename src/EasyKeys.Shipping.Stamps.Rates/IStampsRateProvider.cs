@@ -1,11 +1,10 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
-
-using StampsClient.v111;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 namespace EasyKeys.Shipping.Stamps.Rates
 {
     public interface IStampsRateProvider
     {
-        Task<List<RateV40>> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default);
+        Task<Shipment> GetRatesAsync(Shipment shipment, RateRequestDetails rateDetails, CancellationToken cancellationToken = default);
     }
 }

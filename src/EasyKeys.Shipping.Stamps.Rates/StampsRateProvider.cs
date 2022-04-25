@@ -1,165 +1,49 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 
 using Microsoft.Extensions.Logging;
-
-using StampsClient.v111;
 
 namespace EasyKeys.Shipping.Stamps.Rates
 {
     public class StampsRateProvider : IStampsRateProvider
     {
         private readonly IStampsClientService _stampsClient;
+        private readonly IRatesService _ratesService;
         private readonly ILogger<StampsRateProvider> _logger;
 
-        public StampsRateProvider(IStampsClientService stampsClientService, ILogger<StampsRateProvider> logger)
+        public StampsRateProvider(IStampsClientService stampsClientService, IRatesService ratesService, ILogger<StampsRateProvider> logger)
         {
             _stampsClient = stampsClientService;
+            _ratesService = ratesService;
             _logger = logger;
         }
 
-        public async Task<List<RateV40>> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
+        public async Task<Shipment> GetRatesAsync(Shipment shipment, RateRequestDetails rateRequestDetails, CancellationToken cancellationToken = default)
         {
-            var stampsClient = _stampsClient.CreateClient();
 
-            var request = new GetRatesRequest()
+            var rates = await _ratesService.GetRatesResponseAsync(shipment, rateRequestDetails, cancellationToken);
+
+            foreach (var rate in rates)
             {
-                Item = await _stampsClient.GetTokenAsync(cancellationToken),
+                var addons = rate.AddOns.Select(x => x.AddOnDescription).Flatten(",");
 
-                Rate = new RateV40()
-                {
-                    From = new StampsClient.v111.Address()
-                    {
-                        FullName = shipment.SenderInformation.FullName,
+                var required = rate.RequiresAllOf?.Length;
 
-                        Address1 = shipment.OriginAddress.StreetLine,
+                rate.InsuredValue = 100M;
 
-                        State = shipment.OriginAddress.StateOrProvince,
+                rate.AddOns = null;
 
-                        ZIPCode = shipment.OriginAddress.PostalCode,
+                shipment.Rates.Add(new Shipping.Abstractions.Rate($"{rate.ServiceType}", rate.ServiceDescription, rate.Amount, rate.DeliveryDate));
 
-                        EmailAddress = shipment.SenderInformation.Email
-                    },
+                _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");
 
-                    To = new StampsClient.v111.Address()
-                    {
-                        FullName = shipment.RecipientInformation.FullName,
+                _logger.LogInformation($" => Cost : {rate.Amount}");
 
-                        Address1 = shipment.DestinationAddress.StreetLine,
-
-                        State = shipment.DestinationAddress.StateOrProvince,
-
-                        PostalCode = shipment.DestinationAddress.PostalCode,
-
-                        ZIPCode = shipment.DestinationAddress.PostalCode,
-
-                        EmailAddress = shipment.RecipientInformation.Email
-                    },
-
-                    Amount = 0.0m,
-
-                    MaxAmount = 0.0m,
-
-                    ServiceType = ServiceType.Unknown,
-
-                    ServiceDescription = String.Empty,
-
-                    PrintLayout = string.Empty,
-
-                    DeliverDays = string.Empty,
-
-                    WeightLb = (double)shipment.Packages.Sum(x => x.Weight),
-
-                    WeightOz = 0.0,
-
-                    PackageType = PackageTypeV11.Package,
-
-                    //RequiresAllOf =
-
-                    Length = 1.0d,
-
-                    Width = 1.0d,
-
-                    Height = 1.0d,
-
-                    ShipDate = DateTime.Now,
-
-                    //DeliveryDate =
-
-                    InsuredValue = 100.0m,
-
-                    RegisteredValue = 0.0m,
-
-                    CODValue = 0.0m,
-
-                    DeclaredValue = 0.0m,
-
-                    NonMachinable = false,
-
-                    RectangularShaped = true,
-
-                    Prohibitions = String.Empty,
-
-                    Restrictions = String.Empty,
-
-                    Observations = String.Empty,
-
-                    Regulations = String.Empty,
-
-                    GEMNotes = String.Empty,
-
-                    MaxDimensions = String.Empty,
-
-                    DimWeighting = String.Empty,
-
-                    //AddOns =
-
-                    //Surcharges =
-
-                    EffectiveWeightInOunces = 0,
-
-                    Zone = 0,
-
-                    RateCategory = 0,
-
-                    CubicPricing = false,
-
-                    ContentType = ContentTypeV2.Other,
-
-                    EntryFacility = EntryFacilityV1.Unknown,
-
-                    SortType = SortTypeV1.Unknown,
-                },
-                Carrier = Carrier.USPS
-            };
-
-            try
-            {
-                var response = await stampsClient.GetRatesAsync(request);
-
-                foreach (var rate in response.Rates)
-                {
-                    var addons = rate.AddOns.Select(x => x.AddOnDescription).Flatten(",");
-
-                    var required = rate.RequiresAllOf?.Length;
-
-                    rate.InsuredValue = 100M;
-
-                    rate.AddOns = null;
-
-                    _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");
-
-                    _logger.LogInformation($" => Addons Available : {addons}");
-
-                    _logger.LogInformation($" => Required Addons : {rate.RequiresAllOf?.ToString()}");
-                }
-
-                return response.Rates.ToList();
+                _logger.LogInformation($" => Delivery Days : {rate.DeliverDays}");
             }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+
+            return shipment;
         }
     }
 }

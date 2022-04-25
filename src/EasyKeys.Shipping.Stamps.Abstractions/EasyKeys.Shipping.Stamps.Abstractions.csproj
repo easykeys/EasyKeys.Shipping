@@ -20,6 +20,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Reference Include="System.ServiceModel" />
 	</ItemGroup>
 

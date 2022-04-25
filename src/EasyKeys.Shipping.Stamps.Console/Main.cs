@@ -1,9 +1,11 @@
 ﻿
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.AddressValidation;
 using EasyKeys.Shipping.Stamps.Rates;
 using EasyKeys.Shipping.Stamps.Shipment;
+using EasyKeys.Shipping.Stamps.Shipment.Models;
 
 using Microsoft.Extensions.Options;
 
@@ -74,31 +76,59 @@ public class Main : IMain
             FullName = "Brandon Moffett",
             Company = "EasyKeys.com",
             Email = "TestMe@EasyKeys.com",
-            Department = "Software"
+            Department = "Software",
+            PhoneNumber = "951-223-2222"
         };
         var receiver = new RecipientInformation()
         {
             FullName = "Fictitious Character",
             Company = "Marvel",
             Email = "FictitiousCharacter@marvel.com",
-            Department = "SuperHero"
+            Department = "SuperHero",
+            PhoneNumber = "867-338-2737"
         };
 
-        var shipment = new Shipment(originAddress, destinationAddress, packages) { RecipientInformation = receiver, SenderInformation = sender };
+        // 1) create validate address request
+        var validateRequest = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
 
-        var adjustedShipment = await _addressProvider.ValidateAddressAsync(shipment, cancellationToken);
+        // 2) validate address
+        var validatedAddress = await _addressProvider.ValidateAddressAsync(validateRequest, cancellationToken);
 
-        _logger.LogInformation($"Errors: {adjustedShipment.Errors.Count}");
+        _logger.LogWarning($"Address Validation Warnings : {validatedAddress.Warnings.Count()}");
 
-        var rateResponse = await _rateProvider.GetRatesAsync(adjustedShipment, cancellationToken);
+        _logger.LogError($"Address Validation Warnings : {validatedAddress.Errors.Count()}");
 
-        var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(adjustedShipment, rateResponse.LastOrDefault(), cancellationToken);
+        // 3) create shipment
+        var shipment = new Shipment(originAddress, validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress, packages)
+        {
+            RecipientInformation = receiver,
+            SenderInformation = sender
+        };
+
+        shipment.Errors.Concat(validatedAddress.Errors);
+
+        shipment.Warnings.Concat(validatedAddress.Warnings);
+
+        // 4) create generic rate details
+        var rateDetails = new RateRequestDetails() { ServiceType = ServiceType.USPS_PRIORITY_MAIL };
+
+        // 5) get list of rates for shipment
+        var shipmentWithRates = await _rateProvider.GetRatesAsync(shipment, rateDetails, cancellationToken);
+
+        _logger.LogWarning($"Address Validation Warnings : {shipmentWithRates.Warnings.Count()}");
+
+        _logger.LogError($"Address Validation Warnings : {shipmentWithRates.Errors.Count()}");
+
+        // 6) create shipment with shipment details
+        var shipmentDetails = new ShipmentRequestDetails();
+
+        var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(shipmentWithRates, shipmentDetails, cancellationToken);
 
         _logger.LogCritical($"Tracking Number : {shipmentResponse.Labels[0].TrackingId}");
 
-        await File.WriteAllBytesAsync("label.png", shipmentResponse.Labels[0].Bytes[0]);
+        //await File.WriteAllBytesAsync("label.png", shipmentResponse.Labels[0].Bytes[0]);
 
-        var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse, cancellationToken);
+        //var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse, cancellationToken);
 
         return 0;
     }

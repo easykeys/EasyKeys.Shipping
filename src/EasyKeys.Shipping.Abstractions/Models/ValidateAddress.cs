@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EasyKeys.Shipping.Abstractions.Models
+﻿namespace EasyKeys.Shipping.Abstractions.Models
 {
     /// <summary>
     /// A class to be used for address validation purposes.
@@ -42,6 +40,11 @@ namespace EasyKeys.Shipping.Abstractions.Models
         /// A parsed address returned from the address verification provider.
         /// </summary>
         public Address? ProposedAddress { get; set; }
+
+        /// <summary>
+        ///  Warnings returned by service provder (e.g. 'Street Address, City, State, and Zip are valid, but a suite or apt number may be missing.').
+        /// </summary>
+        public List<Error> Warnings { get; set; } = new List<Error>();
 
         /// <summary>
         ///     Errors returned by service provider (e.g. 'Wrong postal code').
