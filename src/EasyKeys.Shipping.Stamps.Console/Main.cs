@@ -110,7 +110,7 @@ public class Main : IMain
         shipment.Warnings.Concat(validatedAddress.Warnings);
 
         // 4) create generic rate details
-        var rateDetails = new RateRequestDetails() { ServiceType = ServiceType.USPS_PRIORITY_MAIL };
+        var rateDetails = new RateRequestDetails();
 
         // 5) get list of rates for shipment
         var shipmentWithRates = await _rateProvider.GetRatesAsync(shipment, rateDetails, cancellationToken);
@@ -119,16 +119,17 @@ public class Main : IMain
 
         _logger.LogError($"Address Validation Warnings : {shipmentWithRates.Errors.Count()}");
 
-        // 6) create shipment with shipment details
-        var shipmentDetails = new ShipmentRequestDetails();
+        // user chooses which type of service
+        var shipmentDetails = new ShipmentRequestDetails() { SelectedRate = shipmentWithRates.Rates[0] };
 
+        // 6) create shipment with shipment details
         var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(shipmentWithRates, shipmentDetails, cancellationToken);
 
         _logger.LogCritical($"Tracking Number : {shipmentResponse.Labels[0].TrackingId}");
 
-        //await File.WriteAllBytesAsync("label.png", shipmentResponse.Labels[0].Bytes[0]);
+        await File.WriteAllBytesAsync("label.png", shipmentResponse.Labels[0].Bytes[0]);
 
-        //var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse, cancellationToken);
+        var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse, cancellationToken);
 
         return 0;
     }

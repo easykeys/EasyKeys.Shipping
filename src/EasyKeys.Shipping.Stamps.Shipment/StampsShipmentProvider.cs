@@ -24,7 +24,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
             var ratesDetails = new RateRequestDetails()
             {
-                ServiceType = shipment?.Rates?.FirstOrDefault()?.Name switch
+                ServiceType = shipmentDetails.SelectedRate.Name switch
                 {
                     "USFC" => Abstractions.Models.ServiceType.USPS_FIRST_CLASS_MAIL,
                     "USMM" => Abstractions.Models.ServiceType.USPS_MEDIA_MAIL,
@@ -35,10 +35,10 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                     "USFCI" => Abstractions.Models.ServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL,
                     "USPS" => Abstractions.Models.ServiceType.USPS_PARCEL_SELECT_GROUND,
                     "USLM" => Abstractions.Models.ServiceType.USPS_LIBRARY_MAIL,
-                    _ => Abstractions.Models.ServiceType.UNKNOWN
+                    _ => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL
 
                 },
-                ServiceDescription = shipment?.Rates?.FirstOrDefault()?.ServiceName,
+                ServiceDescription = shipmentDetails.SelectedRate.ServiceName,
             };
 
             var rates = await _ratesService.GetRatesResponseAsync(shipment, ratesDetails, cancellationToken);
@@ -121,7 +121,6 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                     Internal Transaction Number (ITN) to be put on the CP72 form.*/
                 InternalTransactionNumber = "123",
 
-
                 PaperSize = shipmentDetails.LabelOptions.PaperSize.ToLower() switch
                 {
                     "4x6" => PaperSizeV1.Default,
@@ -195,7 +194,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                     {
                         new PackageLabelDetails()
                         {
-                            ImageType = ImageType.Png.ToString(),
+                            ImageType = shipmentDetails.LabelOptions.ImageType,
                             TrackingId = response.TrackingNumber.ToString(),
                             Bytes = response.ImageData.ToList()
                         }
@@ -229,8 +228,6 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
         private CustomsV7 SetCustomsInformation(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, RateRequestDetails rateDetails)
         {
-            // using shipment.commodities information set request.customs
-
             var customsLine = new List<CustomsLine>();
 
             foreach (var commodity in shipment.Commodities)
@@ -290,7 +287,6 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
         private ShipmentNotification SetShipmentNotification(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails)
         {
-            // using shipment informtion to set request.shipmentNotification
             return new ShipmentNotification()
             {
                 Email = string.IsNullOrEmpty(shipmentDetails.NotificationOptions.Email) ? shipment.RecipientInformation.Email : shipmentDetails.NotificationOptions.Email,
