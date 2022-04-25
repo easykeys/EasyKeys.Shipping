@@ -41,11 +41,11 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                     To = new StampsClient.v111.Address()
                     {
-                        FullName = details.Recipient.FullName,
+                        FullName = details.Sender.FullName,
 
-                        FirstName = details.Recipient.FirstName,
+                        FirstName = details.Sender.FirstName,
 
-                        LastName = details.Recipient.LastName,
+                        LastName = details.Sender.LastName,
 
                         Address1 = shipment.DestinationAddress.StreetLine,
 

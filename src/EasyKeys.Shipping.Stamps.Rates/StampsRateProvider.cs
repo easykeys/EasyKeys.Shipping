@@ -10,7 +10,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
         private readonly IGetRatesV40 _ratesV40;
         private readonly ILogger<StampsRateProvider> _logger;
 
-        public StampsRateProvider(IGetRatesV40 ratesV40, ILogger<StampsRateProvider> logger)
+        public StampsRateProvider(IStampsClientService stampsClientService, IGetRatesV40 ratesV40, ILogger<StampsRateProvider> logger)
         {
             _ratesV40 = ratesV40;
             _logger = logger;
