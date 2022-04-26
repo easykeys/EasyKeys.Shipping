@@ -53,11 +53,11 @@ public class Main : IMain
             countryCode: "US");
 
         var destinationAddress = new EasyKeys.Shipping.Abstractions.Models.Address(
-            streetLine: "1550 Central Ave",
-            city: "Riverside",
-            stateOrProvince: "CA",
-            postalCode: "92507",
-            countryCode: "US");
+            streetLine: "24 Sussex Drive",
+            city: "Ottawa",
+            stateOrProvince: "ON",
+            postalCode: "K1M 1M4",
+            countryCode: "CA");
 
         var packages = new List<EasyKeys.Shipping.Abstractions.Package>
         {
@@ -70,6 +70,8 @@ public class Main : IMain
                 },
                 50.0M),
         };
+
+        var commodity = new Commodity() { Description = "ekjs", CountryOfManufacturer = "US", PartNumber = "kjsdf", Amount = 10m, CustomsValue = 1m, NumberOfPieces = 1, Quantity = 1, ExportLicenseNumber = "dsdfs", Name = "sdkfsdf", Weight = 13m };
 
         var sender = new SenderInformation()
         {
@@ -102,15 +104,17 @@ public class Main : IMain
         var shipment = new Shipment(originAddress, validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress, packages)
         {
             RecipientInformation = receiver,
-            SenderInformation = sender
+            SenderInformation = sender,
         };
 
         shipment.Errors.Concat(validatedAddress.Errors);
 
         shipment.Warnings.Concat(validatedAddress.Warnings);
 
+        shipment.Commodities.Add(commodity);
+
         // 4) create generic rate details
-        var rateDetails = new RateRequestDetails();
+        var rateDetails = new RateRequestDetails() { DeclaredValue = 100m, RegisteredValue = 100m };
 
         // 5) get list of rates for shipment
         var shipmentWithRates = await _rateProvider.GetRatesAsync(shipment, rateDetails, cancellationToken);
@@ -120,7 +124,7 @@ public class Main : IMain
         _logger.LogError($"Address Validation Warnings : {shipmentWithRates.Errors.Count()}");
 
         // user chooses which type of service
-        var shipmentDetails = new ShipmentRequestDetails() { SelectedRate = shipmentWithRates.Rates[0] };
+        var shipmentDetails = new ShipmentRequestDetails() { DeclaredValue = 100m, SelectedRate = shipmentWithRates.Rates[0], CustomsInformation = new CustomsInformation() { CustomsSigner = "brandon moffett" } };
 
         // 6) create shipment with shipment details
         var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(shipmentWithRates, shipmentDetails, cancellationToken);

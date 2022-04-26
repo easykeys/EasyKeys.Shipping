@@ -27,8 +27,10 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
                     Address2 = validateAddress.OriginalAddress.StreetLine2,
                     City = validateAddress.OriginalAddress.City,
                     State = validateAddress.OriginalAddress.StateOrProvince,
+                    Province = validateAddress.OriginalAddress.StateOrProvince,
                     PostalCode = validateAddress.OriginalAddress.PostalCode,
-                },
+                    Country = validateAddress.OriginalAddress.CountryCode
+                }
             };
             try
             {
@@ -51,15 +53,6 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
                 else
                 {
                     validateAddress.Errors.Add(new Error { Description = response.AddressCleansingResult });
-                    validateAddress.ProposedAddress = new Shipping.Abstractions.Models.Address()
-                    {
-                        StreetLine = response.CandidateAddresses[0].Address1 ?? String.Empty,
-                        StreetLine2 = response.CandidateAddresses[0].Address2 ?? String.Empty,
-                        City = response.CandidateAddresses[0].City ?? String.Empty,
-                        StateOrProvince = response.CandidateAddresses[0].State ?? String.Empty,
-                        CountryCode = response.CandidateAddresses[0].Country ?? String.Empty,
-                        PostalCode = response.CandidateAddresses[0].ZIPCode ?? String.Empty
-                    };
                 }
             }
 

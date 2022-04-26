@@ -35,7 +35,11 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                             Address1 = shipment.OriginAddress.StreetLine,
 
+                            City = shipment.OriginAddress.City,
+
                             State = shipment.OriginAddress.StateOrProvince,
+
+                            Country = shipment.OriginAddress.CountryCode,
 
                             ZIPCode = shipment.OriginAddress.PostalCode,
 
@@ -54,11 +58,17 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                             Address1 = shipment.DestinationAddress.StreetLine,
 
-                            State = shipment.DestinationAddress.StateOrProvince,
+                            City = shipment.DestinationAddress.City,
 
-                            PostalCode = shipment.DestinationAddress.PostalCode,
+                            Province = shipment.DestinationAddress.CountryCode != "US" ? shipment.DestinationAddress.StateOrProvince : null,
 
-                            ZIPCode = shipment.DestinationAddress.PostalCode,
+                            State = shipment.DestinationAddress.CountryCode == "US" ? shipment.DestinationAddress.StateOrProvince : null,
+
+                            Country = shipment.DestinationAddress.CountryCode,
+
+                            PostalCode = shipment.DestinationAddress.CountryCode != "US" ? shipment.DestinationAddress.PostalCode : null,
+
+                            ZIPCode = shipment.DestinationAddress.CountryCode == "US" ? shipment.DestinationAddress.PostalCode : null,
 
                             PhoneNumber = shipment.RecipientInformation.PhoneNumber,
 
@@ -184,7 +194,11 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                 addOns.Add(new AddOnV17() { AddOnDescription = "Tracking", AddOnType = AddOnTypeV17.USADC });
 
-                addOns.Add(new AddOnV17() { AddOnDescription = "Registered Mail", AddOnType = AddOnTypeV17.USAREG });
+                if (shipment.DestinationAddress.CountryCode == "US")
+                {
+                    addOns.Add(new AddOnV17() { AddOnDescription = "Registered Mail", AddOnType = AddOnTypeV17.USAREG });
+                }
+
 
                 if (shipment.Packages.Any(x => x.SignatureRequiredOnDelivery))
                 {

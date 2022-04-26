@@ -31,7 +31,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                     "USPM" => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL,
                     "USXM" => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL_EXPRESS,
                     "UEMI" => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL_EXPRESS_INTERNATIONAL,
-                    "UPMI" => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL,
+                    "USPMI" => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL,
                     "USFCI" => Abstractions.Models.ServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL,
                     "USPS" => Abstractions.Models.ServiceType.USPS_PARCEL_SELECT_GROUND,
                     "USLM" => Abstractions.Models.ServiceType.USPS_LIBRARY_MAIL,
@@ -39,6 +39,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
                 },
                 ServiceDescription = shipmentDetails.SelectedRate.ServiceName,
+                DeclaredValue = shipmentDetails.DeclaredValue
             };
 
             var rates = await _ratesService.GetRatesResponseAsync(shipment, ratesDetails, cancellationToken);
@@ -181,7 +182,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 EnclosedPackageType = EnclosedPackageType.Unknown,
 
                 //Caller defined data. Specifies the branding to be used for emails corresponding with this print.
-                BrandingId = Guid.NewGuid(),
+                BrandingId = Guid.NewGuid()
             };
 
             request = SetOrderDetails(request, shipment);
@@ -238,6 +239,11 @@ namespace EasyKeys.Shipping.Stamps.Shipment
         private Dictionary<string, decimal> SetSurcharges(CreateIndiciumResponse response)
         {
             var surcharges = new Dictionary<string, decimal>();
+
+            if (response.Rate.Surcharges == null)
+            {
+                return surcharges;
+            }
 
             foreach (var surcharge in response.Rate.Surcharges)
             {
