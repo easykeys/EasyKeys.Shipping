@@ -123,7 +123,9 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
                 PaperSize = shipmentDetails.LabelOptions.PaperSize.ToLower() switch
                 {
-                    "4x6" => PaperSizeV1.Default,
+                    "default" => PaperSizeV1.Default,
+                    "labelsize" => PaperSizeV1.LabelSize,
+                    "letter85x11" => PaperSizeV1.Letter85x11,
                     _ => PaperSizeV1.Default
                 },
 
@@ -196,7 +198,13 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                         {
                             ImageType = shipmentDetails.LabelOptions.ImageType,
                             TrackingId = response.TrackingNumber.ToString(),
-                            Bytes = response.ImageData.ToList()
+                            Bytes = response.ImageData.ToList(),
+                            Charges = new PackageCharges()
+                            {
+                                Surcharges = SetSurcharges(response),
+                                TotalSurCharges = SetSurcharges(response).Values.Sum(),
+                                NetCharge = response.Rate.Amount
+                            }
                         }
                     }
                 };
@@ -224,6 +232,18 @@ namespace EasyKeys.Shipping.Stamps.Shipment
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        private Dictionary<string, decimal> SetSurcharges(CreateIndiciumResponse response)
+        {
+            var surcharges = new Dictionary<string, decimal>();
+
+            foreach (var surcharge in response.Rate.Surcharges)
+            {
+                surcharges[surcharge.SurchargeType.ToString()] = surcharge.Amount;
+            }
+
+            return surcharges;
         }
 
         private CustomsV7 SetCustomsInformation(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, RateRequestDetails rateDetails)

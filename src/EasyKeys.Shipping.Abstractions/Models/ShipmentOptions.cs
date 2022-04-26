@@ -20,17 +20,54 @@ public class ShipmentOptions
     public string PreferredCurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// • YOUR_PACKAGING
-    /// • FEDEX_10KG_BOX
-    /// • FEDEX_25KG_BOX
-    /// • FEDEX_BOX
-    /// • FEDEX_ENVELOPE
-    /// • FEDEX_EXTRA_LARGE_BOX
-    /// • FEDEX_LARGE_BOX
-    /// • FEDEX_MEDIUM_BOX
-    /// • FEDEX_PAK
-    /// • FEDEX_SMALL_BOX
-    /// • FEDEX_TUBE.
+    /// <b>FEDEX SHIPPING ONLY</b>
+    /// <list type="bullet">
+    ///
+    /// <item>
+    /// <description> YOUR_PACKAGING
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_10KG_BOX
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_25KG_BOX
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_BOX
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_ENVELOPE
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_EXTRA_LARGE_BOX
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_LARGE_BOX
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_MEDIUM_BOX
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_PAK
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_SMALL_BOX
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>FEDEX_TUBE.
+    /// </description>
+    /// </item>
+    /// </list>
     /// </summary>
     public string PackagingType { get; set; } = "YOUR_PACKAGING";
 

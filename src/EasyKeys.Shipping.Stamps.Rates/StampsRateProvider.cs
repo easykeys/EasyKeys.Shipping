@@ -26,14 +26,6 @@ namespace EasyKeys.Shipping.Stamps.Rates
 
             foreach (var rate in rates)
             {
-                var addons = rate.AddOns.Select(x => x.AddOnDescription).Flatten(",");
-
-                var required = rate.RequiresAllOf?.Length;
-
-                rate.InsuredValue = 100M;
-
-                rate.AddOns = null;
-
                 shipment.Rates.Add(new Shipping.Abstractions.Rate($"{rate.ServiceType}", rate.ServiceDescription, rate.Amount, rate.DeliveryDate));
 
                 _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");

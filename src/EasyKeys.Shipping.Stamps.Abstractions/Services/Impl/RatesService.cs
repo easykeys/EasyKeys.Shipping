@@ -86,13 +86,9 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         ServiceDescription = rateDetails.ServiceDescription,
 
-                        //PrintLayout = rateDetails.LabelOptions.LabelSize,
-
                         DeliverDays = string.Empty,
 
                         ShipDate = shipment.Options.ShippingDate,
-
-                        //DeliveryDate =
 
                         InsuredValue = rateDetails.InsuredValue,
 
@@ -120,13 +116,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         DimWeighting = rateDetails.DimWeighting,
 
-                        //Surcharges =
-
                         EffectiveWeightInOunces = 0,
-
-                        Zone = rateDetails.Zone,
-
-                        RateCategory = rateDetails.RateCategory,
 
                         CubicPricing = rateDetails.CubicPricing,
 
@@ -160,7 +150,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                     }
                 };
 
-                request = ApplyPackageDetails(request, shipment);
+                request = ApplyPackageDetails(request, rateDetails, shipment);
 
                 try
                 {
@@ -207,24 +197,43 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
             return request;
         }
 
-        private GetRatesRequest ApplyPackageDetails(GetRatesRequest request, Shipment shipment)
+        private GetRatesRequest ApplyPackageDetails(GetRatesRequest request, RateRequestDetails rateDetails, Shipment shipment)
         {
             request.Rate.WeightLb = (double)shipment.Packages.Sum(x => x.Weight);
 
             request.Rate.WeightOz = 0.0;
 
-            request.Rate.PackageType = shipment.Options.PackagingType switch
+            request.Rate.PackageType = rateDetails.PackageType switch
             {
+                PackageType.Pak => PackageTypeV11.Pak,
+                PackageType.Package => PackageTypeV11.Package,
+                PackageType.Oversized_Package => PackageTypeV11.OversizedPackage,
+                PackageType.Large_Package => PackageTypeV11.LargePackage,
+                PackageType.PostCard => PackageTypeV11.Postcard,
+                PackageType.Documents => PackageTypeV11.Documents,
+                PackageType.Thick_Envelope => PackageTypeV11.ThickEnvelope,
+                PackageType.Envelope => PackageTypeV11.Envelope,
+                PackageType.Express_Envelope => PackageTypeV11.ExpressEnvelope,
+                PackageType.Flat_Rate_Envelope => PackageTypeV11.FlatRateEnvelope,
+                PackageType.Legal_Flat_Rate_Envelope => PackageTypeV11.LegalFlatRateEnvelope,
+                PackageType.Unknown => PackageTypeV11.Unknown,
+                PackageType.Letter => PackageTypeV11.Letter,
+                PackageType.Large_Envelope_Or_Flat => PackageTypeV11.LargeEnvelopeorFlat,
+                PackageType.Small_Flat_Rate_Box => PackageTypeV11.SmallFlatRateBox,
+                PackageType.Flat_Rate_Box => PackageTypeV11.FlatRateBox,
+                PackageType.Large_Flat_Rate_Box => PackageTypeV11.LargeFlatRateBox,
+                PackageType.Flat_Rate_Padded_Envelope => PackageTypeV11.FlatRatePaddedEnvelope,
+                PackageType.Regional_Rate_Box_A => PackageTypeV11.RegionalRateBoxA,
+                PackageType.Regional_Rate_Box_B => PackageTypeV11.RegionalRateBoxB,
+                PackageType.Regional_Rate_Box_C => PackageTypeV11.RegionalRateBoxC,
                 _ => PackageTypeV11.Package
             };
 
-            //RequiresAllOf =
+            request.Rate.Length = (double)shipment.Packages.FirstOrDefault().Dimensions.Length;
 
-            request.Rate.Length = 1.0d;
+            request.Rate.Width = (double)shipment.Packages.FirstOrDefault().Dimensions.Width;
 
-            request.Rate.Width = 1.0d;
-
-            request.Rate.Height = 1.0d;
+            request.Rate.Height = (double)shipment.Packages.FirstOrDefault().Dimensions.Height;
 
             return request;
         }

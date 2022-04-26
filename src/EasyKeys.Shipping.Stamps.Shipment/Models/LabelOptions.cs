@@ -51,7 +51,7 @@
         /// </item>
         /// </list>
         /// </summary>
-        public string PaperSize { get; set; } = "4x6";
+        public string PaperSize { get; set; } = "default";
 
         /// <summary>
         /// <list type="bullet">
