@@ -20,9 +20,8 @@ public class ShipmentOptions
     public string PreferredCurrencyCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// <b>FEDEX SHIPPING ONLY</b>
+    /// <b>FEDEX Shipping </b>
     /// <list type="bullet">
-    ///
     /// <item>
     /// <description> YOUR_PACKAGING
     /// </description>

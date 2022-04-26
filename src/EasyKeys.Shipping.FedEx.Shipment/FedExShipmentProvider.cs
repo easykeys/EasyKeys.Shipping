@@ -182,7 +182,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
     {
         request.RequestedShipment = new RequestedShipment
         {
-            ShipTimestamp = shipment.Options.ShippingDate ?? DateTime.Now,
+            ShipTimestamp = shipment.Options.ShippingDate,
             ServiceType = serviceType.ToString(),
             PackagingType = shipment.Options.PackagingType,
             PackageCount = shipment.Packages.Count.ToString(),

@@ -196,6 +196,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                     {
                         new PackageLabelDetails()
                         {
+                            ProviderLabelId = response.StampsTxID.ToString(),
                             ImageType = shipmentDetails.LabelOptions.ImageType,
                             TrackingId = response.TrackingNumber.ToString(),
                             Bytes = response.ImageData.ToList(),
