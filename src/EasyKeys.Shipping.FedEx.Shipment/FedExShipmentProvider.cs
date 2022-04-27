@@ -220,9 +220,9 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             Value = shipment.Packages.Sum(x => x.Weight)
         };
 
-        SetSender(request, details.Sender, shipment);
+        SetSender(request, shipment);
 
-        SetRecipient(request, details.Recipient, shipment);
+        SetRecipient(request, shipment);
 
         SetPayment(request, shipment, details);
 
@@ -231,17 +231,16 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
     private void SetSender(
         ProcessShipmentRequest request,
-        SenderContact shipper,
         Shipping.Abstractions.Models.Shipment shipment)
     {
         request.RequestedShipment.Shipper = new Party
         {
             Contact = new ShipClient.v25.Contact()
             {
-                PersonName = shipper.FullName,
-                CompanyName = shipper.CompanyName,
-                PhoneNumber = shipper.PhoneNumber,
-                EMailAddress = shipper.Email
+                PersonName = shipment.SenderInfo.FullName,
+                CompanyName = shipment.SenderInfo.Company,
+                PhoneNumber = shipment.SenderInfo.PhoneNumber,
+                EMailAddress = shipment.SenderInfo.Email
             },
             Address = shipment.OriginAddress.GetFedExAddress()
         };
@@ -249,16 +248,15 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
     private void SetRecipient(
         ProcessShipmentRequest request,
-        RecipientContact recipient,
         Shipping.Abstractions.Models.Shipment shipment)
     {
         request.RequestedShipment.Recipient = new Party
         {
             Contact = new ShipClient.v25.Contact()
             {
-                PersonName = recipient.FullName,
-                EMailAddress = recipient.Email,
-                PhoneNumber = recipient.PhoneNumber
+                PersonName = shipment.RecipientInfo.FullName,
+                EMailAddress = shipment.RecipientInfo.Email,
+                PhoneNumber = shipment.RecipientInfo.PhoneNumber
             },
             Address = shipment.DestinationAddress.GetFedExAddress()
         };
@@ -290,9 +288,9 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         {
                             Contact = new ShipClient.v25.Contact()
                             {
-                                PersonName = details.Sender.FullName,
-                                EMailAddress = details.Sender.Email,
-                                PhoneNumber = details.Sender.PhoneNumber
+                                PersonName = shipment.SenderInfo.FullName,
+                                EMailAddress = shipment.SenderInfo.Email,
+                                PhoneNumber = shipment.SenderInfo.PhoneNumber
                             },
                             AccountNumber = request.ClientDetail.AccountNumber,
                         },
@@ -312,11 +310,11 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         {
                             Contact = new ShipClient.v25.Contact()
                             {
-                                PersonName = details.Recipient.FullName,
-                                EMailAddress = details.Recipient.Email,
-                                PhoneNumber = details.Recipient.PhoneNumber
+                                PersonName = shipment.RecipientInfo.FullName,
+                                EMailAddress = shipment.RecipientInfo.Email,
+                                PhoneNumber = shipment.RecipientInfo.PhoneNumber
                             },
-                            AccountNumber = details.Recipient.AccountNumber,
+                            AccountNumber = details.AccountNumber,
                         },
                     }
                 };
@@ -350,9 +348,10 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             {
                 Contact = new ShipClient.v25.Contact()
                 {
-                    PersonName = details.Sender.FullName,
-                    EMailAddress = details.Sender.Email,
-                    PhoneNumber = details.Sender.PhoneNumber
+                    PersonName = shipment.SenderInfo.FullName,
+                    CompanyName = shipment.SenderInfo.Company,
+                    EMailAddress = shipment.SenderInfo.Email,
+                    PhoneNumber = shipment.SenderInfo.PhoneNumber
                 },
                 Address = shipment.OriginAddress.GetFedExAddress()
             },
@@ -387,7 +386,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 Value = shipment.Packages[sequenceNumber].RoundedWeight,
             },
 
-            Dimensions = new Dimensions()
+            Dimensions = new ShipClient.v25.Dimensions()
             {
                 Length = shipment.Packages[sequenceNumber].Dimensions.RoundedLength.ToString(),
                 Width = shipment.Packages[sequenceNumber].Dimensions.RoundedWidth.ToString(),
@@ -463,8 +462,8 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                             NotificationType = NotificationType.EMAIL,
                             EmailDetail = new EMailDetail()
                             {
-                                EmailAddress = details.Recipient.Email,
-                                Name = details.Recipient.FullName,
+                                EmailAddress = shipment.RecipientInfo.Email,
+                                Name = shipment.RecipientInfo.FullName,
                             },
                             Localization = new Localization
                             {

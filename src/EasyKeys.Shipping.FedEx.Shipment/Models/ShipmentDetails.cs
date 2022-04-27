@@ -8,14 +8,9 @@ public class ShipmentDetails
     public string TransactionId { get; set; } = Guid.NewGuid().ToString();
 
     /// <summary>
-    /// Informaiton used for labels.
+    /// Recipient Account Number.
     /// </summary>
-    public SenderContact Sender { get; set; } = new();
-
-    /// <summary>
-    /// Information used for labels.
-    /// </summary>
-    public RecipientContact Recipient { get; set; } = new();
+    public string AccountNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// Direct,
@@ -47,7 +42,7 @@ public class ShipmentDetails
     /// NONE,
     /// PREFERRED.
     /// </summary>
-    public string RateRequestType { get; set; } = "PREFERRED";
+    public string RateRequestType { get; set; } = "LIST";
 
     /// <summary>
     /// Default payment type would be sender unless its a COD.
@@ -60,5 +55,8 @@ public class ShipmentDetails
     /// </summary>
     public CollectOnDelivery CollectOnDelivery { get; set; } = new CollectOnDelivery();
 
+    /// <summary>
+    /// FedEx label options.
+    /// </summary>
     public LabelOptions LabelOptions { get; set; } = new();
 }

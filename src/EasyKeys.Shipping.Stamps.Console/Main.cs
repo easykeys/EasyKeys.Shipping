@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.AddressValidation;
@@ -45,24 +44,24 @@ public class Main : IMain
         // use this token for stopping the services
         var cancellationToken = _applicationLifetime.ApplicationStopping;
 
-        var originAddress = new EasyKeys.Shipping.Abstractions.Models.Address(
+        var originAddress = new Address(
             streetLine: "11407 Granite Street",
             city: "Charlotte",
             stateOrProvince: "NC",
             postalCode: "28273",
             countryCode: "US");
 
-        var destinationAddress = new EasyKeys.Shipping.Abstractions.Models.Address(
+        var destinationAddress = new Address(
             streetLine: "24 Sussex Drive",
             city: "Ottawa",
             stateOrProvince: "ON",
             postalCode: "K1M 1M4",
             countryCode: "CA");
 
-        var packages = new List<EasyKeys.Shipping.Abstractions.Package>
+        var packages = new List<Package>
         {
-            new EasyKeys.Shipping.Abstractions.Package(
-                new EasyKeys.Shipping.Abstractions.Dimensions()
+            new Package(
+                new Dimensions()
                 {
                     Height = 20.00M,
                     Width = 20.00M,
@@ -71,19 +70,32 @@ public class Main : IMain
                 50.0M),
         };
 
-        var commodity = new Commodity() { Description = "ekjs", CountryOfManufacturer = "US", PartNumber = "kjsdf", Amount = 10m, CustomsValue = 1m, NumberOfPieces = 1, Quantity = 1, ExportLicenseNumber = "dsdfs", Name = "sdkfsdf", Weight = 13m };
-
-        var sender = new SenderInformation()
+        var commodity = new Commodity()
         {
-            FullName = "Brandon Moffett",
+            Description = "ekjs",
+            CountryOfManufacturer = "US",
+            PartNumber = "kjsdf",
+            Amount = 10m,
+            CustomsValue = 1m,
+            NumberOfPieces = 1,
+            Quantity = 1,
+            ExportLicenseNumber = "dsdfs",
+            Name = "sdkfsdf",
+            Weight = 13m
+        };
+
+        var sender = new ContactInfo()
+        {
+            FirstName = "Brandon",
+            LastName = "Moffett",
             Company = "EasyKeys.com",
             Email = "TestMe@EasyKeys.com",
             Department = "Software",
             PhoneNumber = "951-223-2222"
         };
-        var receiver = new RecipientInformation()
+        var receiver = new ContactInfo()
         {
-            FullName = "Fictitious Character",
+            FirstName = "Fictitious Character",
             Company = "Marvel",
             Email = "FictitiousCharacter@marvel.com",
             Department = "SuperHero",
@@ -103,8 +115,8 @@ public class Main : IMain
         // 3) create shipment
         var shipment = new Shipment(originAddress, validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress, packages)
         {
-            RecipientInformation = receiver,
-            SenderInformation = sender,
+            RecipientInfo = receiver,
+            SenderInfo = sender,
         };
 
         shipment.Errors.Concat(validatedAddress.Errors);

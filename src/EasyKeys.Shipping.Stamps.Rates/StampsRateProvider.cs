@@ -4,36 +4,34 @@ using EasyKeys.Shipping.Stamps.Abstractions.Services;
 
 using Microsoft.Extensions.Logging;
 
-namespace EasyKeys.Shipping.Stamps.Rates
+namespace EasyKeys.Shipping.Stamps.Rates;
+
+public class StampsRateProvider : IStampsRateProvider
 {
-    public class StampsRateProvider : IStampsRateProvider
+    private readonly IRatesService _ratesService;
+    private readonly ILogger<StampsRateProvider> _logger;
+
+    public StampsRateProvider(IRatesService ratesService, ILogger<StampsRateProvider> logger)
     {
-        private readonly IRatesService _ratesService;
-        private readonly ILogger<StampsRateProvider> _logger;
+        _ratesService = ratesService;
+        _logger = logger;
+    }
 
-        public StampsRateProvider(IRatesService ratesService, ILogger<StampsRateProvider> logger)
+    public async Task<Shipment> GetRatesAsync(Shipment shipment, RateRequestDetails rateRequestDetails, CancellationToken cancellationToken = default)
+    {
+        var rates = await _ratesService.GetRatesResponseAsync(shipment, rateRequestDetails, cancellationToken);
+
+        foreach (var rate in rates)
         {
-            _ratesService = ratesService;
-            _logger = logger;
+            shipment.Rates.Add(new Rate($"{rate.ServiceType}", rate.ServiceDescription, rate.Amount, rate.DeliveryDate));
+
+            _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");
+
+            _logger.LogInformation($" => Cost : {rate.Amount}");
+
+            _logger.LogInformation($" => Delivery Days : {rate.DeliverDays}");
         }
 
-        public async Task<Shipment> GetRatesAsync(Shipment shipment, RateRequestDetails rateRequestDetails, CancellationToken cancellationToken = default)
-        {
-
-            var rates = await _ratesService.GetRatesResponseAsync(shipment, rateRequestDetails, cancellationToken);
-
-            foreach (var rate in rates)
-            {
-                shipment.Rates.Add(new Shipping.Abstractions.Rate($"{rate.ServiceType}", rate.ServiceDescription, rate.Amount, rate.DeliveryDate));
-
-                _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");
-
-                _logger.LogInformation($" => Cost : {rate.Amount}");
-
-                _logger.LogInformation($" => Delivery Days : {rate.DeliverDays}");
-            }
-
-            return shipment;
-        }
+        return shipment;
     }
 }

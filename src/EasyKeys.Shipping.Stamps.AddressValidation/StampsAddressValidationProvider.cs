@@ -63,12 +63,12 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
                 null => validateAddress.OriginalAddress,
                 _ => new Shipping.Abstractions.Models.Address()
                 {
-                    StreetLine = response.CandidateAddresses?.FirstOrDefault()?.Address1 ?? String.Empty,
-                    StreetLine2 = response.CandidateAddresses?.FirstOrDefault()?.Address2 ?? String.Empty,
-                    City = response.CandidateAddresses?.FirstOrDefault()?.City ?? String.Empty,
-                    StateOrProvince = response.CandidateAddresses?.FirstOrDefault()?.State ?? String.Empty,
-                    CountryCode = response.CandidateAddresses?.FirstOrDefault()?.Country ?? String.Empty,
-                    PostalCode = response.CandidateAddresses?.FirstOrDefault()?.ZIPCode ?? String.Empty
+                    StreetLine = response.CandidateAddresses?.FirstOrDefault()?.Address1 ?? string.Empty,
+                    StreetLine2 = response.CandidateAddresses?.FirstOrDefault()?.Address2 ?? string.Empty,
+                    City = response.CandidateAddresses?.FirstOrDefault()?.City ?? string.Empty,
+                    StateOrProvince = response.CandidateAddresses?.FirstOrDefault()?.State ?? string.Empty,
+                    CountryCode = response.CandidateAddresses?.FirstOrDefault()?.Country ?? string.Empty,
+                    PostalCode = response.CandidateAddresses?.FirstOrDefault()?.ZIPCode ?? string.Empty
                 }
             };
 

@@ -51,10 +51,10 @@ public class Main : IMain
             postalCode: "28273",
             countryCode: "US");
 
-        var packages = new List<Shipping.Abstractions.Package>
+        var packages = new List<Package>
         {
-            new Shipping.Abstractions.Package(
-                new Shipping.Abstractions.Dimensions()
+            new Package(
+                new Dimensions()
                 {
                     Height = 20.00M,
                     Width = 20.00M,
@@ -62,8 +62,8 @@ public class Main : IMain
                 },
                 125.0M),
 
-            new Shipping.Abstractions.Package(
-                new Shipping.Abstractions.Dimensions()
+            new Package(
+                new Dimensions()
                 {
                     Height = 10.00M,
                     Width = 10.00M,
@@ -71,8 +71,8 @@ public class Main : IMain
                 },
                 80.0M),
 
-            //new Shipping.Abstractions.Package(
-            //    new Shipping.Abstractions.Dimensions()
+            // new Package(
+            //    new Dimensions()
             //    {
             //        Height = 11.00M,
             //        Width = 11.00M,
@@ -91,24 +91,7 @@ public class Main : IMain
         var details = new ShipmentDetails
         {
             TransactionId = "1234-transaction",
-            Sender = new SenderContact
-            {
-                FullName = "EasyKeys.com Customer Support",
-                CompanyName = "EasyKeys.com",
-                PhoneNumber = "8778395397",
-                Email = ""
-            },
-
             PaymentType = "sender",
-
-            Recipient = new RecipientContact
-            {
-                FullName = "Ed Moicoachv",
-                CompanyName = "companyname",
-                Email = "moincoachv@easykeys.com",
-                PhoneNumber = "444-444-4444"
-            },
-
             CollectOnDelivery = new CollectOnDelivery()
             {
                 Activated = false,
@@ -116,9 +99,7 @@ public class Main : IMain
                 CollectionType = "guaranteed_funds",
                 Currency = "USD"
             },
-
             DeliverySignatureOptions = "NoSignatureRequired",
-
             LabelOptions = new LabelOptions()
             {
                 LabelFormatType = "COMMON2D",
@@ -136,6 +117,24 @@ public class Main : IMain
             Quantity = 3,
             QuantityUnits = "EA",
             UnitPrice = 15.0M
+        };
+
+        var sender = new ContactInfo
+        {
+            FirstName = "EasyKeys.com",
+            LastName = "Customer Support",
+            Company = "EasyKeys.com",
+            PhoneNumber = "8778395397",
+            Email = string.Empty
+        };
+
+        var recipient = new ContactInfo
+        {
+            FirstName = "Ed",
+            LastName = "Moicoachv",
+            Company = "companyname",
+            Email = "moincoachv@easykeys.com",
+            PhoneNumber = "444-444-4444"
         };
 
         using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly("Embeded.Addresses.json");
@@ -159,6 +158,9 @@ public class Main : IMain
                 validationResult?.ProposedAddress,
                 packages,
                 shipmentOptions);
+
+            shipment.SenderInfo = sender;
+            shipment.RecipientInfo = recipient;
 
             shipment.Commodities.Add(commodity);
 

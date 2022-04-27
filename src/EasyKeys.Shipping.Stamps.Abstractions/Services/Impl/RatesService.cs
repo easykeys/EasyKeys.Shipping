@@ -27,11 +27,11 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                     {
                         From = new StampsClient.v111.Address()
                         {
-                            FullName = shipment.SenderInformation.FullName,
+                            FullName = shipment.SenderInfo.FullName,
 
-                            FirstName = shipment.SenderInformation.FirstName,
+                            FirstName = shipment.SenderInfo.FirstName,
 
-                            LastName = shipment.SenderInformation.LastName,
+                            LastName = shipment.SenderInfo.LastName,
 
                             Address1 = shipment.OriginAddress.StreetLine,
 
@@ -43,18 +43,18 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                             ZIPCode = shipment.OriginAddress.PostalCode,
 
-                            PhoneNumber = shipment.SenderInformation.PhoneNumber,
+                            PhoneNumber = shipment.SenderInfo.PhoneNumber,
 
-                            EmailAddress = shipment.RecipientInformation.Email
+                            EmailAddress = shipment.RecipientInfo.Email
                         },
 
                         To = new StampsClient.v111.Address()
                         {
-                            FullName = shipment.RecipientInformation.FullName,
+                            FullName = shipment.RecipientInfo.FullName,
 
-                            FirstName = shipment.RecipientInformation.FirstName,
+                            FirstName = shipment.RecipientInfo.FirstName,
 
-                            LastName = shipment.RecipientInformation.LastName,
+                            LastName = shipment.RecipientInfo.LastName,
 
                             Address1 = shipment.DestinationAddress.StreetLine,
 
@@ -70,9 +70,9 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                             ZIPCode = shipment.DestinationAddress.CountryCode == "US" ? shipment.DestinationAddress.PostalCode : null,
 
-                            PhoneNumber = shipment.RecipientInformation.PhoneNumber,
+                            PhoneNumber = shipment.RecipientInfo.PhoneNumber,
 
-                            EmailAddress = shipment.RecipientInformation.Email
+                            EmailAddress = shipment.RecipientInfo.Email
                         },
 
                         Amount = 0.0m,
