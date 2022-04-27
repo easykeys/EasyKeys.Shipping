@@ -111,10 +111,10 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 RedirectTo = null,
 
                 // ?
-                OutboundTransactionID = String.Empty,
+                OutboundTransactionID = string.Empty,
 
                 // ?
-                OriginalPostageHash = String.Empty,
+                OriginalPostageHash = string.Empty,
 
                 ReturnImageData = shipmentDetails.LabelOptions.ReturnImageData,
 
@@ -173,7 +173,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 ReturnIndiciumData = false,
 
                 // ??
-                //ExtendedPostageInfo = new ExtendedPostageInfoV1(),
+                // ExtendedPostageInfo = new ExtendedPostageInfoV1(),
 
                 // ??
                 EnclosedServiceType = EnclosedServiceType.Unknown,
@@ -181,7 +181,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 // ??
                 EnclosedPackageType = EnclosedPackageType.Unknown,
 
-                //Caller defined data. Specifies the branding to be used for emails corresponding with this print.
+                // Caller defined data. Specifies the branding to be used for emails corresponding with this print.
                 BrandingId = Guid.NewGuid()
             };
 
@@ -316,7 +316,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
         {
             return new ShipmentNotification()
             {
-                Email = string.IsNullOrEmpty(shipmentDetails.NotificationOptions.Email) ? shipment.RecipientInformation.Email : shipmentDetails.NotificationOptions.Email,
+                Email = string.IsNullOrEmpty(shipmentDetails.NotificationOptions.Email) ? shipment.RecipientInfo.Email : shipmentDetails.NotificationOptions.Email,
                 CCToAccountHolder = shipmentDetails.NotificationOptions.CC_ToAccountHolder,
                 UseCompanyNameInFromLine = shipmentDetails.NotificationOptions.UseCompanyNameInFromLine,
                 UseCompanyNameInSubject = shipmentDetails.NotificationOptions.UseCompanyNameInSubject,
@@ -336,7 +336,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
         private CreateIndiciumRequest SetOrderDetails(CreateIndiciumRequest request, Shipping.Abstractions.Models.Shipment shipment)
         {
-            //request.OrderDetails
+            // request.OrderDetails
             return request;
         }
     }

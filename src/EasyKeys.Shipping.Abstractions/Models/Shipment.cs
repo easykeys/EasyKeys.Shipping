@@ -4,7 +4,11 @@ namespace EasyKeys.Shipping.Abstractions.Models;
 
 public class Shipment
 {
-    public Shipment(Address originAddress, Address destinationAddress, List<Package> packages, ShipmentOptions? options = null)
+    public Shipment(
+        Address originAddress,
+        Address destinationAddress,
+        List<Package> packages,
+        ShipmentOptions? options = null)
     {
         OriginAddress = originAddress ?? throw new ArgumentNullException(nameof(originAddress));
         DestinationAddress = destinationAddress ?? throw new ArgumentNullException(nameof(destinationAddress));
@@ -12,9 +16,15 @@ public class Shipment
         Options = options ?? new ShipmentOptions();
     }
 
-    public RecipientInformation RecipientInformation { get; set; } = new RecipientInformation();
+    /// <summary>
+    /// Shipment information of the Recipient.
+    /// </summary>
+    public ContactInfo RecipientInfo { get; set; } = new ContactInfo();
 
-    public SenderInformation SenderInformation { get; set; } = new SenderInformation();
+    /// <summary>
+    /// Shipment information of the Sender.
+    /// </summary>
+    public ContactInfo SenderInfo { get; set; } = new ContactInfo();
 
     /// <summary>
     /// A collection of the packages to be shipped.

@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 
 using StampsClient.v111;

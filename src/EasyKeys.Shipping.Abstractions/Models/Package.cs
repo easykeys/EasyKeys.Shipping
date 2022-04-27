@@ -1,116 +1,113 @@
-﻿using System;
+﻿namespace EasyKeys.Shipping.Abstractions.Models;
 
-namespace EasyKeys.Shipping.Abstractions
+/// <summary>
+/// The class definition for actual material shipping package.
+/// </summary>
+public class Package
 {
     /// <summary>
-    /// The class definition for actual material shipping package.
+    /// Initializes a new instance of the <see cref="Package"/> class.
+    /// Creates a new Shipment package.
     /// </summary>
-    public class Package
+    /// <param name="dimensions">The dimensions of the package, in inches.</param>
+    /// <param name="weight">The weight of the package, in pounds.</param>
+    /// <param name="insuredValue"></param>
+    /// <param name="signatureRequiredOnDelivery"></param>
+    public Package(
+        Dimensions dimensions,
+        decimal weight,
+        decimal insuredValue,
+        bool signatureRequiredOnDelivery)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Package"/> class.
-        /// Creates a new Shipment package.
-        /// </summary>
-        /// <param name="dimensions">The dimensions of the package, in inches.</param>
-        /// <param name="weight">The weight of the package, in pounds.</param>
-        /// <param name="insuredValue"></param>
-        /// <param name="signatureRequiredOnDelivery"></param>
-        public Package(
-            Dimensions dimensions,
-            decimal weight,
-            decimal insuredValue,
-            bool signatureRequiredOnDelivery)
+        Dimensions = dimensions;
+        Weight = weight;
+        InsuredValue = insuredValue;
+        SignatureRequiredOnDelivery = signatureRequiredOnDelivery;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Package"/> class.
+    /// Creates a new package with 0 insurance value and signature is not required.
+    /// </summary>
+    /// <param name="dimensions"></param>
+    /// <param name="weight"></param>
+    public Package(
+        Dimensions dimensions,
+        decimal weight)
+        : this(dimensions, weight, 0m, false)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Package"/> class.
+    ///     Creates a new package object.
+    /// </summary>
+    /// <param name="length">The length of the package, in inches.</param>
+    /// <param name="width">The width of the package, in inches.</param>
+    /// <param name="height">The height of the package, in inches.</param>
+    /// <param name="weight">The weight of the package, in pounds.</param>
+    /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
+    /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
+    public Package(
+        int length,
+        int width,
+        int height,
+        int weight,
+        decimal insuredValue,
+        bool signatureRequiredOnDelivery = false)
+        : this(length, width, height, (decimal)weight, insuredValue, signatureRequiredOnDelivery)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Package"/> class.
+    ///     Creates a new package object.
+    /// </summary>
+    /// <param name="length">The length of the package, in inches.</param>
+    /// <param name="width">The width of the package, in inches.</param>
+    /// <param name="height">The height of the package, in inches.</param>
+    /// <param name="weight">The weight of the package, in pounds.</param>
+    /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
+    /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
+    public Package(
+        decimal length,
+        decimal width,
+        decimal height,
+        decimal weight,
+        decimal insuredValue,
+        bool signatureRequiredOnDelivery = false)
+        : this(new Dimensions(length, width, height), weight, insuredValue, signatureRequiredOnDelivery)
+    {
+    }
+
+    public Dimensions Dimensions { get; set; }
+
+    public decimal InsuredValue { get; set; } = 20;
+
+    public bool IsOversize { get; set; }
+
+    public decimal Weight { get; set; }
+
+    public decimal RoundedWeight => Math.Ceiling(Weight);
+
+    public bool SignatureRequiredOnDelivery { get; set; }
+
+    public PoundsAndOunces PoundsAndOunces
+    {
+        get
         {
-            Dimensions = dimensions;
-            Weight = weight;
-            InsuredValue = insuredValue;
-            SignatureRequiredOnDelivery = signatureRequiredOnDelivery;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Package"/> class.
-        /// Creates a new package with 0 insurance value and signature is not required.
-        /// </summary>
-        /// <param name="dimensions"></param>
-        /// <param name="weight"></param>
-        public Package(
-            Dimensions dimensions,
-            decimal weight)
-            : this(dimensions, weight, 0m, false)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Package"/> class.
-        ///     Creates a new package object.
-        /// </summary>
-        /// <param name="length">The length of the package, in inches.</param>
-        /// <param name="width">The width of the package, in inches.</param>
-        /// <param name="height">The height of the package, in inches.</param>
-        /// <param name="weight">The weight of the package, in pounds.</param>
-        /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
-        /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
-        public Package(
-            int length,
-            int width,
-            int height,
-            int weight,
-            decimal insuredValue,
-            bool signatureRequiredOnDelivery = false)
-            : this(length, width, height, (decimal)weight, insuredValue, signatureRequiredOnDelivery)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Package"/> class.
-        ///     Creates a new package object.
-        /// </summary>
-        /// <param name="length">The length of the package, in inches.</param>
-        /// <param name="width">The width of the package, in inches.</param>
-        /// <param name="height">The height of the package, in inches.</param>
-        /// <param name="weight">The weight of the package, in pounds.</param>
-        /// <param name="insuredValue">The insured-value of the package, in dollars.</param>
-        /// <param name="signatureRequiredOnDelivery">If true, will attempt to send this to the appropriate rate provider.</param>
-        public Package(
-            decimal length,
-            decimal width,
-            decimal height,
-            decimal weight,
-            decimal insuredValue,
-            bool signatureRequiredOnDelivery = false)
-            : this(new Dimensions(length, width, height), weight, insuredValue, signatureRequiredOnDelivery)
-        {
-        }
-
-        public Dimensions Dimensions { get; set; }
-
-        public decimal InsuredValue { get; set; } = 20;
-
-        public bool IsOversize { get; set; }
-
-        public decimal Weight { get; set; }
-
-        public decimal RoundedWeight => Math.Ceiling(Weight);
-
-        public bool SignatureRequiredOnDelivery { get; set; }
-
-        public PoundsAndOunces PoundsAndOunces
-        {
-            get
+            var poundsAndOunces = new PoundsAndOunces();
+            if (Weight <= 0)
             {
-                var poundsAndOunces = new PoundsAndOunces();
-                if (Weight <= 0)
-                {
-                    return poundsAndOunces;
-                }
-
-                poundsAndOunces.Pounds = (int)Math.Truncate(Weight);
-                var decimalPart = (Weight - poundsAndOunces.Pounds) * 16;
-
-                poundsAndOunces.Ounces = (int)Math.Ceiling(decimalPart);
-
                 return poundsAndOunces;
             }
+
+            poundsAndOunces.Pounds = (int)Math.Truncate(Weight);
+            var decimalPart = (Weight - poundsAndOunces.Pounds) * 16;
+
+            poundsAndOunces.Ounces = (int)Math.Ceiling(decimalPart);
+
+            return poundsAndOunces;
         }
     }
 }
