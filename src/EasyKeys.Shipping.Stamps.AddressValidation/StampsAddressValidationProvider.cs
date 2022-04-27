@@ -56,6 +56,20 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
                 }
             }
 
+            validateAddress.ProposedAddress = response.CandidateAddresses.FirstOrDefault() switch
+            {
+                null => validateAddress.OriginalAddress,
+                _ => new Shipping.Abstractions.Models.Address()
+                {
+                    StreetLine = response.CandidateAddresses?.FirstOrDefault()?.Address1 ?? String.Empty,
+                    StreetLine2 = response.CandidateAddresses?.FirstOrDefault()?.Address2 ?? String.Empty,
+                    City = response.CandidateAddresses?.FirstOrDefault()?.City ?? String.Empty,
+                    StateOrProvince = response.CandidateAddresses?.FirstOrDefault()?.State ?? String.Empty,
+                    CountryCode = response.CandidateAddresses?.FirstOrDefault()?.Country ?? String.Empty,
+                    PostalCode = response.CandidateAddresses?.FirstOrDefault()?.ZIPCode ?? String.Empty
+                }
+            };
+
             return validateAddress;
         }
     }
