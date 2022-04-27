@@ -30,7 +30,7 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
                     Province = validateAddress.OriginalAddress.CountryCode != "US" ? validateAddress.OriginalAddress.StateOrProvince : null,
                     ZIPCode = validateAddress.OriginalAddress.CountryCode == "US" ? validateAddress.OriginalAddress.PostalCode : null,
                     PostalCode = validateAddress.OriginalAddress.CountryCode != "US" ? validateAddress.OriginalAddress.PostalCode : null,
-                    Country = validateAddress.OriginalAddress.CountryCode
+                    Country = validateAddress.OriginalAddress.CountryCode,
                 }
             };
             try

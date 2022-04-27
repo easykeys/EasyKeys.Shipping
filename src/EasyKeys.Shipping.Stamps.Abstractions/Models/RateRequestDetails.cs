@@ -165,4 +165,32 @@ public class RateRequestDetails
     public PackageType PackageType { get; set; } = PackageType.Package;
 
     public decimal CODValue { get; set; }
+
+    /// <summary>
+    /// <para>
+    /// Format: Decimal with up to three digits to the right of the decimal point This is the rate cost for the particular shipment option.
+    /// If this is blank or missing, check the error attribute for a reason.
+    /// If there is not enough information in the input Rate object to calculate an exact amount,
+    /// Amount will be set to the lower bound of the known range and MaxAmount will be set to the upper bound.
+    /// For example, if the the ToZipCode is omitted and the Rate is for a zone-based service,
+    /// Amount will be the amount for the closest zone (1) and MaxAmount will be the amount for the furthest zone (8).
+    /// In this case, some other elements of the Rate object may not apply in all cases.
+    /// For example, when Amount and MaxAmount indicate a range of possible amounts, DimWeighting may only apply for the furthest zones (5-8).
+    /// </para>
+    /// </summary>
+    public decimal Amount { get; set; }
+
+    /// <summary>
+    /// <para>
+    /// Format: Decimal with up to three digits to the right of the decimal point This is the maximum rate cost for the particular shipment option.
+    /// When the exact rate can be calculated, MaxAmount will be equal to Amount.
+    /// If there is not enough information in the input Rate object to calculate an exact amount,
+    /// Amount will be set to the lower bound of the known range and MaxAmount will be set to the upper bound.
+    /// For example, if the the ToZipCode is omitted and the Rate is for a zone-based service,
+    /// Amount will be the amount for the closest zone (1) and MaxAmount will be the amount for the furthest zone (8).
+    /// In this case, some other elements of the Rate object may not apply in all cases.
+    /// For example, when Amount and MaxAmount indicate a range of possible amounts, DimWeighting may only apply for the furthest zones (5-8).
+    /// </para>
+    /// </summary>
+    public decimal MaxAmount { get; set; }
 }

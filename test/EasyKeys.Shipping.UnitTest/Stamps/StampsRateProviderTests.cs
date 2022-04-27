@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 using Bet.Extensions.Testing.Logging;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using Xunit.Abstractions;
-
-namespace EasyKeysShipping.UnitTest
+namespace EasyKeysShipping.UnitTest.Stamps
 {
     public class StampsRateProviderTests
     {

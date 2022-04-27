@@ -37,7 +37,6 @@
 	<ItemGroup>
 	  <Folder Include="FedEx\" />
 	  <Folder Include="Usps\" />
-	  <Folder Include="Stamps\" />
 	</ItemGroup>
 
 

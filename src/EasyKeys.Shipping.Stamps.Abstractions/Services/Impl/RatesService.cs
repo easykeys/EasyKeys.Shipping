@@ -75,9 +75,9 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                             EmailAddress = shipment.RecipientInfo.Email
                         },
 
-                        Amount = 0.0m,
+                        Amount = rateDetails.Amount,
 
-                        MaxAmount = 0.0m,
+                        MaxAmount = rateDetails.MaxAmount,
 
                         ServiceType = rateDetails.ServiceType switch
                         {
@@ -91,6 +91,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                             Models.ServiceType.USPS_PAY_ON_USE_RETURN => StampsClient.v111.ServiceType.USRETURN,
                             Models.ServiceType.USPS_LIBRARY_MAIL => StampsClient.v111.ServiceType.USLM,
                             Models.ServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL => StampsClient.v111.ServiceType.USPMI,
+                            Models.ServiceType.UNKNOWN => StampsClient.v111.ServiceType.Unknown,
                             _ => StampsClient.v111.ServiceType.Unknown
                         },
 
@@ -162,18 +163,11 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                 request = ApplyPackageDetails(request, rateDetails, shipment);
 
-                try
-                {
-                    var response = await stampsClient.GetRatesAsync(request);
+                var response = await stampsClient.GetRatesAsync(request);
 
-                    response = ApplyAddOns(response, shipment);
+                response = ApplyAddOns(response, shipment);
 
-                    return response.Rates.ToList();
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
+                return response.Rates.ToList();
             }
         }
 
@@ -198,7 +192,6 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                 {
                     addOns.Add(new AddOnV17() { AddOnDescription = "Registered Mail", AddOnType = AddOnTypeV17.USAREG });
                 }
-
 
                 if (shipment.Packages.Any(x => x.SignatureRequiredOnDelivery))
                 {

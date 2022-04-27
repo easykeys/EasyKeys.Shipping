@@ -9,7 +9,7 @@ using EasyKeys.Shipping.Stamps.AddressValidation.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeysShipping.UnitTest
+namespace EasyKeysShipping.UnitTest.Stamps
 {
     public class StampsAddressValidationProviderTests
     {
@@ -24,7 +24,7 @@ namespace EasyKeysShipping.UnitTest
 
         [Theory]
         [ClassData(typeof(AddressTestData))]
-        public async Task Domestic_Address_Validation_Successfully(
+        public async Task Address_Validation_Successfully(
             Address address, int errorCount, int internalErrorCount, int warningCount)
         {
             var cancellationToken = CancellationToken.None;
@@ -38,61 +38,6 @@ namespace EasyKeysShipping.UnitTest
             Assert.Equal(internalErrorCount, result.InternalErrors.Count());
             Assert.Equal(errorCount, result.Errors.Count());
             Assert.Equal(warningCount, result.Warnings.Count());
-        }
-
-        [Fact]
-        public async Task International_Address_Validation_Successfully()
-        {
-            var cancellationToken = CancellationToken.None;
-            var request = new ValidateAddress(
-                Guid.NewGuid().ToString(),
-                new EasyKeys.Shipping.Abstractions.Models.Address(
-                   "ATTN John Smith 1800 ISLE PKWY",
-                   string.Empty,
-                   "BETTENDORF",
-                   "IA",
-                   "52722",
-                   "US",
-                   false));
-
-            var result = await _validator.ValidateAddressAsync(request, cancellationToken);
-        }
-
-        [Fact]
-        public async Task Error_Returned_Successfully()
-        {
-            var cancellationToken = CancellationToken.None;
-            var request = new ValidateAddress(
-                Guid.NewGuid().ToString(),
-                new EasyKeys.Shipping.Abstractions.Models.Address(
-                   "ATTN John Smith 1800 ISLE PKWY",
-                   string.Empty,
-                   "BETTENDORF",
-                   "IA",
-                   "52722",
-                   "US",
-                   false));
-
-            var result = await _validator.ValidateAddressAsync(request, cancellationToken);
-        }
-
-        [Fact]
-
-        public async Task Warning_Returned_Successfully()
-        {
-            var cancellationToken = CancellationToken.None;
-            var request = new ValidateAddress(
-                Guid.NewGuid().ToString(),
-                new EasyKeys.Shipping.Abstractions.Models.Address(
-                   "ATTN John Smith 1800 ISLE PKWY",
-                   string.Empty,
-                   "BETTENDORF",
-                   "IA",
-                   "52722",
-                   "US",
-                   false));
-
-            var result = await _validator.ValidateAddressAsync(request, cancellationToken);
         }
 
         private IStampsAddressValidationProvider GetAddressValidator()
@@ -143,14 +88,75 @@ namespace EasyKeysShipping.UnitTest
                      0
                 };
                 yield return new object[]
-{
+                {
                      new Address()
                             {
-                                StreetLine = "1550 Central Ave",
                                 City = "Riverside",
                                 StateOrProvince = "CA",
                                 CountryCode = "US",
                                 PostalCode = "92507"
+                            },
+
+                     // Errors
+                     0,
+
+                     // Internal Errors
+                     1,
+
+                     // Warnings
+                     0
+                };
+                yield return new object[]
+                {
+                     new Address()
+                            {
+                                City = "Riverside",
+                                StreetLine = "is this a real street",
+                                StateOrProvince = "CA",
+                                CountryCode = "US",
+                                PostalCode = "92507"
+                            },
+
+                     // Errors
+                     0,
+
+                     // Internal Errors
+                     0,
+
+                     // Warnings
+                     1
+                };
+                yield return new object[]
+                {
+                     // International Address
+                     new Address()
+                            {
+                                City = "San Diana",
+                                StreetLine = "Strada Gilda 2 Piano 9",
+                                StateOrProvince = "Brescia",
+                                CountryCode = "IT",
+                                PostalCode = "64921"
+                            },
+
+                     // Errors
+                     0,
+
+                     // Internal Errors
+                     0,
+
+                     // Warnings
+                     0
+                };
+                yield return new object[]
+{
+                     // International Address
+                     new Address()
+                            {
+                                City = "Barrhead",
+                                StreetLine = "512 Venture Place",
+                                StateOrProvince = "AB",
+                                CountryCode = "CA",
+                                PostalCode = "T0G 0E0"
                             },
 
                      // Errors
