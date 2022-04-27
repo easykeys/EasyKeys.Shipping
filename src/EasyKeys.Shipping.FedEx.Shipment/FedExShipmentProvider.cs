@@ -54,6 +54,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 var shipmentRequest = new processShipmentRequest1(request);
 
                 shipmentRequest.ProcessShipmentRequest.RequestedShipment.MasterTrackingId = masterTrackingId == default(TrackingId) ? null : masterTrackingId;
+
                 var response = await client.processShipmentAsync(shipmentRequest);
 
                 var reply = response?.ProcessShipmentReply;
@@ -71,6 +72,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         {
                             charges.Surcharges = new Dictionary<string, decimal>();
 
+                            // if shipment destination is international
                             if (reply?.CompletedShipmentDetail.ShipmentRating != null)
                             {
                                 charges.BaseCharge = totalShipmentDetails.Select(x => x.TotalBaseCharge).Sum(x => x.Amount);
@@ -81,6 +83,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                                                         .ForEach(x => charges.Surcharges[x.Description] = x.Amount.Amount);
                             }
 
+                            // if shipment destination is domestic
                             if (x.PackageRating != null)
                             {
                                 charges.BaseCharge = x.PackageRating.PackageRateDetails.Select(x => x.BaseCharge).Sum(s => s.Amount);

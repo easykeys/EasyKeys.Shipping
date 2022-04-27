@@ -26,9 +26,10 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
                     Address1 = validateAddress.OriginalAddress.StreetLine,
                     Address2 = validateAddress.OriginalAddress.StreetLine2,
                     City = validateAddress.OriginalAddress.City,
-                    State = validateAddress.OriginalAddress.StateOrProvince,
-                    Province = validateAddress.OriginalAddress.StateOrProvince,
-                    PostalCode = validateAddress.OriginalAddress.PostalCode,
+                    State = validateAddress.OriginalAddress.CountryCode == "US" ? validateAddress.OriginalAddress.StateOrProvince : null,
+                    Province = validateAddress.OriginalAddress.CountryCode != "US" ? validateAddress.OriginalAddress.StateOrProvince : null,
+                    ZIPCode = validateAddress.OriginalAddress.CountryCode == "US" ? validateAddress.OriginalAddress.PostalCode : null,
+                    PostalCode = validateAddress.OriginalAddress.CountryCode != "US" ? validateAddress.OriginalAddress.PostalCode : null,
                     Country = validateAddress.OriginalAddress.CountryCode
                 }
             };
@@ -38,7 +39,8 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                validateAddress.InternalErrors.Add(ex.Message);
+                return validateAddress;
             }
         }
 

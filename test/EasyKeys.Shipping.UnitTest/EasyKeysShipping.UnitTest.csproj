@@ -34,5 +34,11 @@
 		<Content Include="Data/**/*" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="FedEx\" />
+	  <Folder Include="Usps\" />
+	  <Folder Include="Stamps\" />
+	</ItemGroup>
+
 
 </Project>

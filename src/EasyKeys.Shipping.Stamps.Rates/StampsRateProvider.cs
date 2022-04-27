@@ -8,13 +8,11 @@ namespace EasyKeys.Shipping.Stamps.Rates
 {
     public class StampsRateProvider : IStampsRateProvider
     {
-        private readonly IStampsClientService _stampsClient;
         private readonly IRatesService _ratesService;
         private readonly ILogger<StampsRateProvider> _logger;
 
-        public StampsRateProvider(IStampsClientService stampsClientService, IRatesService ratesService, ILogger<StampsRateProvider> logger)
+        public StampsRateProvider(IRatesService ratesService, ILogger<StampsRateProvider> logger)
         {
-            _stampsClient = stampsClientService;
             _ratesService = ratesService;
             _logger = logger;
         }

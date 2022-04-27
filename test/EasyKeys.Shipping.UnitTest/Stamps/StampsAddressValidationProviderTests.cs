@@ -36,6 +36,10 @@ namespace EasyKeysShipping.UnitTest
                    false));
 
             var result = await _validator.ValidateAddressAsync(request, cancellationToken);
+
+            Assert.NotNull(result);
+            Assert.False(result.InternalErrors.Any());
+            Assert.False(result.Errors.Any());
         }
 
         [Fact]
