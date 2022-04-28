@@ -8,6 +8,13 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class StampsServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds Stamps.com authentication service.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="sectionName"></param>
+    /// <param name="configure"></param>
+    /// <returns></returns>
     public static IServiceCollection AddStampsClient(
         this IServiceCollection services,
         string sectionName = nameof(StampsOptions),
@@ -16,18 +23,6 @@ public static class StampsServiceCollectionExtensions
         services.AddChangeTokenOptions<StampsOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
 
         services.TryAddScoped<IStampsClientService, StampsClientService>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddStampsRate(
-        this IServiceCollection services,
-        string sectionName = nameof(StampsOptions),
-        Action<StampsOptions, IServiceProvider>? configure = null)
-    {
-        services.AddChangeTokenOptions<StampsOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
-
-        services.TryAddScoped<IRatesService, RatesService>();
 
         return services;
     }

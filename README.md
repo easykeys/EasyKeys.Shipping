@@ -5,16 +5,33 @@
 ![Nuget](https://img.shields.io/nuget/dt/EasyKeys.Shipping.Abstractions)
 [![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https://f.feedz.io/easykeys/core/shield/EasyKeys.Shipping.Abstractions/latest)](https://f.feedz.io/easykeys/core/packages/EasyKeys.Shipping.Abstractions/latest/download)
 
-[EasyKeys.com](https://easykeys.com) experimental shipment library for FedEx and USPS shipping providers.
+[EasyKeys.com](https://easykeys.com) production ready shipment library for FedEx, Stamps and USPS shipping providers.
+
+## Reusable Abstractions
 
 - [x] [EasyKeys.Shipping.Abstractions](./src/EasyKeys.Shipping.Abstractions)
+- [x] [EasyKeys.Shipping.PostalAddress](./src/EasyKeys.Shipping.PostalAddress)
+
+## FedEx Shipping
+
 - [x] [EasyKeys.Shipping.FedEx.Abstractions](./src/EasyKeys.Shipping.FedEx.Abstractions)
 - [x] [EasyKeys.Shipping.FedEx.AddressValidation](./src/EasyKeys.Shipping.FedEx.AddressValidation)
-- [x] [EasyKeys.Shipping.FedEx.Console](./src/EasyKeys.Shipping.FedEx.Console)
 - [x] [EasyKeys.Shipping.FedEx.Rates](./src/EasyKeys.Shipping.FedEx.Rates)
-- [ ] [EasyKeys.Shipping.FedEx.Shipment](./src/EasyKeys.Shipping.FedEx.Shipment)
+- [x] [EasyKeys.Shipping.FedEx.Shipment](./src/EasyKeys.Shipping.FedEx.Shipment)
 - [ ] [EasyKeys.Shipping.FedEx.Tracking](./src/EasyKeys.Shipping.FedEx.Tracking)
-- [x] [EasyKeys.Shipping.PostalAddress](./src/EasyKeys.Shipping.PostalAddress)
+- [x] [EasyKeys.Shipping.FedEx.Console](./src/EasyKeys.Shipping.FedEx.Console) - Sample Application
+
+## Stamps Shipping
+
+- [x] [EasyKeys.Shipping.Stamps.Abstractions](./src/EasyKeys.Shipping.Stamps.Abstractions)
+- [x] [EasyKeys.Shipping.Stamps.AddressValidation](./src/EasyKeys.Shipping.Stamps.AddressValidation)
+- [x] [EasyKeys.Shipping.Stamps.Rates](./src/EasyKeys.Shipping.Stamps.Rates)
+- [x] [EasyKeys.Shipping.Stamps.Shipment](./src/EasyKeys.Shipping.Stamps.Shipment)
+- [ ] [EasyKeys.Shipping.Stamps.Tracking](./src/EasyKeys.Shipping.Stamps.Tracking)
+- [x] [EasyKeys.Shipping.Stamps.Console](./src/EasyKeys.Shipping.Stamps.Console) - Sample application
+
+## USPS Shipping
+
 - [x] [EasyKeys.Shipping.Usps.Abstractions](./src/EasyKeys.Shipping.Usps.Abstractions)
 - [x] [EasyKeys.Shipping.Usps.Rates](./src/EasyKeys.Shipping.Usps.Rates)
 

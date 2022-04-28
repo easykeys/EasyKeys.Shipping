@@ -4,4 +4,9 @@
 		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
 	</PropertyGroup>
 
+	<PropertyGroup Label="Nuget Package Settings">
+		<Description>DotNetCore Abstractions of Shipment Library.</Description>
+		<PackageTags>DotNetCore, Shipment Abstractions</PackageTags>
+	</PropertyGroup>
+
 </Project>

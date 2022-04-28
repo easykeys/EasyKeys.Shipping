@@ -5,8 +5,6 @@ using EasyKeys.Shipping.Usps.Tracking;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using Xunit.Sdk;
-
 namespace EasyKeysShipping.UnitTest
 {
     public class UspsTrackingClientTests
@@ -18,7 +16,11 @@ namespace EasyKeysShipping.UnitTest
             _output = output;
         }
 
-        [Fact]
+        /// <summary>
+        /// Proivde current usps shipiet to work.
+        /// </summary>
+        /// <returns></returns>
+        [RunnableInDebugOnly]
         public async Task TestUspsTrackingClientAsync()
         {
             var services = GetServices();

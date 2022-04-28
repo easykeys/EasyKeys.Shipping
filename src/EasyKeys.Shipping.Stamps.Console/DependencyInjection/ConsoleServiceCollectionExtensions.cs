@@ -1,5 +1,4 @@
-﻿using EasyKeys.Shipping.Stamps.AddressValidation.DependencyInjection;
-using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
+﻿using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -12,10 +11,6 @@ public static class ConsoleServiceCollectionExtensions
         services.AddStampsAddressProvider();
 
         services.AddStampsRateProvider();
-
-        services.AddStampsClient();
-
-        services.AddStampsRate();
 
         services.AddStampsShipmentProvider();
     }

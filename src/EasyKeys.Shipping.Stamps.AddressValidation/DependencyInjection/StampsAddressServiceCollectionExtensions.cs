@@ -1,22 +1,20 @@
 ﻿using EasyKeys.Shipping.Stamps.Abstractions.Options;
+using EasyKeys.Shipping.Stamps.AddressValidation;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace EasyKeys.Shipping.Stamps.AddressValidation.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+
+public static class StampsAddressServiceCollectionExtensions
 {
-    public static class StampsAddressServiceCollectionExtensions
+    public static IServiceCollection AddStampsAddressProvider(
+    this IServiceCollection services,
+    string sectionName = nameof(StampsOptions),
+    Action<StampsOptions, IServiceProvider>? configure = null)
     {
-        public static IServiceCollection AddStampsAddressProvider(
-        this IServiceCollection services,
-        string sectionName = nameof(StampsOptions),
-        Action<StampsOptions, IServiceProvider>? configure = null)
-        {
-            services.AddChangeTokenOptions<StampsOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
+        services.AddStampsClient(sectionName, configure);
+        services.TryAddScoped<IStampsAddressValidationProvider, StampsAddressValidationProvider>();
 
-            services.TryAddScoped<IStampsAddressValidationProvider, StampsAddressValidationProvider>();
-
-            return services;
-        }
+        return services;
     }
 }

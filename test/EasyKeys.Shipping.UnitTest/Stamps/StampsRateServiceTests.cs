@@ -114,7 +114,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
             // check ToAddress Province/State & PostalCode/ZipCode logic
             Assert.NotNull(domesticRates);
 
-            //Assert.True(domesticRates.All(x => x.c == returnedCarrierType));
+            // Assert.True(domesticRates.All(x => x.c == returnedCarrierType));
         }
 
         private Shipment CreateDomesticShipment()
@@ -255,8 +255,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
             services.AddLogging(builder => builder.AddXunit(_output));
             services.AddSingleton<IConfiguration>(configBuilder.Build());
-            services.AddStampsClient();
-            services.AddStampsRate();
+            services.AddStampsRateProvider();
 
             return services.BuildServiceProvider().GetRequiredService<IRatesService>();
         }
@@ -306,7 +305,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                 yield return new object[] { ServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL, StampsClient.v111.ServiceType.USFCI };
 
                 // Mail class UspsReturn not supported.
-                //yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
+                // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
 
                 yield return new object[] { ServiceType.USPS_LIBRARY_MAIL, StampsClient.v111.ServiceType.USLM };
 
@@ -347,7 +346,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                 yield return new object[] { "returned_goods", StampsClient.v111.ContentTypeV2.ReturnedGoods };
 
                 // Mail class UspsReturn not supported.
-                //yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
+                // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
 
                 yield return new object[] { "other", StampsClient.v111.ContentTypeV2.Other };
             }

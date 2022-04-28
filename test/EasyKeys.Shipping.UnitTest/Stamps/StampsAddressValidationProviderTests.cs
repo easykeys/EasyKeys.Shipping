@@ -4,176 +4,172 @@ using Bet.Extensions.Testing.Logging;
 
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.AddressValidation;
-using EasyKeys.Shipping.Stamps.AddressValidation.DependencyInjection;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeysShipping.UnitTest.Stamps
+namespace EasyKeysShipping.UnitTest.Stamps;
+
+public class StampsAddressValidationProviderTests
 {
-    public class StampsAddressValidationProviderTests
+    private readonly ITestOutputHelper _output;
+    private readonly IStampsAddressValidationProvider _validator;
+
+    public StampsAddressValidationProviderTests(ITestOutputHelper output)
     {
-        private readonly ITestOutputHelper _output;
-        private readonly IStampsAddressValidationProvider _validator;
+        _output = output;
+        _validator = GetAddressValidator();
+    }
 
-        public StampsAddressValidationProviderTests(ITestOutputHelper output)
+    [Theory]
+    [ClassData(typeof(AddressTestData))]
+    public async Task Address_Validation_Successfully(
+        Address address, int errorCount, int internalErrorCount, int warningCount)
+    {
+        var cancellationToken = CancellationToken.None;
+        var request = new ValidateAddress(
+            Guid.NewGuid().ToString(),
+            address);
+
+        var result = await _validator.ValidateAddressAsync(request, cancellationToken);
+
+        Assert.NotNull(result);
+        Assert.Equal(internalErrorCount, result.InternalErrors.Count());
+        Assert.Equal(errorCount, result.Errors.Count());
+        Assert.Equal(warningCount, result.Warnings.Count());
+    }
+
+    private IStampsAddressValidationProvider GetAddressValidator()
+    {
+        var services = new ServiceCollection();
+
+        var dic = new Dictionary<string, string>
         {
-            _output = output;
-            _validator = GetAddressValidator();
-        }
+            { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
+        };
 
-        [Theory]
-        [ClassData(typeof(AddressTestData))]
-        public async Task Address_Validation_Successfully(
-            Address address, int errorCount, int internalErrorCount, int warningCount)
+        var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
+        configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
+
+        services.AddLogging(builder => builder.AddXunit(_output));
+        services.AddSingleton<IConfiguration>(configBuilder.Build());
+        services.AddStampsAddressProvider();
+
+        var sp = services.BuildServiceProvider();
+        return sp.GetRequiredService<IStampsAddressValidationProvider>();
+    }
+
+    public class AddressTestData : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
         {
-            var cancellationToken = CancellationToken.None;
-            var request = new ValidateAddress(
-                Guid.NewGuid().ToString(),
-                address);
-
-            var result = await _validator.ValidateAddressAsync(request, cancellationToken);
-
-            Assert.NotNull(result);
-            Assert.Equal(internalErrorCount, result.InternalErrors.Count());
-            Assert.Equal(errorCount, result.Errors.Count());
-            Assert.Equal(warningCount, result.Warnings.Count());
-        }
-
-        private IStampsAddressValidationProvider GetAddressValidator()
-        {
-            var services = new ServiceCollection();
-
-            var dic = new Dictionary<string, string>
+            yield return new object[]
             {
-                { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
+                 new Address()
+                        {
+                            StreetLine = "1550 Central Ave",
+                            StreetLine2 = "Apt 35",
+                            City = "Riverside",
+                            StateOrProvince = "CA",
+                            CountryCode = "US",
+                            PostalCode = "92507"
+                        },
+
+                 // Errors
+                 0,
+
+                 // Internal Errors
+                 0,
+
+                 // Warnings
+                 0
             };
+            yield return new object[]
+            {
+                 new Address()
+                        {
+                            City = "Riverside",
+                            StateOrProvince = "CA",
+                            CountryCode = "US",
+                            PostalCode = "92507"
+                        },
 
-            var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
-            configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
+                 // Errors
+                 0,
 
-            services.AddLogging(builder => builder.AddXunit(_output));
-            services.AddSingleton<IConfiguration>(configBuilder.Build());
+                 // Internal Errors
+                 1,
 
-            services.AddStampsClient();
-            services.AddStampsAddressProvider();
+                 // Warnings
+                 0
+            };
+            yield return new object[]
+            {
+                 new Address()
+                        {
+                            City = "Riverside",
+                            StreetLine = "is this a real street",
+                            StateOrProvince = "CA",
+                            CountryCode = "US",
+                            PostalCode = "92507"
+                        },
 
-            var sp = services.BuildServiceProvider();
-            return sp.GetRequiredService<IStampsAddressValidationProvider>();
+                 // Errors
+                 0,
+
+                 // Internal Errors
+                 0,
+
+                 // Warnings
+                 1
+            };
+            yield return new object[]
+            {
+                 // International Address
+                 new Address()
+                        {
+                            City = "San Diana",
+                            StreetLine = "Strada Gilda 2 Piano 9",
+                            StateOrProvince = "Brescia",
+                            CountryCode = "IT",
+                            PostalCode = "64921"
+                        },
+
+                 // Errors
+                 0,
+
+                 // Internal Errors
+                 0,
+
+                 // Warnings
+                 0
+            };
+            yield return new object[]
+{
+                 // International Address
+                 new Address()
+                        {
+                            City = "Barrhead",
+                            StreetLine = "512 Venture Place",
+                            StateOrProvince = "AB",
+                            CountryCode = "CA",
+                            PostalCode = "T0G 0E0"
+                        },
+
+                 // Errors
+                 0,
+
+                 // Internal Errors
+                 0,
+
+                 // Warnings
+                 0
+};
         }
 
-        public class AddressTestData : IEnumerable<object[]>
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            public IEnumerator<object[]> GetEnumerator()
-            {
-                yield return new object[]
-                {
-                     new Address()
-                            {
-                                StreetLine = "1550 Central Ave",
-                                StreetLine2 = "Apt 35",
-                                City = "Riverside",
-                                StateOrProvince = "CA",
-                                CountryCode = "US",
-                                PostalCode = "92507"
-                            },
-
-                     // Errors
-                     0,
-
-                     // Internal Errors
-                     0,
-
-                     // Warnings
-                     0
-                };
-                yield return new object[]
-                {
-                     new Address()
-                            {
-                                City = "Riverside",
-                                StateOrProvince = "CA",
-                                CountryCode = "US",
-                                PostalCode = "92507"
-                            },
-
-                     // Errors
-                     0,
-
-                     // Internal Errors
-                     1,
-
-                     // Warnings
-                     0
-                };
-                yield return new object[]
-                {
-                     new Address()
-                            {
-                                City = "Riverside",
-                                StreetLine = "is this a real street",
-                                StateOrProvince = "CA",
-                                CountryCode = "US",
-                                PostalCode = "92507"
-                            },
-
-                     // Errors
-                     0,
-
-                     // Internal Errors
-                     0,
-
-                     // Warnings
-                     1
-                };
-                yield return new object[]
-                {
-                     // International Address
-                     new Address()
-                            {
-                                City = "San Diana",
-                                StreetLine = "Strada Gilda 2 Piano 9",
-                                StateOrProvince = "Brescia",
-                                CountryCode = "IT",
-                                PostalCode = "64921"
-                            },
-
-                     // Errors
-                     0,
-
-                     // Internal Errors
-                     0,
-
-                     // Warnings
-                     0
-                };
-                yield return new object[]
-{
-                     // International Address
-                     new Address()
-                            {
-                                City = "Barrhead",
-                                StreetLine = "512 Venture Place",
-                                StateOrProvince = "AB",
-                                CountryCode = "CA",
-                                PostalCode = "T0G 0E0"
-                            },
-
-                     // Errors
-                     0,
-
-                     // Internal Errors
-                     0,
-
-                     // Warnings
-                     0
-};
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
+            return GetEnumerator();
         }
     }
 }

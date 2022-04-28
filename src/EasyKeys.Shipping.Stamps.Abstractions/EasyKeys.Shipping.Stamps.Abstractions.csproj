@@ -20,6 +20,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="EasyKeys.Shipping.Stamps.Rates" />
+		<InternalsVisibleTo Include="EasyKeys.Shipping.Stamps.Shipment" />
+		<InternalsVisibleTo Include="EasyKeysShipping.UnitTest"/>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
 	</ItemGroup>
 
