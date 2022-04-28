@@ -63,9 +63,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.Ra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.Console", "src\EasyKeys.Shipping.Stamps.Console\EasyKeys.Shipping.Stamps.Console.csproj", "{DAFA0110-5502-4778-8372-714A19143178}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.Shipment", "src\EasyKeys.Shipping.Stamps.Shipment\EasyKeys.Shipping.Stamps.Shipment.csproj", "{DAFCFA00-C4CB-42FB-B47B-65A548C9FFAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.Shipment", "src\EasyKeys.Shipping.Stamps.Shipment\EasyKeys.Shipping.Stamps.Shipment.csproj", "{DAFCFA00-C4CB-42FB-B47B-65A548C9FFAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.AddressValidation", "src\EasyKeys.Shipping.Stamps.AddressValidation\EasyKeys.Shipping.Stamps.AddressValidation.csproj", "{0759B8E0-BE7C-4771-8E13-13C83BAD3E82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.AddressValidation", "src\EasyKeys.Shipping.Stamps.AddressValidation\EasyKeys.Shipping.Stamps.AddressValidation.csproj", "{0759B8E0-BE7C-4771-8E13-13C83BAD3E82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.Tracking", "src\EasyKeys.Shipping.Stamps.Tracking\EasyKeys.Shipping.Stamps.Tracking.csproj", "{69AD45D6-E45C-4E91-8D32-F4F1DA767660}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -281,6 +283,18 @@ Global
 		{0759B8E0-BE7C-4771-8E13-13C83BAD3E82}.Release|x64.Build.0 = Release|Any CPU
 		{0759B8E0-BE7C-4771-8E13-13C83BAD3E82}.Release|x86.ActiveCfg = Release|Any CPU
 		{0759B8E0-BE7C-4771-8E13-13C83BAD3E82}.Release|x86.Build.0 = Release|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Debug|x64.Build.0 = Debug|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Debug|x86.Build.0 = Debug|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Release|x64.ActiveCfg = Release|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Release|x64.Build.0 = Release|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Release|x86.ActiveCfg = Release|Any CPU
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -306,6 +320,7 @@ Global
 		{DAFA0110-5502-4778-8372-714A19143178} = {C8221B09-84F2-4A06-A6CA-7E89238E5EB2}
 		{DAFCFA00-C4CB-42FB-B47B-65A548C9FFAB} = {C8221B09-84F2-4A06-A6CA-7E89238E5EB2}
 		{0759B8E0-BE7C-4771-8E13-13C83BAD3E82} = {C8221B09-84F2-4A06-A6CA-7E89238E5EB2}
+		{69AD45D6-E45C-4E91-8D32-F4F1DA767660} = {C8221B09-84F2-4A06-A6CA-7E89238E5EB2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0FBE81B8-162F-4342-BABD-0FFFD0C99331}

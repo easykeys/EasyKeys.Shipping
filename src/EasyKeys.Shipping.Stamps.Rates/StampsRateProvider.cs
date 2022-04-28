@@ -11,7 +11,9 @@ public class StampsRateProvider : IStampsRateProvider
     private readonly IRatesService _ratesService;
     private readonly ILogger<StampsRateProvider> _logger;
 
-    public StampsRateProvider(IRatesService ratesService, ILogger<StampsRateProvider> logger)
+    public StampsRateProvider(
+        IRatesService ratesService,
+        ILogger<StampsRateProvider> logger)
     {
         _ratesService = ratesService;
         _logger = logger;

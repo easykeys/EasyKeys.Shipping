@@ -254,9 +254,10 @@ public class FedExRateProviderTests
         }
 
         // FEDEX INTERNATIONAL FIRST - 5 / 6 / 2021 10:00:00 AM - 125.26 - 125.26 - False
+        // FEDEX INTERNATIONAL PRIORITY EXPRESS
         // FEDEX INTERNATIONAL PRIORITY - 5 / 6 / 2021 12:00:00 PM - 18.16 - 72.46 - False
         // FEDEX INTERNATIONAL ECONOMY - 5 / 11 / 2021 6:00:00 PM - 23.56 - 109.23 - False
-        Assert.Equal(3, rates.Rates.Count);
+        Assert.Equal(4, rates.Rates.Count);
     }
 
     [Fact]

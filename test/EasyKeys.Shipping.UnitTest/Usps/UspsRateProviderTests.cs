@@ -82,7 +82,7 @@ public class UspsRateProviderTests
         Assert.NotNull(rate);
 
         // usps rate
-        Assert.Equal(8.45m, rate?.TotalCharges);
+        Assert.Equal(9.45m, rate?.TotalCharges);
 
         // stamps.com rate
         Assert.Equal(7.90m, config.StampsRate);
@@ -110,7 +110,7 @@ public class UspsRateProviderTests
         var rate = result.Rates.FirstOrDefault();
 
         Assert.NotNull(rate);
-        Assert.Equal(15.50m, rate?.TotalCharges);
+        Assert.Equal(16.10m, rate?.TotalCharges);
         Assert.Equal(13.75m, config.StampsRate);
 
         _output.WriteLine($"{rate?.ServiceName} - ${rate?.TotalCharges} - {rate?.TotalCharges2} - {rate?.GuaranteedDelivery}");
@@ -119,11 +119,11 @@ public class UspsRateProviderTests
     public static IEnumerable<object[]> FistClassData =>
     new List<object[]>
     {
-                    new object[] { 1.0M, 4.15m },
-                    new object[] { 5.0M, 4.90m },
-                    new object[] { 10.0M, 5.60m },
-                    new object[] { 13.0M, 6.40m },
-                    new object[] { 15.0M, 6.40m },
+                    new object[] { 1.0M, 4.65m },
+                    new object[] { 5.0M, 5.20m },
+                    new object[] { 10.0M, 5.90m },
+                    new object[] { 13.0M, 7.25m },
+                    new object[] { 15.0M, 7.25m },
     };
 
     [Theory]
@@ -198,17 +198,17 @@ public class UspsRateProviderTests
         var rate = result.Rates.FirstOrDefault();
 
         Assert.NotNull(rate);
-        Assert.Equal(4.15m, rate?.TotalCharges);
+        Assert.Equal(4.65m, rate?.TotalCharges);
         _output.WriteLine($"{rate?.ServiceName} - ${rate?.TotalCharges} - {rate?.GuaranteedDelivery}");
     }
 
     [Theory]
 
-    // USPS First-Class Package International Service- $57.50 for 4 lbs
-    [InlineData("2.4", "41.50")]
+    // USPS First-Class Package International Service- $42.65 for 4 lbs
+    [InlineData("2.4", "42.65")]
 
-    // USPS First-Class Package International Service- $41.50
-    [InlineData("4", "57.50")]
+    // USPS First-Class Package International Service- $58.35
+    [InlineData("4", "58.35")]
     public async Task Get_First_Class_International_Large_Package_Successfully(string w, string c)
     {
         var sp = GetServices();
@@ -244,14 +244,14 @@ public class UspsRateProviderTests
 
     [Theory]
 
-    // USPS First-Class Package International Service- $41.50 for 2.4 lbs
-    [InlineData("2.4", "41.50")]
+    // USPS First-Class Package International Service- $42.65 for 2.4 lbs
+    [InlineData("2.4", "42.65")]
 
-    // USPS First-Class Package International Service- $41.50
-    [InlineData("4", "57.50")]
+    // USPS First-Class Package International Service- $58.35
+    [InlineData("4", "58.35")]
 
-    // USPS First-Class Package International Service- $15.25 with 2 oz or 0.125 lbs
-    [InlineData("0.125", "15.25")]
+    // USPS First-Class Package International Service- $16.45 with 2 oz or 0.125 lbs
+    [InlineData("0.125", "16.45")]
     public async Task Get_First_Class_International_Mail_Successfully(string w, string c)
     {
         var sp = GetServices();
@@ -317,7 +317,7 @@ public class UspsRateProviderTests
         var rate = result.Rates.FirstOrDefault();
 
         Assert.NotNull(rate);
-        Assert.Equal(77.60m, rate?.TotalCharges);
+        Assert.Equal(80.65m, rate?.TotalCharges);
 
         _output.WriteLine($"{rate?.ServiceName}- ${rate?.TotalCharges} - {rate?.GuaranteedDelivery}");
     }
