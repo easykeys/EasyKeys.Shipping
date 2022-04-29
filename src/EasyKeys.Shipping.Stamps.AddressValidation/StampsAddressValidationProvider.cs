@@ -16,10 +16,8 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
 
         public async Task<ValidateAddress> ValidateAddressAsync(ValidateAddress validateAddress, CancellationToken cancellationToken)
         {
-            var client = _stampsClient.CreateClient();
             var request = new CleanseAddressRequest()
             {
-                Item = await _stampsClient.GetTokenAsync(cancellationToken),
                 Address = new StampsClient.v111.Address()
                 {
                     FullName = "This is required for address validation",
@@ -35,6 +33,10 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation
             };
             try
             {
+                var client = _stampsClient.CreateClient();
+
+                request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
+
                 return VerifyAddress(await client.CleanseAddressAsync(request), validateAddress);
             }
             catch (Exception ex)

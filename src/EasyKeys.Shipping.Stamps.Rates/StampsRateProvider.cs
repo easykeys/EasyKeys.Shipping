@@ -21,17 +21,24 @@ public class StampsRateProvider : IStampsRateProvider
 
     public async Task<Shipment> GetRatesAsync(Shipment shipment, RateRequestDetails rateRequestDetails, CancellationToken cancellationToken = default)
     {
-        var rates = await _ratesService.GetRatesResponseAsync(shipment, rateRequestDetails, cancellationToken);
-
-        foreach (var rate in rates)
+        try
         {
-            shipment.Rates.Add(new Rate($"{rate.ServiceType}", rate.ServiceDescription, rate.Amount, rate.DeliveryDate));
+            var rates = await _ratesService.GetRatesResponseAsync(shipment, rateRequestDetails, cancellationToken);
 
-            _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");
+            foreach (var rate in rates)
+            {
+                shipment.Rates.Add(new Rate($"{rate.ServiceType}", rate.ServiceDescription, rate.Amount, rate.DeliveryDate));
 
-            _logger.LogInformation($" => Cost : {rate.Amount}");
+                _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");
 
-            _logger.LogInformation($" => Delivery Days : {rate.DeliverDays}");
+                _logger.LogInformation($" => Cost : {rate.Amount}");
+
+                _logger.LogInformation($" => Delivery Days : {rate.DeliverDays}");
+            }
+        }
+        catch (Exception ex)
+        {
+            shipment.InternalErrors.Add(ex.Message);
         }
 
         return shipment;

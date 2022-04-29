@@ -20,8 +20,6 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
         public async Task<ShipmentLabel> CreateShipmentAsync(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, CancellationToken cancellationToken)
         {
-            var client = _stampsClient.CreateClient();
-
             var ratesDetails = new RateRequestDetails()
             {
                 ServiceType = shipmentDetails.SelectedRate.Name switch
@@ -42,17 +40,9 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 DeclaredValue = shipmentDetails.DeclaredValue
             };
 
-            var rates = await _ratesService.GetRatesResponseAsync(shipment, ratesDetails, cancellationToken);
-
             var request = new CreateIndiciumRequest()
             {
-                Item = await _stampsClient.GetTokenAsync(cancellationToken),
-
                 IntegratorTxID = Guid.NewGuid().ToString(),
-
-                Rate = rates.FirstOrDefault(),
-
-                ReturnTo = rates?.FirstOrDefault()?.From,
 
                 CustomerID = Guid.NewGuid().ToString(),
 
@@ -189,6 +179,16 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
             try
             {
+                var client = _stampsClient.CreateClient();
+
+                var rates = await _ratesService.GetRatesResponseAsync(shipment, ratesDetails, cancellationToken);
+
+                request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
+
+                request.Rate = rates.FirstOrDefault();
+
+                request.ReturnTo = rates.FirstOrDefault()?.From;
+
                 var response = await client.CreateIndiciumAsync(request);
 
                 return new ShipmentLabel()
@@ -213,7 +213,11 @@ namespace EasyKeys.Shipping.Stamps.Shipment
             }
             catch (Exception ex)
             {
-                return new ShipmentLabel();
+                var shipmentLabel = new ShipmentLabel();
+
+                shipmentLabel.InternalErrors.Add(ex.Message);
+
+                return shipmentLabel;
             }
         }
 
@@ -223,11 +227,12 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
             var request = new CancelIndiciumRequest()
             {
-                Item = await _stampsClient.GetTokenAsync(cancellationToken),
                 Item1 = shipmentLabel.Labels[0].ProviderLabelId
             };
             try
             {
+                request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
+
                 return await client.CancelIndiciumAsync(request);
             }
             catch (Exception ex)

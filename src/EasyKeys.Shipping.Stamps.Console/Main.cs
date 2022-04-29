@@ -110,7 +110,7 @@ public class Main : IMain
 
         _logger.LogWarning($"Address Validation Warnings : {validatedAddress.Warnings.Count()}");
 
-        _logger.LogError($"Address Validation Warnings : {validatedAddress.Errors.Count()}");
+        _logger.LogError($"Address Validation Errors: {validatedAddress.Errors.Count()}");
 
         // 3) create shipment
         var shipment = new Shipment(originAddress, validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress, packages)
@@ -133,7 +133,7 @@ public class Main : IMain
 
         _logger.LogWarning($"Address Validation Warnings : {shipmentWithRates.Warnings.Count()}");
 
-        _logger.LogError($"Address Validation Warnings : {shipmentWithRates.Errors.Count()}");
+        _logger.LogError($"Address Validation Errors : {shipmentWithRates.Errors.Count()}");
 
         // user chooses which type of service
         var shipmentDetails = new ShipmentRequestDetails() { DeclaredValue = 100m, SelectedRate = shipmentWithRates.Rates[0], CustomsInformation = new CustomsInformation() { CustomsSigner = "brandon moffett" } };

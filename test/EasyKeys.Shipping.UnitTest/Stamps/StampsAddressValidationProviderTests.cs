@@ -27,6 +27,7 @@ public class StampsAddressValidationProviderTests
         Address address, int errorCount, int internalErrorCount, int warningCount)
     {
         var cancellationToken = CancellationToken.None;
+
         var request = new ValidateAddress(
             Guid.NewGuid().ToString(),
             address);
@@ -34,8 +35,11 @@ public class StampsAddressValidationProviderTests
         var result = await _validator.ValidateAddressAsync(request, cancellationToken);
 
         Assert.NotNull(result);
+
         Assert.Equal(internalErrorCount, result.InternalErrors.Count());
+
         Assert.Equal(errorCount, result.Errors.Count());
+
         Assert.Equal(warningCount, result.Warnings.Count());
     }
 
@@ -145,7 +149,7 @@ public class StampsAddressValidationProviderTests
                  0
             };
             yield return new object[]
-{
+            {
                  // International Address
                  new Address()
                         {
@@ -164,7 +168,7 @@ public class StampsAddressValidationProviderTests
 
                  // Warnings
                  0
-};
+            };
         }
 
         IEnumerator IEnumerable.GetEnumerator()
