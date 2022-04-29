@@ -19,7 +19,7 @@ internal sealed class StampsClientService : IStampsClientService
         optionsMonitor.OnChange(x => _options = x);
     }
 
-    public SwsimV111SoapClient CreateClient()
+    public SwsimV111Soap CreateClient()
     {
         return new SwsimV111SoapClient(
              new BasicHttpsBinding(BasicHttpsSecurityMode.Transport)
