@@ -1,4 +1,5 @@
 ﻿using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
+using EasyKeys.Shipping.Stamps.Tracking.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -13,5 +14,7 @@ public static class ConsoleServiceCollectionExtensions
         services.AddStampsRateProvider();
 
         services.AddStampsShipmentProvider();
+
+        services.AddStampsTrackingProvider();
     }
 }

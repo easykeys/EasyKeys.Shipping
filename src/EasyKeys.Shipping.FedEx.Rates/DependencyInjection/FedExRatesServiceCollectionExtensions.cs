@@ -1,4 +1,5 @@
-﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.DependencyInjection;
+using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Rates;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,8 @@ public static class FedExRatesServiceCollectionExtensions
         services.AddChangeTokenOptions<FedExOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
 
         services.AddLogging();
+
+        services.AddFedExClient();
 
         services.AddTransient<IFedExRateProvider, FedExRateProvider>();
 

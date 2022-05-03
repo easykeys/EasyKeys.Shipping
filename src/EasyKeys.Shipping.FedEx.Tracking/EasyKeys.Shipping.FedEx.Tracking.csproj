@@ -9,4 +9,15 @@
 		<PackageTags>DotNetCore, FedEx Package Tracking, FedEx 2020 WCF</PackageTags>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Bet.Extensions.Options" />
+		<PackageReference Include="Microsoft.Extensions.Logging" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+	  <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Abstractions\EasyKeys.Shipping.FedEx.Abstractions.csproj" />
+	  <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Shipment\EasyKeys.Shipping.FedEx.Shipment.csproj" />
+	</ItemGroup>
+
 </Project>

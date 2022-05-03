@@ -5,6 +5,7 @@ using EasyKeys.Shipping.Stamps.AddressValidation;
 using EasyKeys.Shipping.Stamps.Rates;
 using EasyKeys.Shipping.Stamps.Shipment;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
+using EasyKeys.Shipping.Stamps.Tracking;
 
 using Microsoft.Extensions.Options;
 
@@ -15,6 +16,7 @@ public class Main : IMain
     private readonly IStampsAddressValidationProvider _addressProvider;
     private readonly IStampsRateProvider _rateProvider;
     private readonly IStampsShipmentProvider _shipmentProvider;
+    private readonly IStampsTrackingProvider _trackingProvider;
     private readonly StampsOptions _options;
 
     public Main(
@@ -24,6 +26,7 @@ public class Main : IMain
         IStampsRateProvider rateProvider,
         IStampsShipmentProvider shipmentProvider,
         IStampsAddressValidationProvider addressProvider,
+        IStampsTrackingProvider trackingProvider,
         ILogger<Main> logger)
     {
         _rateProvider = rateProvider;
@@ -32,6 +35,7 @@ public class Main : IMain
         _options = options.Value;
         _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
         Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _trackingProvider = trackingProvider;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -144,6 +148,8 @@ public class Main : IMain
         _logger.LogCritical($"Tracking Number : {shipmentResponse.Labels[0].TrackingId}");
 
         await File.WriteAllBytesAsync("label.png", shipmentResponse.Labels[0].Bytes[0]);
+
+        var trackingInfo = await _trackingProvider.TrackShipmentAsync(shipmentResponse, cancellationToken);
 
         var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse, cancellationToken);
 

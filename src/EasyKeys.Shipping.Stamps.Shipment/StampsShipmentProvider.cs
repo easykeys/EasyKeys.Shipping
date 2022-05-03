@@ -142,7 +142,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 RateToken = string.Empty,
 
                 // Caller defined data. Order ID associated to this print.
-                OrderId = string.Empty,
+                OrderId = shipmentDetails.OrderId,
 
                 // ?
                 BypassCleanseAddress = false,

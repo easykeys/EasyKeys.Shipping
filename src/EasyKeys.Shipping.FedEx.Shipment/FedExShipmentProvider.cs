@@ -2,6 +2,7 @@
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
+using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Shipment.Extensions;
 using EasyKeys.Shipping.FedEx.Shipment.Models;
 
@@ -15,15 +16,19 @@ namespace EasyKeys.Shipping.FedEx.Shipment;
 public class FedExShipmentProvider : IFedExShipmentProvider
 {
     private readonly ILogger<FedExShipmentProvider> _logger;
+    private readonly ShipPortType _shipmentClient;
     private FedExOptions _options;
 
     public FedExShipmentProvider(
         IOptionsMonitor<FedExOptions> optionsMonitor,
+        IFedExClientService fedExClientService,
         ILogger<FedExShipmentProvider> logger)
     {
         _options = optionsMonitor.CurrentValue;
 
         optionsMonitor.OnChange(x => _options = x);
+
+        _shipmentClient = fedExClientService.CreateShipClient();
 
         _logger = logger ?? throw new ArgumentException(nameof(logger));
     }
@@ -34,12 +39,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         ShipmentDetails shipmentDetails,
         CancellationToken cancellationToken = default)
     {
-        var client = new ShipPortTypeClient(
-            ShipPortTypeClient.EndpointConfiguration.ShipServicePort,
-            _options.Url);
+        var client = _shipmentClient;
 
         var label = new ShipmentLabel();
+
         var masterTrackingId = default(TrackingId);
+
         try
         {
             // for multiple packages, each package must have its own request.

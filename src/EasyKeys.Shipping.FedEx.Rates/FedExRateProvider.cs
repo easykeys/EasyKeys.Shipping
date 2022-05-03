@@ -3,6 +3,7 @@ using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
+using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Extensions;
 
 using Microsoft.Extensions.Logging;
@@ -15,13 +16,16 @@ namespace EasyKeys.Shipping.FedEx.Rates;
 public class FedExRateProvider : IFedExRateProvider
 {
     private readonly FedExOptions _options;
+    private RatePortType _rateClient;
     private readonly ILogger<FedExRateProvider> _logger;
 
     public FedExRateProvider(
         IOptionsSnapshot<FedExOptions> options,
+        IFedExClientService fedExClientService,
         ILogger<FedExRateProvider> logger)
     {
         _options = options.Value;
+        _rateClient = fedExClientService.CreateRateClient();
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -30,9 +34,7 @@ public class FedExRateProvider : IFedExRateProvider
         ServiceType serviceType = ServiceType.DEFAULT,
         CancellationToken cancellationToken = default)
     {
-        var client = new RatePortTypeClient(
-            RatePortTypeClient.EndpointConfiguration.RateServicePort,
-            _options.Url);
+        var client = _rateClient;
 
         try
         {

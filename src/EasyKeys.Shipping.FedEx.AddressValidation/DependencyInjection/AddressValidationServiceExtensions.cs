@@ -1,4 +1,5 @@
-﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.DependencyInjection;
+using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.AddressValidation;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -24,6 +25,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 configureAction: (options, sp) => configOptions?.Invoke(options, sp));
 
             services.AddLogging();
+
+            services.AddFedExClient();
+
             services.TryAddTransient<IFedExAddressValidationProvider, FedExAddressValidationProvider>();
 
             return services;

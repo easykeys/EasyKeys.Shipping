@@ -1,21 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+	</PropertyGroup>
 
-  <PropertyGroup Label="Nuget Package Settings">
-    <Description>DotNetCore Implementation of FedEx Web Services 2020 of WCF.</Description>
-    <PackageTags>DotNetCore, FedEx 2020 WCF</PackageTags>
-  </PropertyGroup>
+	<PropertyGroup Label="Nuget Package Settings">
+		<Description>DotNetCore Implementation of FedEx Web Services 2020 of WCF.</Description>
+		<PackageTags>DotNetCore, FedEx 2020 WCF</PackageTags>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Ardalis.SmartEnum" Version="2.0.1" />
-    <PackageReference Include="System.ServiceModel.Http" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Ardalis.SmartEnum" Version="2.0.1" />
+		<PackageReference Include="System.ServiceModel.Http" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Bet.Extensions.Options" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<WCFMetadata Include="Connected Services" />
+	</ItemGroup>
 
 </Project>

@@ -16,5 +16,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
         /// The amount to declare for this shipment, in dollars and cents. Required for International.
         /// </summary>
         public decimal DeclaredValue { get; set; }
+
+        public string OrderId { get; set; } = string.Empty;
     }
 }

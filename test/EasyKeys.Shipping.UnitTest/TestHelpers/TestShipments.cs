@@ -105,7 +105,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
                 Quantity = 1,
                 ExportLicenseNumber = "dsdfs",
                 Name = "sdkfsdf",
-                Weight = 13m
+                Weight = .3m
             };
 
             var sender = new ContactInfo()
@@ -128,11 +128,14 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
 
             var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
 
-            return new Shipment(originAddress, validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress, packages)
+            var shipment = new Shipment(originAddress, validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress, packages)
             {
                 RecipientInfo = receiver,
-                SenderInfo = sender,
+                SenderInfo = sender
             };
+            shipment.Commodities.Add(commodity);
+
+            return shipment;
         }
     }
 }

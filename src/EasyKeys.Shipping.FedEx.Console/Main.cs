@@ -8,6 +8,7 @@ using EasyKeys.Shipping.FedEx.AddressValidation;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
 using EasyKeys.Shipping.FedEx.Shipment.Models;
+using EasyKeys.Shipping.FedEx.Tracking;
 
 namespace EasyKeys.Shipping.FedEx.Console;
 
@@ -16,6 +17,7 @@ public class Main : IMain
     private readonly IFedExAddressValidationProvider _validationClient;
     private readonly IFedExRateProvider _fedexRateProvider;
     private readonly IFedExShipmentProvider _fedExShipmentProvider;
+    private readonly IFedExTrackingProvider _fedExTrackingProvider;
     private readonly IHostApplicationLifetime _applicationLifetime;
     private readonly ILogger<Main> _logger;
 
@@ -23,6 +25,7 @@ public class Main : IMain
         IFedExAddressValidationProvider validationClient,
         IFedExRateProvider fedExRateProvider,
         IFedExShipmentProvider fedExShipmentProvider,
+        IFedExTrackingProvider fedExTrackingProvider,
         IHostApplicationLifetime applicationLifetime,
         IConfiguration configuration,
         ILogger<Main> logger)
@@ -31,6 +34,7 @@ public class Main : IMain
         _fedexRateProvider = fedExRateProvider ?? throw new ArgumentNullException(nameof(fedExRateProvider));
         _fedExShipmentProvider = fedExShipmentProvider ?? throw new ArgumentNullException(nameof(fedExShipmentProvider));
         _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
+        _fedExTrackingProvider = fedExTrackingProvider ?? throw new ArgumentNullException(nameof(fedExTrackingProvider));
         Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -183,6 +187,8 @@ public class Main : IMain
                 cancellationToken);
 
             await File.WriteAllBytesAsync("label.png", result.Labels[0].Bytes[0]);
+
+            var info = await _fedExTrackingProvider.TrackShipmentAsync(result, cancellationToken);
         }
 
         // A multiple - package shipment(MPS) consists of two or more packages shipped to the same recipient.
