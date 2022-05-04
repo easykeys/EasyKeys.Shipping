@@ -20,19 +20,24 @@ namespace EasyKeysShipping.UnitTest.FedEx
             _trackingProvider = GetTrackingProvider();
         }
 
-        [Fact]
-        public async Task Track_Shipment_Successfully()
+        [Theory]
+        [InlineData("778161615475509")]
+        [InlineData("776753740455")]
+        [InlineData("272707764259")]
+        [InlineData("272712649472")]
+        [InlineData("272719656012")]
+        public async Task Track_Shipment_Successfully(string trackingId)
         {
             var shipmentLabel = new ShipmentLabel();
 
             shipmentLabel.Labels.Add(new PackageLabelDetails()
             {
-                TrackingId = "272690249680"
+                TrackingId = trackingId
             });
 
             var result = await _trackingProvider.TrackShipmentAsync(shipmentLabel, CancellationToken.None);
 
-            Assert.NotNull(result);
+            Assert.Null(result.TrackingEvents);
         }
 
         private IFedExTrackingProvider GetTrackingProvider()

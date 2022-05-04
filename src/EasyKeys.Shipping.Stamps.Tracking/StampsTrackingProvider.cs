@@ -14,14 +14,15 @@ namespace EasyKeys.Shipping.Stamps.Tracking
             _stampsClient = stampsClient;
         }
 
-        public async Task<List<Models.TrackingEvent>> TrackShipmentAsync(ShipmentLabel shipmentLabel, CancellationToken cancellationToken)
+        public async Task<TrackingInformation> TrackShipmentAsync(ShipmentLabel shipmentLabel, CancellationToken cancellationToken)
         {
-            var trackingEvents = new List<Models.TrackingEvent>();
+            var trackingInformation = new TrackingInformation();
 
             var trackRequest = new TrackShipmentRequest()
             {
                 Item = await _stampsClient.GetTokenAsync(cancellationToken),
-                Item1 = shipmentLabel.Labels.FirstOrDefault().TrackingId
+                Item1 = shipmentLabel.Labels.FirstOrDefault().TrackingId,
+                Carrier = Carrier.All
             };
 
             try
@@ -33,7 +34,7 @@ namespace EasyKeys.Shipping.Stamps.Tracking
                 foreach (var trackingEvent in trackingResults.TrackingEvents)
                 {
                     var address = new Shipping.Abstractions.Models.Address(trackingEvent.City, trackingEvent.State, trackingEvent.Zip, trackingEvent.Country);
-                    trackingEvents.Add(new Models.TrackingEvent()
+                    trackingInformation.TrackingEvents.Add(new TrackingEvent()
                     {
                         Event = trackingEvent.Event,
                         TimeStamp = trackingEvent.Timestamp,
@@ -44,14 +45,10 @@ namespace EasyKeys.Shipping.Stamps.Tracking
             }
             catch (Exception ex)
             {
-                var internalErrorEvent = new Models.TrackingEvent();
-
-                internalErrorEvent.InternalErrors.Add(ex.Message);
-
-                trackingEvents.Add(internalErrorEvent);
+                trackingInformation.InternalErrors.Add(ex.Message);
             }
 
-            return trackingEvents;
+            return trackingInformation;
         }
     }
 }
