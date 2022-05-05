@@ -220,7 +220,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
         private GetRatesRequest ApplyPackageDetails(GetRatesRequest request, RateRequestDetails rateDetails, Shipment shipment)
         {
-            request.Rate.WeightLb = (double)shipment.Packages.Sum(x => x.Weight);
+            request.Rate.WeightLb = (double)shipment.Packages.FirstOrDefault().Weight;
 
             request.Rate.WeightOz = 0.0;
 

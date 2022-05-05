@@ -91,7 +91,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
                     Width = 1.500M,
                     Length = 1.200M
                 },
-                .5M),
+                3.5M),
         };
 
             var commodity = new Commodity()
@@ -105,7 +105,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
                 Quantity = 1,
                 ExportLicenseNumber = "dsdfs",
                 Name = "sdkfsdf",
-                Weight = .3m
+                Weight = 3.5m
             };
 
             var sender = new ContactInfo()

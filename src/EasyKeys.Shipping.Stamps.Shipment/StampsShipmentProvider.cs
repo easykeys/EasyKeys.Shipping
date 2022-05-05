@@ -37,6 +37,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
                 },
                 ServiceDescription = shipmentDetails.SelectedRate.ServiceName,
+                PackageType = shipmentDetails.PackageType,
                 DeclaredValue = shipmentDetails.DeclaredValue
             };
 

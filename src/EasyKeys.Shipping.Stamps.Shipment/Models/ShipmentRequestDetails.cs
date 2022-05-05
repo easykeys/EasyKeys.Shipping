@@ -1,4 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
@@ -11,6 +12,8 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
         public NotificationOptions NotificationOptions { get; set; } = new NotificationOptions();
 
         public Rate SelectedRate { get; set; }
+
+        public PackageType PackageType { get; set; }
 
         /// <summary>
         /// The amount to declare for this shipment, in dollars and cents. Required for International.
