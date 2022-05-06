@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Abstractions.Services.Impl;
 

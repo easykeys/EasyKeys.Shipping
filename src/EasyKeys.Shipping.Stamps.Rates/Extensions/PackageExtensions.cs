@@ -33,7 +33,7 @@ namespace EasyKeys.Shipping.Stamps.Rates.Extensions
         }
 
         /// <summary>
-        /// 12 1/2″ x 9 1/2″
+        /// 12 1/2″ x 9 1/2″.
         /// </summary>
         /// <param name="pacakge"></param>
         /// <returns></returns>
@@ -63,7 +63,7 @@ namespace EasyKeys.Shipping.Stamps.Rates.Extensions
         }
 
         /// <summary>
-        /// Flat Rate Box	USPS medium flat rate box. A special 11” x 8 ½” x 5 ½” or 14” x 3.5” x 12” USPS box that clearly indicates “Medium Flat Rate Box”
+        /// Flat Rate Box	USPS medium flat rate box. A special 11” x 8 ½” x 5 ½” or 14” x 3.5” x 12” USPS box that clearly indicates “Medium Flat Rate Box”.
         /// </summary>
         /// <param name="package"></param>
         /// <returns></returns>

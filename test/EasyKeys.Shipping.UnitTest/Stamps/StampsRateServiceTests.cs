@@ -138,7 +138,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
         /// This test simulates a <RequriesAllof></RequriesAllof> object and tests to make sure at least one of the
         /// AddOnTypes are added from this list.
         ///
-        /// Collection of one or more <requiresoneof> objects.
+        /// Collection of one or more. <requiresoneof> objects.
         /// This value is a hint to the integration that there are required add-ons to go with this add-on.
         /// If this add-on is selected, the integration must also choose exactly one add-on from each set of add-ons listed in the <requiresallof> element in order to form a valid rate to be passed to CreateIndicium.
         /// The integration may use this hint in preparing a user interface with pre-validation for its users.
@@ -224,8 +224,8 @@ namespace EasyKeysShipping.UnitTest.Stamps
             services.AddStampsClient();
             services.AddStampsRateProvider();
             return services.BuildServiceProvider();
-            //services.BuildServiceProvider().GetRequiredService<IOptions<StampsOptions>>();
-            //return services.BuildServiceProvider().GetRequiredService<IRatesService>();
+            // services.BuildServiceProvider().GetRequiredService<IOptions<StampsOptions>>();
+            // return services.BuildServiceProvider().GetRequiredService<IRatesService>();
         }
 
         public class AddOnTypeData : IEnumerable<object[]>
@@ -250,7 +250,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
         }
 
         /// <summary>
-        /// PackageType.Unkown sends back all possible packageTypes, if unknown will default to PackageType.Package
+        /// PackageType.Unkown sends back all possible packageTypes, if unknown will default to PackageType.Package.
         /// </summary>
         public class PackageTypeData : IEnumerable<object[]>
         {
@@ -351,7 +351,6 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
                 // Mail class UspsReturn not supported.
                 // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
-
                 yield return new object[] { ServiceType.USPS_LIBRARY_MAIL, StampsClient.v111.ServiceType.USLM };
 
                 // Mail class 'PriorityMailInternational' is not available for the destination country.
@@ -392,7 +391,6 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
                 // Mail class UspsReturn not supported.
                 // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
-
                 yield return new object[] { "other", StampsClient.v111.ContentTypeV2.Other };
             }
 

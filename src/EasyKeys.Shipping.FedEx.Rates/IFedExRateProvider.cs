@@ -6,7 +6,7 @@ namespace EasyKeys.Shipping.FedEx.Rates;
 public interface IFedExRateProvider
 {
     /// <summary>
-    /// Retrieves FedEx rates for non ground services.
+    /// Retrieves FedEx Shipment Rates for specified <see cref="ServiceType"/>.
     /// </summary>
     /// <param name="shipment">The shipment with packages.</param>
     /// <param name="serviceType">The type of fedex service to be utilized.</param>

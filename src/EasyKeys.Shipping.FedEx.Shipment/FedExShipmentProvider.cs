@@ -119,7 +119,11 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 }
                 else
                 {
-                    label.InternalErrors.Add(reply.Notifications.Select(x => x.Message).Flatten(","));
+                    var errors = reply.Notifications.Select(x => x.Message).Flatten(",");
+
+                    _logger.LogError("{providerName} failed: {errors}", nameof(FedExShipmentProvider), errors);
+
+                    label.InternalErrors.Add(errors);
                 }
             }
 
@@ -127,8 +131,11 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{providerName} failed", nameof(FedExShipmentProvider));
+
             // this does not explain fault exceptions well, must debug handler
-            label.InternalErrors.Add($"FedEx provider exception: {ex.Message}");
+            // TODO: possible needed to have Inner Exception support added.
+            label.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExShipmentProvider)} failed");
         }
 
         return label;
@@ -205,6 +212,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 "none" => new RateRequestType[1] { RateRequestType.NONE },
                 "list" => new RateRequestType[1] { RateRequestType.LIST },
                 "preferred" => new RateRequestType[1] { RateRequestType.PREFERRED },
+                _ => throw new NotImplementedException(),
             }
         };
 

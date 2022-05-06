@@ -159,7 +159,7 @@ public class Main : IMain
 
             var shipment = new Shipping.Abstractions.Models.Shipment(
                 originAddress,
-                validationResult?.ProposedAddress,
+                validationResult?.ProposedAddress ?? originAddress,
                 packages,
                 shipmentOptions);
 

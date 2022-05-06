@@ -1,33 +1,31 @@
 ﻿using EasyKeys.Shipping.FedEx.Abstractions.DependencyInjection;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
+using EasyKeys.Shipping.FedEx.Shipment;
 
-using Microsoft.Extensions.DependencyInjection;
+namespace Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeys.Shipping.FedEx.Shipment.DependencyInjection
+public static class FedExShippingServiceCollectionExtensions
 {
-    public static class FedExShippingServiceCollectionExtensions
+    /// <summary>
+    /// Adds <see cref="IFedExShipmentProvider"/> implementation.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="sectionName"></param>
+    /// <param name="configure"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddFedExShipmenProvider(
+        this IServiceCollection services,
+        string sectionName = nameof(FedExOptions),
+        Action<FedExOptions, IServiceProvider>? configure = null)
     {
-        /// <summary>
-        /// Adds <see cref="IFedExShipmentProvider"/> implementation.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="sectionName"></param>
-        /// <param name="configure"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddFedExShipmenProvider(
-            this IServiceCollection services,
-            string sectionName = nameof(FedExOptions),
-            Action<FedExOptions, IServiceProvider>? configure = null)
-        {
-            services.AddChangeTokenOptions<FedExOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
+        services.AddChangeTokenOptions<FedExOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
 
-            services.AddLogging();
+        services.AddLogging();
 
-            services.AddFedExClient();
+        services.AddFedExClient();
 
-            services.AddTransient<IFedExShipmentProvider, FedExShipmentProvider>();
+        services.AddTransient<IFedExShipmentProvider, FedExShipmentProvider>();
 
-            return services;
-        }
+        return services;
     }
 }

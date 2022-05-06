@@ -18,7 +18,7 @@
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// Customized text that goes in the email body
+        /// Customized text that goes in the email body.
         /// </summary>
         public string Note { get; set; } = string.Empty;
     }

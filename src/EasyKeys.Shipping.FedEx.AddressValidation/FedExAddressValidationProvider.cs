@@ -109,13 +109,14 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
                         Description = notification.Message
                     });
                 }
+
+                _logger.LogError("{providerName} failed: {errors} ", nameof(FedExAddressValidationProvider), request.Errors.Select(x => x.Description).Flatten(","));
             }
         }
         catch (Exception ex)
         {
-            var exMsg = "FedExValidation client failed";
-            _logger.LogError(ex, exMsg);
-            request.InternalErrors.Add(ex?.Message ?? exMsg);
+            _logger.LogError(ex, "{providerName} failed", nameof(FedExAddressValidationProvider));
+            request.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExAddressValidationProvider)} failed");
         }
 
         return request;

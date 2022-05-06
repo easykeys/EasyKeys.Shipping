@@ -38,9 +38,6 @@ public class AddressParseResult
             if (propertyInfo != null)
             {
                 propertyInfo.SetValue(this, Convert.ChangeType(pair.Value, propertyInfo.PropertyType), null);
-
-                //var methodInfo = propertyInfo.GetSetMethod(true);
-                //methodInfo?.Invoke(this, new[] { pair.Value });
             }
         }
     }
