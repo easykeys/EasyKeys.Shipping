@@ -1,4 +1,8 @@
-﻿namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
+﻿using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.CarrierTypes;
+using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ContentTypes;
+using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ServiceTypes;
+
+namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 public class RateRequestDetails
 {
@@ -6,7 +10,7 @@ public class RateRequestDetails
     /// Required for CreateIndicium web method.
     /// Not required for GetRates web method.If not specified in GetRates, <b>rate</b> object in the response will include rates for all ServiceTypes.
     /// </summary>
-    public ServiceType ServiceType { get; set; } = ServiceType.UNKNOWN;
+    public ServiceTypes ServiceType { get; set; } = ServiceTypes.Unknown;
 
     /// <summary>
     /// A plain language description of the service returned, i.e. “USPS Priority Mail”.
@@ -16,7 +20,7 @@ public class RateRequestDetails
     /// <summary>
     /// The amount to insure this shipment for, in dollars and cents. If a value is specified, insurance add-ons will be returned.
     /// </summary>
-    public decimal InsuredValue { get; set; } = 100.0m;
+    public decimal InsuredValue { get; set; } = 20.0m;
 
     /// <summary>
     /// The registered value for this shipment, in dollars and cents.
@@ -125,7 +129,7 @@ public class RateRequestDetails
     /// </list>
     /// One of: Commercial_Sample, Dangerous_Goods, Document, Gift, Humanitarian_Donation, Merchandise, Returned_Goods, or Other.
     /// </summary>
-    public string ContentType { get; set; } = "Merchandise";
+    public ContentTypes ContentType { get; set; } = ContentTypes.Merchandise;
 
     public bool ContentTypeSpecified { get; set; } = true;
 
@@ -153,7 +157,7 @@ public class RateRequestDetails
     /// </item>
     /// </list>
     /// </summary>
-    public string Carrier { get; set; } = "USPS";
+    public CarrierTypes Carrier { get; set; } = CarrierTypes.Usps;
 
     /// <summary>
     /// <para>

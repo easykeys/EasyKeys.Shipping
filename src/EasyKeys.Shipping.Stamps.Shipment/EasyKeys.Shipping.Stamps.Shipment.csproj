@@ -9,6 +9,9 @@
 		<PackageTags>DotNetCore, Stamps.com Shipment service, Stamps.com WCF, Stamps.com SWS/IM API</PackageTags>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Ardalis.SmartEnum" Version="2.0.1" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />

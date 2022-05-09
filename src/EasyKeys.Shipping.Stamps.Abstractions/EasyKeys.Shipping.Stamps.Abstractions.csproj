@@ -17,12 +17,13 @@
 		<PackageReference Include="System.ServiceModel.NetTcp" />
 		<PackageReference Include="System.ServiceModel.Security" />
 		<PackageReference Include="Bet.Extensions.Options" />
+		<PackageReference Include="Ardalis.SmartEnum" Version="2.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="EasyKeys.Shipping.Stamps.Rates" />
 		<InternalsVisibleTo Include="EasyKeys.Shipping.Stamps.Shipment" />
-		<InternalsVisibleTo Include="EasyKeysShipping.UnitTest"/>
+		<InternalsVisibleTo Include="EasyKeysShipping.UnitTest" />
 	</ItemGroup>
 
 	<ItemGroup>

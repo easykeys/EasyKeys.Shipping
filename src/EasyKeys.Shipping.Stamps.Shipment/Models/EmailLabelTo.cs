@@ -3,6 +3,11 @@
     public class EmailLabelTo
     {
         /// <summary>
+        /// Activate label emailing.
+        /// </summary>
+        public bool IsActivated { get; set; } = true;
+
+        /// <summary>
         /// The email address that receives the label.
         /// </summary>
         public string Email { get; set; } = string.Empty;

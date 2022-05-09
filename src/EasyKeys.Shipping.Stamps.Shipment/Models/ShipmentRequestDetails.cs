@@ -20,6 +20,11 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
         /// </summary>
         public decimal DeclaredValue { get; set; }
 
+        /// <summary>
+        /// Generates a sample label. Default is <b>true</b>.
+        /// </summary>
+        public bool IsSample { get; set; } = true;
+
         public string OrderId { get; set; } = string.Empty;
     }
 }

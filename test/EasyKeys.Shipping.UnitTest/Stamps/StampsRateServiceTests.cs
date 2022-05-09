@@ -3,6 +3,9 @@
 using Bet.Extensions.Testing.Logging;
 
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.CarrierTypes;
+using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ContentTypes;
+using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ServiceTypes;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
 
@@ -59,7 +62,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
         [Theory]
         [ClassData(typeof(ServiceTypeData))]
-        public async Task Return_RatesV40_ServiceType_Successfully(ServiceType serviceType, StampsClient.v111.ServiceType returnServiceType)
+        public async Task Return_RatesV40_ServiceType_Successfully(ServiceTypes serviceType, StampsClient.v111.ServiceType returnServiceType)
         {
             var rateRequest = new RateRequestDetails()
             {
@@ -77,7 +80,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
             // check ToAddress Province/State & PostalCode/ZipCode logic
             Assert.NotNull(rates);
 
-            if (serviceType == ServiceType.UNKNOWN)
+            if (serviceType == ServiceTypes.Unknown)
             {
                 // when unknown, defaults to all available
                 Assert.True(rates.Any());
@@ -90,7 +93,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
         [Theory]
         [ClassData(typeof(ContentTypeData))]
-        public async Task Return_RatesV40_ContentType_Successfully(string contentType, StampsClient.v111.ContentTypeV2 returnedContentType)
+        public async Task Return_RatesV40_ContentType_Successfully(ContentTypes contentType, StampsClient.v111.ContentTypeV2 returnedContentType)
         {
             var rateRequest = new RateRequestDetails() { ContentType = contentType };
 
@@ -105,7 +108,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
         [Theory]
         [ClassData(typeof(CarrierTypeData))]
-        public async Task Return_RatesV40_Carrier_Successfully(string carrier, int ratesReturnedCount)
+        public async Task Return_RatesV40_Carrier_Successfully(CarrierTypes carrier, int ratesReturnedCount)
         {
             var rateRequest = new RateRequestDetails() { Carrier = carrier };
 
@@ -116,7 +119,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
             Assert.NotNull(domesticRates);
 
             // service will only return rates for "usps"
-            Assert.True(carrier.Contains("usps") || carrier.Contains("default") ? domesticRates.Count > ratesReturnedCount : domesticRates.Count == ratesReturnedCount);
+            Assert.True(carrier.Name.Contains("usps") || carrier.Name.Contains("default") ? domesticRates.Count > ratesReturnedCount : domesticRates.Count == ratesReturnedCount);
         }
 
         [Theory]
@@ -309,15 +312,13 @@ namespace EasyKeysShipping.UnitTest.Stamps
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { "usps", 1 };
+                yield return new object[] { CarrierTypes.Usps, 1 };
 
-                yield return new object[] { "ups", 0 };
+                yield return new object[] { CarrierTypes.Ups, 0 };
 
-                yield return new object[] { "dhlexpress", 0 };
+                yield return new object[] { CarrierTypes.DhsExpress, 0 };
 
-                yield return new object[] { "fedex", 0 };
-
-                yield return new object[] { "default", 1 };
+                yield return new object[] { CarrierTypes.Fedex, 0 };
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -330,35 +331,35 @@ namespace EasyKeysShipping.UnitTest.Stamps
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { ServiceType.USPS_PARCEL_SELECT_GROUND, StampsClient.v111.ServiceType.USPS };
+                yield return new object[] { ServiceTypes.USPS_Parcel_Select_Ground, StampsClient.v111.ServiceType.USPS };
 
                 /* Mailpiece is over maximum weight of 0 lb 15.999 oz
                  * Cannot ship First-Class packages larger than 22" x 18" x 15"
                  */
-                yield return new object[] { ServiceType.USPS_FIRST_CLASS_MAIL, StampsClient.v111.ServiceType.USFC };
+                yield return new object[] { ServiceTypes.USPS_First_Class_Mail, StampsClient.v111.ServiceType.USFC };
 
-                yield return new object[] { ServiceType.USPS_MEDIA_MAIL, StampsClient.v111.ServiceType.USMM };
+                yield return new object[] { ServiceTypes.USPS_Media_Mail, StampsClient.v111.ServiceType.USMM };
 
-                yield return new object[] { ServiceType.USPS_PRIORITY_MAIL, StampsClient.v111.ServiceType.USPM };
+                yield return new object[] { ServiceTypes.USPS_Priority_Mail, StampsClient.v111.ServiceType.USPM };
 
-                yield return new object[] { ServiceType.USPS_PRIORITY_MAIL_EXPRESS, StampsClient.v111.ServiceType.USXM };
+                yield return new object[] { ServiceTypes.USPS_Priority_Mail_Express, StampsClient.v111.ServiceType.USXM };
 
                 // Mail class 'ExpressMailInternational' is not available for the destination country.
-                yield return new object[] { ServiceType.USPS_PRIORITY_MAIL_EXPRESS_INTERNATIONAL, StampsClient.v111.ServiceType.USEMI };
+                yield return new object[] { ServiceTypes.USPS_Priority_Mail_Express_International, StampsClient.v111.ServiceType.USEMI };
 
                 // only for international
-                yield return new object[] { ServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL, StampsClient.v111.ServiceType.USFCI };
+                yield return new object[] { ServiceTypes.USPS_First_Class_Mail_International, StampsClient.v111.ServiceType.USFCI };
 
                 // Mail class UspsReturn not supported.
                 // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
 
-                yield return new object[] { ServiceType.USPS_LIBRARY_MAIL, StampsClient.v111.ServiceType.USLM };
+                yield return new object[] { ServiceTypes.USPS_Library_Mail, StampsClient.v111.ServiceType.USLM };
 
                 // Mail class 'PriorityMailInternational' is not available for the destination country.
-                yield return new object[] { ServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL, StampsClient.v111.ServiceType.USPMI };
+                yield return new object[] { ServiceTypes.USPS_Priority_Mail_International, StampsClient.v111.ServiceType.USPMI };
 
                 // when unknown, defaults to all available
-                yield return new object[] { ServiceType.UNKNOWN, StampsClient.v111.ServiceType.USPM };
+                yield return new object[] { ServiceTypes.Unknown, StampsClient.v111.ServiceType.USPM };
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -371,29 +372,29 @@ namespace EasyKeysShipping.UnitTest.Stamps
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { "commercial_sample", StampsClient.v111.ContentTypeV2.CommercialSample };
+                yield return new object[] { ContentTypes.CommercialSample, StampsClient.v111.ContentTypeV2.CommercialSample };
 
                 /* Mailpiece is over maximum weight of 0 lb 15.999 oz
                  * Cannot ship First-Class packages larger than 22" x 18" x 15"
                  */
-                yield return new object[] { "dangerous_goods", StampsClient.v111.ContentTypeV2.DangerousGoods };
+                yield return new object[] { ContentTypes.DangerousGoods, StampsClient.v111.ContentTypeV2.DangerousGoods };
 
-                yield return new object[] { "document", StampsClient.v111.ContentTypeV2.Document };
+                yield return new object[] { ContentTypes.Document, StampsClient.v111.ContentTypeV2.Document };
 
-                yield return new object[] { "gift", StampsClient.v111.ContentTypeV2.Gift };
+                yield return new object[] { ContentTypes.Gift, StampsClient.v111.ContentTypeV2.Gift };
 
-                yield return new object[] { "humanitarian", StampsClient.v111.ContentTypeV2.HumanitarianDonation };
+                yield return new object[] { ContentTypes.Humanitarian, StampsClient.v111.ContentTypeV2.HumanitarianDonation };
 
                 // Mail class 'ExpressMailInternational' is not available for the destination country.
-                yield return new object[] { "merchandise", StampsClient.v111.ContentTypeV2.Merchandise };
+                yield return new object[] { ContentTypes.Merchandise, StampsClient.v111.ContentTypeV2.Merchandise };
 
                 // only for international
-                yield return new object[] { "returned_goods", StampsClient.v111.ContentTypeV2.ReturnedGoods };
+                yield return new object[] { ContentTypes.ReturnedGoods, StampsClient.v111.ContentTypeV2.ReturnedGoods };
 
                 // Mail class UspsReturn not supported.
                 // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
 
-                yield return new object[] { "other", StampsClient.v111.ContentTypeV2.Other };
+                yield return new object[] { ContentTypes.Other, StampsClient.v111.ContentTypeV2.Other };
             }
 
             IEnumerator IEnumerable.GetEnumerator()

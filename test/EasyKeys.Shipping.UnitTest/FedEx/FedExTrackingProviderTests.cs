@@ -37,7 +37,7 @@ namespace EasyKeysShipping.UnitTest.FedEx
 
             var result = await _trackingProvider.TrackShipmentAsync(shipmentLabel, CancellationToken.None);
 
-            Assert.Null(result.TrackingEvents);
+            Assert.NotNull(result.TrackingEvents);
         }
 
         private IFedExTrackingProvider GetTrackingProvider()

@@ -79,21 +79,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         MaxAmount = rateDetails.MaxAmount,
 
-                        ServiceType = rateDetails.ServiceType switch
-                        {
-                            Models.ServiceType.USPS_PARCEL_SELECT_GROUND => StampsClient.v111.ServiceType.USPS,
-                            Models.ServiceType.USPS_FIRST_CLASS_MAIL => StampsClient.v111.ServiceType.USFC,
-                            Models.ServiceType.USPS_MEDIA_MAIL => StampsClient.v111.ServiceType.USMM,
-                            Models.ServiceType.USPS_PRIORITY_MAIL => StampsClient.v111.ServiceType.USPM,
-                            Models.ServiceType.USPS_PRIORITY_MAIL_EXPRESS => StampsClient.v111.ServiceType.USXM,
-                            Models.ServiceType.USPS_PRIORITY_MAIL_EXPRESS_INTERNATIONAL => StampsClient.v111.ServiceType.USEMI,
-                            Models.ServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL => StampsClient.v111.ServiceType.USFCI,
-                            Models.ServiceType.USPS_PAY_ON_USE_RETURN => StampsClient.v111.ServiceType.USRETURN,
-                            Models.ServiceType.USPS_LIBRARY_MAIL => StampsClient.v111.ServiceType.USLM,
-                            Models.ServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL => StampsClient.v111.ServiceType.USPMI,
-                            Models.ServiceType.UNKNOWN => StampsClient.v111.ServiceType.Unknown,
-                            _ => StampsClient.v111.ServiceType.Unknown
-                        },
+                        ServiceType = rateDetails.ServiceType.Type,
 
                         ServiceDescription = rateDetails.ServiceDescription,
 
@@ -131,17 +117,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         CubicPricing = rateDetails.CubicPricing,
 
-                        ContentType = rateDetails.ContentType.ToLower() switch
-                        {
-                            "commercial_sample" => ContentTypeV2.CommercialSample,
-                            "dangerous_goods" => ContentTypeV2.DangerousGoods,
-                            "document" => ContentTypeV2.Document,
-                            "gift" => ContentTypeV2.Gift,
-                            "humanitarian" => ContentTypeV2.HumanitarianDonation,
-                            "merchandise" => ContentTypeV2.Merchandise,
-                            "returned_goods" => ContentTypeV2.ReturnedGoods,
-                            _ => ContentTypeV2.Other
-                        },
+                        ContentType = rateDetails.ContentType.Type,
 
                         ContentTypeSpecified = rateDetails.ContentTypeSpecified,
 
@@ -151,14 +127,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                         // dont know what this is
                         SortType = SortTypeV1.Unknown,
                     },
-                    Carrier = rateDetails.Carrier.ToLower() switch
-                    {
-                        "usps" => Carrier.USPS,
-                        "ups" => Carrier.UPS,
-                        "dhlexpress" => Carrier.DHLExpress,
-                        "fedex" => Carrier.FedEx,
-                        _ => Carrier.USPS
-                    }
+                    Carrier = rateDetails.Carrier.Type
                 };
 
                 request = ApplyPackageDetails(request, rateDetails, shipment);

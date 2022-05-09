@@ -1,5 +1,6 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ServiceTypes;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 
@@ -22,18 +23,19 @@ namespace EasyKeys.Shipping.Stamps.Shipment
         {
             var ratesDetails = new RateRequestDetails()
             {
-                ServiceType = shipmentDetails.SelectedRate.Name switch
+                ServiceType = shipmentDetails.SelectedRate.Name.ToUpper() switch
                 {
-                    "USFC" => Abstractions.Models.ServiceType.USPS_FIRST_CLASS_MAIL,
-                    "USMM" => Abstractions.Models.ServiceType.USPS_MEDIA_MAIL,
-                    "USPM" => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL,
-                    "USXM" => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL_EXPRESS,
-                    "UEMI" => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL_EXPRESS_INTERNATIONAL,
-                    "USPMI" => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL,
-                    "USFCI" => Abstractions.Models.ServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL,
-                    "USPS" => Abstractions.Models.ServiceType.USPS_PARCEL_SELECT_GROUND,
-                    "USLM" => Abstractions.Models.ServiceType.USPS_LIBRARY_MAIL,
-                    _ => Abstractions.Models.ServiceType.USPS_PRIORITY_MAIL
+
+                    "USFC" => ServiceTypes.USPS_First_Class_Mail,
+                    "USMM" => ServiceTypes.USPS_Media_Mail,
+                    "USPM" => ServiceTypes.USPS_Priority_Mail,
+                    "USXM" => ServiceTypes.USPS_Priority_Mail_Express,
+                    "UEMI" => ServiceTypes.USPS_Priority_Mail_Express_International,
+                    "USPMI" => ServiceTypes.USPS_Priority_Mail_International,
+                    "USFCI" => ServiceTypes.USPS_First_Class_Mail_International,
+                    "USPS" => ServiceTypes.USPS_Parcel_Select_Ground,
+                    "USLM" => ServiceTypes.USPS_Library_Mail,
+                    _ => ServiceTypes.USPS_First_Class_Mail
 
                 },
                 ServiceDescription = shipmentDetails.SelectedRate.ServiceName,
@@ -49,28 +51,13 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
                 Customs = shipment.Commodities.Any() ? SetCustomsInformation(shipment, shipmentDetails, ratesDetails) : default,
 
-                SampleOnly = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") == "Development" ? true : false,
+                SampleOnly = shipmentDetails.IsSample,
 
-                PostageMode = shipmentDetails.LabelOptions.PostageMode.ToLower() switch
-                {
-                    "normal" => PostageMode.Normal,
-                    "NoPostage" => PostageMode.NoPostage,
-                    _ => PostageMode.Normal
-                },
+                PostageMode = shipmentDetails.LabelOptions.PostageMode.Type,
 
-                ImageType = shipmentDetails.LabelOptions.ImageType switch
-                {
-                    "png" => ImageType.Png,
-                    "pdf" => ImageType.Pdf,
-                    _ => ImageType.Png
-                },
+                ImageType = shipmentDetails.LabelOptions.ImageType.Type,
 
-                EltronPrinterDPIType = shipmentDetails.LabelOptions.Resolution switch
-                {
-                    "default" => EltronPrinterDPIType.Default,
-                    "high" => EltronPrinterDPIType.High,
-                    _ => EltronPrinterDPIType.Default
-                },
+                EltronPrinterDPIType = shipmentDetails.LabelOptions.DpiType.Type,
 
                 memo = shipmentDetails.LabelOptions.Memo,
 
@@ -113,15 +100,9 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                     Internal Transaction Number (ITN) to be put on the CP72 form.*/
                 InternalTransactionNumber = "123",
 
-                PaperSize = shipmentDetails.LabelOptions.PaperSize.ToLower() switch
-                {
-                    "default" => PaperSizeV1.Default,
-                    "labelsize" => PaperSizeV1.LabelSize,
-                    "letter85x11" => PaperSizeV1.Letter85x11,
-                    _ => PaperSizeV1.Default
-                },
+                PaperSize = shipmentDetails.LabelOptions.PaperSize.Size,
 
-                EmailLabelTo = string.IsNullOrEmpty(shipmentDetails.LabelOptions.EmailLabelTo.Email) ? null : SetEmailLabelTo(shipmentDetails),
+                EmailLabelTo = shipmentDetails.LabelOptions.EmailLabelTo.IsActivated ? null : SetEmailLabelTo(shipmentDetails),
 
                 // ??
                 PayOnPrint = false,
@@ -129,15 +110,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 // ??
                 ReturnLabelExpirationDays = 1,
 
-                ImageDpi = shipmentDetails.LabelOptions.ImageDPI switch
-                {
-                    "ImageDpi203" => ImageDpi.ImageDpiDefault,
-                    "ImageDpi300" => ImageDpi.ImageDpi300,
-                    "ImageDpi200" => ImageDpi.ImageDpi200,
-                    "ImageDpi150" => ImageDpi.ImageDpi150,
-                    "ImageDpi96" => ImageDpi.ImageDpi96,
-                    _ => ImageDpi.ImageDpiDefault
-                },
+                ImageDpi = shipmentDetails.LabelOptions.ImageDPI.Dpi,
 
                 // ??
                 RateToken = string.Empty,
@@ -199,7 +172,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                         new PackageLabelDetails()
                         {
                             ProviderLabelId = response.StampsTxID.ToString(),
-                            ImageType = shipmentDetails.LabelOptions.ImageType,
+                            ImageType = shipmentDetails.LabelOptions.ImageType.Name,
                             TrackingId = response.TrackingNumber.ToString(),
                             Bytes = response.ImageData.ToList(),
                             Charges = new PackageCharges()
@@ -280,17 +253,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
             return new CustomsV7()
             {
-                ContentType = rateDetails.ContentType.ToLower() switch
-                {
-                    "commercial_sample" => ContentTypeV2.CommercialSample,
-                    "dangerous_goods" => ContentTypeV2.DangerousGoods,
-                    "document" => ContentTypeV2.Document,
-                    "gift" => ContentTypeV2.Gift,
-                    "humanitarian" => ContentTypeV2.HumanitarianDonation,
-                    "merchandise" => ContentTypeV2.Merchandise,
-                    "returned_goods" => ContentTypeV2.ReturnedGoods,
-                    _ => ContentTypeV2.Other
-                },
+                ContentType = rateDetails.ContentType.Type,
 
                 Comments = shipment?.Commodities?.FirstOrDefault()?.Comments,
 

@@ -1,4 +1,10 @@
-﻿namespace EasyKeys.Shipping.Stamps.Shipment.Models
+﻿using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.ImageDpiTypes;
+using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.ImageTypes;
+using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.PaperSizes;
+using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.PostageModes;
+using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.PrinterTypes;
+
+namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
     public class LabelOptions
     {
@@ -15,21 +21,18 @@
         /// * The URL element will be an empty string.
         /// * This mode cannot be used on ImageType of Auto, PrintOncePDF, or EncryptedPngURL.
         /// </summary>
-        public bool ReturnImageData
-        { get; set; } = true;
+        public bool ReturnImageData { get; set; } = true;
 
         /// <summary>
-        /// Normal : A regular label with postage and a valid indicium.
+        /// Normal : A regular label with postage and a valid indicium (<b>default</b>).
         /// NoPostage : A regular label without postage or an indicium.
         /// </summary>
-        public string PostageMode { get; set; } = "Normal";
+        public PostageModes PostageMode { get; set; } = PostageModes.Normal;
 
         /// <summary>
         /// Image type of shipping label. Default is Auto: which generates a Png image.
         /// </summary>
-        public string ImageType { get; set; } = "png";
-
-        public string EltronPrinterDPIType { get; set; } = "default";
+        public ImageTypes ImageType { get; set; } = ImageTypes.Png;
 
         /// <summary>
         /// The memo to print at the bottom of the shipping label. The memo parameter may consist of more than one line separated by the standard carriage return/line feed, use &#xd; as carriage return and &#xa; as line feed in the request.
@@ -51,7 +54,7 @@
         /// </item>
         /// </list>
         /// </summary>
-        public string PaperSize { get; set; } = "default";
+        public PaperSizes PaperSize { get; set; } = PaperSizes.Default;
 
         /// <summary>
         /// <list type="bullet">
@@ -67,7 +70,7 @@
         /// </item>
         /// </list>
         /// </summary>
-        public string Resolution { get; set; } = "default";
+        public DpiTypes DpiType { get; set; } = DpiTypes.Default;
 
         /// <summary>
         /// <list type="bullet">
@@ -150,6 +153,6 @@
         /// </item>
         /// </list>
         /// </summary>
-        public string ImageDPI { get; set; } = "ImageDpi203";
+        public ImageDpiTypes ImageDPI { get; set; } = ImageDpiTypes.Default;
     }
 }
