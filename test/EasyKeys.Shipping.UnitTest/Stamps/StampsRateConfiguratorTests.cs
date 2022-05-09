@@ -44,6 +44,10 @@ namespace EasyKeysShipping.UnitTest.Stamps
             Assert.True(new Package(11m, 8.5m, 5.5m, 10m, 20m).IsFlatRateBox());
 
             Assert.True(new Package(12m, 12m, 6m, 10m, 20m).IsLargeFlatRateBox());
+
+            Assert.True(new Package(12m, 12m, 6m, .81m, 20m).IsLargeFlatEnvelope());
+
+            Assert.True(new Package(12m, 12m, 6m, 10m, 20m).DimensionsExceedFirstClassInternationalService());
         }
 
         [Fact]
