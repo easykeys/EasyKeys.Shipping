@@ -16,7 +16,7 @@ namespace EasyKeys.Shipping.FedEx.Rates;
 public class FedExRateProvider : IFedExRateProvider
 {
     private readonly FedExOptions _options;
-    private RatePortType _rateClient;
+    private readonly RatePortType _rateClient;
     private readonly ILogger<FedExRateProvider> _logger;
 
     public FedExRateProvider(
@@ -51,12 +51,14 @@ public class FedExRateProvider : IFedExRateProvider
             }
             else
             {
-                shipment.InternalErrors.Add($"FedEx provider: API returned NULL result");
+                _logger.LogError("{providerName}: API returned NULL result", nameof(FedExRateProvider));
+                shipment.InternalErrors.Add("FedEx provider: API returned NULL result");
             }
         }
         catch (Exception ex)
         {
-            shipment.InternalErrors.Add($"FedEx provider exception: {ex.Message}");
+            _logger.LogError(ex, "{providerName} failed", nameof(FedExRateProvider));
+            shipment.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExRateProvider)} failed");
         }
 
         return shipment;
@@ -239,15 +241,15 @@ public class FedExRateProvider : IFedExRateProvider
                 }
 
                 // FEDEX_INTERNATIONAL_PRIORITY
-                if (name == "INTERNATIONAL_PRIORITY")
+                if (name == nameof(ServiceType.INTERNATIONAL_PRIORITY))
                 {
                     guaranteedDelivery = shipDate.AddBusinessDays(3);
                 }
-                else if (name == "INTERNATIONAL_ECONOMY")
+                else if (name == nameof(ServiceType.INTERNATIONAL_ECONOMY))
                 {
                     guaranteedDelivery = shipDate.AddBusinessDays(6);
                 }
-                else if (name == "FEDEX_GROUND")
+                else if (name == nameof(ServiceType.FEDEX_GROUND))
                 {
                     guaranteedDelivery = shipDate.AddBusinessDays(1);
                 }

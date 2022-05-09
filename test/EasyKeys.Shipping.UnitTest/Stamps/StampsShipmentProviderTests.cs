@@ -26,7 +26,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
         [Fact]
         public async Task Process_Domestic_Shipment_Successfully()
         {
-            var rate = new Rate("USPM", "", 0m, DateTime.Now) { Name = "USPM" };
+            var rate = new Rate("USPM", string.Empty, 0m, DateTime.Now) { Name = "USPM" };
 
             var labels = await _shipmentProvider.CreateShipmentAsync(
                   TestShipments.CreateDomesticShipment(),
@@ -40,7 +40,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
         [Fact]
         public async Task Process_International_Shipment_Successfully()
         {
-            var rate = new Rate("USPMI", "", 100m, DateTime.Now);
+            var rate = new Rate("USPMI", string.Empty, 100m, DateTime.Now);
 
             var shipmentDetails = new ShipmentRequestDetails() { DeclaredValue = 100m, SelectedRate = rate, CustomsInformation = new CustomsInformation() { CustomsSigner = "brandon moffett" } };
 

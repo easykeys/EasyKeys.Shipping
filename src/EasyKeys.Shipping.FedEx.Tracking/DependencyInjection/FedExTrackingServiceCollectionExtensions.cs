@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.FedEx.Abstractions.DependencyInjection;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.DependencyInjection;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 
 using Microsoft.Extensions.DependencyInjection;

@@ -41,7 +41,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
 
         /// <summary>
         /// Specifies the page size of PDF labels. This value only applies to PDF. If offset is specified, this value will be ignored.
-        /// <see href="https://developer.stamps.com/soap-api/reference/swsimv111.html#carrier">more documentation</see>
+        /// <see href="https://developer.stamps.com/soap-api/reference/swsimv111.html#carrier">more documentation</see>.
         /// <list type="bullet">
         /// <item>
         /// <description>default</description>

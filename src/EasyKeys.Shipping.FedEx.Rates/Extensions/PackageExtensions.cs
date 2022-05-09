@@ -34,6 +34,12 @@ public static class PackageExtensions
                 && package.Dimensions.Width <= 15m;
     }
 
+    /// <summary>
+    /// This is an option for the shipments that are lesser than 1 lbs.
+    /// </summary>
+    /// <param name="package"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException">Null Exception thrown.</exception>
     public static bool IsFedExEnvelopeWeight(this Package package)
     {
         package = package ?? throw new ArgumentNullException(nameof(package));

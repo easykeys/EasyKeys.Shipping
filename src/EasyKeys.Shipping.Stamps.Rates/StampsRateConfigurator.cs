@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ServiceTypes;
 using EasyKeys.Shipping.Stamps.Rates.Extensions;
@@ -92,7 +91,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
         }
 
         /// <summary>
-        /// Package. Longest side plus the distance around the thickest part is less than or equal to 84”
+        /// Package. Longest side plus the distance around the thickest part is less than or equal to 84”.
         /// </summary>
         /// <param name="weight"></param>
         /// <returns></returns>
@@ -102,7 +101,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
         }
 
         /// <summary>
-        /// USPS small flat rate box. A special 8-5/8” x 5-3/8” x 1-5/8” USPS box that clearly indicates “Small Flat Rate Box”
+        /// USPS small flat rate box. A special 8-5/8” x 5-3/8” x 1-5/8” USPS box that clearly indicates “Small Flat Rate Box”.
         /// </summary>
         /// <param name="weight"></param>
         /// <returns></returns>
@@ -112,7 +111,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
         }
 
         /// <summary>
-        /// USPS medium flat rate box. A special 11” x 8 ½” x 5 ½” or 14” x 3.5” x 12” USPS box that clearly indicates “Medium Flat Rate Box”
+        /// USPS medium flat rate box. A special 11” x 8 ½” x 5 ½” or 14” x 3.5” x 12” USPS box that clearly indicates “Medium Flat Rate Box”.
         /// </summary>
         /// <param name="weight"></param>
         /// <returns></returns>

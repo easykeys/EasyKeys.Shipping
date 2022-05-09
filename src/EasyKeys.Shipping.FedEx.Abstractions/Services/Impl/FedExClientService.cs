@@ -1,5 +1,4 @@
-﻿
-using AddressValidationClient.v4;
+﻿using AddressValidationClient.v4;
 
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 

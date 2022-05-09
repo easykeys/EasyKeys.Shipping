@@ -22,8 +22,6 @@
 		<PackageReference Update="Microsoft.Extensions.Logging" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.Hosting" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.Http.Polly" Version="$(NetCoreVersion)" />
-		<PackageReference Update="Microsoft.Extensions.Caching.Memory" Version="$(NetCoreVersion)" />
-		<PackageReference Update="Microsoft.Extensions.Caching.StackExchangeRedis" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Microsoft.Extensions.Configuration" Version="$(NetCoreVersion)" />
 	</ItemGroup>
 
@@ -32,8 +30,6 @@
 		<PackageReference Update="Microsoft.Azure.ServiceBus" Version="5.1.0" />
 		<PackageReference Update="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
 		<PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.*" />
-		<PackageReference Update="Microsoft.CSharp" Version="4.8.1" />
-		<PackageReference Update="System.Drawing.Common" Version="4.8.1" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -53,6 +49,7 @@
 
 	<ItemGroup Label="Others">
 		<PackageReference Update="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Update="Ardalis.SmartEnum" Version="2.1.0" />
 	</ItemGroup>
 
 	<ItemGroup Label="Unit Tests">
