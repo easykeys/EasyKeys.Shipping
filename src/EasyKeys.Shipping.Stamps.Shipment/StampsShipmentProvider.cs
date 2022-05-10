@@ -1,6 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
-using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ServiceTypes;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 
@@ -26,16 +25,16 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 ServiceType = shipmentDetails.SelectedRate.Name.ToUpper() switch
                 {
 
-                    "USFC" => ServiceTypes.USPS_First_Class_Mail,
-                    "USMM" => ServiceTypes.USPS_Media_Mail,
-                    "USPM" => ServiceTypes.USPS_Priority_Mail,
-                    "USXM" => ServiceTypes.USPS_Priority_Mail_Express,
-                    "UEMI" => ServiceTypes.USPS_Priority_Mail_Express_International,
-                    "USPMI" => ServiceTypes.USPS_Priority_Mail_International,
-                    "USFCI" => ServiceTypes.USPS_First_Class_Mail_International,
-                    "USPS" => ServiceTypes.USPS_Parcel_Select_Ground,
-                    "USLM" => ServiceTypes.USPS_Library_Mail,
-                    _ => ServiceTypes.USPS_First_Class_Mail
+                    "USFC" => StampsServiceType.USPS_FIRST_CLASS_MAIL,
+                    "USMM" => StampsServiceType.USPS_MEDIA_MAIL,
+                    "USPM" => StampsServiceType.USPS_PRIORITY_MAIL,
+                    "USXM" => StampsServiceType.USPS_PRIORITY_MAIL_EXPRESS,
+                    "UEMI" => StampsServiceType.USPS_PRIORITY_MAIL_EXPRESS_INTERNATIONAL,
+                    "USPMI" => StampsServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL,
+                    "USFCI" => StampsServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL,
+                    "USPS" => StampsServiceType.USPS_PARCEL_SELECT_GROUND,
+                    "USLM" => StampsServiceType.USPS_LIBRARY_MAIL,
+                    _ => StampsServiceType.USPS_FIRST_CLASS_MAIL
 
                 },
                 ServiceDescription = shipmentDetails.SelectedRate.ServiceName,
@@ -53,12 +52,26 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
                 SampleOnly = shipmentDetails.IsSample,
 
-                PostageMode = shipmentDetails.LabelOptions.PostageMode.Type,
+                PostageMode = shipmentDetails.LabelOptions.PostageMode.Name switch
+                {
+                    "NORMAL" => StampsClient.v111.PostageMode.Normal,
+                    "NO_POSTAGE" => StampsClient.v111.PostageMode.NoPostage,
+                    _ => StampsClient.v111.PostageMode.Normal
+                },
 
-                ImageType = shipmentDetails.LabelOptions.ImageType.Type,
+                ImageType = shipmentDetails.LabelOptions.ImageType.Name switch
+                {
+                    "PNG" => StampsClient.v111.ImageType.Png,
+                    "PDF" => StampsClient.v111.ImageType.Pdf,
+                    _ => StampsClient.v111.ImageType.Png
+                },
 
-                EltronPrinterDPIType = shipmentDetails.LabelOptions.DpiType.Type,
-
+                EltronPrinterDPIType = shipmentDetails.LabelOptions.DpiType.Name switch
+                {
+                    "DEFAULT" => EltronPrinterDPIType.Default,
+                    "HIGH" => EltronPrinterDPIType.High,
+                    _ => EltronPrinterDPIType.Default
+                },
                 memo = shipmentDetails.LabelOptions.Memo,
 
                 // ??
@@ -100,7 +113,13 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                     Internal Transaction Number (ITN) to be put on the CP72 form.*/
                 InternalTransactionNumber = "123",
 
-                PaperSize = shipmentDetails.LabelOptions.PaperSize.Size,
+                PaperSize = shipmentDetails.LabelOptions.PaperSize.Name switch
+                {
+                    "DEFAULT" => PaperSizeV1.Default,
+                    "LABELSIZE" => PaperSizeV1.LabelSize,
+                    "LETTER85X11" => PaperSizeV1.Letter85x11,
+                    _ => PaperSizeV1.Default
+                },
 
                 EmailLabelTo = shipmentDetails.LabelOptions.EmailLabelTo.IsActivated ? null : SetEmailLabelTo(shipmentDetails),
 
@@ -110,7 +129,15 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 // ??
                 ReturnLabelExpirationDays = 1,
 
-                ImageDpi = shipmentDetails.LabelOptions.ImageDPI.Dpi,
+                ImageDpi = shipmentDetails.LabelOptions.ImageDPI.Name switch
+                {
+                    "DPI203" => ImageDpi.ImageDpi203,
+                    "DPI300" => ImageDpi.ImageDpi300,
+                    "DPI200" => ImageDpi.ImageDpi200,
+                    "DPI150" => ImageDpi.ImageDpi150,
+                    "DPI96" => ImageDpi.ImageDpi96,
+                    _ => ImageDpi.ImageDpiDefault
+                },
 
                 // ??
                 RateToken = string.Empty,
@@ -253,7 +280,17 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
             return new CustomsV7()
             {
-                ContentType = rateDetails.ContentType.Type,
+                ContentType = rateDetails.ContentType.Name switch
+                {
+                    "COMMERCIAL_SAMPLE" => ContentTypeV2.CommercialSample,
+                    "DANGEROUS_GOODS" => ContentTypeV2.DangerousGoods,
+                    "DOCUMENT" => ContentTypeV2.Document,
+                    "GIFT" => ContentTypeV2.Gift,
+                    "HUMANITARIAN" => ContentTypeV2.HumanitarianDonation,
+                    "MERCHANDISE" => ContentTypeV2.Merchandise,
+                    "RETURNED_GOODS" => ContentTypeV2.ReturnedGoods,
+                    _ => ContentTypeV2.Other
+                },
 
                 Comments = shipment?.Commodities?.FirstOrDefault()?.Comments,
 

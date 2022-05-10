@@ -1,10 +1,4 @@
-﻿using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.ImageDpiTypes;
-using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.ImageTypes;
-using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.PaperSizes;
-using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.PostageModes;
-using EasyKeys.Shipping.Stamps.Shipment.Models.Enums.PrinterTypes;
-
-namespace EasyKeys.Shipping.Stamps.Shipment.Models
+﻿namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
     public class LabelOptions
     {
@@ -27,12 +21,12 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
         /// Normal : A regular label with postage and a valid indicium (<b>default</b>).
         /// NoPostage : A regular label without postage or an indicium.
         /// </summary>
-        public PostageModes PostageMode { get; set; } = PostageModes.Normal;
+        public PostageMode PostageMode { get; set; } = PostageMode.NORMAL;
 
         /// <summary>
         /// Image type of shipping label. Default is Auto: which generates a Png image.
         /// </summary>
-        public ImageTypes ImageType { get; set; } = ImageTypes.Png;
+        public ImageType ImageType { get; set; } = ImageType.PNG;
 
         /// <summary>
         /// The memo to print at the bottom of the shipping label. The memo parameter may consist of more than one line separated by the standard carriage return/line feed, use &#xd; as carriage return and &#xa; as line feed in the request.
@@ -54,7 +48,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
         /// </item>
         /// </list>
         /// </summary>
-        public PaperSizes PaperSize { get; set; } = PaperSizes.Default;
+        public PaperSize PaperSize { get; set; } = PaperSize.DEFAULT;
 
         /// <summary>
         /// <list type="bullet">
@@ -70,7 +64,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
         /// </item>
         /// </list>
         /// </summary>
-        public DpiTypes DpiType { get; set; } = DpiTypes.Default;
+        public DpiType DpiType { get; set; } = DpiType.DEFAULT;
 
         /// <summary>
         /// <list type="bullet">
@@ -153,6 +147,6 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
         /// </item>
         /// </list>
         /// </summary>
-        public ImageDpiTypes ImageDPI { get; set; } = ImageDpiTypes.Default;
+        public ImageDpiType ImageDPI { get; set; } = ImageDpiType.DEFAULT;
     }
 }

@@ -37,7 +37,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class ReturnedGoods : ContentType
         {
-            public ReturnedGoods() : base("RETURNED_GOODS", 0)
+            public ReturnedGoods() : base("RETURNED_GOODS", 1)
             {
             }
 
@@ -46,7 +46,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class Merchandise : ContentType
         {
-            public Merchandise() : base("MERCHANDISE", 0)
+            public Merchandise() : base("MERCHANDISE", 2)
             {
             }
 
@@ -55,7 +55,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class Humanitarian : ContentType
         {
-            public Humanitarian() : base("HUMANITARIAN", 0)
+            public Humanitarian() : base("HUMANITARIAN", 3)
             {
             }
 
@@ -64,7 +64,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class Gift : ContentType
         {
-            public Gift() : base("GIFT", 0)
+            public Gift() : base("GIFT", 4)
             {
             }
 
@@ -73,7 +73,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class Document : ContentType
         {
-            public Document() : base("DOCUMENT", 0)
+            public Document() : base("DOCUMENT", 5)
             {
             }
 
@@ -82,7 +82,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class DangerousGoods : ContentType
         {
-            public DangerousGoods() : base("DANGEROUS_GOODS", 0)
+            public DangerousGoods() : base("DANGEROUS_GOODS", 6)
             {
             }
 
@@ -91,7 +91,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class CommercialSample : ContentType
         {
-            public CommercialSample() : base("COMMERCIAL_SAMPLE", 0)
+            public CommercialSample() : base("COMMERCIAL_SAMPLE", 7)
             {
             }
 

@@ -29,7 +29,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class Ups : CarrierType
         {
-            public Ups() : base("UPS", 0)
+            public Ups() : base("UPS", 1)
             {
             }
 
@@ -38,7 +38,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class Usps : CarrierType
         {
-            public Usps() : base("USPS", 0)
+            public Usps() : base("USPS", 2)
             {
             }
 
@@ -47,7 +47,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class DhlExpress : CarrierType
         {
-            public DhlExpress() : base("DHL_EXPRESS", 0)
+            public DhlExpress() : base("DHL_EXPRESS", 3)
             {
             }
 

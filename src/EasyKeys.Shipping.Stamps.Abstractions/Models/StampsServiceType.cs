@@ -42,7 +42,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class USPS_Priority_Mail : StampsServiceType
         {
-            public USPS_Priority_Mail() : base("USPM", 1)
+            public USPS_Priority_Mail() : base("USPM", 2)
             {
             }
 
@@ -51,7 +51,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class USPS_Priority_Mail_Express : StampsServiceType
         {
-            public USPS_Priority_Mail_Express() : base("USXM", 1)
+            public USPS_Priority_Mail_Express() : base("USXM", 3)
             {
             }
 
@@ -60,7 +60,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class USPS_Priority_Mail_Express_International : StampsServiceType
         {
-            public USPS_Priority_Mail_Express_International() : base("USEMI", 1)
+            public USPS_Priority_Mail_Express_International() : base("USEMI", 4)
             {
             }
 
@@ -69,7 +69,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class USPS_Priority_Mail_International : StampsServiceType
         {
-            public USPS_Priority_Mail_International() : base("USPMI", 1)
+            public USPS_Priority_Mail_International() : base("USPMI", 5)
             {
             }
 
@@ -78,7 +78,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class USPS_Parcel_Select_Ground : StampsServiceType
         {
-            public USPS_Parcel_Select_Ground() : base("USPS", 1)
+            public USPS_Parcel_Select_Ground() : base("USPS", 6)
             {
             }
 
@@ -87,17 +87,16 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class USPS_Media_Mail : StampsServiceType
         {
-            public USPS_Media_Mail() : base("USMM", 1)
+            public USPS_Media_Mail() : base("USMM", 7)
             {
             }
 
             public override string ServiceName => "USPS Media Mail";
         }
 
-
         private sealed class USPS_Pay_On_Use_Return : StampsServiceType
         {
-            public USPS_Pay_On_Use_Return() : base("USRETURN", 1)
+            public USPS_Pay_On_Use_Return() : base("USRETURN", 8)
             {
             }
 
@@ -106,7 +105,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class USPS_Library_Mail : StampsServiceType
         {
-            public USPS_Library_Mail() : base("USLM", 1)
+            public USPS_Library_Mail() : base("USLM", 9)
             {
             }
 
@@ -115,7 +114,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         private sealed class Unkown : StampsServiceType
         {
-            public Unkown() : base("Unkown", 1)
+            public Unkown() : base("Unkown", 10)
             {
             }
 
