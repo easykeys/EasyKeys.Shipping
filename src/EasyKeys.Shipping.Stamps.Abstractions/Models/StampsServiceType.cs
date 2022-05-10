@@ -14,7 +14,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
         public static readonly StampsServiceType USPS_MEDIA_MAIL = new USPS_Media_Mail();
         public static readonly StampsServiceType USPS_PAY_ON_USE_RETURN = new USPS_Pay_On_Use_Return();
         public static readonly StampsServiceType USPS_LIBRARY_MAIL = new USPS_Library_Mail();
-        public static readonly StampsServiceType UNKOWN = new Unkown();
+        public static readonly StampsServiceType UNKNOWN = new Unknown();
 
         public StampsServiceType(string name, int value) : base(name, value)
         {
@@ -112,9 +112,9 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
             public override string ServiceName => "USPS Library Mail";
         }
 
-        private sealed class Unkown : StampsServiceType
+        private sealed class Unknown : StampsServiceType
         {
-            public Unkown() : base("Unkown", 10)
+            public Unknown() : base("Unknown", 10)
             {
             }
 

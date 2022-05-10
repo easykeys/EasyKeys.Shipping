@@ -1,6 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
-using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ServiceTypes;
 using EasyKeys.Shipping.Stamps.Rates.Extensions;
 
 namespace EasyKeys.Shipping.Stamps.Rates
@@ -189,7 +188,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
             {
                 PackageType = package.IsLargeFlatEnvelope() ? PackageType.Large_Envelope_Or_Flat : PackageType.Package,
                 ServiceDescription = "USPS First Class Mail",
-                ServiceType = ServiceTypes.USPS_First_Class_Mail
+                ServiceType = StampsServiceType.USPS_FIRST_CLASS_MAIL
             };
             var shipmentOptions = new ShipmentOptions()
             {
@@ -228,7 +227,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
             var rateOptions = new RateRequestDetails()
             {
                 ServiceDescription = "USPS Priority Mail",
-                ServiceType = ServiceTypes.USPS_Priority_Mail,
+                ServiceType = StampsServiceType.USPS_PRIORITY_MAIL,
                 PackageType = GetFlatRatePackage(package)
             };
 
@@ -264,7 +263,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
             var rateOptions = new RateRequestDetails()
             {
                 ServiceDescription = "USPS First Class Mail International",
-                ServiceType = ServiceTypes.USPS_First_Class_Mail_International,
+                ServiceType = StampsServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL,
                 PackageType = PackageType.Package
             };
 
@@ -300,7 +299,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
             var rateOptions = new RateRequestDetails()
             {
                 ServiceDescription = "USPS Priority Mail International",
-                ServiceType = ServiceTypes.USPS_Priority_Mail_International,
+                ServiceType = StampsServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL,
                 PackageType = GetFlatRatePackage(package)
             };
 

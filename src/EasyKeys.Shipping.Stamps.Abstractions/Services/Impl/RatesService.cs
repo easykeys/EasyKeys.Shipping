@@ -91,7 +91,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                             "USRETURN" => ServiceType.USRETURN,
                             "USLM" => ServiceType.USLM,
                             "USPMI" => ServiceType.USPMI,
-                            "Unkown" => ServiceType.Unknown,
+                            "Unknown" => ServiceType.Unknown,
                             _ => ServiceType.Unknown
                         },
 

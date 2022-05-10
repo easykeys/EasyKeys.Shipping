@@ -6,7 +6,7 @@ public class RateRequestDetails
     /// Required for CreateIndicium web method.
     /// Not required for GetRates web method.If not specified in GetRates, <b>rate</b> object in the response will include rates for all ServiceTypes.
     /// </summary>
-    public StampsServiceType ServiceType { get; set; } = StampsServiceType.USPS_FIRST_CLASS_MAIL;
+    public StampsServiceType ServiceType { get; set; } = StampsServiceType.UNKNOWN;
 
     /// <summary>
     /// A plain language description of the service returned, i.e. “USPS Priority Mail”.

@@ -2,7 +2,6 @@
 
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
-using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ServiceTypes;
 using EasyKeys.Shipping.Stamps.Rates;
 using EasyKeys.Shipping.Stamps.Rates.Extensions;
 
@@ -17,11 +16,12 @@ namespace EasyKeysShipping.UnitTest.Stamps
         public void Return_Correct_RateRequestDetails_Successfully(
             Address address,
             decimal weight,
-            ServiceTypes type,
+            StampsServiceType type,
             PackageType packageType,
             string serviceDescription)
         {
             var shipment = TestShipments.CreateDomesticShipment();
+
             var config = new StampsRateConfigurator(
                 shipment.OriginAddress,
                 address,
@@ -77,7 +77,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                             StateOrProvince = "CA",
                             CountryCode = "US",
                             PostalCode = "92507"
-                        }, .1m, ServiceTypes.USPS_First_Class_Mail, PackageType.Large_Envelope_Or_Flat, "USPS First Class Mail"
+                        }, .1m, StampsServiceType.USPS_FIRST_CLASS_MAIL, PackageType.Large_Envelope_Or_Flat, "USPS First Class Mail"
                 };
                 yield return new object[]
                 {
@@ -88,7 +88,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                             StateOrProvince = "Brescia",
                             CountryCode = "IT",
                             PostalCode = "64921"
-                        }, .1m, ServiceTypes.USPS_First_Class_Mail_International, PackageType.Package, "USPS First Class Mail International"
+                        }, .1m, StampsServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL, PackageType.Package, "USPS First Class Mail International"
                 };
                 yield return new object[]
                 {
@@ -100,7 +100,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                             StateOrProvince = "CA",
                             CountryCode = "US",
                             PostalCode = "92507"
-                        }, 1m, ServiceTypes.USPS_Priority_Mail, PackageType.Small_Flat_Rate_Box, "USPS Priority Mail"
+                        }, 1m, StampsServiceType.USPS_PRIORITY_MAIL, PackageType.Small_Flat_Rate_Box, "USPS Priority Mail"
                 };
                 yield return new object[]
                 {
@@ -111,7 +111,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                             StateOrProvince = "Brescia",
                             CountryCode = "IT",
                             PostalCode = "64921"
-                        }, 1m, ServiceTypes.USPS_First_Class_Mail_International, PackageType.Package, "USPS First Class Mail International"
+                        }, 1m, StampsServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL, PackageType.Package, "USPS First Class Mail International"
                 };
             }
 
