@@ -79,7 +79,21 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         MaxAmount = rateDetails.MaxAmount,
 
-                        ServiceType = rateDetails.ServiceType.Type,
+                        ServiceType = rateDetails.ServiceType.Name switch
+                        {
+                            "USPS" => ServiceType.USPS,
+                            "USFC" => ServiceType.USFC,
+                            "USMM" => ServiceType.USMM,
+                            "USPM" => ServiceType.USPM,
+                            "USXM" => ServiceType.USXM,
+                            "USEMI" => ServiceType.USEMI,
+                            "USFCI" => ServiceType.USFCI,
+                            "USRETURN" => ServiceType.USRETURN,
+                            "USLM" => ServiceType.USLM,
+                            "USPMI" => ServiceType.USPMI,
+                            "Unkown" => ServiceType.Unknown,
+                            _ => ServiceType.Unknown
+                        },
 
                         ServiceDescription = rateDetails.ServiceDescription,
 
@@ -117,7 +131,17 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         CubicPricing = rateDetails.CubicPricing,
 
-                        ContentType = rateDetails.ContentType.Type,
+                        ContentType = rateDetails.ContentType.Name switch
+                        {
+                            "COMMERCIAL_SAMPLE" => ContentTypeV2.CommercialSample,
+                            "DANGEROUS_GOODS" => ContentTypeV2.DangerousGoods,
+                            "DOCUMENT" => ContentTypeV2.Document,
+                            "GIFT" => ContentTypeV2.Gift,
+                            "HUMANITARIAN" => ContentTypeV2.HumanitarianDonation,
+                            "MERCHANDISE" => ContentTypeV2.Merchandise,
+                            "RETURNED_GOODS" => ContentTypeV2.ReturnedGoods,
+                            _ => ContentTypeV2.Other
+                        },
 
                         ContentTypeSpecified = rateDetails.ContentTypeSpecified,
 
@@ -127,7 +151,14 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                         // dont know what this is
                         SortType = SortTypeV1.Unknown,
                     },
-                    Carrier = rateDetails.Carrier.Type
+                    Carrier = rateDetails.Carrier.Name switch
+                    {
+                        "USPS" => Carrier.USPS,
+                        "UPS" => Carrier.UPS,
+                        "DHL_EXPRESS" => Carrier.DHLExpress,
+                        "FEDEX" => Carrier.FedEx,
+                        _ => Carrier.USPS
+                    }
                 };
 
                 request = ApplyPackageDetails(request, rateDetails, shipment);

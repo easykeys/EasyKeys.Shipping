@@ -1,17 +1,14 @@
-﻿
-using Ardalis.SmartEnum;
+﻿using Ardalis.SmartEnum;
 
-using StampsClient.v111;
-
-namespace EasyKeys.Shipping.Stamps.Shipment.Models.Enums.ImageTypes
+namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
-    public abstract class ImageTypes : SmartEnum<ImageTypes>
+    public abstract class ImageType : SmartEnum<ImageType>
     {
         public static readonly ImageTypes Pdf = new Pdf();
 
         public static readonly ImageTypes Png = new Png();
 
-        public ImageTypes(string name, int value, ImageType type) : base(name, value)
+        public ImageType(string name, int value, ImageType type) : base(name, value)
         {
             Type = type;
         }

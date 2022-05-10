@@ -1,8 +1,4 @@
-﻿using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.CarrierTypes;
-using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ContentTypes;
-using EasyKeys.Shipping.Stamps.Abstractions.Models.Enums.ServiceTypes;
-
-namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
+﻿namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 public class RateRequestDetails
 {
@@ -10,7 +6,7 @@ public class RateRequestDetails
     /// Required for CreateIndicium web method.
     /// Not required for GetRates web method.If not specified in GetRates, <b>rate</b> object in the response will include rates for all ServiceTypes.
     /// </summary>
-    public ServiceTypes ServiceType { get; set; } = ServiceTypes.Unknown;
+    public StampsServiceType ServiceType { get; set; } = StampsServiceType.USPS_FIRST_CLASS_MAIL;
 
     /// <summary>
     /// A plain language description of the service returned, i.e. “USPS Priority Mail”.
@@ -129,7 +125,7 @@ public class RateRequestDetails
     /// </list>
     /// One of: Commercial_Sample, Dangerous_Goods, Document, Gift, Humanitarian_Donation, Merchandise, Returned_Goods, or Other.
     /// </summary>
-    public ContentTypes ContentType { get; set; } = ContentTypes.Merchandise;
+    public ContentType ContentType { get; set; } = ContentType.MERCHANDISE;
 
     public bool ContentTypeSpecified { get; set; } = true;
 
@@ -157,7 +153,7 @@ public class RateRequestDetails
     /// </item>
     /// </list>
     /// </summary>
-    public CarrierTypes Carrier { get; set; } = CarrierTypes.Usps;
+    public CarrierType Carrier { get; set; } = CarrierType.USPS;
 
     /// <summary>
     /// <para>

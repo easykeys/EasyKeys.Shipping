@@ -2,9 +2,9 @@
 
 using StampsClient.v111;
 
-namespace EasyKeys.Shipping.Stamps.Shipment.Models.Enums.PaperSizes
+namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
-    public abstract class PaperSizes : SmartEnum<PaperSizes>
+    public abstract class PaperSize : SmartEnum<PaperSize>
     {
         public static readonly PaperSizes Default = new Default();
 
@@ -12,7 +12,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models.Enums.PaperSizes
 
         public static readonly PaperSizes LabelSize = new LabelSize();
 
-        public PaperSizes(string name, int value, PaperSizeV1 size) : base(name, value)
+        public PaperSize(string name, int value, PaperSizeV1 size) : base(name, value)
         {
             Size = size;
         }

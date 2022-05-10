@@ -1,16 +1,14 @@
 ﻿using Ardalis.SmartEnum;
 
-using StampsClient.v111;
-
-namespace EasyKeys.Shipping.Stamps.Shipment.Models.Enums.PostageModes
+namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
-    public abstract class PostageModes : SmartEnum<PostageModes>
+    public abstract class PostageMode : SmartEnum<PostageMode>
     {
         public static readonly PostageModes Normal = new NormalPostage();
 
         public static readonly PostageModes NoPostage = new NoPostage();
 
-        public PostageModes(string name, int value, PostageMode mode) : base(name, value)
+        public PostageMode(string name, int value, PostageMode mode) : base(name, value)
         {
             Type = mode;
         }

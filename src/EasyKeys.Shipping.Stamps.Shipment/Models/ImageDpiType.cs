@@ -1,11 +1,10 @@
-﻿
-using Ardalis.SmartEnum;
+﻿using Ardalis.SmartEnum;
 
 using StampsClient.v111;
 
-namespace EasyKeys.Shipping.Stamps.Shipment.Models.Enums.ImageDpiTypes
+namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
-    public abstract class ImageDpiTypes : SmartEnum<ImageDpiTypes>
+    public abstract class ImageDpiType : SmartEnum<ImageDpiType>
     {
         public static readonly Dpi200 Dpi200 = new Dpi200();
 
