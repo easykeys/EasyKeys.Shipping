@@ -21,12 +21,12 @@
         /// Normal : A regular label with postage and a valid indicium (<b>default</b>).
         /// NoPostage : A regular label without postage or an indicium.
         /// </summary>
-        public PostageMode PostageMode { get; set; } = PostageMode.NORMAL;
+        public PostageModeType PostageMode { get; set; } = PostageModeType.Normal;
 
         /// <summary>
         /// Image type of shipping label. Default is Auto: which generates a Png image.
         /// </summary>
-        public ImageType ImageType { get; set; } = ImageType.PNG;
+        public ImageType ImageType { get; set; } = ImageType.Png;
 
         /// <summary>
         /// The memo to print at the bottom of the shipping label. The memo parameter may consist of more than one line separated by the standard carriage return/line feed, use &#xd; as carriage return and &#xa; as line feed in the request.
@@ -48,7 +48,7 @@
         /// </item>
         /// </list>
         /// </summary>
-        public PaperSize PaperSize { get; set; } = PaperSize.DEFAULT;
+        public PaperSizeType PaperSize { get; set; } = PaperSizeType.Default;
 
         /// <summary>
         /// <list type="bullet">
@@ -64,7 +64,7 @@
         /// </item>
         /// </list>
         /// </summary>
-        public DpiType DpiType { get; set; } = DpiType.DEFAULT;
+        public DpiType DpiType { get; set; } = DpiType.Default;
 
         /// <summary>
         /// <list type="bullet">
@@ -147,6 +147,6 @@
         /// </item>
         /// </list>
         /// </summary>
-        public ImageDpiType ImageDPI { get; set; } = ImageDpiType.DEFAULT;
+        public ImageDpiType ImageDPI { get; set; } = ImageDpiType.Default;
     }
 }

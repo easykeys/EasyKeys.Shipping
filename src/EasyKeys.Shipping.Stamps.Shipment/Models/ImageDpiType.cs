@@ -4,54 +4,47 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
     public abstract class ImageDpiType : SmartEnum<ImageDpiType>
     {
-        public static readonly ImageDpiType DPI200 = new Dpi200();
+        public static readonly ImageDpiType Dpi200 = new Dpi200Type();
 
-        public static readonly ImageDpiType DPI300 = new Dpi300();
+        public static readonly ImageDpiType Dpi300 = new Dpi300Type();
 
-        public static readonly ImageDpiType DPI96 = new Dpi96();
+        public static readonly ImageDpiType Dpi96 = new Dpi96Type();
 
-        public static readonly ImageDpiType DEFAULT = new Default();
+        public static readonly ImageDpiType Default = new DefaultType();
 
-        public ImageDpiType(string name, int value) : base(name, value)
+        public ImageDpiType(string name, int value, string description) : base(name, value)
         {
+            Description = description;
         }
 
-        public abstract string DpiName { get; }
+        public string Description { get; }
 
-        private sealed class Dpi200 : ImageDpiType
+        private sealed class Dpi200Type : ImageDpiType
         {
-            public Dpi200() : base("DPI200", 0)
+            public Dpi200Type() : base(StampsClient.v111.ImageDpi.ImageDpi200.ToString(), (int)StampsClient.v111.ImageDpi.ImageDpi200, "Image Dpi 200")
             {
             }
-
-            public override string DpiName => "Dpi 200";
         }
 
-        private sealed class Dpi300 : ImageDpiType
+        private sealed class Dpi300Type : ImageDpiType
         {
-            public Dpi300() : base("DPI300", 1)
+            public Dpi300Type() : base(StampsClient.v111.ImageDpi.ImageDpi300.ToString(), (int)StampsClient.v111.ImageDpi.ImageDpi300, "Image Dpi 300")
             {
             }
-
-            public override string DpiName => "Dpi 300";
         }
 
-        private sealed class Dpi96 : ImageDpiType
+        private sealed class Dpi96Type : ImageDpiType
         {
-            public Dpi96() : base("DPI96", 2)
+            public Dpi96Type() : base(StampsClient.v111.ImageDpi.ImageDpi96.ToString(), (int)StampsClient.v111.ImageDpi.ImageDpi96, "Image Dpi 96")
             {
             }
-
-            public override string DpiName => "Dpi 96";
         }
 
-        private sealed class Default : ImageDpiType
+        private sealed class DefaultType : ImageDpiType
         {
-            public Default() : base("DEFAULT", 3)
+            public DefaultType() : base(StampsClient.v111.ImageDpi.ImageDpiDefault.ToString(), (int)StampsClient.v111.ImageDpi.ImageDpiDefault, "Image Dpi Default")
             {
             }
-
-            public override string DpiName => "Default";
         }
     }
 }

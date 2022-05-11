@@ -79,19 +79,19 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         MaxAmount = rateDetails.MaxAmount,
 
-                        ServiceType = rateDetails.ServiceType.Name switch
+                        ServiceType = rateDetails.ServiceType.Value switch
                         {
-                            "USPS" => ServiceType.USPS,
-                            "USFC" => ServiceType.USFC,
-                            "USMM" => ServiceType.USMM,
-                            "USPM" => ServiceType.USPM,
-                            "USXM" => ServiceType.USXM,
-                            "USEMI" => ServiceType.USEMI,
-                            "USFCI" => ServiceType.USFCI,
-                            "USRETURN" => ServiceType.USRETURN,
-                            "USLM" => ServiceType.USLM,
-                            "USPMI" => ServiceType.USPMI,
-                            "Unknown" => ServiceType.Unknown,
+                            (int)ServiceType.USPS => ServiceType.USPS,
+                            (int)ServiceType.USFC => ServiceType.USFC,
+                            (int)ServiceType.USMM => ServiceType.USMM,
+                            (int)ServiceType.USPM => ServiceType.USPM,
+                            (int)ServiceType.USXM => ServiceType.USXM,
+                            (int)ServiceType.USEMI => ServiceType.USEMI,
+                            (int)ServiceType.USFCI => ServiceType.USFCI,
+                            (int)ServiceType.USRETURN => ServiceType.USRETURN,
+                            (int)ServiceType.USLM => ServiceType.USLM,
+                            (int)ServiceType.USPMI => ServiceType.USPMI,
+                            (int)ServiceType.Unknown => ServiceType.Unknown,
                             _ => ServiceType.Unknown
                         },
 
@@ -131,15 +131,15 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         CubicPricing = rateDetails.CubicPricing,
 
-                        ContentType = rateDetails.ContentType.Name switch
+                        ContentType = rateDetails.ContentType.Value switch
                         {
-                            "COMMERCIAL_SAMPLE" => ContentTypeV2.CommercialSample,
-                            "DANGEROUS_GOODS" => ContentTypeV2.DangerousGoods,
-                            "DOCUMENT" => ContentTypeV2.Document,
-                            "GIFT" => ContentTypeV2.Gift,
-                            "HUMANITARIAN" => ContentTypeV2.HumanitarianDonation,
-                            "MERCHANDISE" => ContentTypeV2.Merchandise,
-                            "RETURNED_GOODS" => ContentTypeV2.ReturnedGoods,
+                            (int)ContentTypeV2.CommercialSample => ContentTypeV2.CommercialSample,
+                            (int)ContentTypeV2.DangerousGoods => ContentTypeV2.DangerousGoods,
+                            (int)ContentTypeV2.Document => ContentTypeV2.Document,
+                            (int)ContentTypeV2.Gift => ContentTypeV2.Gift,
+                            (int)ContentTypeV2.HumanitarianDonation => ContentTypeV2.HumanitarianDonation,
+                            (int)ContentTypeV2.Merchandise => ContentTypeV2.Merchandise,
+                            (int)ContentTypeV2.ReturnedGoods => ContentTypeV2.ReturnedGoods,
                             _ => ContentTypeV2.Other
                         },
 
@@ -151,12 +151,12 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                         // dont know what this is
                         SortType = SortTypeV1.Unknown,
                     },
-                    Carrier = rateDetails.Carrier.Name switch
+                    Carrier = rateDetails.Carrier.Value switch
                     {
-                        "USPS" => Carrier.USPS,
-                        "UPS" => Carrier.UPS,
-                        "DHL_EXPRESS" => Carrier.DHLExpress,
-                        "FEDEX" => Carrier.FedEx,
+                        (int)Carrier.USPS => Carrier.USPS,
+                        (int)Carrier.UPS => Carrier.UPS,
+                        (int)Carrier.DHLExpress => Carrier.DHLExpress,
+                        (int)Carrier.FedEx => Carrier.FedEx,
                         _ => Carrier.USPS
                     }
                 };
@@ -224,28 +224,28 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
             request.Rate.WeightOz = 0.0;
 
-            request.Rate.PackageType = rateDetails.PackageType switch
+            request.Rate.PackageType = rateDetails.PackageType.Value switch
             {
-                PackageType.Pak => PackageTypeV11.Pak,
-                PackageType.Package => PackageTypeV11.Package,
-                PackageType.Oversized_Package => PackageTypeV11.OversizedPackage,
-                PackageType.Large_Package => PackageTypeV11.LargePackage,
-                PackageType.PostCard => PackageTypeV11.Postcard,
-                PackageType.Documents => PackageTypeV11.Documents,
-                PackageType.Thick_Envelope => PackageTypeV11.ThickEnvelope,
-                PackageType.Envelope => PackageTypeV11.Envelope,
-                PackageType.Express_Envelope => PackageTypeV11.ExpressEnvelope,
-                PackageType.Flat_Rate_Envelope => PackageTypeV11.FlatRateEnvelope,
-                PackageType.Legal_Flat_Rate_Envelope => PackageTypeV11.LegalFlatRateEnvelope,
-                PackageType.Letter => PackageTypeV11.Letter,
-                PackageType.Large_Envelope_Or_Flat => PackageTypeV11.LargeEnvelopeorFlat,
-                PackageType.Small_Flat_Rate_Box => PackageTypeV11.SmallFlatRateBox,
-                PackageType.Flat_Rate_Box => PackageTypeV11.FlatRateBox,
-                PackageType.Large_Flat_Rate_Box => PackageTypeV11.LargeFlatRateBox,
-                PackageType.Flat_Rate_Padded_Envelope => PackageTypeV11.FlatRatePaddedEnvelope,
-                PackageType.Regional_Rate_Box_A => PackageTypeV11.RegionalRateBoxA,
-                PackageType.Regional_Rate_Box_B => PackageTypeV11.RegionalRateBoxB,
-                PackageType.Regional_Rate_Box_C => PackageTypeV11.RegionalRateBoxC,
+                (int)PackageTypeV11.Pak => PackageTypeV11.Pak,
+                (int)PackageTypeV11.Package => PackageTypeV11.Package,
+                (int)PackageTypeV11.OversizedPackage => PackageTypeV11.OversizedPackage,
+                (int)PackageTypeV11.LargePackage => PackageTypeV11.LargePackage,
+                (int)PackageTypeV11.Postcard => PackageTypeV11.Postcard,
+                (int)PackageTypeV11.Documents => PackageTypeV11.Documents,
+                (int)PackageTypeV11.ThickEnvelope => PackageTypeV11.ThickEnvelope,
+                (int)PackageTypeV11.Envelope => PackageTypeV11.Envelope,
+                (int)PackageTypeV11.ExpressEnvelope => PackageTypeV11.ExpressEnvelope,
+                (int)PackageTypeV11.FlatRateEnvelope => PackageTypeV11.FlatRateEnvelope,
+                (int)PackageTypeV11.LegalFlatRateEnvelope => PackageTypeV11.LegalFlatRateEnvelope,
+                (int)PackageTypeV11.Letter => PackageTypeV11.Letter,
+                (int)PackageTypeV11.LargeEnvelopeorFlat => PackageTypeV11.LargeEnvelopeorFlat,
+                (int)PackageTypeV11.SmallFlatRateBox => PackageTypeV11.SmallFlatRateBox,
+                (int)PackageTypeV11.FlatRateBox => PackageTypeV11.FlatRateBox,
+                (int)PackageTypeV11.LargeFlatRateBox => PackageTypeV11.LargeFlatRateBox,
+                (int)PackageTypeV11.FlatRatePaddedEnvelope => PackageTypeV11.FlatRatePaddedEnvelope,
+                (int)PackageTypeV11.RegionalRateBoxA => PackageTypeV11.RegionalRateBoxA,
+                (int)PackageTypeV11.RegionalRateBoxB => PackageTypeV11.RegionalRateBoxB,
+                (int)PackageTypeV11.RegionalRateBoxC => PackageTypeV11.RegionalRateBoxC,
                 _ => PackageTypeV11.Package
             };
 

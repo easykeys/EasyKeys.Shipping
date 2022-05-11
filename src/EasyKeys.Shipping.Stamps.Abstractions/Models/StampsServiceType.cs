@@ -1,124 +1,105 @@
 ﻿using Ardalis.SmartEnum;
 
+using StampsClient.v111;
+
 namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 {
     public abstract class StampsServiceType : SmartEnum<StampsServiceType>
     {
-        public static readonly StampsServiceType USPS_FIRST_CLASS_MAIL = new USPS_First_Class_Mail();
-        public static readonly StampsServiceType USPS_FIRST_CLASS_MAIL_INTERNATIONAL = new USPS_First_Class_Mail_International();
-        public static readonly StampsServiceType USPS_PRIORITY_MAIL = new USPS_Priority_Mail();
-        public static readonly StampsServiceType USPS_PRIORITY_MAIL_EXPRESS = new USPS_Priority_Mail_Express();
-        public static readonly StampsServiceType USPS_PRIORITY_MAIL_EXPRESS_INTERNATIONAL = new USPS_Priority_Mail_Express_International();
-        public static readonly StampsServiceType USPS_PRIORITY_MAIL_INTERNATIONAL = new USPS_Priority_Mail_International();
-        public static readonly StampsServiceType USPS_PARCEL_SELECT_GROUND = new USPS_Parcel_Select_Ground();
-        public static readonly StampsServiceType USPS_MEDIA_MAIL = new USPS_Media_Mail();
-        public static readonly StampsServiceType USPS_PAY_ON_USE_RETURN = new USPS_Pay_On_Use_Return();
-        public static readonly StampsServiceType USPS_LIBRARY_MAIL = new USPS_Library_Mail();
-        public static readonly StampsServiceType UNKNOWN = new Unknown();
+        public static readonly StampsServiceType FirstClass = new FirstClassType();
+        public static readonly StampsServiceType FirstClassInternational = new FirstClassInternationalType();
+        public static readonly StampsServiceType Priority = new PriorityType();
+        public static readonly StampsServiceType PriorityExpress = new PriorityExpressType();
+        public static readonly StampsServiceType PriorityExpressInternational = new PriorityExpressInternationalType();
+        public static readonly StampsServiceType PriorityInternational = new PriorityInternationalType();
+        public static readonly StampsServiceType ParcelSelectGround = new ParcelSelectGroundType();
+        public static readonly StampsServiceType MediaMail = new MediaMailType();
+        public static readonly StampsServiceType PayOnUseReturn = new PayOnUseReturnType();
+        public static readonly StampsServiceType LibraryMail = new LibraryMailType();
+        public static readonly StampsServiceType Unknown = new UnknownType();
 
-        public StampsServiceType(string name, int value) : base(name, value)
+        public StampsServiceType(string name, int value, string description) : base(name, value)
         {
+            Description = description;
         }
 
-        public abstract string ServiceName { get; }
+        public string Description { get; private set; }
 
-        private sealed class USPS_First_Class_Mail : StampsServiceType
+        private sealed class FirstClassType : StampsServiceType
         {
-            public USPS_First_Class_Mail() : base("USFC", 0)
+            public FirstClassType() : base(ServiceType.USFC.ToString(), (int)ServiceType.USFC, "USPS First Class Mail")
             {
             }
-
-            public override string ServiceName => "USPS First Class Mail";
         }
 
-        private sealed class USPS_First_Class_Mail_International : StampsServiceType
+        private sealed class FirstClassInternationalType : StampsServiceType
         {
-            public USPS_First_Class_Mail_International() : base("USFCI", 1)
+            public FirstClassInternationalType() : base(ServiceType.USFCI.ToString(), (int)ServiceType.USFCI, "USPS First Class Mail International")
             {
             }
-
-            public override string ServiceName => "USPS First Class Mail International";
         }
 
-        private sealed class USPS_Priority_Mail : StampsServiceType
+        private sealed class PriorityType : StampsServiceType
         {
-            public USPS_Priority_Mail() : base("USPM", 2)
+            public PriorityType() : base(ServiceType.USPM.ToString(), (int)ServiceType.USPM, "USPS Priority Mail")
             {
             }
-
-            public override string ServiceName => "USPS Priority Mail";
         }
 
-        private sealed class USPS_Priority_Mail_Express : StampsServiceType
+        private sealed class PriorityExpressType : StampsServiceType
         {
-            public USPS_Priority_Mail_Express() : base("USXM", 3)
+            public PriorityExpressType() : base(ServiceType.USXM.ToString(), (int)ServiceType.USXM, "USPS Priority Mail Express")
             {
             }
-
-            public override string ServiceName => "USPS Priority Mail Express";
         }
 
-        private sealed class USPS_Priority_Mail_Express_International : StampsServiceType
+        private sealed class PriorityExpressInternationalType : StampsServiceType
         {
-            public USPS_Priority_Mail_Express_International() : base("USEMI", 4)
+            public PriorityExpressInternationalType() : base(ServiceType.USEMI.ToString(), (int)ServiceType.USEMI, "USPS Priority Mail Express International")
             {
             }
-
-            public override string ServiceName => "USPS Priority Mail Express International";
         }
 
-        private sealed class USPS_Priority_Mail_International : StampsServiceType
+        private sealed class PriorityInternationalType : StampsServiceType
         {
-            public USPS_Priority_Mail_International() : base("USPMI", 5)
+            public PriorityInternationalType() : base(ServiceType.USPMI.ToString(), (int)ServiceType.USPMI, "USPS Priority Mail International")
             {
             }
-
-            public override string ServiceName => "USPS Priority Mail International";
         }
 
-        private sealed class USPS_Parcel_Select_Ground : StampsServiceType
+        private sealed class ParcelSelectGroundType : StampsServiceType
         {
-            public USPS_Parcel_Select_Ground() : base("USPS", 6)
+            public ParcelSelectGroundType() : base(ServiceType.USPS.ToString(), (int)ServiceType.USPS, "USPS Parcel Select Ground")
             {
             }
-
-            public override string ServiceName => "USPS Parcel Select Ground";
         }
 
-        private sealed class USPS_Media_Mail : StampsServiceType
+        private sealed class MediaMailType : StampsServiceType
         {
-            public USPS_Media_Mail() : base("USMM", 7)
+            public MediaMailType() : base(ServiceType.USMM.ToString(), (int)ServiceType.USMM, "USPS Media Mail")
             {
             }
-
-            public override string ServiceName => "USPS Media Mail";
         }
 
-        private sealed class USPS_Pay_On_Use_Return : StampsServiceType
+        private sealed class PayOnUseReturnType : StampsServiceType
         {
-            public USPS_Pay_On_Use_Return() : base("USRETURN", 8)
+            public PayOnUseReturnType() : base(ServiceType.USRETURN.ToString(), (int)ServiceType.USRETURN, "Pay On Use Return")
             {
             }
-
-            public override string ServiceName => "USPS Pay On Use Return";
         }
 
-        private sealed class USPS_Library_Mail : StampsServiceType
+        private sealed class LibraryMailType : StampsServiceType
         {
-            public USPS_Library_Mail() : base("USLM", 9)
+            public LibraryMailType() : base(ServiceType.USLM.ToString(), (int)ServiceType.USLM, "USPS Library Mail")
             {
             }
-
-            public override string ServiceName => "USPS Library Mail";
         }
 
-        private sealed class Unknown : StampsServiceType
+        private sealed class UnknownType : StampsServiceType
         {
-            public Unknown() : base("Unknown", 10)
+            public UnknownType() : base(ServiceType.Unknown.ToString(), (int)ServiceType.Unknown, "Unknown")
             {
             }
-
-            public override string ServiceName => "Unknown";
         }
     }
 }

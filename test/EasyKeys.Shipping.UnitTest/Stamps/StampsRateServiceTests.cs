@@ -72,13 +72,13 @@ namespace EasyKeysShipping.UnitTest.Stamps
             var internationalShipment = TestShipments.CreateInternationalShipment();
 
             // Mail class UspsReturn not supported.
-            var rates = serviceType.ServiceName.Contains("International", StringComparison.OrdinalIgnoreCase) ? await _ratesService.GetRatesResponseAsync(internationalShipment, rateRequest, CancellationToken.None)
+            var rates = serviceType.Description.Contains("International", StringComparison.OrdinalIgnoreCase) ? await _ratesService.GetRatesResponseAsync(internationalShipment, rateRequest, CancellationToken.None)
                 : await _ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
 
             // check ToAddress Province/State & PostalCode/ZipCode logic
             Assert.NotNull(rates);
 
-            if (serviceType == StampsServiceType.UNKNOWN)
+            if (serviceType == StampsServiceType.Unknown)
             {
                 // when unknown, defaults to all available
                 Assert.True(rates.Any());
@@ -261,43 +261,41 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
                 yield return new object[] { PackageType.Package, StampsClient.v111.PackageTypeV11.Package };
 
-                yield return new object[] { PackageType.Oversized_Package, StampsClient.v111.PackageTypeV11.OversizedPackage };
+                yield return new object[] { PackageType.OversizedPackage, StampsClient.v111.PackageTypeV11.OversizedPackage };
 
-                yield return new object[] { PackageType.Large_Package, StampsClient.v111.PackageTypeV11.LargePackage };
+                yield return new object[] { PackageType.LargePackage, StampsClient.v111.PackageTypeV11.LargePackage };
 
                 yield return new object[] { PackageType.PostCard, StampsClient.v111.PackageTypeV11.Postcard };
 
                 yield return new object[] { PackageType.Documents, StampsClient.v111.PackageTypeV11.Documents };
 
-                yield return new object[] { PackageType.Thick_Envelope, StampsClient.v111.PackageTypeV11.ThickEnvelope };
+                yield return new object[] { PackageType.ThickEnvelope, StampsClient.v111.PackageTypeV11.ThickEnvelope };
 
                 yield return new object[] { PackageType.Envelope, StampsClient.v111.PackageTypeV11.Envelope };
 
-                yield return new object[] { PackageType.Express_Envelope, StampsClient.v111.PackageTypeV11.ExpressEnvelope };
+                yield return new object[] { PackageType.ExpressEnvelope, StampsClient.v111.PackageTypeV11.ExpressEnvelope };
 
-                yield return new object[] { PackageType.Flat_Rate_Envelope, StampsClient.v111.PackageTypeV11.FlatRateEnvelope };
+                yield return new object[] { PackageType.FlatRateEnvelope, StampsClient.v111.PackageTypeV11.FlatRateEnvelope };
 
-                yield return new object[] { PackageType.Legal_Flat_Rate_Envelope, StampsClient.v111.PackageTypeV11.LegalFlatRateEnvelope };
-
-                yield return new object[] { PackageType.Unknown, StampsClient.v111.PackageTypeV11.Package };
+                yield return new object[] { PackageType.LegalFlatRateEnvelope, StampsClient.v111.PackageTypeV11.LegalFlatRateEnvelope };
 
                 yield return new object[] { PackageType.Letter, StampsClient.v111.PackageTypeV11.Letter };
 
-                yield return new object[] { PackageType.Large_Envelope_Or_Flat, StampsClient.v111.PackageTypeV11.LargeEnvelopeorFlat };
+                yield return new object[] { PackageType.LargeEnvelopeOrFlat, StampsClient.v111.PackageTypeV11.LargeEnvelopeorFlat };
 
-                yield return new object[] { PackageType.Small_Flat_Rate_Box, StampsClient.v111.PackageTypeV11.SmallFlatRateBox };
+                yield return new object[] { PackageType.SmallFlatRateBox, StampsClient.v111.PackageTypeV11.SmallFlatRateBox };
 
-                yield return new object[] { PackageType.Flat_Rate_Box, StampsClient.v111.PackageTypeV11.FlatRateBox };
+                yield return new object[] { PackageType.FlatRateBox, StampsClient.v111.PackageTypeV11.FlatRateBox };
 
-                yield return new object[] { PackageType.Large_Flat_Rate_Box, StampsClient.v111.PackageTypeV11.LargeFlatRateBox };
+                yield return new object[] { PackageType.LargeFlatRateBox, StampsClient.v111.PackageTypeV11.LargeFlatRateBox };
 
-                yield return new object[] { PackageType.Flat_Rate_Padded_Envelope, StampsClient.v111.PackageTypeV11.FlatRatePaddedEnvelope };
+                yield return new object[] { PackageType.FlatRatePaddedEnvelope, StampsClient.v111.PackageTypeV11.FlatRatePaddedEnvelope };
 
-                yield return new object[] { PackageType.Regional_Rate_Box_A, StampsClient.v111.PackageTypeV11.RegionalRateBoxA };
+                yield return new object[] { PackageType.RegionalRateBoxA, StampsClient.v111.PackageTypeV11.RegionalRateBoxA };
 
-                yield return new object[] { PackageType.Regional_Rate_Box_B, StampsClient.v111.PackageTypeV11.RegionalRateBoxB };
+                yield return new object[] { PackageType.RegionalRateBoxB, StampsClient.v111.PackageTypeV11.RegionalRateBoxB };
 
-                yield return new object[] { PackageType.Regional_Rate_Box_C, StampsClient.v111.PackageTypeV11.RegionalRateBoxC };
+                yield return new object[] { PackageType.RegionalRateBoxC, StampsClient.v111.PackageTypeV11.RegionalRateBoxC };
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -310,13 +308,13 @@ namespace EasyKeysShipping.UnitTest.Stamps
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { CarrierType.USPS, 1 };
+                yield return new object[] { CarrierType.Usps, 1 };
 
-                yield return new object[] { CarrierType.UPS, 0 };
+                yield return new object[] { CarrierType.Ups, 0 };
 
-                yield return new object[] { CarrierType.DHL_EXPRESS, 0 };
+                yield return new object[] { CarrierType.DhlExpress, 0 };
 
-                yield return new object[] { CarrierType.FEDEX, 0 };
+                yield return new object[] { CarrierType.FedEx, 0 };
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -329,35 +327,35 @@ namespace EasyKeysShipping.UnitTest.Stamps
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { StampsServiceType.USPS_PARCEL_SELECT_GROUND, StampsClient.v111.ServiceType.USPS };
+                yield return new object[] { StampsServiceType.ParcelSelectGround, StampsClient.v111.ServiceType.USPS };
 
                 /* Mailpiece is over maximum weight of 0 lb 15.999 oz
                  * Cannot ship First-Class packages larger than 22" x 18" x 15"
                  */
-                yield return new object[] { StampsServiceType.USPS_FIRST_CLASS_MAIL, StampsClient.v111.ServiceType.USFC };
+                yield return new object[] { StampsServiceType.FirstClass, StampsClient.v111.ServiceType.USFC };
 
-                yield return new object[] { StampsServiceType.USPS_MEDIA_MAIL, StampsClient.v111.ServiceType.USMM };
+                yield return new object[] { StampsServiceType.MediaMail, StampsClient.v111.ServiceType.USMM };
 
-                yield return new object[] { StampsServiceType.USPS_PRIORITY_MAIL, StampsClient.v111.ServiceType.USPM };
+                yield return new object[] { StampsServiceType.Priority, StampsClient.v111.ServiceType.USPM };
 
-                yield return new object[] { StampsServiceType.USPS_PRIORITY_MAIL_EXPRESS, StampsClient.v111.ServiceType.USXM };
+                yield return new object[] { StampsServiceType.PriorityExpress, StampsClient.v111.ServiceType.USXM };
 
                 // Mail class 'ExpressMailInternational' is not available for the destination country.
-                yield return new object[] { StampsServiceType.USPS_PRIORITY_MAIL_EXPRESS_INTERNATIONAL, StampsClient.v111.ServiceType.USEMI };
+                yield return new object[] { StampsServiceType.PriorityExpressInternational, StampsClient.v111.ServiceType.USEMI };
 
                 // only for international
-                yield return new object[] { StampsServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL, StampsClient.v111.ServiceType.USFCI };
+                yield return new object[] { StampsServiceType.FirstClassInternational, StampsClient.v111.ServiceType.USFCI };
 
                 // Mail class UspsReturn not supported.
                 // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
 
-                yield return new object[] { StampsServiceType.USPS_LIBRARY_MAIL, StampsClient.v111.ServiceType.USLM };
+                yield return new object[] { StampsServiceType.LibraryMail, StampsClient.v111.ServiceType.USLM };
 
                 // Mail class 'PriorityMailInternational' is not available for the destination country.
-                yield return new object[] { StampsServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL, StampsClient.v111.ServiceType.USPMI };
+                yield return new object[] { StampsServiceType.PriorityInternational, StampsClient.v111.ServiceType.USPMI };
 
                 // when unknown, defaults to all available
-                yield return new object[] { StampsServiceType.UNKNOWN, StampsClient.v111.ServiceType.USPM };
+                yield return new object[] { StampsServiceType.Unknown, StampsClient.v111.ServiceType.USPM };
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -370,29 +368,29 @@ namespace EasyKeysShipping.UnitTest.Stamps
         {
             public IEnumerator<object[]> GetEnumerator()
             {
-                yield return new object[] { ContentType.COMMERCIAL_SAMPLE, StampsClient.v111.ContentTypeV2.CommercialSample };
+                yield return new object[] { ContentType.CommcercialSample, StampsClient.v111.ContentTypeV2.CommercialSample };
 
                 /* Mailpiece is over maximum weight of 0 lb 15.999 oz
                  * Cannot ship First-Class packages larger than 22" x 18" x 15"
                  */
-                yield return new object[] { ContentType.DANGEROUS_GOODS, StampsClient.v111.ContentTypeV2.DangerousGoods };
+                yield return new object[] { ContentType.DangerousGoods, StampsClient.v111.ContentTypeV2.DangerousGoods };
 
-                yield return new object[] { ContentType.DOCUMENT, StampsClient.v111.ContentTypeV2.Document };
+                yield return new object[] { ContentType.Document, StampsClient.v111.ContentTypeV2.Document };
 
-                yield return new object[] { ContentType.GIFT, StampsClient.v111.ContentTypeV2.Gift };
+                yield return new object[] { ContentType.Gift, StampsClient.v111.ContentTypeV2.Gift };
 
-                yield return new object[] { ContentType.HUMANITARIAN, StampsClient.v111.ContentTypeV2.HumanitarianDonation };
+                yield return new object[] { ContentType.HumanitarianDonation, StampsClient.v111.ContentTypeV2.HumanitarianDonation };
 
                 // Mail class 'ExpressMailInternational' is not available for the destination country.
-                yield return new object[] { ContentType.MERCHANDISE, StampsClient.v111.ContentTypeV2.Merchandise };
+                yield return new object[] { ContentType.Merchandise, StampsClient.v111.ContentTypeV2.Merchandise };
 
                 // only for international
-                yield return new object[] { ContentType.RETURNED_GOODS, StampsClient.v111.ContentTypeV2.ReturnedGoods };
+                yield return new object[] { ContentType.ReturnedGoods, StampsClient.v111.ContentTypeV2.ReturnedGoods };
 
                 // Mail class UspsReturn not supported.
                 // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
 
-                yield return new object[] { ContentType.OTHER, StampsClient.v111.ContentTypeV2.Other };
+                yield return new object[] { ContentType.Other, StampsClient.v111.ContentTypeV2.Other };
             }
 
             IEnumerator IEnumerable.GetEnumerator()

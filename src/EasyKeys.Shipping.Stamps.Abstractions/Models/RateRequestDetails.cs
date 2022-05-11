@@ -6,7 +6,7 @@ public class RateRequestDetails
     /// Required for CreateIndicium web method.
     /// Not required for GetRates web method.If not specified in GetRates, <b>rate</b> object in the response will include rates for all ServiceTypes.
     /// </summary>
-    public StampsServiceType ServiceType { get; set; } = StampsServiceType.UNKNOWN;
+    public StampsServiceType ServiceType { get; set; } = StampsServiceType.Unknown;
 
     /// <summary>
     /// A plain language description of the service returned, i.e. “USPS Priority Mail”.
@@ -125,7 +125,7 @@ public class RateRequestDetails
     /// </list>
     /// One of: Commercial_Sample, Dangerous_Goods, Document, Gift, Humanitarian_Donation, Merchandise, Returned_Goods, or Other.
     /// </summary>
-    public ContentType ContentType { get; set; } = ContentType.MERCHANDISE;
+    public ContentType ContentType { get; set; } = ContentType.Merchandise;
 
     public bool ContentTypeSpecified { get; set; } = true;
 
@@ -153,7 +153,7 @@ public class RateRequestDetails
     /// </item>
     /// </list>
     /// </summary>
-    public CarrierType Carrier { get; set; } = CarrierType.USPS;
+    public CarrierType Carrier { get; set; } = CarrierType.Usps;
 
     /// <summary>
     /// <para>

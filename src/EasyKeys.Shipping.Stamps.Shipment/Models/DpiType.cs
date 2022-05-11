@@ -4,31 +4,28 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
     public abstract class DpiType : SmartEnum<DpiType>
     {
-        public static readonly DpiType DEFAULT = new Default();
-        public static readonly DpiType HIGH = new High();
+        public static readonly DpiType Default = new DefaultType();
+        public static readonly DpiType High = new HighType();
 
-        public DpiType(string name, int value) : base(name, value)
+        public DpiType(string name, int value, string description) : base(name, value)
         {
+            Description = description;
         }
 
-        public abstract string DpiName { get; }
+        public string Description { get; }
 
-        private sealed class Default : DpiType
+        private sealed class DefaultType : DpiType
         {
-            public Default() : base("DEFAULT", 0)
+            public DefaultType() : base(StampsClient.v111.EltronPrinterDPIType.Default.ToString(), (int)StampsClient.v111.EltronPrinterDPIType.Default, "Electron Printer Default Dpi Type")
             {
             }
-
-            public override string DpiName => "Default";
         }
 
-        private sealed class High : DpiType
+        private sealed class HighType : DpiType
         {
-            public High() : base("HIGH", 1)
+            public HighType() : base(StampsClient.v111.EltronPrinterDPIType.High.ToString(), (int)StampsClient.v111.EltronPrinterDPIType.High, "Electron Printer High Dpi Type")
             {
             }
-
-            public override string DpiName => "High";
         }
     }
 }

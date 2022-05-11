@@ -4,98 +4,83 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 {
     public abstract class ContentType : SmartEnum<ContentType>
     {
-        public static readonly ContentType OTHER = new Other();
+        public static readonly ContentType Other = new OtherType();
 
-        public static readonly ContentType RETURNED_GOODS = new ReturnedGoods();
+        public static readonly ContentType ReturnedGoods = new ReturnedGoodsType();
 
-        public static readonly ContentType MERCHANDISE = new Merchandise();
+        public static readonly ContentType Merchandise = new MerchandiseType();
 
-        public static readonly ContentType HUMANITARIAN = new Humanitarian();
+        public static readonly ContentType HumanitarianDonation = new HumanitarianDonationType();
 
-        public static readonly ContentType GIFT = new Gift();
+        public static readonly ContentType Gift = new GiftType();
 
-        public static readonly ContentType DOCUMENT = new Document();
+        public static readonly ContentType Document = new DocumentType();
 
-        public static readonly ContentType DANGEROUS_GOODS = new DangerousGoods();
+        public static readonly ContentType DangerousGoods = new DangerousGoodsType();
 
-        public static readonly ContentType COMMERCIAL_SAMPLE = new CommercialSample();
+        public static readonly ContentType CommcercialSample = new CommercialSampleType();
 
-        public ContentType(string name, int value) : base(name, value)
+        public ContentType(string name, int value, string description) : base(name, value)
         {
+            Description = description;
         }
 
-        public abstract string ContentName { get; }
+        public string Description { get; }
 
-        private sealed class Other : ContentType
+        private sealed class OtherType : ContentType
         {
-            public Other() : base("OTHER", 0)
+            public OtherType() : base(StampsClient.v111.ContentTypeV2.Other.ToString(), (int)StampsClient.v111.ContentTypeV2.Other, "Other")
             {
             }
-
-            public override string ContentName => "Other";
         }
 
-        private sealed class ReturnedGoods : ContentType
+        private sealed class ReturnedGoodsType : ContentType
         {
-            public ReturnedGoods() : base("RETURNED_GOODS", 1)
+            public ReturnedGoodsType() : base(StampsClient.v111.ContentTypeV2.ReturnedGoods.ToString(), (int)StampsClient.v111.ContentTypeV2.ReturnedGoods, "Returned Goods")
             {
             }
-
-            public override string ContentName => "Returned Goods";
         }
 
-        private sealed class Merchandise : ContentType
+        private sealed class MerchandiseType : ContentType
         {
-            public Merchandise() : base("MERCHANDISE", 2)
+            public MerchandiseType() : base(StampsClient.v111.ContentTypeV2.Merchandise.ToString(), (int)StampsClient.v111.ContentTypeV2.Merchandise, "Merchandise")
             {
             }
-
-            public override string ContentName => "Merchandise";
         }
 
-        private sealed class Humanitarian : ContentType
+        private sealed class HumanitarianDonationType : ContentType
         {
-            public Humanitarian() : base("HUMANITARIAN", 3)
+            public HumanitarianDonationType() : base(StampsClient.v111.ContentTypeV2.HumanitarianDonation.ToString(), (int)StampsClient.v111.ContentTypeV2.HumanitarianDonation, "Humanitarian Donation")
             {
             }
-
-            public override string ContentName => "Humanitarian";
         }
 
-        private sealed class Gift : ContentType
+        private sealed class GiftType : ContentType
         {
-            public Gift() : base("GIFT", 4)
+            public GiftType() : base(StampsClient.v111.ContentTypeV2.Gift.ToString(), (int)StampsClient.v111.ContentTypeV2.Gift, "Gift")
             {
             }
-
-            public override string ContentName => "Gift";
         }
 
-        private sealed class Document : ContentType
+        private sealed class DocumentType : ContentType
         {
-            public Document() : base("DOCUMENT", 5)
+            public DocumentType() : base(StampsClient.v111.ContentTypeV2.Document.ToString(), (int)StampsClient.v111.ContentTypeV2.Document, "Document")
             {
             }
-
-            public override string ContentName => "Document";
         }
 
-        private sealed class DangerousGoods : ContentType
+        private sealed class DangerousGoodsType : ContentType
         {
-            public DangerousGoods() : base("DANGEROUS_GOODS", 6)
+            public DangerousGoodsType() : base(StampsClient.v111.ContentTypeV2.DangerousGoods.ToString(), (int)StampsClient.v111.ContentTypeV2.DangerousGoods, "Dangerous Goods")
             {
             }
-
-            public override string ContentName => "Dangerous Goods";
         }
 
-        private sealed class CommercialSample : ContentType
+        private sealed class CommercialSampleType : ContentType
         {
-            public CommercialSample() : base("COMMERCIAL_SAMPLE", 7)
+            public CommercialSampleType() : base(StampsClient.v111.ContentTypeV2.CommercialSample.ToString(), (int)StampsClient.v111.ContentTypeV2.CommercialSample, "Commercial Ssample")
             {
             }
-
-            public override string ContentName => "Commercial Sample";
         }
     }
 }

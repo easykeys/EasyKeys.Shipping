@@ -13,7 +13,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
 
         public Rate SelectedRate { get; set; }
 
-        public PackageType PackageType { get; set; }
+        public PackageType PackageType { get; set; } = PackageType.Package;
 
         /// <summary>
         /// The amount to declare for this shipment, in dollars and cents. Required for International.

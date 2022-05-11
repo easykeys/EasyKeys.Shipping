@@ -4,32 +4,29 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
 {
     public abstract class ImageType : SmartEnum<ImageType>
     {
-        public static readonly ImageType PDF = new Pdf();
+        public static readonly ImageType Pdf = new PdfType();
 
-        public static readonly ImageType PNG = new Png();
+        public static readonly ImageType Png = new PngType();
 
-        public ImageType(string name, int value) : base(name, value)
+        public ImageType(string name, int value, string description) : base(name, value)
         {
+            Description = description;
         }
 
-        public abstract string ImageTypeName { get; }
+        public string Description { get; }
 
-        private sealed class Pdf : ImageType
+        private sealed class PdfType : ImageType
         {
-            public Pdf() : base("PDF", 0)
+            public PdfType() : base(StampsClient.v111.ImageType.Pdf.ToString(), (int)StampsClient.v111.ImageType.Pdf, "Pdf")
             {
             }
-
-            public override string ImageTypeName => "PDF";
         }
 
-        private sealed class Png : ImageType
+        private sealed class PngType : ImageType
         {
-            public Png() : base("PNG", 1)
+            public PngType() : base(StampsClient.v111.ImageType.Png.ToString(), (int)StampsClient.v111.ImageType.Png, "Png")
             {
             }
-
-            public override string ImageTypeName => "PNG";
         }
     }
 }

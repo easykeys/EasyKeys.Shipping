@@ -186,9 +186,9 @@ namespace EasyKeys.Shipping.Stamps.Rates
             var packages = new List<Package> { package };
             var options = new RateRequestDetails()
             {
-                PackageType = package.IsLargeFlatEnvelope() ? PackageType.Large_Envelope_Or_Flat : PackageType.Package,
+                PackageType = package.IsLargeFlatEnvelope() ? PackageType.LargeEnvelopeOrFlat : PackageType.Package,
                 ServiceDescription = "USPS First Class Mail",
-                ServiceType = StampsServiceType.USPS_FIRST_CLASS_MAIL
+                ServiceType = StampsServiceType.FirstClass
             };
             var shipmentOptions = new ShipmentOptions()
             {
@@ -227,7 +227,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
             var rateOptions = new RateRequestDetails()
             {
                 ServiceDescription = "USPS Priority Mail",
-                ServiceType = StampsServiceType.USPS_PRIORITY_MAIL,
+                ServiceType = StampsServiceType.Priority,
                 PackageType = GetFlatRatePackage(package)
             };
 
@@ -263,7 +263,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
             var rateOptions = new RateRequestDetails()
             {
                 ServiceDescription = "USPS First Class Mail International",
-                ServiceType = StampsServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL,
+                ServiceType = StampsServiceType.FirstClassInternational,
                 PackageType = PackageType.Package
             };
 
@@ -299,7 +299,7 @@ namespace EasyKeys.Shipping.Stamps.Rates
             var rateOptions = new RateRequestDetails()
             {
                 ServiceDescription = "USPS Priority Mail International",
-                ServiceType = StampsServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL,
+                ServiceType = StampsServiceType.PriorityInternational,
                 PackageType = GetFlatRatePackage(package)
             };
 
@@ -317,22 +317,22 @@ namespace EasyKeys.Shipping.Stamps.Rates
             // sequence from smallest to largest
             if (package.IsPaddedFlatRateEnvelope())
             {
-                return PackageType.Flat_Rate_Padded_Envelope;
+                return PackageType.FlatRatePaddedEnvelope;
             }
 
             if (package.IsSmallFlatRateBox())
             {
-                return PackageType.Small_Flat_Rate_Box;
+                return PackageType.SmallFlatRateBox;
             }
 
             if (package.IsFlatRateBox())
             {
-                return PackageType.Flat_Rate_Box;
+                return PackageType.FlatRateBox;
             }
 
             if (package.IsLargeFlatRateBox())
             {
-                return PackageType.Large_Flat_Rate_Box;
+                return PackageType.LargeFlatRateBox;
             }
 
             return PackageType.Package;

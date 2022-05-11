@@ -77,7 +77,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                             StateOrProvince = "CA",
                             CountryCode = "US",
                             PostalCode = "92507"
-                        }, .1m, StampsServiceType.USPS_FIRST_CLASS_MAIL, PackageType.Large_Envelope_Or_Flat, "USPS First Class Mail"
+                        }, .1m, StampsServiceType.FirstClass, PackageType.LargeEnvelopeOrFlat, "USPS First Class Mail"
                 };
                 yield return new object[]
                 {
@@ -88,7 +88,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                             StateOrProvince = "Brescia",
                             CountryCode = "IT",
                             PostalCode = "64921"
-                        }, .1m, StampsServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL, PackageType.Package, "USPS First Class Mail International"
+                        }, .1m, StampsServiceType.FirstClassInternational, PackageType.Package, "USPS First Class Mail International"
                 };
                 yield return new object[]
                 {
@@ -100,7 +100,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                             StateOrProvince = "CA",
                             CountryCode = "US",
                             PostalCode = "92507"
-                        }, 1m, StampsServiceType.USPS_PRIORITY_MAIL, PackageType.Small_Flat_Rate_Box, "USPS Priority Mail"
+                        }, 1m, StampsServiceType.Priority, PackageType.SmallFlatRateBox, "USPS Priority Mail"
                 };
                 yield return new object[]
                 {
@@ -111,7 +111,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
                             StateOrProvince = "Brescia",
                             CountryCode = "IT",
                             PostalCode = "64921"
-                        }, 1m, StampsServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL, PackageType.Package, "USPS First Class Mail International"
+                        }, 1m, StampsServiceType.FirstClassInternational, PackageType.Package, "USPS First Class Mail International"
                 };
             }
 

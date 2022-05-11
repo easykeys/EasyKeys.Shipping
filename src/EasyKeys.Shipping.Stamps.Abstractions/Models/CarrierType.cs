@@ -4,54 +4,47 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 {
     public abstract class CarrierType : SmartEnum<CarrierType>
     {
-        public static readonly CarrierType FEDEX = new FedEx();
+        public static readonly CarrierType FedEx = new FedExType();
 
-        public static readonly CarrierType UPS = new Ups();
+        public static readonly CarrierType Ups = new UpsType();
 
-        public static readonly CarrierType USPS = new Usps();
+        public static readonly CarrierType Usps = new UspsType();
 
-        public static readonly CarrierType DHL_EXPRESS = new DhlExpress();
+        public static readonly CarrierType DhlExpress = new DhlExpressType();
 
-        public CarrierType(string name, int value) : base(name, value)
+        public CarrierType(string name, int value, string description) : base(name, value)
         {
+            Description = description;
         }
 
-        public abstract string CarrierName { get; }
+        public string Description { get; }
 
-        private sealed class FedEx : CarrierType
+        private sealed class FedExType : CarrierType
         {
-            public FedEx() : base("FEDEX", 0)
+            public FedExType() : base(StampsClient.v111.Carrier.FedEx.ToString(), (int)StampsClient.v111.Carrier.FedEx, "FedEx")
             {
             }
-
-            public override string CarrierName => "FedEx";
         }
 
-        private sealed class Ups : CarrierType
+        private sealed class UpsType : CarrierType
         {
-            public Ups() : base("UPS", 1)
+            public UpsType() : base(StampsClient.v111.Carrier.USPS.ToString(), (int)StampsClient.v111.Carrier.USPS, "UPS")
             {
             }
-
-            public override string CarrierName => "Ups";
         }
 
-        private sealed class Usps : CarrierType
+        private sealed class UspsType : CarrierType
         {
-            public Usps() : base("USPS", 2)
+            public UspsType() : base(StampsClient.v111.Carrier.USPS.ToString(), (int)StampsClient.v111.Carrier.USPS, "USPS")
             {
             }
-
-            public override string CarrierName => "Usps";
         }
 
-        private sealed class DhlExpress : CarrierType
+        private sealed class DhlExpressType : CarrierType
         {
-            public DhlExpress() : base("DHL_EXPRESS", 3)
+            public DhlExpressType() : base(StampsClient.v111.Carrier.DHLExpress.ToString(), (int)StampsClient.v111.Carrier.DHLExpress, "DHL Express")
             {
             }
-
-            public override string CarrierName => "Dhl Express";
         }
     }
 }

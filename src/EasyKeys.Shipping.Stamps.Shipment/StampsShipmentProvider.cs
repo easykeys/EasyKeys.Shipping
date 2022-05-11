@@ -22,21 +22,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment
         {
             var ratesDetails = new RateRequestDetails()
             {
-                ServiceType = shipmentDetails.SelectedRate.Name.ToUpper() switch
-                {
-
-                    "USFC" => StampsServiceType.USPS_FIRST_CLASS_MAIL,
-                    "USMM" => StampsServiceType.USPS_MEDIA_MAIL,
-                    "USPM" => StampsServiceType.USPS_PRIORITY_MAIL,
-                    "USXM" => StampsServiceType.USPS_PRIORITY_MAIL_EXPRESS,
-                    "UEMI" => StampsServiceType.USPS_PRIORITY_MAIL_EXPRESS_INTERNATIONAL,
-                    "USPMI" => StampsServiceType.USPS_PRIORITY_MAIL_INTERNATIONAL,
-                    "USFCI" => StampsServiceType.USPS_FIRST_CLASS_MAIL_INTERNATIONAL,
-                    "USPS" => StampsServiceType.USPS_PARCEL_SELECT_GROUND,
-                    "USLM" => StampsServiceType.USPS_LIBRARY_MAIL,
-                    _ => StampsServiceType.USPS_FIRST_CLASS_MAIL
-
-                },
+                ServiceType = StampsServiceType.FromName(shipmentDetails.SelectedRate.Name),
                 ServiceDescription = shipmentDetails.SelectedRate.ServiceName,
                 PackageType = shipmentDetails.PackageType,
                 DeclaredValue = shipmentDetails.DeclaredValue
@@ -52,24 +38,24 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
                 SampleOnly = shipmentDetails.IsSample,
 
-                PostageMode = shipmentDetails.LabelOptions.PostageMode.Name switch
+                PostageMode = shipmentDetails.LabelOptions.PostageMode.Value switch
                 {
-                    "NORMAL" => StampsClient.v111.PostageMode.Normal,
-                    "NO_POSTAGE" => StampsClient.v111.PostageMode.NoPostage,
+                    (int)StampsClient.v111.PostageMode.Normal => StampsClient.v111.PostageMode.Normal,
+                    (int)StampsClient.v111.PostageMode.NoPostage => StampsClient.v111.PostageMode.NoPostage,
                     _ => StampsClient.v111.PostageMode.Normal
                 },
 
-                ImageType = shipmentDetails.LabelOptions.ImageType.Name switch
+                ImageType = shipmentDetails.LabelOptions.ImageType.Value switch
                 {
-                    "PNG" => StampsClient.v111.ImageType.Png,
-                    "PDF" => StampsClient.v111.ImageType.Pdf,
+                    (int)StampsClient.v111.ImageType.Png => StampsClient.v111.ImageType.Png,
+                    (int)StampsClient.v111.ImageType.Pdf => StampsClient.v111.ImageType.Pdf,
                     _ => StampsClient.v111.ImageType.Png
                 },
 
-                EltronPrinterDPIType = shipmentDetails.LabelOptions.DpiType.Name switch
+                EltronPrinterDPIType = shipmentDetails.LabelOptions.DpiType.Value switch
                 {
-                    "DEFAULT" => EltronPrinterDPIType.Default,
-                    "HIGH" => EltronPrinterDPIType.High,
+                    (int)EltronPrinterDPIType.Default => EltronPrinterDPIType.Default,
+                    (int)EltronPrinterDPIType.High => EltronPrinterDPIType.High,
                     _ => EltronPrinterDPIType.Default
                 },
                 memo = shipmentDetails.LabelOptions.Memo,
@@ -113,11 +99,11 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                     Internal Transaction Number (ITN) to be put on the CP72 form.*/
                 InternalTransactionNumber = "123",
 
-                PaperSize = shipmentDetails.LabelOptions.PaperSize.Name switch
+                PaperSize = shipmentDetails.LabelOptions.PaperSize.Value switch
                 {
-                    "DEFAULT" => PaperSizeV1.Default,
-                    "LABELSIZE" => PaperSizeV1.LabelSize,
-                    "LETTER85X11" => PaperSizeV1.Letter85x11,
+                    (int)PaperSizeV1.Default => PaperSizeV1.Default,
+                    (int)PaperSizeV1.LabelSize => PaperSizeV1.LabelSize,
+                    (int)PaperSizeV1.Letter85x11 => PaperSizeV1.Letter85x11,
                     _ => PaperSizeV1.Default
                 },
 
@@ -129,13 +115,13 @@ namespace EasyKeys.Shipping.Stamps.Shipment
                 // ??
                 ReturnLabelExpirationDays = 1,
 
-                ImageDpi = shipmentDetails.LabelOptions.ImageDPI.Name switch
+                ImageDpi = shipmentDetails.LabelOptions.ImageDPI.Value switch
                 {
-                    "DPI203" => ImageDpi.ImageDpi203,
-                    "DPI300" => ImageDpi.ImageDpi300,
-                    "DPI200" => ImageDpi.ImageDpi200,
-                    "DPI150" => ImageDpi.ImageDpi150,
-                    "DPI96" => ImageDpi.ImageDpi96,
+                    (int)ImageDpi.ImageDpi203 => ImageDpi.ImageDpi203,
+                    (int)ImageDpi.ImageDpi300 => ImageDpi.ImageDpi300,
+                    (int)ImageDpi.ImageDpi200 => ImageDpi.ImageDpi200,
+                    (int)ImageDpi.ImageDpi150 => ImageDpi.ImageDpi150,
+                    (int)ImageDpi.ImageDpi96 => ImageDpi.ImageDpi96,
                     _ => ImageDpi.ImageDpiDefault
                 },
 
@@ -280,15 +266,15 @@ namespace EasyKeys.Shipping.Stamps.Shipment
 
             return new CustomsV7()
             {
-                ContentType = rateDetails.ContentType.Name switch
+                ContentType = rateDetails.ContentType.Value switch
                 {
-                    "COMMERCIAL_SAMPLE" => ContentTypeV2.CommercialSample,
-                    "DANGEROUS_GOODS" => ContentTypeV2.DangerousGoods,
-                    "DOCUMENT" => ContentTypeV2.Document,
-                    "GIFT" => ContentTypeV2.Gift,
-                    "HUMANITARIAN" => ContentTypeV2.HumanitarianDonation,
-                    "MERCHANDISE" => ContentTypeV2.Merchandise,
-                    "RETURNED_GOODS" => ContentTypeV2.ReturnedGoods,
+                    (int)ContentTypeV2.CommercialSample => ContentTypeV2.CommercialSample,
+                    (int)ContentTypeV2.DangerousGoods => ContentTypeV2.DangerousGoods,
+                    (int)ContentTypeV2.Document => ContentTypeV2.Document,
+                    (int)ContentTypeV2.Gift => ContentTypeV2.Gift,
+                    (int)ContentTypeV2.HumanitarianDonation => ContentTypeV2.HumanitarianDonation,
+                    (int)ContentTypeV2.Merchandise => ContentTypeV2.Merchandise,
+                    (int)ContentTypeV2.ReturnedGoods => ContentTypeV2.ReturnedGoods,
                     _ => ContentTypeV2.Other
                 },
 
