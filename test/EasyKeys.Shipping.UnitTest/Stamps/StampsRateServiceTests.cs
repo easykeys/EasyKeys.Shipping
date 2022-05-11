@@ -314,7 +314,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
                 yield return new object[] { CarrierType.UPS, 0 };
 
-                yield return new object[] { CarrierType.DHl_EXPRESS, 0 };
+                yield return new object[] { CarrierType.DHL_EXPRESS, 0 };
 
                 yield return new object[] { CarrierType.FEDEX, 0 };
             }

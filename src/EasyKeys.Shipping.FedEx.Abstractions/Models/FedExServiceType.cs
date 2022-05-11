@@ -6,6 +6,8 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
 {
     public static readonly FedExServiceType DEFAULT = new Default();
 
+    public static readonly FedExServiceType EUROPE_FIRST_INTERNATIONAL_PRIORITY = new Europe_First_International_Priority();
+
     private FedExServiceType(string name, int value) : base(name, value)
     {
     }
@@ -27,7 +29,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "EUROPE_FIRST_INTERNATIONAL_PRIORITY";
+        public override string ServiceName => "FedEx Europe First International Priority";
     }
 
     private sealed class FedEx_1_Day_Freight : FedExServiceType
@@ -36,7 +38,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_1_DAY_FREIGHT";
+        public override string ServiceName => "FedEx 1Day Freight";
     }
 
     private sealed class FedEx_2_Day : FedExServiceType
@@ -45,7 +47,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_2_DAY";
+        public override string ServiceName => "FedEx 2Day";
     }
 
     private sealed class FedEx_2_Day_AM : FedExServiceType
@@ -54,7 +56,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_2_DAY_AM";
+        public override string ServiceName => "FedEx 2Day AM";
     }
 
     private sealed class FEDEX_2_DAY_FREIGHT : FedExServiceType
@@ -63,7 +65,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_2_DAY_FREIGHT";
+        public override string ServiceName => "FedEx 2Day Freight";
     }
 
     private sealed class FEDEX_3_DAY_FREIGHT : FedExServiceType
@@ -72,7 +74,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_3_DAY_FREIGHT";
+        public override string ServiceName => "FedEx 3Day Freight";
     }
 
     private sealed class FEDEX_EXPRESS_SAVER : FedExServiceType
@@ -81,7 +83,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_EXPRESS_SAVER";
+        public override string ServiceName => "FedEx Express Saver";
     }
 
     private sealed class FEDEX_FIRST_FREIGHT : FedExServiceType
@@ -90,7 +92,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_FIRST_FREIGHT";
+        public override string ServiceName => "FedEx First Freight";
     }
 
     private sealed class FEDEX_FREIGHT_ECONOMY : FedExServiceType
@@ -99,7 +101,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_FREIGHT_ECONOMY";
+        public override string ServiceName => "Fedex Freight Economy";
     }
 
     private sealed class FEDEX_FREIGHT_PRIORITY : FedExServiceType
@@ -108,7 +110,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_FREIGHT_PRIORITY";
+        public override string ServiceName => "FedEx Freight Priority";
     }
 
     private sealed class FEDEX_GROUND : FedExServiceType
@@ -117,7 +119,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FEDEX_GROUND";
+        public override string ServiceName => "FedEx Ground";
     }
 
     private sealed class FIRST_OVERNIGHT : FedExServiceType
@@ -126,7 +128,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "FIRST_OVERNIGHT";
+        public override string ServiceName => "FedEx First Overnight";
     }
 
     private sealed class GROUND_HOME_DELIVERY : FedExServiceType
@@ -135,7 +137,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "GROUND_HOME_DELIVERY";
+        public override string ServiceName => "FedEx Ground Home Delivery";
     }
 
     private sealed class INTERNATIONAL_ECONOMY : FedExServiceType
@@ -144,7 +146,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "INTERNATIONAL_ECONOMY";
+        public override string ServiceName => "FedEx International Economy";
     }
 
     private sealed class INTERNATIONAL_ECONOMY_FREIGHT : FedExServiceType
@@ -153,7 +155,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "INTERNATIONAL_ECONOMY_FREIGHT";
+        public override string ServiceName => "FedEx International Economy Freight";
     }
 
     private sealed class INTERNATIONAL_FIRST : FedExServiceType
@@ -162,7 +164,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "INTERNATIONAL_FIRST";
+        public override string ServiceName => "FedEx International First";
     }
 
     private sealed class INTERNATIONAL_PRIORITY : FedExServiceType
@@ -171,7 +173,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "INTERNATIONAL_PRIORITY";
+        public override string ServiceName => "FedEx International Priority";
     }
 
     private sealed class INTERNATIONAL_PRIORITY_FREIGHT : FedExServiceType
@@ -180,7 +182,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "INTERNATIONAL_PRIORITY_FREIGHT";
+        public override string ServiceName => "FedEx International Priority Freight";
     }
 
     private sealed class PRIORITY_OVERNIGHT : FedExServiceType
@@ -189,7 +191,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "PRIORITY_OVERNIGHT";
+        public override string ServiceName => "Priority Overnight";
     }
 
     private sealed class SMART_POST : FedExServiceType
@@ -198,7 +200,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "SMART_POST";
+        public override string ServiceName => "Smart Post";
     }
 
     private sealed class STANDARD_OVERNIGHT : FedExServiceType
@@ -207,6 +209,6 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         {
         }
 
-        public override string ServiceName => "STANDARD_OVERNIGHT";
+        public override string ServiceName => "Standard Overnight";
     }
 }

@@ -10,7 +10,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models
 
         public static readonly CarrierType USPS = new Usps();
 
-        public static readonly CarrierType DHl_EXPRESS = new DhlExpress();
+        public static readonly CarrierType DHL_EXPRESS = new DhlExpress();
 
         public CarrierType(string name, int value) : base(name, value)
         {
