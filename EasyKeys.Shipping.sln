@@ -69,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.Ad
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.Tracking", "src\EasyKeys.Shipping.Stamps.Tracking\EasyKeys.Shipping.Stamps.Tracking.csproj", "{69AD45D6-E45C-4E91-8D32-F4F1DA767660}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.API", "EasyKeys.Shipping.Stamps.API\EasyKeys.Shipping.Stamps.API.csproj", "{2A9DAD46-E0D9-4EBE-B4C6-482C7C7C1B30}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.API", "src\EasyKeys.Shipping.Stamps.API\EasyKeys.Shipping.Stamps.API.csproj", "{2A9DAD46-E0D9-4EBE-B4C6-482C7C7C1B30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
