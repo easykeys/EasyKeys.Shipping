@@ -1,5 +1,4 @@
-﻿using EasyKeys.Shipping.FedEx.Abstractions.DependencyInjection;
-using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Rates;
 
 namespace Microsoft.Extensions.DependencyInjection;

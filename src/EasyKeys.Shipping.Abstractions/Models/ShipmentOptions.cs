@@ -4,71 +4,36 @@ public class ShipmentOptions
 {
     public const string DefaultCurrencyCode = "USD";
 
+    public ShipmentOptions(string packagingType, DateTime shippingDate)
+    {
+        PackagingType = packagingType;
+        ShippingDate = shippingDate;
+    }
+
     /// <summary>
-    /// Enable Saturday Delivery option for shipping rates.
+    /// <para>Enable Saturday Delivery option for shipping rates.</para>
+    /// <para>The default value is false.</para>
     /// </summary>
     public bool SaturdayDelivery { get; set; }
 
     /// <summary>
-    /// Pickup date. Current date and time is used if not specified.
+    /// <para>Pickup date. Current date and time is used if not specified.</para>
+    /// <para>The default value is DateTime.Now.</para>
     /// </summary>
-    public DateTime ShippingDate { get; set; } = DateTime.Now;
+    public DateTime ShippingDate { get; } = DateTime.Now;
 
     /// <summary>
-    /// Preferred currency code, applies to FedEx only.
+    /// <para>Preferred currency code, applies to FedEx only.</para>
+    /// <para>The default value is "USD".</para>
     /// </summary>
-    public string PreferredCurrencyCode { get; set; } = string.Empty;
+    public string PreferredCurrencyCode { get; set; } = DefaultCurrencyCode;
 
     /// <summary>
-    /// <b>FEDEX Shipping </b>
-    /// <list type="bullet">
-    /// <item>
-    /// <description> YOUR_PACKAGING
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_10KG_BOX
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_25KG_BOX
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_BOX
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_ENVELOPE
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_EXTRA_LARGE_BOX
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_LARGE_BOX
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_MEDIUM_BOX
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_PAK
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_SMALL_BOX
-    /// </description>
-    /// </item>
-    /// <item>
-    /// <description>FEDEX_TUBE.
-    /// </description>
-    /// </item>
-    /// </list>
+    /// <para>The type of the packing.</para>
+    /// <para>FedEx example is YOUR_PACKAGING.</para>
+    /// <para>USPS example is PACKAGE_SERVICE_RETAIL.</para>
     /// </summary>
-    public string PackagingType { get; set; } = "YOUR_PACKAGING";
+    public string PackagingType { get; } = "YOUR_PACKAGING";
 
     /// <summary>
     /// RegularPickup,

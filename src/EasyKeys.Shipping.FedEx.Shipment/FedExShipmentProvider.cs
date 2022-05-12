@@ -34,7 +34,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
     }
 
     public async Task<ShipmentLabel> CreateShipmentAsync(
-        ServiceType serviceType,
+        FedExServiceType serviceType,
         Shipping.Abstractions.Models.Shipment shipment,
         ShipmentDetails shipmentDetails,
         CancellationToken cancellationToken = default)
@@ -142,7 +142,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
     }
 
     private ProcessShipmentRequest CreateShipmentRequest(
-        ServiceType serviceType,
+        FedExServiceType serviceType,
         Shipping.Abstractions.Models.Shipment shipment,
         ShipmentDetails details,
         int sequenceNumber)
@@ -191,14 +191,14 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
     private void SetShipmentDetails(
         ProcessShipmentRequest request,
-        ServiceType serviceType,
+        FedExServiceType serviceType,
         Shipping.Abstractions.Models.Shipment shipment,
         ShipmentDetails details)
     {
         request.RequestedShipment = new RequestedShipment
         {
             ShipTimestamp = shipment.Options.ShippingDate,
-            ServiceType = serviceType.ToString(),
+            ServiceType = serviceType.Name,
             PackagingType = shipment.Options.PackagingType,
             PackageCount = shipment.Packages.Count.ToString(),
             TotalWeight = new Weight
@@ -553,7 +553,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         Weight = new Weight()
                             {
                                 Units = WeightUnits.LB,
-                                Value = commodity.Weight
+                                Value = shipment.GetTotalWeight(),
                             },
 
                         Quantity = commodity.Quantity,

@@ -95,7 +95,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                             _ => ServiceType.Unknown
                         },
 
-                        ServiceDescription = rateDetails.ServiceDescription,
+                        ServiceDescription = rateDetails.ServiceType.Description,
 
                         DeliverDays = string.Empty,
 
@@ -224,7 +224,11 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
             request.Rate.WeightOz = 0.0;
 
-            request.Rate.PackageType = rateDetails.PackageType.Value switch
+            var packageType = PackageType.Package;
+
+            PackageType.TryFromName(shipment.Options.PackagingType, out packageType);
+
+            request.Rate.PackageType = packageType.Value switch
             {
                 (int)PackageTypeV11.Pak => PackageTypeV11.Pak,
                 (int)PackageTypeV11.Package => PackageTypeV11.Package,

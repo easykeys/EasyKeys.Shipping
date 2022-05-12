@@ -85,9 +85,8 @@ public class Main : IMain
             //    40.0M)
         };
 
-        var shipmentOptions = new ShipmentOptions
+        var shipmentOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now)
         {
-            PackagingType = "YOUR_PACKAGING",
             SaturdayDelivery = true,
             PreferredCurrencyCode = "USD",
         };
@@ -107,7 +106,7 @@ public class Main : IMain
             LabelOptions = new LabelOptions()
             {
                 LabelFormatType = "COMMON2D",
-                ImageType = "PNG",
+                ImageType = "PDF",
             }
         };
 
@@ -117,7 +116,6 @@ public class Main : IMain
             NumberOfPieces = 3,
             Description = "A set of 4 Steel Keys for office furniture",
             CountryOfManufacturer = "US",
-            Weight = 10.0M,
             Quantity = 3,
             QuantityUnits = "EA",
             UnitPrice = 15.0M
@@ -161,17 +159,18 @@ public class Main : IMain
                 originAddress,
                 validationResult?.ProposedAddress ?? originAddress,
                 packages,
-                shipmentOptions);
-
-            shipment.SenderInfo = sender;
-            shipment.RecipientInfo = recipient;
+                shipmentOptions)
+            {
+                SenderInfo = sender,
+                RecipientInfo = recipient
+            };
 
             shipment.Commodities.Add(commodity);
 
             // 2. shipment rates
             var rates = await _fedexRateProvider.GetRatesAsync(
                 shipment: shipment,
-                serviceType: shipment.DestinationAddress.CountryCode == "US" ? ServiceType.FEDEX_2_DAY : ServiceType.INTERNATIONAL_ECONOMY,
+                serviceType: shipment.DestinationAddress.CountryCode == "US" ? FedExServiceType.FedExSecondDay : FedExServiceType.FedExInternationalEconomy,
                 cancellationToken);
 
             if (shipment.DestinationAddress.CountryCode != "US")
@@ -181,7 +180,7 @@ public class Main : IMain
 
             // 3. get shipment label
             var result = await _fedExShipmentProvider.CreateShipmentAsync(
-                serviceType: shipment.DestinationAddress.CountryCode == "US" ? ServiceType.FEDEX_2_DAY : ServiceType.INTERNATIONAL_ECONOMY,
+                serviceType: shipment.DestinationAddress.CountryCode == "US" ? FedExServiceType.FedExSecondDay : FedExServiceType.FedExInternationalEconomy,
                 shipment,
                 details,
                 cancellationToken);

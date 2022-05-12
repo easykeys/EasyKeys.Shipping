@@ -85,7 +85,6 @@ public class Main : IMain
             Quantity = 1,
             ExportLicenseNumber = "dsdfs",
             Name = "sdkfsdf",
-            Weight = 13m
         };
 
         var sender = new ContactInfo()
@@ -117,11 +116,15 @@ public class Main : IMain
         _logger.LogError($"Address Validation Errors: {validatedAddress.Errors.Count()}");
 
         // 3) create shipment
-        var shipment = new Shipment(originAddress, validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress, packages)
-        {
-            RecipientInfo = receiver,
-            SenderInfo = sender,
-        };
+        // get correct packge
+        var config = new StampsRateConfigurator(
+            originAddress,
+            validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
+            packages.First(),
+            sender,
+            receiver);
+
+        var (shipment, ratesOptions) = config.Shipments.First();
 
         shipment.Errors.Concat(validatedAddress.Errors);
 

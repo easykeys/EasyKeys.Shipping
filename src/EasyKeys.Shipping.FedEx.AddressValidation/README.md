@@ -5,8 +5,16 @@
 ![Nuget](https://img.shields.io/nuget/dt/EasyKeys.Shipping.FedEx.AddressValidation)
 [![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https://f.feedz.io/easykeys/core/shield/EasyKeys.Shipping.FedEx.AddressValidation/latest)](https://f.feedz.io/easykeys/core/packages/EasyKeys.Shipping.FedEx.AddressValidation/latest/download)
 
-Implements FedEx AV v4
+This library implements FedEx AV v4 for Address Validation.
 
+## Give a Star! :star:
+
+If you like or are using this project please give it a star. Thanks!
+
+## Install
+
+```bash
+    dotnet add package EasyKeys.Shipping.FedEx.AddressValidation
 
 ## How FedEx Address Validation Works
 

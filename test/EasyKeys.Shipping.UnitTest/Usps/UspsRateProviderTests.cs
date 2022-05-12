@@ -224,11 +224,7 @@ public class UspsRateProviderTests
             {
                 UspsRateConfigurator.GetIntlEnvelope(weight)
             };
-        var shipOptions = new ShipmentOptions
-        {
-            PackagingType = nameof(IntlPackageType.LARGEENVELOPE),
-            ShippingDate = DateTime.Now.AddBusinessDays(1),
-        };
+        var shipOptions = new ShipmentOptions(nameof(IntlPackageType.LARGEENVELOPE), DateTime.Now.AddBusinessDays(1));
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
         var rateOptions = new UspsRateOptions { ServiceName = "First-Class Package International Service" };
 
@@ -268,11 +264,7 @@ public class UspsRateProviderTests
                 UspsRateConfigurator.GetIntlBox(weight)
             };
 
-        var shipOptions = new ShipmentOptions
-        {
-            PackagingType = nameof(IntlPackageType.ALL),
-            ShippingDate = DateTime.Now.AddBusinessDays(1),
-        };
+        var shipOptions = new ShipmentOptions(nameof(IntlPackageType.ALL), DateTime.Now.AddBusinessDays(1));
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
         var rateOptions = new UspsRateOptions { ServiceName = "First-Class Package International Service" };
@@ -305,11 +297,8 @@ public class UspsRateProviderTests
                 UspsRateConfigurator.GetIntlBox(5m)
             };
 
-        var shipOptions = new ShipmentOptions
-        {
-            PackagingType = nameof(IntlPackageType.PACKAGE),
-            ShippingDate = DateTime.Now.AddBusinessDays(1),
-        };
+        var shipOptions = new ShipmentOptions(nameof(IntlPackageType.PACKAGE), DateTime.Now.AddBusinessDays(1));
+
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
         var rateOptions = new UspsRateOptions { ServiceName = "Priority Mail International" };
 
