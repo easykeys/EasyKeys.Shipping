@@ -23,13 +23,51 @@ namespace EasyKeys.Shipping.Stamps.Rates.Extensions
                 || totalDimensions > 36;
         }
 
-        public static bool IsLargeFlatEnvelope(this Package package)
+        public static bool IsLargeEnvelope(this Package package)
         {
             package = package ?? throw new ArgumentNullException(nameof(package));
 
-            return package.Weight < 0.8125m
-                && package.Dimensions.Length <= 15m
-                && package.Dimensions.Width <= 12m;
+            return package.Weight <= 0.8125m
+                && (package.Dimensions.Length > 11.5m && package.Dimensions.Length <= 15m)
+                && (package.Dimensions.Height > 6.125m && package.Dimensions.Height <= 12m)
+                && (package.Dimensions.Width <= .75m);
+        }
+
+        public static bool IsRegionalRateBoxA(this Package package)
+        {
+            package = package ?? throw new ArgumentNullException(nameof(package));
+
+            return package.Weight < 15 &&
+                ((package.Dimensions.Length <= 10.125m
+                && package.Dimensions.Height <= 7.125m
+                && package.Dimensions.Width <= 5m)
+                ||
+                (package.Dimensions.Height <= 13.0625m
+                && package.Dimensions.Height <= 11.0625m
+                && package.Dimensions.Width <= 2.5m));
+        }
+
+        public static bool IsRegionalRateBoxB(this Package package)
+        {
+            package = package ?? throw new ArgumentNullException(nameof(package));
+
+            return package.Weight < 20 &&
+                ((package.Dimensions.Length <= 12.25m
+                && package.Dimensions.Height <= 10.5m
+                && package.Dimensions.Width <= 5.5m)
+                ||
+                (package.Dimensions.Height <= 16.25m
+                && package.Dimensions.Height <= 14.5m
+                && package.Dimensions.Width <= 3m));
+        }
+
+        public static bool IsFlatRateEnvelope(this Package package)
+        {
+            package = package ?? throw new ArgumentNullException(nameof(package));
+
+            return package.Weight <= 70m
+                && package.Dimensions.Length < 9.5m
+                && package.Dimensions.Height < 12.5m;
         }
 
         /// <summary>
@@ -41,10 +79,22 @@ namespace EasyKeys.Shipping.Stamps.Rates.Extensions
         {
             package = package ?? throw new ArgumentNullException(nameof(package));
 
-            return package.Weight < 0.8125m &&
-                package.Dimensions.Length <= 12.5m &&
-                package.Dimensions.Width <= 9.5m &&
-                package.Dimensions.Height <= 4m;
+            return package.Weight < 70m &&
+                ((package.Dimensions.Length <= 12.5m &&
+                package.Dimensions.Height <= 9.5m) ||
+                 (package.Dimensions.Height <= 12.5m &&
+                package.Dimensions.Length <= 9.5m));
+        }
+
+        public static bool IsLegalFlatRateEnvelope(this Package package)
+        {
+            package = package ?? throw new ArgumentNullException(nameof(package));
+
+            return package.Weight < 70m &&
+                ((package.Dimensions.Length <= 15m &&
+                package.Dimensions.Height <= 9.5m) ||
+                 (package.Dimensions.Height <= 15m &&
+                package.Dimensions.Length <= 9.5m));
         }
 
         /// <summary>
@@ -57,28 +107,24 @@ namespace EasyKeys.Shipping.Stamps.Rates.Extensions
         {
             package = package ?? throw new ArgumentNullException(nameof(package));
 
-            return package.Dimensions.Length <= 8.625m &&
-                package.Dimensions.Width <= 5.375m &&
-                package.Dimensions.Height <= 1.625m;
+            return package.Weight < 70m &&
+                package.Dimensions.Length <= 8.6875m &&
+                package.Dimensions.Height <= 5.375m &&
+                package.Dimensions.Width <= 1.75m;
         }
 
-        /// <summary>
-        /// Flat Rate Box	USPS medium flat rate box. A special 11” x 8 ½” x 5 ½” or 14” x 3.5” x 12” USPS box that clearly indicates “Medium Flat Rate Box”.
-        /// </summary>
-        /// <param name="package"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static bool IsFlatRateBox(this Package package)
+        public static bool IsMediumFlatRateBox(this Package package)
         {
             package = package ?? throw new ArgumentNullException(nameof(package));
 
-            return (package.Dimensions.Length <= 11m &&
-                package.Dimensions.Width <= 8.5m &&
-                package.Dimensions.Height <= 5.55m)
+            return package.Weight < 70m &&
+                ((package.Dimensions.Length <= 11.25m &&
+                package.Dimensions.Height <= 8.75m &&
+                package.Dimensions.Width <= 6m)
                 ||
                 (package.Dimensions.Length <= 14m &&
-                package.Dimensions.Width <= 3.5m &&
-                package.Dimensions.Height <= 12m);
+                package.Dimensions.Height <= 12m &&
+                package.Dimensions.Width <= 3.5m));
         }
 
         /// <summary>
@@ -91,9 +137,14 @@ namespace EasyKeys.Shipping.Stamps.Rates.Extensions
         {
             package = package ?? throw new ArgumentNullException(nameof(package));
 
-            return package.Dimensions.Length <= 12m &&
-                package.Dimensions.Width <= 12m &&
-                package.Dimensions.Height <= 6m;
+            return package.Weight < 70m &&
+                ((package.Dimensions.Length <= 12.25m &&
+                package.Dimensions.Height <= 12.25m &&
+                package.Dimensions.Width <= 6m)
+                ||
+                (package.Dimensions.Length <= 24.0625m &&
+                package.Dimensions.Height <= 11.825m &&
+                package.Dimensions.Width <= 3.125m));
         }
     }
 }
