@@ -111,7 +111,7 @@ public class Main : IMain
         // 2) validate address
         var validatedAddress = await _addressProvider.ValidateAddressAsync(validateRequest, cancellationToken);
 
-        _logger.LogWarning($"Address Validation Warnings : {validatedAddress.Warnings.Count()}");
+        _logger.LogWarning($"Address Validation Result : {validatedAddress.ValidationBag.Select(x => x.Key + ": " + x.Value).Aggregate((x, y) => x + ", " + y)}");
 
         _logger.LogError($"Address Validation Errors: {validatedAddress.Errors.Count()}");
 
@@ -127,8 +127,6 @@ public class Main : IMain
         var (shipment, ratesOptions) = config.Shipments.First();
 
         shipment.Errors.Concat(validatedAddress.Errors);
-
-        shipment.Warnings.Concat(validatedAddress.Warnings);
 
         //shipment.Commodities.Add(commodity);
 

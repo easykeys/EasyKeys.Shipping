@@ -1,0 +1,3 @@
+
+DELETE https://localhost:7141/cancelShipment/{id}
+

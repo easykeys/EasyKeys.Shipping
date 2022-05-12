@@ -39,8 +39,6 @@ public class StampsAddressValidationProviderTests
         Assert.Equal(internalErrorCount, result.InternalErrors.Count());
 
         Assert.Equal(errorCount, result.Errors.Count());
-
-        Assert.Equal(warningCount, result.Warnings.Count());
     }
 
     private IStampsAddressValidationProvider GetAddressValidator()

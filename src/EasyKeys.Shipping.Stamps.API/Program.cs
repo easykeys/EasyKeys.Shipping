@@ -11,19 +11,10 @@ using EasyKeys.Shipping.Stamps.Shipment.Models;
 using EasyKeys.Shipping.Stamps.Tracking;
 using EasyKeys.Shipping.Stamps.Tracking.DependencyInjection;
 
-using Microsoft.AspNetCore.Http.Json;
-
 var builder = WebApplication.CreateBuilder(args);
 
-// set up config
-var dic = new Dictionary<string, string>
-    {
-        { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
-    };
-
-builder.Configuration.AddInMemoryCollection(dic);
-
-builder.Configuration.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
+// retieve values from azure vault
+builder.Configuration.AddAzureKeyVault(hostingEnviromentName: builder.Environment.EnvironmentName, usePrefix: true);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -37,12 +28,10 @@ builder.Services.AddStampsShipmentProvider();
 builder.Services.AddStampsTrackingProvider();
 
 // configure json options
-builder.Services.Configure<JsonOptions>(options =>
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
     options.SerializerOptions.IncludeFields = true;
 });
-
-var serviceProvider = builder.Services.BuildServiceProvider();
 
 var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
@@ -60,23 +49,33 @@ app.UseHttpsRedirection();
 (var sender, var receiver, var validatedAddress, var shipment, var label) = SetDefaultValues();
 
 // address validation recieves a proposed address.
-app.MapPost("/addressValidation", async (ValidateAddress address, CancellationToken cancellationToken) =>
+app.MapPost("/addressValidation", async (
+    AddressValidationDto model,
+    IStampsAddressValidationProvider addressProvider,
+    CancellationToken cancellationToken) =>
 {
-    var addressProvider = serviceProvider.GetRequiredService<IStampsAddressValidationProvider>();
-
+    var address = new ValidateAddress(model.Id, model.Address);
     validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
 
     return Results.Json(validatedAddress, options);
 });
 
 // getRates recieves a rate model containing destination address and package information.
-app.MapPost("/getRates", async (RateModel rateModel, CancellationToken cancellationToken) =>
+app.MapPost("/getRates", async (
+    RateQuoteDto model,
+    IStampsRateProvider rateProvider,
+    CancellationToken cancellationToken) =>
 {
-    var rateProvider = serviceProvider.GetRequiredService<IStampsRateProvider>();
+    // create a package
+    var package = new Package(
+        model!.Package!.Length,
+        model.Package.Width,
+        model.Package.Height,
+        model.Package.Weight,
+        model.Package.InsuredValue,
+        model.Package.SignatureRequiredOnDelivery);
 
-    var package = new Package(Decimal.Parse(rateModel.Length), Decimal.Parse(rateModel.Width), Decimal.Parse(rateModel.Height), Decimal.Parse(rateModel.Weight), 20m);
-
-    var config = new StampsRateConfigurator(rateModel.Origin, validatedAddress.ProposedAddress, package, sender, receiver);
+    var config = new StampsRateConfigurator(model.Origin, model.Destination, package, sender, receiver);
 
     shipment = await rateProvider.GetRatesAsync(config.Shipments.FirstOrDefault().shipment, new RateRequestDetails(), cancellationToken);
 
@@ -84,10 +83,11 @@ app.MapPost("/getRates", async (RateModel rateModel, CancellationToken cancellat
 });
 
 // create the shipment when rates service type is selected.
-app.MapPost("/createShipment", async (string ServiceType, CancellationToken cancellationToken) =>
+app.MapPost("/createShipment", async (
+    string ServiceType,
+    IStampsShipmentProvider shipmentProvider,
+    CancellationToken cancellationToken) =>
 {
-    var shipmentProvider = serviceProvider.GetRequiredService<IStampsShipmentProvider>();
-
     var shipmentRequestDetails = new ShipmentRequestDetails() { SelectedRate = shipment.Rates.Where(x => x.Name == ServiceType).FirstOrDefault() };
 
     label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
@@ -98,26 +98,31 @@ app.MapPost("/createShipment", async (string ServiceType, CancellationToken canc
 });
 
 // track shipment after it is created.
-app.MapGet("/trackShipment/{id}", async (string id, CancellationToken cancellationToken) =>
+app.MapGet("/trackShipment/{id}", async (
+    string id,
+    IStampsTrackingProvider trackingProvider,
+    CancellationToken cancellationToken) =>
 {
     var labelInfo = new ShipmentLabel();
 
     labelInfo.Labels.Add(new PackageLabelDetails() { TrackingId = id });
 
-    var trackingInfo = await serviceProvider.GetRequiredService<IStampsTrackingProvider>()
-                      .TrackShipmentAsync(labelInfo, cancellationToken);
+    var trackingInfo = await trackingProvider.TrackShipmentAsync(labelInfo, cancellationToken);
 
     return Results.Json(trackingInfo, options);
 });
 
 // cancel a label after it is created.
-app.MapGet("/cancelShipment/{id}", async (string id, CancellationToken cancellationToken) =>
+app.MapDelete("/cancelShipment/{id}", async (
+    string id,
+    IStampsShipmentProvider shipmentProvider,
+    CancellationToken cancellationToken) =>
 {
     var labelInfo = new ShipmentLabel();
 
     labelInfo.Labels.Add(new PackageLabelDetails() { TrackingId = id });
 
-    var trackingInfo = await serviceProvider.GetRequiredService<IStampsShipmentProvider>().CancelShipmentAsync(labelInfo, cancellationToken);
+    var trackingInfo = await shipmentProvider.CancelShipmentAsync(labelInfo, cancellationToken);
 
     return Results.Json(trackingInfo, options);
 });

@@ -1,0 +1,35 @@
+
+POST https://localhost:7141/getRates
+Content-Type: application/json
+
+
+{
+  "origin": {
+    "city": "riverside",
+    "countryCode": "US",
+    "streetLine": "1550 central ave",
+    "streetLine2": "apt 35",
+    "postalCode": "92507",
+    "stateOrProvince": "CA",
+    "isResidential": true
+}
+,
+  "destination": {
+    "city": "Charlotte",
+    "countryCode": "US",
+    "streetLine": "11407 Granite Street",
+    "streetLine2": null,
+    "postalCode": "28273",
+    "stateOrProvince": "NC",
+    "isResidential": false
+  },
+
+  "package": {
+    "signatureRequiredOnDelivery": false,
+    "insuredValue": 0,
+    "length": 9.0,
+    "width": 5.0,
+    "height": 0.5,
+    "weight": 0.1
+  }
+}
