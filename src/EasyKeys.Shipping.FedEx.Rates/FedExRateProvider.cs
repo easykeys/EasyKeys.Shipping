@@ -15,25 +15,32 @@ namespace EasyKeys.Shipping.FedEx.Rates;
 
 public class FedExRateProvider : IFedExRateProvider
 {
-    private readonly FedExOptions _options;
     private readonly RatePortType _rateClient;
     private readonly ILogger<FedExRateProvider> _logger;
+    private FedExOptions _options;
 
     public FedExRateProvider(
-        IOptionsSnapshot<FedExOptions> options,
+        IOptionsMonitor<FedExOptions> options,
         IFedExClientService fedExClientService,
         ILogger<FedExRateProvider> logger)
     {
-        _options = options.Value;
+        _options = options.CurrentValue;
+        options.OnChange(o => _options = o);
+
         _rateClient = fedExClientService.CreateRateClient();
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<Shipment> GetRatesAsync(
         Shipment shipment,
-        ServiceType serviceType = ServiceType.DEFAULT,
+        FedExServiceType? serviceType = null,
         CancellationToken cancellationToken = default)
     {
+        if (serviceType is null)
+        {
+            serviceType = FedExServiceType.Default;
+        }
+
         var client = _rateClient;
 
         try
@@ -64,7 +71,7 @@ public class FedExRateProvider : IFedExRateProvider
         return shipment;
     }
 
-    private RateRequest CreateRateRequest(Shipment shipment, ServiceType serviceType)
+    private RateRequest CreateRateRequest(Shipment shipment, FedExServiceType serviceType)
     {
         // Build the RateRequest
         var request = new RateRequest
@@ -110,9 +117,9 @@ public class FedExRateProvider : IFedExRateProvider
             request.RequestedShipment.TotalInsuredValue.Currency = shipment.Options.PreferredCurrencyCode;
         }
 
-        if (serviceType != ServiceType.DEFAULT)
+        if (serviceType != FedExServiceType.Default)
         {
-            request.RequestedShipment.ServiceType = serviceType.ToString();
+            request.RequestedShipment.ServiceType = serviceType.Name;
         }
 
         if (shipment.Options.SaturdayDelivery)
@@ -240,26 +247,37 @@ public class FedExRateProvider : IFedExRateProvider
                     guaranteedDelivery = shipDate.AddBusinessDays(index + 1);
                 }
 
-                // FEDEX_INTERNATIONAL_PRIORITY
-                if (name == nameof(ServiceType.INTERNATIONAL_PRIORITY))
+                if (FedExServiceType.TryFromName(name, out var tp))
                 {
-                    guaranteedDelivery = shipDate.AddBusinessDays(3);
-                }
-                else if (name == nameof(ServiceType.INTERNATIONAL_ECONOMY))
-                {
-                    guaranteedDelivery = shipDate.AddBusinessDays(6);
-                }
-                else if (name == nameof(ServiceType.FEDEX_GROUND))
-                {
-                    guaranteedDelivery = shipDate.AddBusinessDays(1);
+                    // FEDEX_INTERNATIONAL_PRIORITY
+                    if (name == tp.Name)
+                    {
+                        guaranteedDelivery = shipDate.AddBusinessDays(3);
+                    }
+                    else if (name == tp.Name)
+                    {
+                        guaranteedDelivery = shipDate.AddBusinessDays(6);
+                    }
+                    else if (name == tp.Name)
+                    {
+                        guaranteedDelivery = shipDate.AddBusinessDays(1);
+                    }
                 }
             }
 
-            // var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
             var uName = name.Replace("_", " ");
-            if (!uName.Contains("FEDEX"))
+
+            // var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
+            if (FedExServiceType.TryFromName(name, out var serviceType))
             {
-                uName = $"FEDEX {uName}";
+                uName = serviceType.ServiceName;
+            }
+            else
+            {
+                if (!uName.Contains("FEDEX"))
+                {
+                    uName = $"FEDEX {uName}";
+                }
             }
 
             var rate = new Rate(

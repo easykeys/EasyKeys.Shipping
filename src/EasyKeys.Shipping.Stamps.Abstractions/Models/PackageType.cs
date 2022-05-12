@@ -4,7 +4,6 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 public abstract class PackageType : SmartEnum<PackageType>
 {
-
     /// <summary>
     /// Postcard. Enabled on request.
     /// </summary>
@@ -26,7 +25,7 @@ public abstract class PackageType : SmartEnum<PackageType>
     public static readonly PackageType ThickEnvelope = new ThickEnvelopeType();
 
     /// <summary>
-    /// Package. Longest side plus the distance around the thickest part is less than or equal to 84”
+    /// Package. Longest side plus the distance around the thickest part is less than or equal to 84”.
     /// </summary>
     public static readonly PackageType Package = new Default();
 
@@ -36,7 +35,7 @@ public abstract class PackageType : SmartEnum<PackageType>
     public static readonly PackageType SmallFlatRateBox = new SmallFlatRateBoxType();
 
     /// <summary>
-    /// USPS medium flat rate box. A special 11” x 8 ½” x 5 ½” or 14” x 3.5” x 12” USPS box that clearly indicates “Medium Flat Rate Box”
+    /// USPS medium flat rate box. A special 11” x 8 ½” x 5 ½” or 14” x 3.5” x 12” USPS box that clearly indicates “Medium Flat Rate Box”.
     /// </summary>
     public static readonly PackageType FlatRateBox = new FlatRateBoxType();
 

@@ -15,7 +15,7 @@ public interface IFedExShipmentProvider
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ShipmentLabel> CreateShipmentAsync(
-        ServiceType serviceType,
+        FedExServiceType serviceType,
         Shipping.Abstractions.Models.Shipment shipment,
         ShipmentDetails shipmentDetails,
         CancellationToken cancellationToken = default);

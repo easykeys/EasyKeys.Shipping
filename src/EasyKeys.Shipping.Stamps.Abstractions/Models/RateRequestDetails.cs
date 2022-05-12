@@ -8,10 +8,6 @@ public class RateRequestDetails
     /// </summary>
     public StampsServiceType ServiceType { get; set; } = StampsServiceType.Unknown;
 
-    /// <summary>
-    /// A plain language description of the service returned, i.e. “USPS Priority Mail”.
-    /// </summary>
-    public string ServiceDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// The amount to insure this shipment for, in dollars and cents. If a value is specified, insurance add-ons will be returned.
@@ -154,15 +150,6 @@ public class RateRequestDetails
     /// </list>
     /// </summary>
     public CarrierType Carrier { get; set; } = CarrierType.Usps;
-
-    /// <summary>
-    /// <para>
-    /// When PackageType is submitted, the GetRates web method will respond with the rate based on the specified package.
-    /// However, if PackageType is omitted, the GetRates web method will respond with rates for all of the possible package types for the given ServiceType.
-    /// PackageType is required for CreateIndicium web method.
-    /// </para>
-    /// </summary>
-    public PackageType PackageType { get; set; } = PackageType.Package;
 
     public decimal CODValue { get; set; }
 

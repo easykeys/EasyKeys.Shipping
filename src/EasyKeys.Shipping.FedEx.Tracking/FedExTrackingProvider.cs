@@ -7,119 +7,123 @@ using Microsoft.Extensions.Options;
 
 using TrackClient.v19;
 
-namespace EasyKeys.Shipping.FedEx.Tracking
+namespace EasyKeys.Shipping.FedEx.Tracking;
+
+public class FedExTrackingProvider : IFedExTrackingProvider
 {
-    public class FedExTrackingProvider : IFedExTrackingProvider
+    private readonly ILogger<FedExTrackingProvider> _logger;
+    private readonly TrackPortType _fedExClient;
+    private FedExOptions _options;
+
+    public FedExTrackingProvider(
+        IOptionsMonitor<FedExOptions> optionsMonitor,
+        ILogger<FedExTrackingProvider> logger,
+        IFedExClientService fedExClient)
     {
-        private FedExOptions _options;
-        private readonly ILogger<FedExTrackingProvider> _logger;
-        private readonly TrackPortType _fedExClient;
+        _options = optionsMonitor.CurrentValue;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _fedExClient = fedExClient.CreateTrackClient() ?? throw new ArgumentNullException(nameof(fedExClient));
+    }
 
-        public FedExTrackingProvider(
-            IOptionsMonitor<FedExOptions> optionsMonitor,
-            ILogger<FedExTrackingProvider> logger,
-            IFedExClientService fedExClient)
+    public async Task<TrackingInformation> TrackShipmentAsync(ShipmentLabel label, CancellationToken cancellation)
+    {
+        var trackingInformation = new TrackingInformation() { TrackingEvents = new List<TrackingEvent>() };
+
+        var trackingRequest = new trackRequest1()
         {
-            _options = optionsMonitor.CurrentValue;
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _fedExClient = fedExClient.CreateTrackClient() ?? throw new ArgumentNullException(nameof(fedExClient));
-        }
-
-        public async Task<TrackingInformation> TrackShipmentAsync(ShipmentLabel label, CancellationToken cancellation)
-        {
-            var trackingInformation = new TrackingInformation() { TrackingEvents = new List<TrackingEvent>() };
-
-            var trackingRequest = new trackRequest1()
+            TrackRequest = new TrackRequest()
             {
-                TrackRequest = new TrackRequest()
+                WebAuthenticationDetail = new WebAuthenticationDetail
                 {
-                    WebAuthenticationDetail = new WebAuthenticationDetail
+                    UserCredential = new WebAuthenticationCredential
                     {
-                        UserCredential = new WebAuthenticationCredential
+                        Key = _options.FedExKey,
+                        Password = _options.FedExPassword
+                    }
+                },
+                ClientDetail = new ClientDetail
+                {
+                    AccountNumber = _options.FedExAccountNumber,
+                    MeterNumber = _options.FedExMeterNumber
+                },
+                TransactionDetail = new TransactionDetail()
+                {
+                    CustomerTransactionId = "Track By Number_v16",
+                    Localization = new Localization()
+                    {
+                        LanguageCode = "EN",
+                        LocaleCode = "US"
+                    }
+                },
+                Version = new VersionId()
+                {
+                    ServiceId = "trck",
+                    Major = 19,
+                    Intermediate = 0,
+                    Minor = 0
+                },
+                SelectionDetails = new TrackSelectionDetail[]
+                {
+                    new TrackSelectionDetail()
+                    {
+                        CarrierCode = CarrierCodeType.FDXE,
+                        PackageIdentifier = new TrackPackageIdentifier()
                         {
-                            Key = _options.FedExKey,
-                            Password = _options.FedExPassword
-                        }
-                    },
-                    ClientDetail = new ClientDetail
-                    {
-                        AccountNumber = _options.FedExAccountNumber,
-                        MeterNumber = _options.FedExMeterNumber
-                    },
-                    TransactionDetail = new TransactionDetail()
-                    {
-                        CustomerTransactionId = "Track By Number_v16",
-                        Localization = new Localization()
-                        {
-                            LanguageCode = "EN",
-                            LocaleCode = "US"
-                        }
-                    },
-                    Version = new VersionId()
-                    {
-                        ServiceId = "trck",
-                        Major = 19,
-                        Intermediate = 0,
-                        Minor = 0
-                    },
-                    SelectionDetails = new TrackSelectionDetail[]
-                    {
-                        new TrackSelectionDetail()
-                        {
-                            CarrierCode = CarrierCodeType.FDXE,
-                            PackageIdentifier = new TrackPackageIdentifier()
-                            {
-                                Type = TrackIdentifierType.TRACKING_NUMBER_OR_DOORTAG,
-                                Value = label.Labels.FirstOrDefault().TrackingId
-                            },
-                            ShipmentAccountNumber = string.Empty,
-                            SecureSpodAccount = string.Empty,
+                            Type = TrackIdentifierType.TRACKING_NUMBER_OR_DOORTAG,
+                            Value = label.Labels.FirstOrDefault().TrackingId
                         },
-                    }
-                }
-            };
-
-            try
-            {
-                var trackingReply = await _fedExClient.trackAsync(trackingRequest);
-
-                if ((trackingReply.TrackReply?.HighestSeverity != NotificationSeverityType.ERROR)
-                        && (trackingReply.TrackReply?.HighestSeverity != NotificationSeverityType.FAILURE))
-                {
-                    var events = trackingReply?.TrackReply?.CompletedTrackDetails.SelectMany(x => x.TrackDetails)
-                        .SelectMany(x => x.Events);
-
-                    if (events == null)
-                    {
-                        trackingInformation.InternalErrors.Add("No Tracking events available");
-                        return trackingInformation;
-                    }
-
-                    foreach (var trackingEvent in events)
-                    {
-                        trackingInformation.TrackingEvents.Add(new TrackingEvent()
-                        {
-                            Event = trackingEvent.EventDescription,
-                            TimeStamp = trackingEvent.Timestamp,
-                            Address = new Shipping.Abstractions.Models.Address(
-                                                                                trackingEvent.Address.City,
-                                                                                trackingEvent.Address.StateOrProvinceCode,
-                                                                                trackingEvent.Address.PostalCode,
-                                                                                trackingEvent.Address.CountryCode),
-                        });
-                    }
-                }
-                else
-                {
-                    trackingInformation.InternalErrors.Add(trackingReply.TrackReply.Notifications.Select(x => x.Message).Flatten(","));
+                        ShipmentAccountNumber = string.Empty,
+                        SecureSpodAccount = string.Empty,
+                    },
                 }
             }
-            catch (Exception ex)
-            {
-                trackingInformation.InternalErrors.Add($"FedEx provider exception: {ex.Message}");
-            }
+        };
 
-            return trackingInformation;
+        try
+        {
+            var trackingReply = await _fedExClient.trackAsync(trackingRequest);
+
+            if ((trackingReply.TrackReply?.HighestSeverity != NotificationSeverityType.ERROR)
+                    && (trackingReply.TrackReply?.HighestSeverity != NotificationSeverityType.FAILURE))
+            {
+                var events = trackingReply?.TrackReply?.CompletedTrackDetails.SelectMany(x => x.TrackDetails)
+                    .SelectMany(x => x.Events);
+
+                if (events == null)
+                {
+                    trackingInformation.InternalErrors.Add("No Tracking events available");
+                    return trackingInformation;
+                }
+
+                foreach (var trackingEvent in events)
+                {
+                    trackingInformation.TrackingEvents.Add(new TrackingEvent()
+                    {
+                        Event = trackingEvent.EventDescription,
+                        TimeStamp = trackingEvent.Timestamp,
+                        Address = new Shipping.Abstractions.Models.Address(
+                                                                            trackingEvent.Address.City,
+                                                                            trackingEvent.Address.StateOrProvinceCode,
+                                                                            trackingEvent.Address.PostalCode,
+                                                                            trackingEvent.Address.CountryCode),
+                    });
+                }
+            }
+            else
+            {
+                var errors = trackingReply.TrackReply.Notifications.Select(x => x.Message).Flatten(",");
+                _logger.LogError("{providerName} failed: {errors}", nameof(FedExTrackingProvider), errors);
+
+                trackingInformation.InternalErrors.Add(errors);
+            }
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "{providerName} failed", nameof(FedExTrackingProvider));
+
+            trackingInformation.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExTrackingProvider)} failed");
+        }
+
+        return trackingInformation;
     }
 }

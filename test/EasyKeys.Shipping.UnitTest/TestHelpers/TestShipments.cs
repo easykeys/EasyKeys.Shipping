@@ -1,4 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 namespace EasyKeysShipping.UnitTest.TestHelpers
 {
@@ -55,8 +56,13 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             };
 
             var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
+            var shipmentOptions = new ShipmentOptions(PackageType.Envelope.Name, DateTime.Now);
 
-            return new Shipment(originAddress, validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress, packages)
+            return new Shipment(
+                originAddress,
+                validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
+                packages,
+                shipmentOptions)
             {
                 RecipientInfo = receiver,
                 SenderInfo = sender,
@@ -105,7 +111,6 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
                 Quantity = 1,
                 ExportLicenseNumber = "dsdfs",
                 Name = "sdkfsdf",
-                Weight = 3.5m
             };
 
             var sender = new ContactInfo()
@@ -127,8 +132,13 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             };
 
             var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
+            var shipmentOptions = new ShipmentOptions(PackageType.Envelope.Name, DateTime.Now);
 
-            var shipment = new Shipment(originAddress, validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress, packages)
+            var shipment = new Shipment(
+                originAddress,
+                validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
+                packages,
+                shipmentOptions)
             {
                 RecipientInfo = receiver,
                 SenderInfo = sender

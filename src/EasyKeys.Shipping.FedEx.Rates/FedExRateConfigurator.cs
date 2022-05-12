@@ -19,20 +19,20 @@ public class FedExRateConfigurator
 
         if (package.IsFedExEnvelope())
         {
-            ConfigureFedExPackage(origin, destination, package, solidDate, FedExPackageType.FEDEX_ENVELOPE);
+            ConfigureFedExPackage(origin, destination, package, solidDate, FedExPackageType.FedExEnvelope);
             return;
         }
 
         if (package.IsFedExPak())
         {
-            ConfigureFedExPackage(origin, destination, package, solidDate, FedExPackageType.FEDEX_PAK);
+            ConfigureFedExPackage(origin, destination, package, solidDate, FedExPackageType.FedExPak);
             return;
         }
 
         ConfigureYourPackage(origin, destination, package, solidDate);
     }
 
-    public List<(Shipment shipment, ServiceType serviceType)> Shipments { get; } = new List<(Shipment shipment, ServiceType serviceType)>();
+    public List<(Shipment shipment, FedExServiceType serviceType)> Shipments { get; } = new List<(Shipment shipment, FedExServiceType serviceType)>();
 
     /// <summary>
     /// FEDEX_ENVELOPE 10 lbs l: 9 1/2 (9.50) x w:12 1/2 (12.50).
@@ -72,16 +72,13 @@ public class FedExRateConfigurator
     {
         var packages = new List<Package> { package };
 
-        var options = new ShipmentOptions
+        var options = new ShipmentOptions(FedExPackageType.YourPackaging.Name, shipDate)
         {
-            PackagingType = nameof(FedExPackageType.YOUR_PACKAGING),
             SaturdayDelivery = true,
-            ShippingDate = shipDate,
-            PreferredCurrencyCode = ShipmentOptions.DefaultCurrencyCode,
         };
 
         var shipment = new Shipment(origin, destination, packages, options);
-        var serviceType = destination.IsResidential ? ServiceType.GROUND_HOME_DELIVERY : ServiceType.FEDEX_GROUND;
+        var serviceType = destination.IsResidential ? FedExServiceType.FedExGroundHomeDelivery : FedExServiceType.FedExGround;
 
         Shipments.Add((shipment, serviceType));
     }
@@ -94,16 +91,13 @@ public class FedExRateConfigurator
     {
         var packages = new List<Package> { package };
 
-        var options = new ShipmentOptions
+        var options = new ShipmentOptions(FedExPackageType.YourPackaging.Name, shipDate)
         {
-            PackagingType = nameof(FedExPackageType.YOUR_PACKAGING),
             SaturdayDelivery = true,
-            ShippingDate = shipDate,
-            PreferredCurrencyCode = ShipmentOptions.DefaultCurrencyCode,
         };
 
         var shipment = new Shipment(origin, destination, packages, options);
-        Shipments.Add((shipment, ServiceType.DEFAULT));
+        Shipments.Add((shipment, FedExServiceType.Default));
     }
 
     private void ConfigureFedExPackage(
@@ -115,16 +109,13 @@ public class FedExRateConfigurator
     {
         var packages = new List<Package> { package };
 
-        var options = new ShipmentOptions
+        var options = new ShipmentOptions(type.Name, shipDate)
         {
-            PackagingType = type.ToString(),
             SaturdayDelivery = true,
-            ShippingDate = shipDate,
-            PreferredCurrencyCode = ShipmentOptions.DefaultCurrencyCode,
         };
 
         var shipment = new Shipment(origin, destination, packages, options);
 
-        Shipments.Add((shipment, ServiceType.DEFAULT));
+        Shipments.Add((shipment, FedExServiceType.Default));
     }
 }

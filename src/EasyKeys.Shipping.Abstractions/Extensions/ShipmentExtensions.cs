@@ -13,4 +13,14 @@ public static class ShipmentExtensions
     {
         return shipment.OriginAddress.IsUnitedStatesAddress() && shipment.DestinationAddress.IsUnitedStatesAddress();
     }
+
+    /// <summary>
+    /// Returns total weight for the <see cref="Shipment"/>.
+    /// </summary>
+    /// <param name="shipment"></param>
+    /// <returns></returns>
+    public static decimal GetTotalWeight(this Shipment shipment)
+    {
+        return shipment.Packages.Sum(p => p.Weight);
+    }
 }

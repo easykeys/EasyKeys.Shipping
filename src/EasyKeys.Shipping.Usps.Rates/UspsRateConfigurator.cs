@@ -156,11 +156,7 @@ public class UspsRateConfigurator
 
         // domestic first class package
         var packages = new List<Package> { package };
-        var shipOptions = new ShipmentOptions
-        {
-            PackagingType = nameof(FirstClassPackageType.PACKAGE_SERVICE_RETAIL),
-            ShippingDate = shipDate
-        };
+        var shipOptions = new ShipmentOptions(nameof(FirstClassPackageType.PACKAGE_SERVICE_RETAIL), shipDate);
 
         var shipment = new Shipment(origin, destination, packages, shipOptions);
         var rateOptions = new UspsRateOptions
@@ -206,11 +202,7 @@ public class UspsRateConfigurator
     {
         var packages = new List<Package> { package };
 
-        var shipOptions = new ShipmentOptions
-        {
-            PackagingType = nameof(PriorityPackageType.VARIABLE),
-            ShippingDate = shipDate
-        };
+        var shipOptions = new ShipmentOptions(nameof(PriorityPackageType.VARIABLE), shipDate);
 
         var shipment = new Shipment(origin, destination, packages, shipOptions);
         var rateOptions = new UspsRateOptions
@@ -230,11 +222,7 @@ public class UspsRateConfigurator
     {
         var packages = new List<Package> { package };
 
-        var shipOptions = new ShipmentOptions
-        {
-            PackagingType = nameof(PriorityPackageType.SM_FLAT_RATE_BOX),
-            ShippingDate = shipDate
-        };
+        var shipOptions = new ShipmentOptions(nameof(PriorityPackageType.SM_FLAT_RATE_BOX), shipDate);
 
         StampsRate = 7.90m;
 
@@ -255,11 +243,7 @@ public class UspsRateConfigurator
         DateTime shipDate)
     {
         var packages = new List<Package> { package };
-        var shipOptions = new ShipmentOptions
-        {
-            PackagingType = nameof(PriorityPackageType.MD_FLAT_RATE_BOX),
-            ShippingDate = shipDate
-        };
+        var shipOptions = new ShipmentOptions(nameof(PriorityPackageType.MD_FLAT_RATE_BOX), shipDate);
 
         StampsRate = 13.75m;
 
@@ -281,11 +265,7 @@ public class UspsRateConfigurator
     {
         var packages = new List<Package> { package };
 
-        var shipOptions = new ShipmentOptions
-        {
-            PackagingType = nameof(IntlPackageType.PACKAGE),
-            ShippingDate = shipDate,
-        };
+        var shipOptions = new ShipmentOptions(nameof(IntlPackageType.PACKAGE), shipDate);
 
         var shipment = new Shipment(origin, destination, packages, shipOptions);
 
@@ -312,11 +292,7 @@ public class UspsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var shipOptions = new ShipmentOptions
-        {
-            PackagingType = nameof(IntlPackageType.ALL),
-            ShippingDate = shipDate,
-        };
+        var shipOptions = new ShipmentOptions(nameof(IntlPackageType.ALL), shipDate);
 
         StampsRate = 7.90m;
 

@@ -6,16 +6,15 @@ using ShipClient.v25;
 
 using TrackClient.v19;
 
-namespace EasyKeys.Shipping.FedEx.Abstractions.Services
+namespace EasyKeys.Shipping.FedEx.Abstractions.Services;
+
+public interface IFedExClientService
 {
-    public interface IFedExClientService
-    {
-        TrackPortType CreateTrackClient();
+    TrackPortType CreateTrackClient();
 
-        AddressValidationPortType CreateAddressValidationClient();
+    AddressValidationPortType CreateAddressValidationClient();
 
-        RatePortType CreateRateClient();
+    RatePortType CreateRateClient();
 
-        ShipPortType CreateShipClient();
-    }
+    ShipPortType CreateShipClient();
 }
