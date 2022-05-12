@@ -5,8 +5,11 @@
 ![Nuget](https://img.shields.io/nuget/dt/EasyKeys.Shipping.FedEx.Shipment)
 [![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https://f.feedz.io/easykeys/core/shield/EasyKeys.Shipping.FedEx.Shipment/latest)](https://f.feedz.io/easykeys/core/packages/EasyKeys.Shipping.FedEx.Shipment/latest/download)
 
+This library implements FedEx Shipment v25.
 
-This library Implements FedEx AV v4.
+## Give a Star! :star:
+
+If you like or are using this project please give it a star. Thanks!
 
 ## Install
 

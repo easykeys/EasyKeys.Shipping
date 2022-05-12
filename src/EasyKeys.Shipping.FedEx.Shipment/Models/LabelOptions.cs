@@ -5,12 +5,12 @@ public class LabelOptions
     /// <summary>
     /// COMMON2D, LABEL_DATA_ONLY.
     /// </summary>
-    public string LabelFormatType { get; set; } = string.Empty;
+    public string LabelFormatType { get; set; } = "COMMON2D";
 
     /// <summary>
     /// pdf, png are universal for all providers.
     /// </summary>
-    public string ImageType { get; set; } = string.Empty;
+    public string ImageType { get; set; } = "PNG";
 
     /// <summary>
     /// size of label, default to 4x6.

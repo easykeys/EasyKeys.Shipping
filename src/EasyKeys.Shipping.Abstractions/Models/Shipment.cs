@@ -7,13 +7,13 @@ public class Shipment
     public Shipment(
         Address originAddress,
         Address destinationAddress,
-        List<Package> packages,
-        ShipmentOptions? options = null)
+        IList<Package> packages,
+        ShipmentOptions options)
     {
         OriginAddress = originAddress ?? throw new ArgumentNullException(nameof(originAddress));
         DestinationAddress = destinationAddress ?? throw new ArgumentNullException(nameof(destinationAddress));
-        Packages = packages?.AsReadOnly() ?? throw new ArgumentNullException(nameof(packages));
-        Options = options ?? new ShipmentOptions();
+        Packages = packages?.ToList()?.AsReadOnly() ?? throw new ArgumentNullException(nameof(packages));
+        Options = options ?? throw new ArgumentNullException(nameof(options));
     }
 
     /// <summary>

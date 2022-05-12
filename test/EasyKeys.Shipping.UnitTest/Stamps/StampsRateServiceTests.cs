@@ -117,14 +117,14 @@ namespace EasyKeysShipping.UnitTest.Stamps
             Assert.NotNull(domesticRates);
 
             // service will only return rates for "usps"
-            Assert.True(carrier.Name.ToLower().Contains("usps") ? domesticRates.Count > ratesReturnedCount : domesticRates.Count == ratesReturnedCount);
+            Assert.True(carrier.Name.Contains("usps", StringComparison.OrdinalIgnoreCase) ? domesticRates.Count > ratesReturnedCount : domesticRates.Count == ratesReturnedCount);
         }
 
         [Theory]
         [ClassData(typeof(PackageTypeData))]
         public async Task Return_RatesV40_PackageType_Successfully(PackageType packageType, StampsClient.v111.PackageTypeV11 stampsPackageType)
         {
-            var rateRequest = new RateRequestDetails() { PackageType = packageType };
+            var rateRequest = new RateRequestDetails();
 
             var domesticShipment = TestShipments.CreateDomesticShipment();
 

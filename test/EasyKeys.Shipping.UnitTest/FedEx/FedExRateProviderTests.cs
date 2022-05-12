@@ -28,13 +28,13 @@ public class FedExRateProviderTests
     public static IEnumerable<object[]> Data =>
         new List<object[]>
         {
-                        new object[] { 0.5M, 2, nameof(FedExPackageType.FEDEX_ENVELOPE) },
-                        new object[] { 1M, 2, nameof(FedExPackageType.FEDEX_ENVELOPE) },
-                        new object[] { 1.05M, 2, nameof(FedExPackageType.FEDEX_PAK) },
-                        new object[] { 2.1M, 2, nameof(FedExPackageType.FEDEX_PAK) },
-                        new object[] { 3.3M, 2, nameof(FedExPackageType.FEDEX_PAK) },
-                        new object[] { 3.75M, 2, nameof(FedExPackageType.FEDEX_PAK) },
-                        new object[] { 33.3M, 2, nameof(FedExPackageType.FEDEX_PAK) },
+                        new object[] { 0.5M, 2, FedExPackageType.FedExEnvelope.Name },
+                        new object[] { 1M, 2, FedExPackageType.FedExEnvelope.Name },
+                        new object[] { 1.05M, 2, FedExPackageType.FedExPak.Name },
+                        new object[] { 2.1M, 2, FedExPackageType.FedExPak.Name },
+                        new object[] { 3.3M, 2, FedExPackageType.FedExPak.Name },
+                        new object[] { 3.75M, 2, FedExPackageType.FedExPak.Name },
+                        new object[] { 33.3M, 2, FedExPackageType.FedExPak.Name },
         };
 
     [Theory]
@@ -73,15 +73,12 @@ public class FedExRateProviderTests
         var packages = new List<Package>
             {
                 // fedex envelope
-                new Package(2m, 4m, 8m, 9m / 16,20)
+                new Package(2m, 4m, 8m, 9m / 16, 20)
             };
 
-        var shipOptions = new ShipmentOptions
+        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now)
         {
-            PackagingType = nameof(FedExPackageType.YOUR_PACKAGING),
             SaturdayDelivery = true,
-            ShippingDate = DateTime.Now,
-            PreferredCurrencyCode = ShipmentOptions.DefaultCurrencyCode
         };
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
@@ -108,16 +105,13 @@ public class FedExRateProviderTests
                 FedExRateConfigurator.GetFedExEnvelop(0.03125M)
             };
 
-        var shipOptions = new ShipmentOptions
+        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now.AddBusinessDays(1))
         {
-            PackagingType = nameof(FedExPackageType.YOUR_PACKAGING),
             SaturdayDelivery = true,
-            ShippingDate = DateTime.Now.AddBusinessDays(1),
-            PreferredCurrencyCode = ShipmentOptions.DefaultCurrencyCode,
         };
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
-        var rates = await rateService.GetRatesAsync(shipment, ServiceType.FEDEX_GROUND);
+        var rates = await rateService.GetRatesAsync(shipment, FedExServiceType.FedExGround);
 
         foreach (var rate in rates.Rates)
         {
@@ -134,17 +128,14 @@ public class FedExRateProviderTests
         var destination = new Address("750 County Road 456", "Jonesboro", "AR", "72404", "US", isResidential: false);
 
         var packages = new List<Package>
-            {
-                // fedex envelope
-                FedExRateConfigurator.GetFedExEnvelop(1.03125M)
-            };
-
-        var shipOptions = new ShipmentOptions
         {
-            PackagingType = nameof(FedExPackageType.FEDEX_PAK),
+            // fedex envelope
+            FedExRateConfigurator.GetFedExEnvelop(1.03125M)
+        };
+
+        var shipOptions = new ShipmentOptions(FedExPackageType.FedExPak.Name, DateTime.Now.AddBusinessDays(1))
+        {
             SaturdayDelivery = true,
-            ShippingDate = DateTime.Now.AddBusinessDays(1),
-            PreferredCurrencyCode = ShipmentOptions.DefaultCurrencyCode,
         };
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
@@ -170,17 +161,14 @@ public class FedExRateProviderTests
                 FedExRateConfigurator.GetFedExEnvelop(0.03125M)
             };
 
-        var shipOptions = new ShipmentOptions
+        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now.AddBusinessDays(1))
         {
-            PackagingType = nameof(FedExPackageType.YOUR_PACKAGING),
             SaturdayDelivery = true,
-            ShippingDate = DateTime.Now.AddBusinessDays(1),
-            PreferredCurrencyCode = ShipmentOptions.DefaultCurrencyCode,
         };
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
 
-        var rates = await rateService.GetRatesAsync(shipment, ServiceType.GROUND_HOME_DELIVERY);
+        var rates = await rateService.GetRatesAsync(shipment, FedExServiceType.FedExGroundHomeDelivery);
 
         foreach (var rate in rates.Rates)
         {
@@ -203,12 +191,9 @@ public class FedExRateProviderTests
                 new Package(2m, 4m, 8m, 9m / 16,20)
             };
 
-        var shipOptions = new ShipmentOptions
+        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now)
         {
-            PackagingType = nameof(FedExPackageType.YOUR_PACKAGING),
             SaturdayDelivery = true,
-            ShippingDate = DateTime.Now,
-            PreferredCurrencyCode = ShipmentOptions.DefaultCurrencyCode
         };
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
@@ -236,12 +221,9 @@ public class FedExRateProviderTests
                FedExRateConfigurator.GetFedExEnvelop(0.05M),
             };
 
-        var shipOptions = new ShipmentOptions
+        var shipOptions = new ShipmentOptions(FedExPackageType.FedExEnvelope.Name, DateTime.Now)
         {
-            PackagingType = nameof(FedExPackageType.FEDEX_ENVELOPE),
             SaturdayDelivery = true,
-            ShippingDate = DateTime.Now,
-            PreferredCurrencyCode = ShipmentOptions.DefaultCurrencyCode
         };
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);

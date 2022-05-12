@@ -60,12 +60,6 @@ public class Commodity
 
     /// <summary>
     /// Required
-    /// Weight of each commodity.
-    /// </summary>
-    public decimal Weight { get; set; }
-
-    /// <summary>
-    /// Required
     /// Customs value for each price of a particular commodity in the shipment.
     /// </summary>
     public decimal UnitPrice { get; set; }

@@ -5,7 +5,11 @@
 ![Nuget](https://img.shields.io/nuget/dt/EasyKeys.Shipping.FedEx.Rates)
 [![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https://f.feedz.io/easykeys/core/shield/EasyKeys.Shipping.FedEx.Rates/latest)](https://f.feedz.io/easykeys/core/packages/EasyKeys.Shipping.FedEx.Rates/latest/download)
 
-This library Implements FedEx AV v4.
+This library implements FedEx Rates v28.
+
+## Give a Star! :star:
+
+If you like or are using this project please give it a star. Thanks!
 
 ## Install
 
@@ -16,11 +20,12 @@ This library Implements FedEx AV v4.
 ## Rate Service Details
 
 The Rate and Rate Available Services operations provide a shipping rate quote for a specific service
-combination depending on the origin and destination information supplied in the request. 
+combination depending on the origin and destination information supplied in the request.
 
 The following details apply:
+
 - Discount rates are available for all services and origin/destination pairs.
-- FedEx list rates are available for FedEx Express, FedEx Ground, FedEx SmartPost and FedEx Freight services. 
+- FedEx list rates are available for FedEx Express, FedEx Ground, FedEx SmartPost and FedEx Freight services.
     When list rates are requested, both account specific rates and standard list rates are returned. \
     Note: List rates are not available for all FedEx Freight accounts.
 
