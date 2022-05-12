@@ -92,14 +92,33 @@ app.MapPost("/createShipment", async (string ServiceType, CancellationToken canc
 
     label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
 
+    await File.WriteAllBytesAsync("label.png", label.Labels[0].Bytes[0]);
+
     return Results.Json(label, options);
 });
 
 // track shipment after it is created.
-app.MapGet("/trackShipment", async (CancellationToken cancellationToken) =>
+app.MapGet("/trackShipment/{id}", async (string id, CancellationToken cancellationToken) =>
 {
+    var labelInfo = new ShipmentLabel();
+
+    labelInfo.Labels.Add(new PackageLabelDetails() { TrackingId = id });
+
     var trackingInfo = await serviceProvider.GetRequiredService<IStampsTrackingProvider>()
-                      .TrackShipmentAsync(label, cancellationToken);
+                      .TrackShipmentAsync(labelInfo, cancellationToken);
+
+    return Results.Json(trackingInfo, options);
+});
+
+// cancel a label after it is created.
+app.MapGet("/cancelShipment/{id}", async (string id, CancellationToken cancellationToken) =>
+{
+    var labelInfo = new ShipmentLabel();
+
+    labelInfo.Labels.Add(new PackageLabelDetails() { TrackingId = id });
+
+    var trackingInfo = await serviceProvider.GetRequiredService<IStampsShipmentProvider>().CancelShipmentAsync(labelInfo, cancellationToken);
+
     return Results.Json(trackingInfo, options);
 });
 

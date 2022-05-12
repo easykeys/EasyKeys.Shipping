@@ -182,7 +182,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                     addOns.AddRange(AssignRequiredAddOnTypes(rate.RequiresAllOf));
                 }
 
-                addOns.Add(new AddOnV17() { AddOnDescription = "Tracking", AddOnType = AddOnTypeV17.USADC });
+                addOns.Add(new AddOnV17() { AddOnDescription = "Delivery Confirmation", AddOnType = AddOnTypeV17.USADC });
 
                 if (shipment.DestinationAddress.IsUnitedStatesAddress())
                 {

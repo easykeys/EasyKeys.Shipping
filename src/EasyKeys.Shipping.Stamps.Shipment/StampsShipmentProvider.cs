@@ -213,7 +213,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
         var request = new CancelIndiciumRequest()
         {
-            Item1 = shipmentLabel.Labels[0].ProviderLabelId
+            Item1 = shipmentLabel.Labels[0].TrackingId
         };
         try
         {

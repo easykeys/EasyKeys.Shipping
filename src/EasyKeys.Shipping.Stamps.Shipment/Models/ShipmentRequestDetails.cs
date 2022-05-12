@@ -23,7 +23,7 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models
         /// <summary>
         /// Generates a sample label. Default is <b>true</b>.
         /// </summary>
-        public bool IsSample { get; set; } = true;
+        public bool IsSample { get; set; } = false;
 
         public string OrderId { get; set; } = string.Empty;
     }

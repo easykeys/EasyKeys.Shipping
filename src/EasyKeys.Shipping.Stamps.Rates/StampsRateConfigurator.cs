@@ -190,7 +190,7 @@ public class StampsRateConfigurator
             ServiceType = StampsServiceType.FirstClass,
         };
 
-        var packageType = package.IsLargeFlatEnvelope() ? PackageType.LargeEnvelopeOrFlat : PackageType.Package;
+        var packageType = package.IsLargeFlatEnvelope() ? PackageType.ThickEnvelope : PackageType.Package;
 
         var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
