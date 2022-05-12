@@ -184,7 +184,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                 addOns.Add(new AddOnV17() { AddOnDescription = "Tracking", AddOnType = AddOnTypeV17.USADC });
 
-                if (shipment.DestinationAddress.CountryCode == "US")
+                if (shipment.DestinationAddress.IsUnitedStatesAddress())
                 {
                     addOns.Add(new AddOnV17() { AddOnDescription = "Registered Mail", AddOnType = AddOnTypeV17.USAREG });
                 }

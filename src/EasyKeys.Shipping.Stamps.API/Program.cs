@@ -1,11 +1,29 @@
 using System.Text.Json;
 
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.AddressValidation;
+using EasyKeys.Shipping.Stamps.API.Models;
+using EasyKeys.Shipping.Stamps.Rates;
+using EasyKeys.Shipping.Stamps.Shipment;
+using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
+using EasyKeys.Shipping.Stamps.Shipment.Models;
+using EasyKeys.Shipping.Stamps.Tracking;
+using EasyKeys.Shipping.Stamps.Tracking.DependencyInjection;
 
 using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// set up config
+var dic = new Dictionary<string, string>
+    {
+        { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
+    };
+
+builder.Configuration.AddInMemoryCollection(dic);
+
+builder.Configuration.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -13,8 +31,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // add stamps libraries
-builder.Services.AddStampsClient();
 builder.Services.AddStampsAddressProvider();
+builder.Services.AddStampsRateProvider();
+builder.Services.AddStampsShipmentProvider();
+builder.Services.AddStampsTrackingProvider();
 
 // configure json options
 builder.Services.Configure<JsonOptions>(options =>
@@ -22,20 +42,9 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.IncludeFields = true;
 });
 
+var serviceProvider = builder.Services.BuildServiceProvider();
+
 var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
-
-// set up dev env & config
-var dic = new Dictionary<string, string>
-    {
-        { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
-    };
-
-var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
-
-configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
-
-builder.Services.AddSingleton<IConfiguration>(configBuilder.Build());
-
 
 var app = builder.Build();
 
@@ -48,37 +57,84 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+(var sender, var receiver, var validatedAddress, var shipment, var label) = SetDefaultValues();
 
+// address validation recieves a proposed address.
 app.MapPost("/addressValidation", async (ValidateAddress address, CancellationToken cancellationToken) =>
 {
-    var _addressProvider = builder.Services.BuildServiceProvider().GetRequiredService<IStampsAddressValidationProvider>();
+    var addressProvider = serviceProvider.GetRequiredService<IStampsAddressValidationProvider>();
 
-    var result = await _addressProvider.ValidateAddressAsync(address, cancellationToken);
+    validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
 
-    return Results.Json(result, options);
+    return Results.Json(validatedAddress, options);
 });
 
-app.MapGet("/weatherforecast", () =>
+// getRates recieves a rate model containing destination address and package information.
+app.MapPost("/getRates", async (RateModel rateModel, CancellationToken cancellationToken) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-       new WeatherForecast
-       (
-           DateTime.Now.AddDays(index),
-           Random.Shared.Next(-20, 55),
-           summaries[Random.Shared.Next(summaries.Length)]
-       ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var rateProvider = serviceProvider.GetRequiredService<IStampsRateProvider>();
+
+    var package = new Package(Decimal.Parse(rateModel.Length), Decimal.Parse(rateModel.Width), Decimal.Parse(rateModel.Height), Decimal.Parse(rateModel.Weight), 20m);
+
+    var config = new StampsRateConfigurator(rateModel.Origin, validatedAddress.ProposedAddress, package, sender, receiver);
+
+    shipment = await rateProvider.GetRatesAsync(config.Shipments.FirstOrDefault().shipment, new RateRequestDetails(), cancellationToken);
+
+    return Results.Json(shipment, options);
+});
+
+// create the shipment when rates service type is selected.
+app.MapPost("/createShipment", async (string ServiceType, CancellationToken cancellationToken) =>
+{
+    var shipmentProvider = serviceProvider.GetRequiredService<IStampsShipmentProvider>();
+
+    var shipmentRequestDetails = new ShipmentRequestDetails() { SelectedRate = shipment.Rates.Where(x => x.Name == ServiceType).FirstOrDefault() };
+
+    label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
+
+    return Results.Json(label, options);
+});
+
+// track shipment after it is created.
+app.MapGet("/trackShipment", async (CancellationToken cancellationToken) =>
+{
+    var trackingInfo = await serviceProvider.GetRequiredService<IStampsTrackingProvider>()
+                      .TrackShipmentAsync(label, cancellationToken);
+    return Results.Json(trackingInfo, options);
+});
 
 app.Run();
 
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
+(ContactInfo, ContactInfo, ValidateAddress, Shipment?, ShipmentLabel?) SetDefaultValues()
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    var sender = new ContactInfo()
+    {
+        FirstName = "Brandon",
+        LastName = "Moffett",
+        Company = "EasyKeys.com",
+        Email = "TestMe@EasyKeys.com",
+        Department = "Software",
+        PhoneNumber = "951-223-2222"
+    };
+    var receiver = new ContactInfo()
+    {
+        FirstName = "Fictitious Character",
+        Company = "Marvel",
+        Email = "FictitiousCharacter@marvel.com",
+        Department = "SuperHero",
+        PhoneNumber = "867-338-2737"
+    };
+
+    var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), new Address(
+                                            streetLine: "1550 central avenue",
+                                            city: "riverside",
+                                            stateOrProvince: "CA",
+                                            postalCode: "92507",
+                                            countryCode: "US"));
+
+    var shipment = default(Shipment);
+
+    var label = default(ShipmentLabel);
+
+    return (sender, receiver, validatedAddress, shipment, label);
 }

@@ -135,15 +135,7 @@ public class Main : IMain
         // 4) create generic rate details
         var rateDetails = new RateRequestDetails();
 
-        if (!destinationAddress.IsUnitedStatesAddress())
-        {
-            rateDetails = new RateRequestDetails() { DeclaredValue = 100m, RegisteredValue = 100m };
-        }
-
-        /*{ DeclaredValue = 100m, RegisteredValue = 100m };*/
-
         // 5) get list of rates for shipment
-
         var shipmentWithRates = await _rateProvider.GetRatesAsync(shipment, rateDetails, cancellationToken);
 
         _logger.LogWarning($"Rates Validation Warnings : {shipmentWithRates.Warnings.Count()}");

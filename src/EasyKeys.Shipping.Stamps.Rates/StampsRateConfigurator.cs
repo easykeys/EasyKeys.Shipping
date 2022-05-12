@@ -187,10 +187,11 @@ public class StampsRateConfigurator
         var packages = new List<Package> { package };
         var options = new RateRequestDetails()
         {
-            ServiceType = StampsServiceType.FirstClass
+            ServiceType = StampsServiceType.FirstClass,
         };
 
         var packageType = package.IsLargeFlatEnvelope() ? PackageType.LargeEnvelopeOrFlat : PackageType.Package;
+
         var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
         var shipment = new Shipment(origin, destination, packages, shipmentOptions)
@@ -249,9 +250,12 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
+        // will need to add commodity & customs information here.
         var rateOptions = new RateRequestDetails()
         {
             ServiceType = StampsServiceType.FirstClassInternational,
+            DeclaredValue = package.InsuredValue,
+            RegisteredValue = package.InsuredValue
         };
 
         var packageType = PackageType.Package;
@@ -285,9 +289,12 @@ public class StampsRateConfigurator
 
         var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
+        // will need to add commodity & customs information here.
         var rateOptions = new RateRequestDetails()
         {
             ServiceType = StampsServiceType.PriorityInternational,
+            DeclaredValue = package.InsuredValue,
+            RegisteredValue = package.InsuredValue
         };
 
         var shipment = new Shipment(origin, destination, packages, shipOptions)
