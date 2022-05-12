@@ -2,6 +2,7 @@
 
 using Bet.Extensions.Testing.Logging;
 
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
@@ -128,7 +129,9 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
             var domesticShipment = TestShipments.CreateDomesticShipment();
 
-            var domesticRates = await _ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
+            var shipment = new Shipment(domesticShipment.OriginAddress, domesticShipment.DestinationAddress, domesticShipment.Packages, new ShipmentOptions(packageType.Name, DateTime.Now));
+
+            var domesticRates = await _ratesService.GetRatesResponseAsync(shipment, rateRequest, CancellationToken.None);
 
             Assert.NotNull(domesticRates);
 

@@ -56,11 +56,11 @@ public class Main : IMain
             countryCode: "US");
 
         var destinationAddress = new Address(
-            streetLine: "24 Sussex Drive",
-            city: "Ottawa",
-            stateOrProvince: "ON",
-            postalCode: "K1M 1M4",
-            countryCode: "CA");
+            streetLine: "1550 central ave",
+            city: "riverside",
+            stateOrProvince: "CA",
+            postalCode: "92507",
+            countryCode: "US");
 
         var packages = new List<Package>
         {
@@ -130,20 +130,33 @@ public class Main : IMain
 
         shipment.Warnings.Concat(validatedAddress.Warnings);
 
-        shipment.Commodities.Add(commodity);
+        //shipment.Commodities.Add(commodity);
 
         // 4) create generic rate details
-        var rateDetails = new RateRequestDetails() { DeclaredValue = 100m, RegisteredValue = 100m };
+        var rateDetails = new RateRequestDetails();
+
+        if (!destinationAddress.IsUnitedStatesAddress())
+        {
+            rateDetails = new RateRequestDetails() { DeclaredValue = 100m, RegisteredValue = 100m };
+        }
+
+        /*{ DeclaredValue = 100m, RegisteredValue = 100m };*/
 
         // 5) get list of rates for shipment
+
         var shipmentWithRates = await _rateProvider.GetRatesAsync(shipment, rateDetails, cancellationToken);
 
-        _logger.LogWarning($"Address Validation Warnings : {shipmentWithRates.Warnings.Count()}");
+        _logger.LogWarning($"Rates Validation Warnings : {shipmentWithRates.Warnings.Count()}");
 
-        _logger.LogError($"Address Validation Errors : {shipmentWithRates.Errors.Count()}");
+        _logger.LogError($"Rates Validation Errors : {shipmentWithRates.Errors.Count()}");
 
         // user chooses which type of service
-        var shipmentDetails = new ShipmentRequestDetails() { DeclaredValue = 100m, SelectedRate = shipmentWithRates.Rates[0], CustomsInformation = new CustomsInformation() { CustomsSigner = "brandon moffett" } };
+        var shipmentDetails = new ShipmentRequestDetails() { DeclaredValue = 100m, SelectedRate = shipmentWithRates.Rates[0] };
+
+        if (!destinationAddress.IsUnitedStatesAddress())
+        {
+            shipmentDetails.CustomsInformation = new CustomsInformation() { CustomsSigner = "brandon moffett" };
+        }
 
         // 6) create shipment with shipment details
         var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(shipmentWithRates, shipmentDetails, cancellationToken);

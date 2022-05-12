@@ -22,6 +22,9 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.IncludeFields = true;
 });
 
+var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+
+// set up dev env & config
 var dic = new Dictionary<string, string>
     {
         { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
@@ -31,7 +34,8 @@ var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
 
 configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
 
-var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+builder.Services.AddSingleton<IConfiguration>(configBuilder.Build());
+
 
 var app = builder.Build();
 

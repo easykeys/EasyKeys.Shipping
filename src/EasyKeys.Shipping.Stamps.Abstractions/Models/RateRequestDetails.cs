@@ -8,7 +8,6 @@ public class RateRequestDetails
     /// </summary>
     public StampsServiceType ServiceType { get; set; } = StampsServiceType.Unknown;
 
-
     /// <summary>
     /// The amount to insure this shipment for, in dollars and cents. If a value is specified, insurance add-ons will be returned.
     /// </summary>

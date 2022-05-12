@@ -28,7 +28,7 @@ public abstract class CarrierType : SmartEnum<CarrierType>
 
     private sealed class UpsType : CarrierType
     {
-        public UpsType() : base(nameof(StampsClient.v111.Carrier.USPS), (int)StampsClient.v111.Carrier.USPS, "UPS")
+        public UpsType() : base(nameof(StampsClient.v111.Carrier.UPS), (int)StampsClient.v111.Carrier.UPS, "UPS")
         {
         }
     }

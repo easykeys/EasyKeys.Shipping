@@ -56,7 +56,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             };
 
             var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
-            var shipmentOptions = new ShipmentOptions(PackageType.Envelope.Name, DateTime.Now);
+            var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
 
             return new Shipment(
                 originAddress,
@@ -132,7 +132,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             };
 
             var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
-            var shipmentOptions = new ShipmentOptions(PackageType.Envelope.Name, DateTime.Now);
+            var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
 
             var shipment = new Shipment(
                 originAddress,

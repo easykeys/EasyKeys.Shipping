@@ -60,15 +60,15 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                             City = shipment.DestinationAddress.City,
 
-                            Province = shipment.DestinationAddress.CountryCode != "US" ? shipment.DestinationAddress.StateOrProvince : null,
+                            Province = shipment.DestinationAddress.IsUnitedStatesAddress() ? shipment.DestinationAddress.StateOrProvince : null,
 
-                            State = shipment.DestinationAddress.CountryCode == "US" ? shipment.DestinationAddress.StateOrProvince : null,
+                            State = shipment.DestinationAddress.IsUnitedStatesAddress() ? shipment.DestinationAddress.StateOrProvince : null,
 
                             Country = shipment.DestinationAddress.CountryCode,
 
-                            PostalCode = shipment.DestinationAddress.CountryCode != "US" ? shipment.DestinationAddress.PostalCode : null,
+                            PostalCode = shipment.DestinationAddress.IsUnitedStatesAddress() ? null : shipment.DestinationAddress.PostalCode,
 
-                            ZIPCode = shipment.DestinationAddress.CountryCode == "US" ? shipment.DestinationAddress.PostalCode : null,
+                            ZIPCode = shipment.DestinationAddress.IsUnitedStatesAddress() ? shipment.DestinationAddress.PostalCode : null,
 
                             PhoneNumber = shipment.RecipientInfo.PhoneNumber,
 
@@ -161,7 +161,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                     }
                 };
 
-                request = ApplyPackageDetails(request, rateDetails, shipment);
+                request = ApplyPackageDetails(request, shipment);
 
                 var response = await stampsClient.GetRatesAsync(request);
 
@@ -218,17 +218,13 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
             return addOns;
         }
 
-        private GetRatesRequest ApplyPackageDetails(GetRatesRequest request, RateRequestDetails rateDetails, Shipment shipment)
+        private GetRatesRequest ApplyPackageDetails(GetRatesRequest request, Shipment shipment)
         {
             request.Rate.WeightLb = (double)shipment.Packages.FirstOrDefault().Weight;
 
             request.Rate.WeightOz = 0.0;
 
-            var packageType = PackageType.Package;
-
-            PackageType.TryFromName(shipment.Options.PackagingType, out packageType);
-
-            request.Rate.PackageType = packageType.Value switch
+            request.Rate.PackageType = PackageType.FromName(shipment.Options.PackagingType).Value switch
             {
                 (int)PackageTypeV11.Pak => PackageTypeV11.Pak,
                 (int)PackageTypeV11.Package => PackageTypeV11.Package,
