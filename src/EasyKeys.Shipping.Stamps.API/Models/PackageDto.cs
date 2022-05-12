@@ -2,6 +2,8 @@
 
 public class PackageDto
 {
+    public DateTime? ShipDate { get; set; }
+
     public bool SignatureRequiredOnDelivery { get; set; }
 
     public decimal InsuredValue { get; set; }

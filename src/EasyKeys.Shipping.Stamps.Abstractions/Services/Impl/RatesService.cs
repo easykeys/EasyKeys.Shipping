@@ -101,7 +101,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         ShipDate = shipment.Options.ShippingDate,
 
-                        InsuredValue = rateDetails.InsuredValue,
+                        InsuredValue = shipment.Packages.Sum(x => x.InsuredValue),
 
                         RegisteredValue = rateDetails.RegisteredValue,
 

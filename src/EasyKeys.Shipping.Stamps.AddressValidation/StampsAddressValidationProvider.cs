@@ -88,7 +88,6 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
                 request.ProposedAddress.IsResidential = request.OriginalAddress.IsResidential;
             }
 
-
             request?.ValidationBag.Add("ValidationResult", response?.AddressCleansingResult ?? "No result");
         }
 

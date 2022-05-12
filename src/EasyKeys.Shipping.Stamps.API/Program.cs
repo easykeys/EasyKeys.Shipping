@@ -1,7 +1,6 @@
 using System.Text.Json;
 
 using EasyKeys.Shipping.Abstractions.Models;
-using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.AddressValidation;
 using EasyKeys.Shipping.Stamps.API.Models;
 using EasyKeys.Shipping.Stamps.Rates;
@@ -13,18 +12,22 @@ using EasyKeys.Shipping.Stamps.Tracking.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// retieve values from azure vault
+// retrieve values from azure vault
 builder.Configuration.AddAzureKeyVault(hostingEnviromentName: builder.Environment.EnvironmentName, usePrefix: true);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
 
 // add stamps libraries
 builder.Services.AddStampsAddressProvider();
+
 builder.Services.AddStampsRateProvider();
+
 builder.Services.AddStampsShipmentProvider();
+
 builder.Services.AddStampsTrackingProvider();
 
 // configure json options
@@ -54,7 +57,7 @@ app.MapPost("/addressValidation", async (
     IStampsAddressValidationProvider addressProvider,
     CancellationToken cancellationToken) =>
 {
-    var address = new ValidateAddress(model.Id, model.Address);
+    var address = new ValidateAddress(model.Id, model!.Address);
     validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
 
     return Results.Json(validatedAddress, options);
@@ -75,9 +78,11 @@ app.MapPost("/getRates", async (
         model.Package.InsuredValue,
         model.Package.SignatureRequiredOnDelivery);
 
-    var config = new StampsRateConfigurator(model.Origin, model.Destination, package, sender, receiver);
+    var configurator = new StampsRateConfigurator(model!.Origin, model!.Destination, package, sender, receiver, model.Package.ShipDate);
 
-    shipment = await rateProvider.GetRatesAsync(config.Shipments.FirstOrDefault().shipment, new RateRequestDetails(), cancellationToken);
+    var (shipment, rateOptions) = configurator.Shipments.FirstOrDefault();
+
+    shipment = await rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
 
     return Results.Json(shipment, options);
 });

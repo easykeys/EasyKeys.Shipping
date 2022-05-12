@@ -9,5 +9,4 @@ public class RateQuoteDto
     public Address? Destination { get; set; }
 
     public PackageDto? Package { get; set; }
-
 }

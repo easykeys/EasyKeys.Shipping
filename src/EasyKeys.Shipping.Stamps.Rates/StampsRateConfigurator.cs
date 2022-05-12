@@ -1,4 +1,5 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions;
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Rates.Extensions;
 
@@ -14,7 +15,8 @@ public class StampsRateConfigurator
         ContactInfo receiver,
         DateTime? shipDate = null)
     {
-        var solidDate = shipDate ?? DateTime.Now.AddDays(1);
+        // helpful to make sure we have business days and not regular days.
+        var solidDate = shipDate ?? DateTime.Now.AddBusinessDays(1);
 
         if (destination.IsUnitedStatesAddress())
         {
@@ -44,7 +46,6 @@ public class StampsRateConfigurator
         }
         else
         {
-
             if (package.DimensionsExceedFirstClassInternationalService())
             {
                 ConfigureIntlPriority(
@@ -115,7 +116,7 @@ public class StampsRateConfigurator
     /// </summary>
     /// <param name="weight"></param>
     /// <returns></returns>
-    public static Package GetFlatBox(decimal weight)
+    public static Package GetFlaxBox(decimal weight)
     {
         return new Package(11m, 8.5m, 5.5m, weight, 0m);
     }
@@ -151,6 +152,16 @@ public class StampsRateConfigurator
     }
 
     /// <summary>
+    /// USPS regional rate box C. A special 15” x 12” x 12” USPS box that clearly indicates ”Regional Rate Box C”. 25 lbs maximum weight.
+    /// </summary>
+    /// <param name="weight"></param>
+    /// <returns></returns>
+    public static Package GetRegionalRateBoxC(decimal weight)
+    {
+        return new Package(15m, 12m, 12m, weight, 0m);
+    }
+
+    /// <summary>
     /// USPS-supplied Priority Mail flat-rate envelope 9 1/2” x 15”. Maximum weight 4 pounds.
     /// </summary>
     /// <param name="weight"></param>
@@ -180,7 +191,7 @@ public class StampsRateConfigurator
             ServiceType = StampsServiceType.FirstClass,
         };
 
-        var packageType = package.IsLargeEnvelope() ? PackageType.LargeEnvelopeOrFlat : PackageType.Package;
+        var packageType = package.IsFlatRateEnvelope() ? PackageType.ThickEnvelope : PackageType.Package;
 
         var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
@@ -299,19 +310,9 @@ public class StampsRateConfigurator
     private PackageType GetFlatRatePackage(Package package)
     {
         // sequence from smallest to largest
-        if (package.IsFlatRateEnvelope())
-        {
-            return PackageType.FlatRateEnvelope;
-        }
-
         if (package.IsPaddedFlatRateEnvelope())
         {
             return PackageType.FlatRatePaddedEnvelope;
-        }
-
-        if (package.IsLegalFlatRateEnvelope())
-        {
-            return PackageType.LegalFlatRateEnvelope;
         }
 
         if (package.IsSmallFlatRateBox())

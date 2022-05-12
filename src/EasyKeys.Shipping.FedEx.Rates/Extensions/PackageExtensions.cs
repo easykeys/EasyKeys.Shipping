@@ -1,4 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Abstractions.Models;
 
 namespace EasyKeys.Shipping.FedEx;
 
@@ -14,9 +15,11 @@ public static class PackageExtensions
     {
         package = package ?? throw new ArgumentNullException(nameof(package));
 
-        return package.Weight <= 1m
-                && package.Dimensions.Length <= 9m
-                && package.Dimensions.Width <= 12m;
+        var packageType = FedExPackageType.FedExEnvelope;
+
+        return package.Weight <= packageType.MaxWeight
+                && package.Dimensions.Length <= package.Dimensions.Length
+                && package.Dimensions.Width <= package.Dimensions.Width;
     }
 
     /// <summary>
@@ -29,7 +32,10 @@ public static class PackageExtensions
     {
         package = package ?? throw new ArgumentNullException(nameof(package));
 
-        return package.Weight is > 1m and <= 50
+        var packageType = FedExPackageType.FedExPak;
+
+        return package.Weight >= packageType.MinWeight
+                && package.Weight <= packageType.MaxWeight
                 && package.Dimensions.Length <= 12m
                 && package.Dimensions.Width <= 15m;
     }
@@ -43,6 +49,8 @@ public static class PackageExtensions
     public static bool IsFedExEnvelopeWeight(this Package package)
     {
         package = package ?? throw new ArgumentNullException(nameof(package));
-        return package.Weight <= 1m;
+        var packageType = FedExPackageType.FedExEnvelope;
+
+        return package.Weight <= packageType.MaxWeight;
     }
 }

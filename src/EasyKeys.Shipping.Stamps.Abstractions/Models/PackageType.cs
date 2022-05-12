@@ -111,7 +111,6 @@ public abstract class PackageType : SmartEnum<PackageType>
 
     public string Description { get; }
 
-
     private sealed class PostCardType : PackageType
     {
         public PostCardType() : base(StampsClient.v111.PackageTypeV11.Postcard.ToString(), (int)StampsClient.v111.PackageTypeV11.Postcard, "Postcard Package Type")

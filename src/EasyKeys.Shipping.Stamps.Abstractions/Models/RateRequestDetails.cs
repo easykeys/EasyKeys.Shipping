@@ -9,11 +9,6 @@ public class RateRequestDetails
     public StampsServiceType ServiceType { get; set; } = StampsServiceType.Unknown;
 
     /// <summary>
-    /// The amount to insure this shipment for, in dollars and cents. If a value is specified, insurance add-ons will be returned.
-    /// </summary>
-    public decimal InsuredValue { get; set; } = 20.0m;
-
-    /// <summary>
     /// The registered value for this shipment, in dollars and cents.
     /// </summary>
     public decimal RegisteredValue { get; set; }

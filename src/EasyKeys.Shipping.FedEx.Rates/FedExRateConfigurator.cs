@@ -46,7 +46,7 @@ public class FedExRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(9m, 12m, 0.25m, weight, insuredValue, signatureRequiredOnDelivery: isSignatureRequired);
+        return new Package(FedExPackageType.FedExEnvelope.Dimensions, weight, insuredValue, signatureRequiredOnDelivery: isSignatureRequired);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public class FedExRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(12m, 15m, 1.5m, weight, insuredValue, signatureRequiredOnDelivery: isSignatureRequired);
+        return new Package(FedExPackageType.FedExPak.Dimensions, weight, insuredValue, signatureRequiredOnDelivery: isSignatureRequired);
     }
 
     private void ConfigureGroundPackage(
