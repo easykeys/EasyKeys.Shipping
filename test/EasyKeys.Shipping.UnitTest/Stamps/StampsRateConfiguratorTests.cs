@@ -41,11 +41,11 @@ public class StampsRateConfiguratorTests
 
         Assert.True(new Package(8.625m, 5.375m, 1.62m, 10m, 20m).IsSmallFlatRateBox());
 
-        Assert.True(new Package(11m, 8.5m, 5.5m, 10m, 20m).IsFlatRateBox());
+        Assert.True(new Package(11m, 8.5m, 5.5m, 10m, 20m).IsMediumFlatRateBox());
 
         Assert.True(new Package(12m, 12m, 6m, 10m, 20m).IsLargeFlatRateBox());
 
-        Assert.True(new Package(12m, 12m, 6m, .81m, 20m).IsLargeFlatEnvelope());
+        Assert.True(new Package(12m, 12m, 6m, .81m, 20m).IsFlatRateEnvelope());
 
         Assert.True(new Package(12m, 12m, 6m, 10m, 20m).DimensionsExceedFirstClassInternationalService());
     }

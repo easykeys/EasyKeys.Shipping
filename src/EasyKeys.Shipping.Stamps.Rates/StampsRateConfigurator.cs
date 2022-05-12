@@ -115,7 +115,7 @@ public class StampsRateConfigurator
     /// </summary>
     /// <param name="weight"></param>
     /// <returns></returns>
-    public static Package GetFlaxBox(decimal weight)
+    public static Package GetFlatBox(decimal weight)
     {
         return new Package(11m, 8.5m, 5.5m, weight, 0m);
     }
@@ -151,16 +151,6 @@ public class StampsRateConfigurator
     }
 
     /// <summary>
-    /// USPS regional rate box C. A special 15” x 12” x 12” USPS box that clearly indicates ”Regional Rate Box C”. 25 lbs maximum weight.
-    /// </summary>
-    /// <param name="weight"></param>
-    /// <returns></returns>
-    public static Package GetRegionalRateBoxC(decimal weight)
-    {
-        return new Package(15m, 12m, 12m, weight, 0m);
-    }
-
-    /// <summary>
     /// USPS-supplied Priority Mail flat-rate envelope 9 1/2” x 15”. Maximum weight 4 pounds.
     /// </summary>
     /// <param name="weight"></param>
@@ -190,7 +180,7 @@ public class StampsRateConfigurator
             ServiceType = StampsServiceType.FirstClass,
         };
 
-        var packageType = package.IsLargeFlatEnvelope() ? PackageType.ThickEnvelope : PackageType.Package;
+        var packageType = package.IsLargeEnvelope() ? PackageType.LargeEnvelopeOrFlat : PackageType.Package;
 
         var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
@@ -309,9 +299,19 @@ public class StampsRateConfigurator
     private PackageType GetFlatRatePackage(Package package)
     {
         // sequence from smallest to largest
+        if (package.IsFlatRateEnvelope())
+        {
+            return PackageType.FlatRateEnvelope;
+        }
+
         if (package.IsPaddedFlatRateEnvelope())
         {
             return PackageType.FlatRatePaddedEnvelope;
+        }
+
+        if (package.IsLegalFlatRateEnvelope())
+        {
+            return PackageType.LegalFlatRateEnvelope;
         }
 
         if (package.IsSmallFlatRateBox())
@@ -319,7 +319,7 @@ public class StampsRateConfigurator
             return PackageType.SmallFlatRateBox;
         }
 
-        if (package.IsFlatRateBox())
+        if (package.IsMediumFlatRateBox())
         {
             return PackageType.FlatRateBox;
         }
