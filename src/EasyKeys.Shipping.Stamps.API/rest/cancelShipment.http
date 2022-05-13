@@ -1,3 +1,5 @@
+@id=9408811899560259061065
 
-DELETE https://localhost:7141/cancelShipment/{id}
+DELETE https://localhost:7141/cancelShipment/{{id}}
+Content-Type: application/json
 

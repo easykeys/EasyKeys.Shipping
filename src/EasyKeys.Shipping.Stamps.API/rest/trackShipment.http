@@ -1,3 +1,4 @@
 
-@id=
-GET https://localhost:7141/trackShipment/{id}
+@id=9408811899560259061065
+
+GET https://localhost:7141/trackShipment/{{id}}

@@ -2,7 +2,7 @@
 
 namespace EasyKeys.Shipping.Stamps.API.Models;
 
-public class RateQuoteDto
+public class ShipmentDto
 {
     public Address? Origin { get; set; }
 

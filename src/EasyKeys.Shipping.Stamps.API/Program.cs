@@ -1,6 +1,7 @@
 using System.Text.Json;
 
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.AddressValidation;
 using EasyKeys.Shipping.Stamps.API.Models;
 using EasyKeys.Shipping.Stamps.Rates;
@@ -49,7 +50,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-(var sender, var receiver, var validatedAddress, var shipment, var label) = SetDefaultValues();
+(var sender, var receiver) = SetDefaultValues();
 
 // address validation recieves a proposed address.
 app.MapPost("/addressValidation", async (
@@ -58,44 +59,38 @@ app.MapPost("/addressValidation", async (
     CancellationToken cancellationToken) =>
 {
     var address = new ValidateAddress(model.Id, model!.Address);
-    validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
+    var validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
 
     return Results.Json(validatedAddress, options);
 });
 
 // getRates recieves a rate model containing destination address and package information.
 app.MapPost("/getRates", async (
-    RateQuoteDto model,
+    ShipmentDto model,
     IStampsRateProvider rateProvider,
     CancellationToken cancellationToken) =>
 {
-    // create a package
-    var package = new Package(
-        model!.Package!.Length,
-        model.Package.Width,
-        model.Package.Height,
-        model.Package.Weight,
-        model.Package.InsuredValue,
-        model.Package.SignatureRequiredOnDelivery);
+    var result = await GetShipmentRates(model, rateProvider, sender, receiver, cancellationToken);
 
-    var configurator = new StampsRateConfigurator(model!.Origin, model!.Destination, package, sender, receiver, model.Package.ShipDate);
-
-    var (shipment, rateOptions) = configurator.Shipments.FirstOrDefault();
-
-    shipment = await rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
-
-    return Results.Json(shipment, options);
+    return Results.Json(result, options);
 });
 
 // create the shipment when rates service type is selected.
 app.MapPost("/createShipment", async (
+    ShipmentDto model,
     string ServiceType,
+    IStampsRateProvider rateProvider,
     IStampsShipmentProvider shipmentProvider,
     CancellationToken cancellationToken) =>
 {
-    var shipmentRequestDetails = new ShipmentRequestDetails() { SelectedRate = shipment.Rates.Where(x => x.Name == ServiceType).FirstOrDefault() };
+    var shipment = await GetShipmentRates(model, rateProvider, sender, receiver, cancellationToken);
 
-    label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
+    var shipmentRequestDetails = new ShipmentRequestDetails()
+    {
+        SelectedRate = shipment.Rates.Where(x => x.Name == ServiceType).FirstOrDefault()
+    };
+
+    var label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
 
     await File.WriteAllBytesAsync("label.png", label.Labels[0].Bytes[0]);
 
@@ -134,12 +129,12 @@ app.MapDelete("/cancelShipment/{id}", async (
 
 app.Run();
 
-(ContactInfo, ContactInfo, ValidateAddress, Shipment?, ShipmentLabel?) SetDefaultValues()
+(ContactInfo, ContactInfo) SetDefaultValues()
 {
     var sender = new ContactInfo()
     {
-        FirstName = "Brandon",
-        LastName = "Moffett",
+        FirstName = "EasyKeys.com",
+        LastName = "Fulfilment Center",
         Company = "EasyKeys.com",
         Email = "TestMe@EasyKeys.com",
         Department = "Software",
@@ -147,23 +142,32 @@ app.Run();
     };
     var receiver = new ContactInfo()
     {
-        FirstName = "Fictitious Character",
-        Company = "Marvel",
-        Email = "FictitiousCharacter@marvel.com",
-        Department = "SuperHero",
-        PhoneNumber = "867-338-2737"
+        FirstName = "Customer @ EasyKeys.com",
+        Company = "BOFA",
+        Email = "customer@email.com",
+        Department = "IT Dept",
+        PhoneNumber = "877.839.5397"
     };
 
-    var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), new Address(
-                                            streetLine: "1550 central avenue",
-                                            city: "riverside",
-                                            stateOrProvince: "CA",
-                                            postalCode: "92507",
-                                            countryCode: "US"));
+    return (sender, receiver);
+}
 
-    var shipment = default(Shipment);
+static async Task<Shipment> GetShipmentRates(ShipmentDto model, IStampsRateProvider rateProvider, ContactInfo sender, ContactInfo receiver, CancellationToken cancellationToken)
+{
+    // create a package
+    var package = new Package(
+        model!.Package!.Length,
+        model.Package.Width,
+        model.Package.Height,
+        model.Package.Weight,
+        model.Package.InsuredValue,
+        model.Package.SignatureRequiredOnDelivery);
 
-    var label = default(ShipmentLabel);
+    var configurator = new StampsRateConfigurator(model!.Origin, model!.Destination, package, sender, receiver, model.Package.ShipDate);
 
-    return (sender, receiver, validatedAddress, shipment, label);
+    var (shipment, rateOptions) = configurator.Shipments.FirstOrDefault();
+
+    // todo: fix the issue with raterequest details
+    var result = await rateProvider.GetRatesAsync(shipment, new RateRequestDetails(), cancellationToken);
+    return result;
 }

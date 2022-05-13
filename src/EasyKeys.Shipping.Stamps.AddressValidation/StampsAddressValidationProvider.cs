@@ -38,7 +38,9 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
 
             request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
 
-            return VerifyAddress(await client.CleanseAddressAsync(request), validateAddress);
+            var response = await client.CleanseAddressAsync(request);
+
+            return VerifyAddress(response, validateAddress);
         }
         catch (Exception ex)
         {
