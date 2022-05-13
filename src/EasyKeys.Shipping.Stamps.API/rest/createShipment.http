@@ -1,5 +1,5 @@
 
-POST https://localhost:7141/createShipment?ServiceType=USPM
+POST https://localhost:7141/createShipment?ServiceType=USFC
 Content-Type: application/json
 
 
