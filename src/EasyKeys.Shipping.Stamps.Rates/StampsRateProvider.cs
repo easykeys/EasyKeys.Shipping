@@ -40,27 +40,27 @@ public class StampsRateProvider : IStampsRateProvider
                     _logger.LogInformation($" => Delivery Days : {rate.DeliverDays}");
                 }
             }
+
+            var orderedRates = shipments.FirstOrDefault().Rates.OrderBy(x => x.Name)
+                                    .OrderBy(x => x.TotalCharges)
+                                    .ToArray();
+
+            shipments.FirstOrDefault().Rates.Clear();
+
+            // remove the most expensive duplicate rate in cases where there is more than one possible shipment
+            for (var i = 0; i < orderedRates.Length; i++)
+            {
+                if (shipments.FirstOrDefault().Rates.Any(x => x.Name == orderedRates[i].Name))
+                {
+                    continue;
+                }
+
+                shipments.FirstOrDefault().Rates.Add(orderedRates[i]);
+            }
         }
         catch (Exception ex)
         {
             shipments.FirstOrDefault().InternalErrors.Add(ex.Message);
-        }
-
-        var orderedRates = shipments.FirstOrDefault().Rates.OrderBy(x => x.Name)
-            .OrderBy(x => x.TotalCharges)
-            .ToArray();
-
-        shipments.FirstOrDefault().Rates.Clear();
-
-        // remove the most expensive duplicate rate in cases where there is more than one possible shipment
-        for (var i = 0; i < orderedRates.Length; i++)
-        {
-            if (shipments.FirstOrDefault().Rates.Any(x => x.Name == orderedRates[i].Name))
-            {
-                continue;
-            }
-
-            shipments.FirstOrDefault().Rates.Add(orderedRates[i]);
         }
 
         return shipments.FirstOrDefault();
