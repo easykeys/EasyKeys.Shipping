@@ -24,10 +24,10 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
                 Address1 = validateAddress.OriginalAddress.StreetLine,
                 Address2 = validateAddress.OriginalAddress.StreetLine2,
                 City = validateAddress.OriginalAddress.City,
-                State = validateAddress.OriginalAddress.CountryCode == "US" ? validateAddress.OriginalAddress.StateOrProvince : null,
-                Province = validateAddress.OriginalAddress.CountryCode != "US" ? validateAddress.OriginalAddress.StateOrProvince : null,
-                ZIPCode = validateAddress.OriginalAddress.CountryCode == "US" ? validateAddress.OriginalAddress.PostalCode : null,
-                PostalCode = validateAddress.OriginalAddress.CountryCode != "US" ? validateAddress.OriginalAddress.PostalCode : null,
+                State = validateAddress.OriginalAddress.IsUnitedStatesAddress() ? validateAddress.OriginalAddress.StateOrProvince : null,
+                Province = validateAddress.OriginalAddress.IsUnitedStatesAddress() ? null : validateAddress.OriginalAddress.StateOrProvince,
+                ZIPCode = validateAddress.OriginalAddress.IsUnitedStatesAddress() ? validateAddress.OriginalAddress.PostalCode : null,
+                PostalCode = validateAddress.OriginalAddress.IsUnitedStatesAddress() ? null : validateAddress.OriginalAddress.PostalCode,
                 Country = validateAddress.OriginalAddress.CountryCode,
             }
         };
