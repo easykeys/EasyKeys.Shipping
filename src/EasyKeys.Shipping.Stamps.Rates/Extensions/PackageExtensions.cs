@@ -16,11 +16,21 @@ public static class PackageExtensions
 
         var totalDimensions = package.Dimensions.Length + package.Dimensions.Width + package.Dimensions.Height;
 
-        return package.Weight > 4
+        return package.Weight > 4.4m
             || package.Dimensions.Length > 24
             || package.Dimensions.Width > 24
             || package.Dimensions.Height > 24
             || totalDimensions > 36;
+    }
+
+    public static bool IsInternationalLargeEnvelope(this Package package)
+    {
+        package = package ?? throw new ArgumentNullException(nameof(package));
+
+        return package.Weight <= 4.4m
+            && (package.Dimensions.Length > 11.5m && package.Dimensions.Length <= 15m)
+            && (package.Dimensions.Height > 6.125m && package.Dimensions.Height <= 12m)
+            && (package.Dimensions.Width <= .75m);
     }
 
     public static bool IsLargeEnvelope(this Package package)
@@ -66,8 +76,17 @@ public static class PackageExtensions
         package = package ?? throw new ArgumentNullException(nameof(package));
 
         return package.Weight <= 70m
-            && package.Dimensions.Length < 9.5m
-            && package.Dimensions.Height < 12.5m;
+            && package.Dimensions.Length <= 9.5m
+            && package.Dimensions.Height <= 12.5m;
+    }
+
+    public static bool IsInternationalFlatRateEnvelope(this Package package)
+    {
+        package = package ?? throw new ArgumentNullException(nameof(package));
+
+        return package.Weight <= 4m
+            && package.Dimensions.Length <= 9.5m
+            && package.Dimensions.Height <= 12.5m;
     }
 
     /// <summary>
@@ -85,11 +104,33 @@ public static class PackageExtensions
             package.Dimensions.Length <= 9.5m));
     }
 
+    public static bool IsInternationalPaddedFlatRateEnvelope(this Package package)
+    {
+        package = package ?? throw new ArgumentNullException(nameof(package));
+
+        return package.Weight < 4m &&
+            ((package.Dimensions.Length <= 12.5m &&
+            package.Dimensions.Height <= 9.5m) ||
+             (package.Dimensions.Height <= 12.5m &&
+            package.Dimensions.Length <= 9.5m));
+    }
+
     public static bool IsLegalFlatRateEnvelope(this Package package)
     {
         package = package ?? throw new ArgumentNullException(nameof(package));
 
         return package.Weight < 70m &&
+            ((package.Dimensions.Length <= 15m &&
+            package.Dimensions.Height <= 9.5m) ||
+             (package.Dimensions.Height <= 15m &&
+            package.Dimensions.Length <= 9.5m));
+    }
+
+    public static bool IsInternationalLegalFlatRateEnvelope(this Package package)
+    {
+        package = package ?? throw new ArgumentNullException(nameof(package));
+
+        return package.Weight < 4m &&
             ((package.Dimensions.Length <= 15m &&
             package.Dimensions.Height <= 9.5m) ||
              (package.Dimensions.Height <= 15m &&
@@ -112,11 +153,35 @@ public static class PackageExtensions
             package.Dimensions.Width <= 1.75m;
     }
 
+    public static bool IsInternationalSmallFlatRateBox(this Package package)
+    {
+        package = package ?? throw new ArgumentNullException(nameof(package));
+
+        return package.Weight < 4m &&
+            package.Dimensions.Length <= 8.6875m &&
+            package.Dimensions.Height <= 5.375m &&
+            package.Dimensions.Width <= 1.75m;
+    }
+
     public static bool IsMediumFlatRateBox(this Package package)
     {
         package = package ?? throw new ArgumentNullException(nameof(package));
 
         return package.Weight < 70m &&
+            ((package.Dimensions.Length <= 11.25m &&
+            package.Dimensions.Height <= 8.75m &&
+            package.Dimensions.Width <= 6m)
+            ||
+            (package.Dimensions.Length <= 14m &&
+            package.Dimensions.Height <= 12m &&
+            package.Dimensions.Width <= 3.5m));
+    }
+
+    public static bool IsInternationalMediumFlatRateBox(this Package package)
+    {
+        package = package ?? throw new ArgumentNullException(nameof(package));
+
+        return package.Weight < 20m &&
             ((package.Dimensions.Length <= 11.25m &&
             package.Dimensions.Height <= 8.75m &&
             package.Dimensions.Width <= 6m)
@@ -137,6 +202,20 @@ public static class PackageExtensions
         package = package ?? throw new ArgumentNullException(nameof(package));
 
         return package.Weight < 70m &&
+            ((package.Dimensions.Length <= 12.25m &&
+            package.Dimensions.Height <= 12.25m &&
+            package.Dimensions.Width <= 6m)
+            ||
+            (package.Dimensions.Length <= 24.0625m &&
+            package.Dimensions.Height <= 11.825m &&
+            package.Dimensions.Width <= 3.125m));
+    }
+
+    public static bool IsInternationalLargeFlatRateBox(this Package package)
+    {
+        package = package ?? throw new ArgumentNullException(nameof(package));
+
+        return package.Weight < 20m &&
             ((package.Dimensions.Length <= 12.25m &&
             package.Dimensions.Height <= 12.25m &&
             package.Dimensions.Width <= 6m)

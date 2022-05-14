@@ -11,49 +11,26 @@ namespace EasyKeysShipping.UnitTest.Stamps;
 
 public class StampsRateConfiguratorTests
 {
-    [Theory]
-    [ClassData(typeof(StampConfigTypeData))]
-    public void Return_Correct_RateRequestDetails_Successfully(
-        Address address,
-        decimal weight,
-        StampsServiceType type,
-        PackageType packageType,
-        string serviceDescription)
-    {
-        var shipment = TestShipments.CreateDomesticShipment();
-
-        var config = new StampsRateConfigurator(
-            shipment.OriginAddress,
-            address,
-            new Package(1m, 1m, 1m, weight, 20m),
-            shipment.SenderInfo,
-            shipment.RecipientInfo);
-
-        Assert.Contains(config.Shipments, (x) => x.rateOptions.ServiceType == type);
-        Assert.Contains(config.Shipments, (x) => x.shipment.Options.PackagingType == packageType.Name);
-        Assert.Contains(config.Shipments, (x) => x.rateOptions.ServiceType.Description == serviceDescription);
-    }
-
     [Fact]
     public void Return_Correct_FlatRatePackage_Successfully()
     {
-        Assert.True(new Package(12.5m, 9.5m, 4m, .81m, 20m).IsPaddedFlatRateEnvelope());
+        Assert.True(new Package(12.5m, 4m, 9.5m, .81m, 20m).IsPaddedFlatRateEnvelope());
 
-        Assert.True(new Package(8.625m, 5.375m, 1.62m, 10m, 20m).IsSmallFlatRateBox());
+        Assert.True(new Package(8.625m, 1.62m, 5.375m, 10m, 20m).IsSmallFlatRateBox());
 
-        Assert.True(new Package(11m, 8.5m, 5.5m, 10m, 20m).IsMediumFlatRateBox());
+        Assert.True(new Package(11m, 5.5m, 8.5m, 10m, 20m).IsMediumFlatRateBox());
 
-        Assert.True(new Package(12m, 12m, 6m, 10m, 20m).IsLargeFlatRateBox());
+        Assert.True(new Package(12m, 6m, 12m, 10m, 20m).IsLargeFlatRateBox());
 
-        Assert.True(new Package(12m, 12m, 6m, .81m, 20m).IsFlatRateEnvelope());
+        Assert.True(new Package(9.5m, 6m, 12.5m, .81m, 20m).IsFlatRateEnvelope());
 
-        Assert.True(new Package(12m, 12m, 6m, 10m, 20m).DimensionsExceedFirstClassInternationalService());
+        Assert.True(new Package(12m, 6m, 12m, 10m, 20m).DimensionsExceedFirstClassInternationalService());
     }
 
     [Fact]
     public void Throw_Exception_When_Weight_Is_Greater_Than_70lbs()
     {
-        var shipment = TestShipments.CreateDomesticShipment();
+        var shipment = TestShipments.CreateDomesticShipment().First();
 
         Assert.Throws<ArgumentException>(() => new StampsRateConfigurator(
             shipment.OriginAddress,

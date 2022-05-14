@@ -9,7 +9,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
         /// Packages dimensions are small enough to fit all service types.
         /// </summary>
         /// <returns></returns>
-        public static Shipment CreateDomesticShipment()
+        public static List<Shipment> CreateDomesticShipment()
         {
             var originAddress = new Address(
                  streetLine: "11407 Granite Street",
@@ -58,21 +58,24 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
             var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
 
-            return new Shipment(
+            return new List<Shipment>()
+            {
+                new Shipment(
                 originAddress,
                 validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
                 packages,
                 shipmentOptions)
-            {
-                RecipientInfo = receiver,
-                SenderInfo = sender,
+                {
+                    RecipientInfo = receiver,
+                    SenderInfo = sender,
+                }
             };
         }
 
         /// <summary>
         /// Packages dimensions are small enough to fit all service types.
         /// </summary>
-        public static Shipment CreateInternationalShipment()
+        public static List<Shipment> CreateInternationalShipment()
         {
             var originAddress = new Address(
                  streetLine: "11407 Granite Street",
@@ -134,18 +137,22 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
             var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
 
-            var shipment = new Shipment(
+            var shipments = new List<Shipment>()
+            {
+                new Shipment(
                 originAddress,
                 validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
                 packages,
                 shipmentOptions)
-            {
-                RecipientInfo = receiver,
-                SenderInfo = sender
+                {
+                    RecipientInfo = receiver,
+                    SenderInfo = sender
+                }
             };
-            shipment.Commodities.Add(commodity);
 
-            return shipment;
+            shipments?.FirstOrDefault()?.Commodities.Add(commodity);
+
+            return shipments;
         }
     }
 }

@@ -60,7 +60,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                             City = shipment.DestinationAddress.City,
 
-                            Province = shipment.DestinationAddress.IsUnitedStatesAddress() ? shipment.DestinationAddress.StateOrProvince : null,
+                            Province = shipment.DestinationAddress.IsUnitedStatesAddress() ? null : shipment.DestinationAddress.StateOrProvince,
 
                             State = shipment.DestinationAddress.IsUnitedStatesAddress() ? shipment.DestinationAddress.StateOrProvince : null,
 
@@ -165,13 +165,13 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                 var response = await stampsClient.GetRatesAsync(request);
 
-                response = ApplyAddOns(response, shipment);
+                response = ApplyAddOns(response, rateDetails, shipment);
 
                 return response.Rates.ToList();
             }
         }
 
-        private GetRatesResponse ApplyAddOns(GetRatesResponse request, Shipment shipment)
+        private GetRatesResponse ApplyAddOns(GetRatesResponse request, RateRequestDetails rateDetails, Shipment shipment)
         {
             foreach (var rate in request.Rates)
             {
@@ -182,16 +182,21 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                     addOns.AddRange(AssignRequiredAddOnTypes(rate.RequiresAllOf));
                 }
 
-                addOns.Add(new AddOnV17() { AddOnDescription = "Delivery Confirmation", AddOnType = AddOnTypeV17.USADC });
-
                 if (shipment.DestinationAddress.IsUnitedStatesAddress())
                 {
-                    addOns.Add(new AddOnV17() { AddOnDescription = "Registered Mail", AddOnType = AddOnTypeV17.USAREG });
-                }
-
-                if (shipment.Packages.Any(x => x.SignatureRequiredOnDelivery))
-                {
-                    addOns.Add(new AddOnV17() { AddOnDescription = "Signature Confirmation", AddOnType = AddOnTypeV17.USASC });
+                    // can only chose on or the other unless addon "Registered Mail" is added.
+                    if (shipment.Packages.Any(x => x.SignatureRequiredOnDelivery))
+                    {
+                        // see href="https://faq.usps.com/s/article/How-is-Signature-Confirmation-and-Signature-Confirmation-Restricted-Delivery-Used"
+                        if (!rateDetails.ServiceType.Description.Contains("Express"))
+                        {
+                            addOns.Add(new AddOnV17() { AddOnDescription = "Signature Confirmation", AddOnType = AddOnTypeV17.USASC });
+                        }
+                        else
+                        {
+                            addOns.Add(new AddOnV17() { AddOnDescription = "Delivery Confirmation", AddOnType = AddOnTypeV17.USADC });
+                        }
+                    }
                 }
 
                 rate.AddOns = addOns.ToArray();

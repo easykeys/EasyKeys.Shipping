@@ -31,7 +31,7 @@
         /// <summary>
         /// The memo to print at the bottom of the shipping label. The memo parameter may consist of more than one line separated by the standard carriage return/line feed, use &#xd; as carriage return and &#xa; as line feed in the request.
         /// </summary>
-        public string Memo { get; set; } = string.Empty;
+        public string Memo { get; set; } = "testing memo";
 
         /// <summary>
         /// Specifies the page size of PDF labels. This value only applies to PDF. If offset is specified, this value will be ignored.

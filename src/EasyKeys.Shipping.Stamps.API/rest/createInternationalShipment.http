@@ -1,0 +1,53 @@
+
+POST https://localhost:7141/createInternationalShipment?ServiceType=USFCI
+Content-Type: application/json
+
+{
+  "origin": {
+    "city": "riverside",
+    "countryCode": "US",
+    "countryName": "string",
+    "streetLine": "1550 central ave",
+    "streetLine2": "apt 35",
+    "postalCode": "92507",
+    "stateOrProvince": "CA",
+    "isResidential": true
+  },
+  "destination": {
+    "city": "L' Peres del Puerto",
+    "countryCode": "ES",
+    "countryName": "",
+    "streetLine": "Calle Dario",
+    "streetLine2": "",
+    "postalCode": "94199",
+    "stateOrProvince": "Álava",
+    "isResidential": true
+  },
+  "package": {
+    "shipDate": "2022-05-13T20:04:18.617Z",
+    "signatureRequiredOnDelivery": true,
+    "insuredValue": 20,
+    "length": 1,
+    "width": 1,
+    "height": 1,
+    "weight": 0.80
+  },
+  "commodity": {
+    "name": "package of keys",
+    "numberOfPieces": 1,
+    "description": "these are hon 1 keys",
+    "countryOfManufacturer": "US",
+    "harmonizedCode": "test",
+    "quantity": 1,
+    "ciMarksandNumbers": "not sure",
+    "customsValue": 10,
+    "amount": 10,
+    "exportLicenseNumber": "dont know number",
+    "exportLicenseExpirationDate": "2022-05-14T01:58:52.007Z",
+    "comments": "this is a test",
+    "additionalMeasures": "test",
+    "exiseConditions": "test",
+    "partNumber": "test",
+    "purpose": "string test"
+  }
+}

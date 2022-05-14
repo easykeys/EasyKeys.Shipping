@@ -1,5 +1,7 @@
 ﻿using Ardalis.SmartEnum;
 
+using EasyKeys.Shipping.Abstractions.Models;
+
 namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 public abstract class PackageType : SmartEnum<PackageType>
@@ -109,6 +111,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         Description = description;
     }
 
+    public abstract Dimensions Dimensions { get; }
+
+    public abstract decimal MaxWeight { get; }
+
+    public abstract decimal MinWeight { get; }
+
     public string Description { get; }
 
     private sealed class PostCardType : PackageType
@@ -116,6 +124,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public PostCardType() : base(StampsClient.v111.PackageTypeV11.Postcard.ToString(), (int)StampsClient.v111.PackageTypeV11.Postcard, "Postcard Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(6m, 0.016m, 4.5m);
+
+        public override decimal MaxWeight => .0625m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class LetterType : PackageType
@@ -123,6 +137,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public LetterType() : base(StampsClient.v111.PackageTypeV11.Letter.ToString(), (int)StampsClient.v111.PackageTypeV11.Letter, "Letter Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(11.5m, 0.016m, 6.125m);
+
+        public override decimal MaxWeight => .21875m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class LargeEnvelopeOrFlatType : PackageType
@@ -130,6 +150,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public LargeEnvelopeOrFlatType() : base(StampsClient.v111.PackageTypeV11.LargeEnvelopeorFlat.ToString(), (int)StampsClient.v111.PackageTypeV11.LargeEnvelopeorFlat, "Large Envelope Or Flat Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(15.00m, 0.75m, 12m);
+
+        public override decimal MaxWeight => .8125m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class ThickEnvelopeType : PackageType
@@ -137,6 +163,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public ThickEnvelopeType() : base(StampsClient.v111.PackageTypeV11.ThickEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.ThickEnvelope, "Thick Envelope Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(22m, 15m, 15m);
+
+        public override decimal MaxWeight => .999375m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class SmallFlatRateBoxType : PackageType
@@ -144,6 +176,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public SmallFlatRateBoxType() : base(StampsClient.v111.PackageTypeV11.SmallFlatRateBox.ToString(), (int)StampsClient.v111.PackageTypeV11.SmallFlatRateBox, "Small Flat Rate Box Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(8.6875m, 5.375m, 1.75m);
+
+        public override decimal MaxWeight => 70m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class Default : PackageType
@@ -151,6 +189,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public Default() : base(StampsClient.v111.PackageTypeV11.Package.ToString(), (int)StampsClient.v111.PackageTypeV11.Package, "Default Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(22m, 15m, 15m);
+
+        public override decimal MaxWeight => .999375m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class FlatRateBoxType : PackageType
@@ -158,6 +202,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public FlatRateBoxType() : base(StampsClient.v111.PackageTypeV11.FlatRateBox.ToString(), (int)StampsClient.v111.PackageTypeV11.FlatRateBox, "Flat Rate Box Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(14m, 3.5m, 12m);
+
+        public override decimal MaxWeight => 70m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class FlatRatePaddedEnvelopeType : PackageType
@@ -165,6 +215,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public FlatRatePaddedEnvelopeType() : base(StampsClient.v111.PackageTypeV11.FlatRatePaddedEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.FlatRatePaddedEnvelope, "Flat Rate Padded Envelope Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(12.5m, 0m, 9.5m);
+
+        public override decimal MaxWeight => 70m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class LargePackageType : PackageType
@@ -172,6 +228,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public LargePackageType() : base(StampsClient.v111.PackageTypeV11.LargePackage.ToString(), (int)StampsClient.v111.PackageTypeV11.LargePackage, "Large Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(24.0625m, 3.125m, 11.825m);
+
+        public override decimal MaxWeight => 70m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class OversizedPackageType : PackageType
@@ -179,6 +241,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public OversizedPackageType() : base(StampsClient.v111.PackageTypeV11.OversizedPackage.ToString(), (int)StampsClient.v111.PackageTypeV11.OversizedPackage, "Oversized Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(30m, 4m, 30m);
+
+        public override decimal MaxWeight => 70m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class RegionalRateBoxAType : PackageType
@@ -186,6 +254,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public RegionalRateBoxAType() : base(StampsClient.v111.PackageTypeV11.RegionalRateBoxA.ToString(), (int)StampsClient.v111.PackageTypeV11.RegionalRateBoxA, "Regional Rate Box A Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(12.5m, 4m, 9.5m);
+
+        public override decimal MaxWeight => 15m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class RegionalRateBoxBType : PackageType
@@ -193,6 +267,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public RegionalRateBoxBType() : base(StampsClient.v111.PackageTypeV11.RegionalRateBoxB.ToString(), (int)StampsClient.v111.PackageTypeV11.RegionalRateBoxB, "Regional Rate Box B Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(16.25m, 3m, 14.5m);
+
+        public override decimal MaxWeight => 20m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class RegionalRateBoxCType : PackageType
@@ -200,6 +280,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public RegionalRateBoxCType() : base(StampsClient.v111.PackageTypeV11.RegionalRateBoxC.ToString(), (int)StampsClient.v111.PackageTypeV11.RegionalRateBoxC, "Regional Rate Box C Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(15m, 12m, 12m);
+
+        public override decimal MaxWeight => 25m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class LegalFlatRateEnvelopeType : PackageType
@@ -207,34 +293,76 @@ public abstract class PackageType : SmartEnum<PackageType>
         public LegalFlatRateEnvelopeType() : base(StampsClient.v111.PackageTypeV11.LegalFlatRateEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.LegalFlatRateEnvelope, "Legal Flat Rate Envelope Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(15m, 0m, 9.5m);
+
+        public override decimal MaxWeight => 4m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
+    /// <summary>
+    /// Unknown.
+    /// </summary>
     private sealed class ExpressEnvelopeType : PackageType
     {
         public ExpressEnvelopeType() : base(StampsClient.v111.PackageTypeV11.ExpressEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.ExpressEnvelope, "Express Envelope Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(1m, 1m, 1m);
+
+        public override decimal MaxWeight => 4m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
+    /// <summary>
+    /// Unknown.
+    /// </summary>
     private sealed class DocumentType : PackageType
     {
         public DocumentType() : base(StampsClient.v111.PackageTypeV11.Documents.ToString(), (int)StampsClient.v111.PackageTypeV11.Documents, "Documents Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(1m, 1m, 1m);
+
+        public override decimal MaxWeight => 4m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
+    /// <summary>
+    /// Unknown.
+    /// </summary>
     private sealed class EnvelopeType : PackageType
     {
         public EnvelopeType() : base(StampsClient.v111.PackageTypeV11.Envelope.ToString(), (int)StampsClient.v111.PackageTypeV11.Envelope, "Envelope Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(1m, 1m, 1m);
+
+        public override decimal MaxWeight => 4m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
+    /// <summary>
+    /// Unknown.
+    /// </summary>
     private sealed class PakType : PackageType
     {
         public PakType() : base(StampsClient.v111.PackageTypeV11.Pak.ToString(), (int)StampsClient.v111.PackageTypeV11.Pak, "Pak Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(1m, 1m, 1m);
+
+        public override decimal MaxWeight => 4m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class LargeFlatRateBoxType : PackageType
@@ -242,6 +370,12 @@ public abstract class PackageType : SmartEnum<PackageType>
         public LargeFlatRateBoxType() : base(StampsClient.v111.PackageTypeV11.LargeFlatRateBox.ToString(), (int)StampsClient.v111.PackageTypeV11.LargeFlatRateBox, "Large Flat Rate Box Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(24.0625m, 3.125m, 11.825m);
+
+        public override decimal MaxWeight => 70m;
+
+        public override decimal MinWeight => 0.001m;
     }
 
     private sealed class FlatRateEnvelopeType : PackageType
@@ -249,5 +383,11 @@ public abstract class PackageType : SmartEnum<PackageType>
         public FlatRateEnvelopeType() : base(StampsClient.v111.PackageTypeV11.FlatRateEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.FlatRateEnvelope, "Flat Rate Envelope Package Type")
         {
         }
+
+        public override Dimensions Dimensions => new Dimensions(9.5m, 0m, 12.5m);
+
+        public override decimal MaxWeight => 70m;
+
+        public override decimal MinWeight => 0.001m;
     }
 }

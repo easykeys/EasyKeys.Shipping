@@ -116,7 +116,6 @@ public class Main : IMain
         _logger.LogError($"Address Validation Errors: {validatedAddress.Errors.Count()}");
 
         // 3) create shipment
-        // get correct packge
         var config = new StampsRateConfigurator(
             originAddress,
             validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
@@ -128,13 +127,16 @@ public class Main : IMain
 
         shipment.Errors.Concat(validatedAddress.Errors);
 
-        //shipment.Commodities.Add(commodity);
+        if (!destinationAddress.IsUnitedStatesAddress())
+        {
+            shipment.Commodities.Add(commodity);
+        }
 
         // 4) create generic rate details
         var rateDetails = new RateRequestDetails();
 
         // 5) get list of rates for shipment
-        var shipmentWithRates = await _rateProvider.GetRatesAsync(shipment, rateDetails, cancellationToken);
+        var shipmentWithRates = await _rateProvider.GetRatesAsync(config.Shipments.Select(x => x.shipment).ToList(), rateDetails, cancellationToken);
 
         _logger.LogWarning($"Rates Validation Warnings : {shipmentWithRates.Warnings.Count()}");
 

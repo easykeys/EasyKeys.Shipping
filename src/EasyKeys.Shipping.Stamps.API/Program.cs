@@ -70,7 +70,7 @@ app.MapPost("/getRates", async (
     IStampsRateProvider rateProvider,
     CancellationToken cancellationToken) =>
 {
-    var result = await GetShipmentRates(model, rateProvider, sender, receiver, cancellationToken);
+    var result = await GetShipmentRates(model, rateProvider, sender, receiver, null, cancellationToken);
 
     return Results.Json(result, options);
 });
@@ -83,16 +83,43 @@ app.MapPost("/createShipment", async (
     IStampsShipmentProvider shipmentProvider,
     CancellationToken cancellationToken) =>
 {
-    var shipment = await GetShipmentRates(model, rateProvider, sender, receiver, cancellationToken);
+    var shipment = await GetShipmentRates(model, rateProvider, sender, receiver, StampsServiceType.FromName(ServiceType), cancellationToken);
 
     var shipmentRequestDetails = new ShipmentRequestDetails()
     {
-        SelectedRate = shipment.Rates.Where(x => x.Name == ServiceType).FirstOrDefault()
+        SelectedRate = shipment.Rates.Where(x => x.Name == ServiceType).FirstOrDefault(),
     };
+
+    // adds printed message
+    shipmentRequestDetails.LabelOptions.Memo = "This will be orderId";
 
     var label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
 
-    await File.WriteAllBytesAsync("label.png", label.Labels[0].Bytes[0]);
+    return Results.Json(label, options);
+});
+
+app.MapPost("/createInternationalShipment", async (
+    InternationalShipmentDto model,
+    string ServiceType,
+    IStampsRateProvider rateProvider,
+    IStampsShipmentProvider shipmentProvider,
+    CancellationToken cancellationToken) =>
+{
+    var shipment = await GetShipmentRates(model, rateProvider, sender, receiver, StampsServiceType.FromName(ServiceType), cancellationToken);
+
+    var shipmentRequestDetails = new ShipmentRequestDetails()
+    {
+        SelectedRate = shipment.Rates.Where(x => x.Name == ServiceType).FirstOrDefault(),
+        CustomsInformation = new CustomsInformation() { CustomsSigner = sender.FullName },
+        DeclaredValue = model.Commodity.CustomsValue
+    };
+
+    // adds printed message
+    shipmentRequestDetails.LabelOptions.Memo = "This will be orderId";
+
+    shipment.Commodities.Add(model.Commodity);
+
+    var label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
 
     return Results.Json(label, options);
 });
@@ -142,7 +169,8 @@ app.Run();
     };
     var receiver = new ContactInfo()
     {
-        FirstName = "Customer @ EasyKeys.com",
+        FirstName = "Customer",
+        LastName = "Customer Last Name",
         Company = "BOFA",
         Email = "customer@email.com",
         Department = "IT Dept",
@@ -152,7 +180,7 @@ app.Run();
     return (sender, receiver);
 }
 
-static async Task<Shipment> GetShipmentRates(ShipmentDto model, IStampsRateProvider rateProvider, ContactInfo sender, ContactInfo receiver, CancellationToken cancellationToken)
+static async Task<Shipment> GetShipmentRates(ShipmentDto model, IStampsRateProvider rateProvider, ContactInfo sender, ContactInfo receiver, StampsServiceType? serviceType, CancellationToken cancellationToken)
 {
     // create a package
     var package = new Package(
@@ -163,11 +191,10 @@ static async Task<Shipment> GetShipmentRates(ShipmentDto model, IStampsRateProvi
         model.Package.InsuredValue,
         model.Package.SignatureRequiredOnDelivery);
 
-    var configurator = new StampsRateConfigurator(model!.Origin, model!.Destination, package, sender, receiver, model.Package.ShipDate);
+    var configurator = new StampsRateConfigurator(model!.Origin, model!.Destination, package, sender, receiver, serviceType, model.Package.ShipDate);
 
-    var (shipment, rateOptions) = configurator.Shipments.FirstOrDefault();
+    var shipments = configurator.Shipments;
 
-    // todo: fix the issue with raterequest details
-    var result = await rateProvider.GetRatesAsync(shipment, new RateRequestDetails(), cancellationToken);
+    var result = await rateProvider.GetRatesAsync(shipments.Select(x => x.shipment).ToList(), shipments.FirstOrDefault().rateOptions, cancellationToken);
     return result;
 }
