@@ -180,6 +180,8 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                 if (rate.RequiresAllOf != null)
                 {
                     addOns.AddRange(AssignRequiredAddOnTypes(rate.RequiresAllOf));
+
+                    rate.Amount += addOns.Select(x => x.Amount).Sum();
                 }
 
                 if (shipment.DestinationAddress.IsUnitedStatesAddress())
@@ -191,10 +193,16 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                         if (!rateDetails.ServiceType.Description.Contains("Express"))
                         {
                             addOns.Add(new AddOnV17() { AddOnDescription = "Signature Confirmation", AddOnType = AddOnTypeV17.USASC });
+                            rate.Amount += rate
+                                            .AddOns.FirstOrDefault(x => x.AddOnType == AddOnTypeV17.USASC)
+                                            ?.Amount ?? 0m;
                         }
                         else
                         {
                             addOns.Add(new AddOnV17() { AddOnDescription = "Delivery Confirmation", AddOnType = AddOnTypeV17.USADC });
+                            rate.Amount += rate
+                                            .AddOns.FirstOrDefault(x => x.AddOnType == AddOnTypeV17.USASC)
+                                            ?.Amount ?? 0m;
                         }
                     }
                 }
