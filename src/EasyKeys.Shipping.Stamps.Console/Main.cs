@@ -1,4 +1,8 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿using System.Text.Json;
+
+using Bet.Extensions;
+
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.AddressValidation;
@@ -8,6 +12,8 @@ using EasyKeys.Shipping.Stamps.Shipment.Models;
 using EasyKeys.Shipping.Stamps.Tracking;
 
 using Microsoft.Extensions.Options;
+
+using Models;
 
 public class Main : IMain
 {
@@ -105,6 +111,15 @@ public class Main : IMain
             PhoneNumber = "867-338-2737"
         };
 
+        var fileName = "Embeded.intnl-addresses.json";
+        //var fileName = "Embeded.domestic-addresses.json";
+        var models = LoadModels<List<RateModelDto>>(fileName);
+
+        foreach (var model in models)
+        {
+            var proposedAddress = await ValidateAsync(model.Address, true, cancellationToken);
+        }
+
         // 1) create validate address request
         var validateRequest = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
 
@@ -160,5 +175,39 @@ public class Main : IMain
         var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse, cancellationToken);
 
         return 0;
+    }
+
+    private static T LoadModels<T>(string fileName) where T : class
+    {
+        using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly(fileName);
+        var models = JsonSerializer.Deserialize(stream, typeof(T), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip }) as T;
+
+        return models;
+    }
+
+    private async Task<ValidateAddress> ValidateAsync(Address destination, bool debug = false, CancellationToken cancellationToken = default)
+    {
+        // 1. address validation
+        // for international orders, user must enter the provice/state code, not full name
+
+
+        var request = new ValidateAddress(Guid.NewGuid().ToString(), destination);
+        var result = await _addressProvider.ValidateAddressAsync(request, cancellationToken);
+
+        // var originalAddress = JsonSerializer.Serialize(validationResult.OriginalAddress, new JsonSerializerOptions() { WriteIndented = true });
+        // _logger.LogInformation(originalAddress);
+        if (request.OriginalAddress != request.ProposedAddress && debug)
+        {
+            var propsedAddress = JsonSerializer.Serialize(result.ProposedAddress, new JsonSerializerOptions() { WriteIndented = true });
+            _logger.LogInformation(propsedAddress);
+        }
+
+        if (debug)
+        {
+            // 1.a display validation bag
+            _logger.LogInformation(Environment.NewLine + result.ValidationBag.Select(x => $"{x.Key}-{x.Value}").Flatten(Environment.NewLine));
+        }
+
+        return result;
     }
 }

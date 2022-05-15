@@ -1,15 +1,18 @@
 using System.Text.Json;
 
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.AddressValidation;
+using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.AddressValidation;
-using EasyKeys.Shipping.Stamps.API.Models;
 using EasyKeys.Shipping.Stamps.Rates;
 using EasyKeys.Shipping.Stamps.Shipment;
 using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 using EasyKeys.Shipping.Stamps.Tracking;
 using EasyKeys.Shipping.Stamps.Tracking.DependencyInjection;
+
+using Minimal.Apis.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +33,15 @@ builder.Services.AddStampsRateProvider();
 builder.Services.AddStampsShipmentProvider();
 
 builder.Services.AddStampsTrackingProvider();
+
+// add fedex libraries
+builder.Services.AddFedExAddressValidation();
+
+builder.Services.AddFedExRateProvider();
+
+builder.Services.AddFedExShipmenProvider();
+
+builder.Services.AddFedExTrackingProvider();
 
 // configure json options
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
@@ -53,7 +65,7 @@ app.UseHttpsRedirection();
 (var sender, var receiver) = SetDefaultValues();
 
 // address validation recieves a proposed address.
-app.MapPost("/addressValidation", async (
+app.MapPost("/stamps/addressValidation", async (
     AddressValidationDto model,
     IStampsAddressValidationProvider addressProvider,
     CancellationToken cancellationToken) =>
@@ -62,10 +74,27 @@ app.MapPost("/addressValidation", async (
     var validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
 
     return Results.Json(validatedAddress, options);
-});
+})
+.Accepts<ShipmentDto>("application/json")
+.Produces<ValidateAddress>(StatusCodes.Status200OK, "application/json")
+.WithName("StampsAddressValidation");
+
+app.MapPost("/fedex/addressValidation", async (
+    AddressValidationDto model,
+    IFedExAddressValidationProvider addressProvider,
+    CancellationToken cancellationToken) =>
+{
+    var address = new ValidateAddress(model.Id, model!.Address);
+    var validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
+
+    return Results.Json(validatedAddress, options);
+})
+.Accepts<ShipmentDto>("application/json")
+.Produces<ValidateAddress>(StatusCodes.Status200OK, "application/json")
+.WithName("FedExAddressValidation");
 
 // getRates recieves a rate model containing destination address and package information.
-app.MapPost("/getRates", async (
+app.MapPost("/stamps/getRates", async (
     ShipmentDto model,
     IStampsRateProvider rateProvider,
     CancellationToken cancellationToken) =>
@@ -73,10 +102,45 @@ app.MapPost("/getRates", async (
     var result = await GetShipmentRates(model, rateProvider, sender, receiver, null, cancellationToken);
 
     return Results.Json(result, options);
-});
+})
+.Accepts<ShipmentDto>("application/json")
+.Produces<Shipment>(StatusCodes.Status200OK, "application/json")
+.WithName("StampsGetRates");
+
+app.MapPost("/fedex/getRates", async (
+    ShipmentDto model,
+    IFedExRateProvider rateProvider,
+    CancellationToken cancellationToken) =>
+{
+    // create a package
+    var package = new Package(
+        model!.Package!.Length,
+        model.Package.Width,
+        model.Package.Height,
+        model.Package.Weight,
+        model.Package.InsuredValue,
+        model.Package.SignatureRequiredOnDelivery);
+
+    var defaultPackage = new Package(package.Dimensions, package.Weight, package.InsuredValue, package.SignatureRequiredOnDelivery);
+
+    var config = new FedExRateConfigurator(model.Origin, model.Destination, defaultPackage);
+
+    var result = new List<Rate>();
+
+    foreach (var (shipment, serviceType) in config.Shipments)
+    {
+        var response = await rateProvider.GetRatesAsync(shipment, serviceType, cancellationToken);
+        result.AddRange(response.Rates);
+    }
+
+    return Results.Json(result, options);
+})
+.Accepts<ShipmentDto>("application/json")
+.Produces<Shipment>(StatusCodes.Status200OK, "application/json")
+.WithName("FedExGetRates");
 
 // create the shipment when rates service type is selected.
-app.MapPost("/createShipment", async (
+app.MapPost("/stamps/createShipment", async (
     ShipmentDto model,
     string ServiceType,
     IStampsRateProvider rateProvider,
@@ -96,9 +160,12 @@ app.MapPost("/createShipment", async (
     var label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
 
     return Results.Json(label, options);
-});
+})
+.Accepts<ShipmentDto>("application/json")
+.Produces<ShipmentLabel>(StatusCodes.Status200OK, "application/json")
+.WithName("StampsCreateShipment");
 
-app.MapPost("/createInternationalShipment", async (
+app.MapPost("/stamps/createInternationalShipment", async (
     InternationalShipmentDto model,
     string ServiceType,
     IStampsRateProvider rateProvider,
@@ -122,7 +189,10 @@ app.MapPost("/createInternationalShipment", async (
     var label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
 
     return Results.Json(label, options);
-});
+})
+.Accepts<InternationalShipmentDto>("application/json")
+.Produces<ShipmentLabel>(StatusCodes.Status200OK, "application/json")
+.WithName("StampsCreateInternationalShipment");
 
 // track shipment after it is created.
 app.MapGet("/trackShipment/{id}", async (
@@ -140,7 +210,7 @@ app.MapGet("/trackShipment/{id}", async (
 });
 
 // cancel a label after it is created.
-app.MapDelete("/cancelShipment/{id}", async (
+app.MapDelete("/stamps/cancelShipment/{id}", async (
     string id,
     IStampsShipmentProvider shipmentProvider,
     CancellationToken cancellationToken) =>
@@ -154,7 +224,7 @@ app.MapDelete("/cancelShipment/{id}", async (
     return Results.Json(trackingInfo, options);
 });
 
-app.Run();
+await app.RunAsync();
 
 (ContactInfo, ContactInfo) SetDefaultValues()
 {

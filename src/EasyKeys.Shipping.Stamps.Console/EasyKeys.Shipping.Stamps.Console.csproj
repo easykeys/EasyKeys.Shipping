@@ -8,6 +8,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Include="..\data\RateModelDto.cs" Link="Models\RateModelDto.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="..\data\domestic-addresses.json" Link="Embeded\domestic-addresses.json" />
+	  <EmbeddedResource Include="..\data\intnl-addresses.json" Link="Embeded\intnl-addresses.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Bet.Extensions.Templating.Console" Version="2.0.*" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
@@ -20,6 +29,10 @@
 	  <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Rates\EasyKeys.Shipping.Stamps.Rates.csproj" />
 	  <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Shipment\EasyKeys.Shipping.Stamps.Shipment.csproj" />
 	  <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Tracking\EasyKeys.Shipping.Stamps.Tracking.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Embeded\" />
 	</ItemGroup>
 
 </Project>

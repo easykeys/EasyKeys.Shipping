@@ -50,6 +50,7 @@
 	<ItemGroup Label="Others">
 		<PackageReference Update="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Update="Ardalis.SmartEnum" Version="2.1.0" />
+	    <PackageReference Update="Swashbuckle.AspNetCore" Version="6.2.3" />
 	</ItemGroup>
 
 	<ItemGroup Label="Unit Tests">

@@ -45,7 +45,7 @@ public class FedExRateProviderTests
         var destination = new Address("152 Ski Cove Ln", "Hartsville", "SC", "29550", "US");
         var package = FedExRateConfigurator.GetFedExEnvelop(weight);
 
-        var config = new FedExRateConfigurator(_origin, destination, package, DateTime.Now);
+        var config = new FedExRateConfigurator(_origin, destination, package, true, DateTime.Now);
 
         var s = config.Shipments.Any(x => x.shipment.Options.PackagingType == packageType);
         Assert.True(s);
@@ -76,10 +76,7 @@ public class FedExRateProviderTests
                 new Package(2m, 4m, 8m, 9m / 16, 20)
             };
 
-        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now)
-        {
-            SaturdayDelivery = true,
-        };
+        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now);
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
 
@@ -105,10 +102,7 @@ public class FedExRateProviderTests
                 FedExRateConfigurator.GetFedExEnvelop(0.03125M)
             };
 
-        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now.AddBusinessDays(1))
-        {
-            SaturdayDelivery = true,
-        };
+        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now.AddBusinessDays(1));
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
         var rates = await rateService.GetRatesAsync(shipment, FedExServiceType.FedExGround);
@@ -133,10 +127,7 @@ public class FedExRateProviderTests
             FedExRateConfigurator.GetFedExEnvelop(1.03125M)
         };
 
-        var shipOptions = new ShipmentOptions(FedExPackageType.FedExPak.Name, DateTime.Now.AddBusinessDays(1))
-        {
-            SaturdayDelivery = true,
-        };
+        var shipOptions = new ShipmentOptions(FedExPackageType.FedExPak.Name, DateTime.Now.AddBusinessDays(1));
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
         var rates = await rateService.GetRatesAsync(shipment);
@@ -161,10 +152,7 @@ public class FedExRateProviderTests
                 FedExRateConfigurator.GetFedExEnvelop(0.03125M)
             };
 
-        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now.AddBusinessDays(1))
-        {
-            SaturdayDelivery = true,
-        };
+        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now.AddBusinessDays(1));
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
 
@@ -191,10 +179,7 @@ public class FedExRateProviderTests
                 new Package(2m, 4m, 8m, 9m / 16,20)
             };
 
-        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now)
-        {
-            SaturdayDelivery = true,
-        };
+        var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now);
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
 
@@ -221,10 +206,7 @@ public class FedExRateProviderTests
                FedExRateConfigurator.GetFedExEnvelop(0.05M),
             };
 
-        var shipOptions = new ShipmentOptions(FedExPackageType.FedExEnvelope.Name, DateTime.Now)
-        {
-            SaturdayDelivery = true,
-        };
+        var shipOptions = new ShipmentOptions(FedExPackageType.FedExEnvelope.Name, DateTime.Now);
 
         var shipment = new Shipment(_origin, destination, packages, shipOptions);
 
@@ -248,7 +230,7 @@ public class FedExRateProviderTests
         var rateService = _sp.GetRequiredService<IFedExRateProvider>();
         var destination = new Address("550 WELLINGTON RD Dock G", "Honeywell Department", "LONDON", "ON", "N6C 0A7", "CA", isResidential: false);
         var package = FedExRateConfigurator.GetFedExEnvelop(0.03M, 7.90m, true);
-        var config = new FedExRateConfigurator(_origin, destination, package, DateTime.Now);
+        var config = new FedExRateConfigurator(_origin, destination, package, true, DateTime.Now);
         foreach (var (shipment, serviceType) in config.Shipments)
         {
             var result = await rateService.GetRatesAsync(shipment, serviceType);

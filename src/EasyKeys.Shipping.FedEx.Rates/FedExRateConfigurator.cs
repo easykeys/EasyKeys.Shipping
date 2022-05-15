@@ -9,27 +9,28 @@ public class FedExRateConfigurator
         Address origin,
         Address destination,
         Package package,
+        bool isSaturdayDelivery = true,
         DateTime? shipDate = null)
     {
         // no delay, FedEx orders are priority for business.
         var solidDate = shipDate ?? DateTime.Now;
 
         // add this options always
-        ConfigureGroundPackage(origin, destination, package, solidDate);
+        ConfigureGroundPackage(origin, destination, package, isSaturdayDelivery, solidDate);
 
         if (package.IsFedExEnvelope())
         {
-            ConfigureFedExPackage(origin, destination, package, solidDate, FedExPackageType.FedExEnvelope);
+            ConfigureFedExPackage(origin, destination, package, isSaturdayDelivery, solidDate, FedExPackageType.FedExEnvelope);
             return;
         }
 
         if (package.IsFedExPak())
         {
-            ConfigureFedExPackage(origin, destination, package, solidDate, FedExPackageType.FedExPak);
+            ConfigureFedExPackage(origin, destination, package, isSaturdayDelivery, solidDate, FedExPackageType.FedExPak);
             return;
         }
 
-        ConfigureYourPackage(origin, destination, package, solidDate);
+        ConfigureYourPackage(origin, destination, package, isSaturdayDelivery, solidDate);
     }
 
     public List<(Shipment shipment, FedExServiceType serviceType)> Shipments { get; } = new List<(Shipment shipment, FedExServiceType serviceType)>();
@@ -68,15 +69,13 @@ public class FedExRateConfigurator
         Address origin,
         Address destination,
         Package package,
+        bool isSaturdayDelivery,
         DateTime shipDate)
     {
         // in order for the package to be send via ground, yourpacking must be selected.
         var packages = new List<Package> { package };
 
-        var options = new ShipmentOptions(FedExPackageType.YourPackaging.Name, shipDate)
-        {
-            SaturdayDelivery = true,
-        };
+        var options = new ShipmentOptions(FedExPackageType.YourPackaging.Name, shipDate, isSaturdayDelivery);
 
         var shipment = new Shipment(origin, destination, packages, options);
         var serviceType = destination.IsResidential ? FedExServiceType.FedExGroundHomeDelivery : FedExServiceType.FedExGround;
@@ -94,14 +93,12 @@ public class FedExRateConfigurator
         Address origin,
         Address destination,
         Package package,
+        bool isSaturdayDelivery,
         DateTime shipDate)
     {
         var packages = new List<Package> { package };
 
-        var options = new ShipmentOptions(FedExPackageType.YourPackaging.Name, shipDate)
-        {
-            SaturdayDelivery = true,
-        };
+        var options = new ShipmentOptions(FedExPackageType.YourPackaging.Name, shipDate, isSaturdayDelivery);
 
         var shipment = new Shipment(origin, destination, packages, options);
         Shipments.Add((shipment, FedExServiceType.Default));
@@ -111,15 +108,13 @@ public class FedExRateConfigurator
         Address origin,
         Address destination,
         Package package,
+        bool isSaturdayDelivery,
         DateTime shipDate,
         FedExPackageType type)
     {
         var packages = new List<Package> { package };
 
-        var options = new ShipmentOptions(type.Name, shipDate)
-        {
-            SaturdayDelivery = true,
-        };
+        var options = new ShipmentOptions(type.Name, shipDate, isSaturdayDelivery);
 
         var shipment = new Shipment(origin, destination, packages, options);
 

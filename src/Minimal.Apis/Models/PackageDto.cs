@@ -1,4 +1,4 @@
-﻿namespace EasyKeys.Shipping.Stamps.API.Models;
+﻿namespace Minimal.Apis.Models;
 
 public class PackageDto
 {

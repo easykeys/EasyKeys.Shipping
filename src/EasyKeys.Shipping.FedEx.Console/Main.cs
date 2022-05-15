@@ -5,11 +5,12 @@ using Bet.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.AddressValidation;
-using EasyKeys.Shipping.FedEx.Console.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
 using EasyKeys.Shipping.FedEx.Shipment.Models;
 using EasyKeys.Shipping.FedEx.Tracking;
+
+using Models;
 
 namespace EasyKeys.Shipping.FedEx.Console;
 
@@ -56,9 +57,8 @@ public class Main : IMain
             postalCode: "28273",
             countryCode: "US");
 
-        var shipmentOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now)
+        var shipmentOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now, true)
         {
-            SaturdayDelivery = true,
             PreferredCurrencyCode = "USD",
         };
 
@@ -110,8 +110,10 @@ public class Main : IMain
             PhoneNumber = "444-444-4444"
         };
 
-        using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly("Embeded.intnl-addresses.json");
-        var models = JsonSerializer.Deserialize(stream, typeof(List<RateModel>), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip }) as List<RateModel>;
+        //var fileName = "Embeded.intnl-addresses.json";
+        var fileName = "Embeded.domestic-addresses.json";
+
+        var models = LoadModels<List<RateModelDto>>(fileName);
 
         foreach (var model in models)
         {
@@ -167,6 +169,14 @@ public class Main : IMain
         // MasterTrackingID element for all subsequent packages.You must return the master tracking
         // number and increment the package number(SequenceID) for subsequent packages
         return 0;
+    }
+
+    private static T LoadModels<T>(string fileName) where T : class
+    {
+        using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly(fileName);
+        var models = JsonSerializer.Deserialize(stream, typeof(T), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip }) as T;
+
+        return models;
     }
 
     private async Task<ValidateAddress> ValidateAsync(Address destination, bool debug = false, CancellationToken cancellationToken = default)

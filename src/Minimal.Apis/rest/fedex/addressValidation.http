@@ -1,7 +1,7 @@
 
 # validate the address
 
-POST https://localhost:7141/addressValidation
+POST https://{{host}}/fedex/addressValidation
 Content-Type: application/json
 
 {

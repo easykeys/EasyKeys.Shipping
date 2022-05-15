@@ -1,6 +1,6 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 
-namespace EasyKeys.Shipping.Stamps.API.Models;
+namespace Minimal.Apis.Models;
 
 public class ShipmentDto
 {

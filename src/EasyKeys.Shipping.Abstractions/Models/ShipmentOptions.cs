@@ -4,17 +4,18 @@ public class ShipmentOptions
 {
     public const string DefaultCurrencyCode = "USD";
 
-    public ShipmentOptions(string packagingType, DateTime shippingDate)
+    public ShipmentOptions(string packagingType, DateTime shippingDate, bool saturdayDelivery = true)
     {
         PackagingType = packagingType;
         ShippingDate = shippingDate;
+        SaturdayDelivery = saturdayDelivery;
     }
 
     /// <summary>
     /// <para>Enable Saturday Delivery option for shipping rates.</para>
     /// <para>The default value is false.</para>
     /// </summary>
-    public bool SaturdayDelivery { get; set; }
+    public bool SaturdayDelivery { get; }
 
     /// <summary>
     /// <para>Pickup date. Current date and time is used if not specified.</para>

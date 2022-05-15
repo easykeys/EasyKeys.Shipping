@@ -1,6 +1,6 @@
 [
 
-  
+
   {
 
     "Address": {
@@ -10,7 +10,7 @@
       "StateOrProvince": "Washington",
       "PostalCode": "98052",
       "CountryCode": "US",
-      "IsResidential": false
+      "IsResidential": true
     },
 
     "Packages": [
@@ -39,7 +39,7 @@
       "StateOrProvince": "CA",
       "PostalCode": "92507",
       "CountryCode": "US",
-      "IsResidential": false
+      "IsResidential": true
     },
 
     "Packages": [
@@ -67,7 +67,7 @@
       "StateOrProvince": "MS",
       "PostalCode": "39201",
       "CountryCode": "US",
-      "IsResidential": false
+      "IsResidential": true
     },
 
     "Packages": [
@@ -95,7 +95,7 @@
       "StateOrProvince": "IL",
       "PostalCode": "47403-8741",
       "CountryCode": "US",
-      "IsResidential": false
+      "IsResidential": true
     },
 
     "Packages": [

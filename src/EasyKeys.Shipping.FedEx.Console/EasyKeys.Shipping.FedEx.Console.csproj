@@ -7,18 +7,17 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\data\RateModelDto.cs" Link="Models\RateModelDto.cs" />
+  </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="Embeded\domestic-addresses.json" />
+    <EmbeddedResource Include="..\data\domestic-addresses.json" Link="Embeded\domestic-addresses.json" />
   </ItemGroup>
 
 
   <ItemGroup>
     <EmbeddedResource Include="..\data\intnl-addresses.json" Link="Embeded\intnl-addresses.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Embeded\domestic-addresses.json" />
   </ItemGroup>
 
   <ItemGroup>

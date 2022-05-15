@@ -1,5 +1,5 @@
 
-POST https://localhost:7141/createShipment?ServiceType=USFC
+POST https://{{host}}/fedex/getRates
 Content-Type: application/json
 
 

@@ -1,8 +1,8 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 
-namespace EasyKeys.Shipping.FedEx.Console.Models;
+namespace Models;
 
-public class RateModel
+public class RateModelDto
 {
     public Address Address { get; set; } = new Address();
 

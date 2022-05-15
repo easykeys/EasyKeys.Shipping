@@ -1,5 +1,5 @@
 
-POST https://localhost:7141/getRates
+POST https://{{host}}/stamps/getRates
 Content-Type: application/json
 
 

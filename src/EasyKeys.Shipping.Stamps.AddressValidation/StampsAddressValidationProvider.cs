@@ -1,5 +1,6 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
+using EasyKeys.Shipping.Stamps.AddressValidation.Extensions;
 
 using StampsClient.v111;
 
@@ -18,18 +19,7 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
     {
         var request = new CleanseAddressRequest()
         {
-            Address = new StampsClient.v111.Address()
-            {
-                FullName = "This is required for address validation",
-                Address1 = validateAddress.OriginalAddress.StreetLine,
-                Address2 = validateAddress.OriginalAddress.StreetLine2,
-                City = validateAddress.OriginalAddress.City,
-                State = validateAddress.OriginalAddress.IsUnitedStatesAddress() ? validateAddress.OriginalAddress.StateOrProvince : null,
-                Province = validateAddress.OriginalAddress.IsUnitedStatesAddress() ? null : validateAddress.OriginalAddress.StateOrProvince,
-                ZIPCode = validateAddress.OriginalAddress.IsUnitedStatesAddress() ? validateAddress.OriginalAddress.PostalCode : null,
-                PostalCode = validateAddress.OriginalAddress.IsUnitedStatesAddress() ? null : validateAddress.OriginalAddress.PostalCode,
-                Country = validateAddress.OriginalAddress.CountryCode,
-            }
+            Address = validateAddress.OriginalAddress.GetStampsAddress(),
         };
 
         try
@@ -88,11 +78,7 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
                 };
             }
 
-            // by pass the address validation if the address is not valid
-            if (request?.ProposedAddress != null)
-            {
-                request.ProposedAddress.IsResidential = request.OriginalAddress.IsResidential;
-            }
+            request.ProposedAddress.IsResidential = request.OriginalAddress.IsResidential;
 
             request?.ValidationBag.Add("ValidationResult", response?.AddressCleansingResult ?? "No result");
         }

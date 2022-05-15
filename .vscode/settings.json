@@ -1,0 +1,16 @@
+{
+    "rest-client.fontSize": 14,
+    "rest-client.environmentVariables": {
+        "$shared": {
+            "host": "localhost:7142",
+        }
+    },
+    "files.trimTrailingWhitespace": true,
+    "files.associations": {
+        "*.*proj": "xml",
+        "*.props": "xml",
+        "*.targets": "xml",
+        "*.tasks": "xml",
+        "Dockerfile*": "dockerfile",
+    },
+}

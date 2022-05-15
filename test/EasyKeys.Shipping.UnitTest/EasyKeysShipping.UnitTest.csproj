@@ -39,9 +39,4 @@
 		<Content Include="Data/**/*" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Usps\" />
-	</ItemGroup>
-
-
 </Project>
