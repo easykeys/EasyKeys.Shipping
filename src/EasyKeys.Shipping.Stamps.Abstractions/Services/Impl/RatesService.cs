@@ -171,9 +171,9 @@ public class RatesService : IRatesService
         }
     }
 
-    private GetRatesResponse ApplyAddOns(GetRatesResponse request, RateRequestDetails rateDetails, Shipment shipment)
+    private GetRatesResponse ApplyAddOns(GetRatesResponse response, RateRequestDetails rateDetails, Shipment shipment)
     {
-        foreach (var rate in request.Rates)
+        foreach (var rate in response.Rates)
         {
             var addOns = new List<AddOnV17>();
 
@@ -210,7 +210,7 @@ public class RatesService : IRatesService
             rate.AddOns = addOns.ToArray();
         }
 
-        return request;
+        return response;
     }
 
     /// <summary>

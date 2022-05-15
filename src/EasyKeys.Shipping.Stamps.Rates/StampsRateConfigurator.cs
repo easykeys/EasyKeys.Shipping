@@ -1,5 +1,4 @@
-﻿using EasyKeys.Shipping.Abstractions;
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Rates.Extensions;
 
@@ -17,7 +16,7 @@ public class StampsRateConfigurator
         DateTime? shipDate = null)
     {
         // helpful to make sure we have business days and not regular days.
-        var solidDate = shipDate ?? DateTime.Now.AddBusinessDays(1);
+        var solidDate = shipDate ?? DateTime.Now;
 
         serviceType ??= StampsServiceType.Unknown;
 
