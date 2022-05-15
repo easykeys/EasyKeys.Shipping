@@ -180,7 +180,13 @@ app.Run();
     return (sender, receiver);
 }
 
-static async Task<Shipment> GetShipmentRates(ShipmentDto model, IStampsRateProvider rateProvider, ContactInfo sender, ContactInfo receiver, StampsServiceType? serviceType, CancellationToken cancellationToken)
+static async Task<Shipment> GetShipmentRates(
+    ShipmentDto model,
+    IStampsRateProvider rateProvider,
+    ContactInfo sender,
+    ContactInfo receiver,
+    StampsServiceType? serviceType,
+    CancellationToken cancellationToken)
 {
     // create a package
     var package = new Package(
@@ -191,7 +197,14 @@ static async Task<Shipment> GetShipmentRates(ShipmentDto model, IStampsRateProvi
         model.Package.InsuredValue,
         model.Package.SignatureRequiredOnDelivery);
 
-    var configurator = new StampsRateConfigurator(model!.Origin, model!.Destination, package, sender, receiver, serviceType, model.Package.ShipDate);
+    var configurator = new StampsRateConfigurator(
+        model.Origin!,
+        model.Destination!,
+        package,
+        sender,
+        receiver,
+        serviceType,
+        model.Package.ShipDate);
 
     var shipments = configurator.Shipments;
 

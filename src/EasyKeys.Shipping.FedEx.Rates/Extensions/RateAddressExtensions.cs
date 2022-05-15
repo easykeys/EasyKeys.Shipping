@@ -14,11 +14,15 @@ public static class RateAddressExtensions
     {
         address = address ?? throw new ArgumentNullException(nameof(address));
 
+        var stateOrProvince = (!address.IsUnitedStatesAddress() && address?.StateOrProvince?.Trim()?.Length > 2)
+            ? string.Empty
+            : address?.StateOrProvince ?? string.Empty;
+
         return new RateClient.v28.Address
         {
             StreetLines = address.GetStreetLines(),
             City = address.City?.Trim(),
-            StateOrProvinceCode = address.StateOrProvince?.Trim(),
+            StateOrProvinceCode = stateOrProvince,
             PostalCode = address.PostalCode?.Trim(),
             CountryCode = address.CountryCode?.Trim(),
             CountryName = address.GetCountryName(),

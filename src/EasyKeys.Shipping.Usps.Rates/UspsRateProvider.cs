@@ -4,7 +4,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Usps.Abstractions.Options;
@@ -288,7 +287,7 @@ public class UspsRateProvider : IUspsRateProvider
                 //  <Girth></Girth>
                 //  <CommercialFlag>N</CommercialFlag>
                 // </Package>
-                var container = shipment.Options.PackagingType.Replace("_", " ");
+                var container = shipment.Options.PackagingType?.Replace("_", " ");
 
                 writer.WriteStartElement("Package");
                 writer.WriteAttributeString("ID", i.ToString());

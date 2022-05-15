@@ -80,6 +80,14 @@ public class Package
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Package"/> class.
+    /// Required for json serialization.
+    /// </summary>
+    public Package()
+    {
+    }
+
     public Dimensions Dimensions { get; set; }
 
     public decimal InsuredValue { get; set; } = 20;

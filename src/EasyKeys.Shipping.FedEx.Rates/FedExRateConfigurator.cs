@@ -70,6 +70,7 @@ public class FedExRateConfigurator
         Package package,
         DateTime shipDate)
     {
+        // in order for the package to be send via ground, yourpacking must be selected.
         var packages = new List<Package> { package };
 
         var options = new ShipmentOptions(FedExPackageType.YourPackaging.Name, shipDate)
@@ -79,6 +80,12 @@ public class FedExRateConfigurator
 
         var shipment = new Shipment(origin, destination, packages, options);
         var serviceType = destination.IsResidential ? FedExServiceType.FedExGroundHomeDelivery : FedExServiceType.FedExGround;
+
+        if (!destination.IsUnitedStatesAddress())
+        {
+            // it becomes FedEx International Ground®
+            serviceType = FedExServiceType.FedExGround;
+        }
 
         Shipments.Add((shipment, serviceType));
     }

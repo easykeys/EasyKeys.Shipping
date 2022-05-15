@@ -252,7 +252,13 @@ public class FedExRateProviderTests
         foreach (var (shipment, serviceType) in config.Shipments)
         {
             var result = await rateService.GetRatesAsync(shipment, serviceType);
+
             Assert.True(result.Rates.Count > 0);
+
+            foreach (var rate in result.Rates)
+            {
+                _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+            }
         }
     }
 

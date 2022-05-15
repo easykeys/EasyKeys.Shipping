@@ -70,6 +70,9 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
     // 21
     public static readonly FedExServiceType FedExStandardOvernight = new FedExStandardOvernightType();
 
+    // 22
+    public static readonly FedExServiceType FedExInternationalPriorityExpress = new FedExInternationalPriorityExpressType();
+
     private FedExServiceType(string name, int value) : base(name, value)
     {
     }
@@ -231,7 +234,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
 
     private sealed class FedExInternationalPriorityType : FedExServiceType
     {
-        public FedExInternationalPriorityType() : base("INTERNATIONAL_PRIORITY", 17)
+        public FedExInternationalPriorityType() : base("FEDEX_INTERNATIONAL_PRIORITY", 17)
         {
         }
 
@@ -272,5 +275,14 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
         }
 
         public override string ServiceName => "FedEx Standard Overnight";
+    }
+
+    private sealed class FedExInternationalPriorityExpressType : FedExServiceType
+    {
+        public FedExInternationalPriorityExpressType() : base("FEDEX_INTERNATIONAL_PRIORITY_EXPRESS", 22)
+        {
+        }
+
+        public override string ServiceName => "FedEx International Priority Express";
     }
 }

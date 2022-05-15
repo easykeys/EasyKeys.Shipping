@@ -36,12 +36,6 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
     {
         try
         {
-            // don't waste resources
-            if (!AddressAttributes.SupportedCountries.ContainsKey(request.OriginalAddress.CountryCode))
-            {
-                return request;
-            }
-
             var client = _addressValidationClient;
             var wrap = CreateRequest(request);
 

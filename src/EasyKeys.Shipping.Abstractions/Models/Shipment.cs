@@ -58,11 +58,6 @@ public class Shipment
     public virtual IList<Rate> Rates { get; } = new List<Rate>();
 
     /// <summary>
-    ///  Warnings returned by service provder (e.g. 'Street Address, City, State, and Zip are valid, but a suite or apt number may be missing.').
-    /// </summary>
-    public IList<Error> Warnings { get; set; } = new List<Error>();
-
-    /// <summary>
     ///     Errors returned by service provider (e.g. 'Wrong postal code').
     /// </summary>
     public IList<Error> Errors { get; } = new List<Error>();

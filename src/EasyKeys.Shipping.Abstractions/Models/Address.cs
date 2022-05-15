@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 
 namespace EasyKeys.Shipping.Abstractions.Models;
 
@@ -131,5 +132,19 @@ public class Address
         var usAndTerritories = new List<string> { "AS", "GU", "MP", "PR", "UM", "VI", "US" };
 
         return usAndTerritories.Contains(CountryCode);
+    }
+
+    public override string ToString()
+    {
+        var builder = new StringBuilder();
+        builder.AppendFormat(
+            "{0} {1}, {2}, {3}, {4}, {5}",
+            StreetLine,
+            StreetLine2,
+            City,
+            StateOrProvince,
+            PostalCode,
+            CountryCode);
+        return builder.ToString();
     }
 }

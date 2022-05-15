@@ -41,15 +41,13 @@ public class FedExRateProvider : IFedExRateProvider
             serviceType = FedExServiceType.Default;
         }
 
-        var client = _rateClient;
-
         try
         {
             var request = CreateRateRequest(shipment, serviceType);
 
             var serviceRequest = new getRatesRequest(request);
 
-            var reply = await client.getRatesAsync(serviceRequest);
+            var reply = await _rateClient.getRatesAsync(serviceRequest);
 
             if (reply.RateReply != null)
             {
@@ -109,7 +107,11 @@ public class FedExRateProvider : IFedExRateProvider
                     Amount = shipment.Packages.Sum(x => x.InsuredValue),
                     AmountSpecified = true,
                 }
-            }
+            },
+            CarrierCodes = new[] {
+                    CarrierCodeType.FDXE,
+                    CarrierCodeType.FDXG
+                }
         };
 
         if (shipment.DestinationAddress.IsUnitedStatesAddress())

@@ -138,8 +138,6 @@ public class Main : IMain
         // 5) get list of rates for shipment
         var shipmentWithRates = await _rateProvider.GetRatesAsync(config.Shipments.Select(x => x.shipment).ToList(), rateDetails, cancellationToken);
 
-        _logger.LogWarning($"Rates Validation Warnings : {shipmentWithRates.Warnings.Count()}");
-
         _logger.LogError($"Rates Validation Errors : {shipmentWithRates.Errors.Count()}");
 
         // user chooses which type of service

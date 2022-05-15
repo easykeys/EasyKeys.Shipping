@@ -3,6 +3,10 @@ using EasyKeys.Shipping.FedEx.Abstractions.Models;
 
 namespace EasyKeys.Shipping.FedEx.Rates;
 
+/// <summary>
+/// <para>Provides the implementation of the FedEx shipping rate provider.</para>
+/// <para>Live calculator <see href="https://www.fedex.com/en-us/online/rating.html#"/>.</para>
+/// </summary>
 public interface IFedExRateProvider
 {
     /// <summary>

@@ -5,6 +5,7 @@ using Bet.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.AddressValidation;
+using EasyKeys.Shipping.FedEx.Console.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
 using EasyKeys.Shipping.FedEx.Shipment.Models;
@@ -54,36 +55,6 @@ public class Main : IMain
             stateOrProvince: "NC",
             postalCode: "28273",
             countryCode: "US");
-
-        var packages = new List<Package>
-        {
-            new Package(
-                new Dimensions()
-                {
-                    Height = 20.00M,
-                    Width = 20.00M,
-                    Length = 20.00M
-                },
-                125.0M),
-
-            new Package(
-                new Dimensions()
-                {
-                    Height = 10.00M,
-                    Width = 10.00M,
-                    Length = 10.00M
-                },
-                80.0M),
-
-            // new Package(
-            //    new Dimensions()
-            //    {
-            //        Height = 11.00M,
-            //        Width = 11.00M,
-            //        Length = 11.00M
-            //    },
-            //    40.0M)
-        };
 
         var shipmentOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now)
         {
@@ -139,55 +110,52 @@ public class Main : IMain
             PhoneNumber = "444-444-4444"
         };
 
-        using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly("Embeded.Addresses.json");
-        var addressList = JsonSerializer.Deserialize(stream, typeof(List<Address>)) as List<Address>;
+        using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly("Embeded.intnl-addresses.json");
+        var models = JsonSerializer.Deserialize(stream, typeof(List<RateModel>), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip }) as List<RateModel>;
 
-        var count = 0;
-        foreach (var address in addressList)
+        foreach (var model in models)
         {
-            // 1. address validation
+            var proposedAddress = await ValidateAsync(model.Address, false, cancellationToken);
+            var defaultPackage = new Package(model.Packages[0].Dimensions, model.Packages[0].Weight, 100m, false);
 
-            // for international orders, user must enter the provice/state code, not full name
-            var validateRequest = new ValidateAddress(count.ToString(), address);
-            var validationResult = await _validationClient.ValidateAddressAsync(validateRequest, cancellationToken);
-            count++;
+            var config = new FedExRateConfigurator(originAddress, proposedAddress.ProposedAddress, defaultPackage);
 
-            // state is verified
-            _logger.LogInformation(validationResult.ValidationBag.Select(x => $"{x.Key}-{x.Value}").Flatten(","));
-
-            var shipment = new Shipping.Abstractions.Models.Shipment(
-                originAddress,
-                validationResult?.ProposedAddress ?? originAddress,
-                packages,
-                shipmentOptions)
+            _logger.LogInformation("Rates for: {address}", proposedAddress.ProposedAddress.ToString());
+            foreach (var (shipment, serviceType) in config.Shipments)
             {
-                SenderInfo = sender,
-                RecipientInfo = recipient
-            };
+                // 2. shipment rates
+                var rates = await _fedexRateProvider.GetRatesAsync(shipment, serviceType, cancellationToken);
+                if (rates.Errors.Any())
+                {
+                    var errors = rates.Errors.Select(x => x.Description).Flatten(",");
+                    _logger.LogError(errors);
+                }
 
-            shipment.Commodities.Add(commodity);
+                foreach (var rate in rates.Rates)
+                {
+                    _logger.LogInformation("{serviceName} - {name} - {cost}", rate.ServiceName, rate.Name, rate.TotalCharges2);
+                }
 
-            // 2. shipment rates
-            var rates = await _fedexRateProvider.GetRatesAsync(
-                shipment: shipment,
-                serviceType: shipment.DestinationAddress.CountryCode == "US" ? FedExServiceType.FedExSecondDay : FedExServiceType.FedExInternationalEconomy,
-                cancellationToken);
-
-            if (shipment.DestinationAddress.CountryCode != "US")
-            {
-                details.CollectOnDelivery.Activated = false;
+                shipment.SenderInfo = sender;
+                shipment.RecipientInfo = recipient;
+                shipment.Commodities.Add(commodity);
             }
 
-            // 3. get shipment label
-            var result = await _fedExShipmentProvider.CreateShipmentAsync(
-                serviceType: shipment.DestinationAddress.CountryCode == "US" ? FedExServiceType.FedExSecondDay : FedExServiceType.FedExInternationalEconomy,
-                shipment,
-                details,
-                cancellationToken);
+            //if (shipment.DestinationAddress.CountryCode != "US")
+            //{
+            //    details.CollectOnDelivery.Activated = false;
+            //}
 
-            await File.WriteAllBytesAsync("label.png", result.Labels[0].Bytes[0]);
+            //// 3. get shipment label
+            //var result = await _fedExShipmentProvider.CreateShipmentAsync(
+            //    serviceType: shipment.DestinationAddress.CountryCode == "US" ? FedExServiceType.FedExSecondDay : FedExServiceType.FedExInternationalEconomy,
+            //    shipment,
+            //    details,
+            //    cancellationToken);
 
-            var info = await _fedExTrackingProvider.TrackShipmentAsync(result, cancellationToken);
+            //await File.WriteAllBytesAsync("label.png", result.Labels[0].Bytes[0]);
+
+            //var info = await _fedExTrackingProvider.TrackShipmentAsync(result, cancellationToken);
         }
 
         // A multiple - package shipment(MPS) consists of two or more packages shipped to the same recipient.
@@ -199,5 +167,29 @@ public class Main : IMain
         // MasterTrackingID element for all subsequent packages.You must return the master tracking
         // number and increment the package number(SequenceID) for subsequent packages
         return 0;
+    }
+
+    private async Task<ValidateAddress> ValidateAsync(Address destination, bool debug = false, CancellationToken cancellationToken = default)
+    {
+        // 1. address validation
+        // for international orders, user must enter the provice/state code, not full name
+        var request = new ValidateAddress(Guid.NewGuid().ToString(), destination);
+        var result = await _validationClient.ValidateAddressAsync(request, cancellationToken);
+
+        // var originalAddress = JsonSerializer.Serialize(validationResult.OriginalAddress, new JsonSerializerOptions() { WriteIndented = true });
+        // _logger.LogInformation(originalAddress);
+        if (request.OriginalAddress != request.ProposedAddress && debug)
+        {
+            var propsedAddress = JsonSerializer.Serialize(result.ProposedAddress, new JsonSerializerOptions() { WriteIndented = true });
+            _logger.LogInformation(propsedAddress);
+        }
+
+        if (debug)
+        {
+            // 1.a display validation bag
+            _logger.LogInformation(Environment.NewLine + result.ValidationBag.Select(x => $"{x.Key}-{x.Value}").Flatten(Environment.NewLine));
+        }
+
+        return result;
     }
 }

@@ -69,7 +69,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.Ad
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.Tracking", "src\EasyKeys.Shipping.Stamps.Tracking\EasyKeys.Shipping.Stamps.Tracking.csproj", "{69AD45D6-E45C-4E91-8D32-F4F1DA767660}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Stamps.API", "src\EasyKeys.Shipping.Stamps.API\EasyKeys.Shipping.Stamps.API.csproj", "{2A9DAD46-E0D9-4EBE-B4C6-482C7C7C1B30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.Stamps.API", "src\EasyKeys.Shipping.Stamps.API\EasyKeys.Shipping.Stamps.API.csproj", "{2A9DAD46-E0D9-4EBE-B4C6-482C7C7C1B30}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{2A75488A-57B5-4CB0-B931-6327BA96B445}"
+	ProjectSection(SolutionItems) = preProject
+		src\data\intnl-addresses.json = src\data\intnl-addresses.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -336,6 +341,7 @@ Global
 		{0759B8E0-BE7C-4771-8E13-13C83BAD3E82} = {C8221B09-84F2-4A06-A6CA-7E89238E5EB2}
 		{69AD45D6-E45C-4E91-8D32-F4F1DA767660} = {C8221B09-84F2-4A06-A6CA-7E89238E5EB2}
 		{2A9DAD46-E0D9-4EBE-B4C6-482C7C7C1B30} = {C8221B09-84F2-4A06-A6CA-7E89238E5EB2}
+		{2A75488A-57B5-4CB0-B931-6327BA96B445} = {BCBBDD1A-FF30-41E8-B7C1-9BB2A441FF83}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0FBE81B8-162F-4342-BABD-0FFFD0C99331}
