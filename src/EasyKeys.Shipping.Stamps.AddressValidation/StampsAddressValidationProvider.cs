@@ -45,6 +45,10 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
         catch (Exception ex)
         {
             validateAddress.InternalErrors.Add(ex.Message);
+            validateAddress.ValidationBag.Add("CityStateZipOK", "false");
+            validateAddress.ValidationBag.Add("AddressMatch", "false");
+            validateAddress.ValidationBag.Add("ValidationResult", ex.Message);
+
             return validateAddress;
         }
     }
