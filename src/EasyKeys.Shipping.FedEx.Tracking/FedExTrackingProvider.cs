@@ -25,7 +25,7 @@ public class FedExTrackingProvider : IFedExTrackingProvider
         _fedExClient = fedExClient.CreateTrackClient() ?? throw new ArgumentNullException(nameof(fedExClient));
     }
 
-    public async Task<TrackingInformation> TrackShipmentAsync(ShipmentLabel label, CancellationToken cancellation)
+    public async Task<TrackingInformation> TrackShipmentAsync(string trackingId, CancellationToken cancellation)
     {
         var trackingInformation = new TrackingInformation() { TrackingEvents = new List<TrackingEvent>() };
 
@@ -70,7 +70,7 @@ public class FedExTrackingProvider : IFedExTrackingProvider
                         PackageIdentifier = new TrackPackageIdentifier()
                         {
                             Type = TrackIdentifierType.TRACKING_NUMBER_OR_DOORTAG,
-                            Value = label.Labels.FirstOrDefault().TrackingId
+                            Value = trackingId
                         },
                         ShipmentAccountNumber = string.Empty,
                         SecureSpodAccount = string.Empty,

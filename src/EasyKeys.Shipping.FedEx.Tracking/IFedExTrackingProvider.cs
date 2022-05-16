@@ -4,6 +4,6 @@ namespace EasyKeys.Shipping.FedEx.Tracking
 {
     public interface IFedExTrackingProvider
     {
-        Task<TrackingInformation> TrackShipmentAsync(ShipmentLabel label, CancellationToken cancellation);
+        Task<TrackingInformation> TrackShipmentAsync(string trackingId, CancellationToken cancellation);
     }
 }

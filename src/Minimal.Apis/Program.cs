@@ -137,7 +137,7 @@ app.MapPost("/fedex/getRates", async (
         result.AddRange(response.Rates);
     }
 
-    return Results.Json(result, options);
+    return Results.Json(result.OrderBy(x => x.TotalCharges), options);
 })
 .Accepts<ShipmentDto>("application/json")
 .Produces<Shipment>(StatusCodes.Status200OK, "application/json")
@@ -204,11 +204,7 @@ app.MapGet("/trackShipment/{id}", async (
     IStampsTrackingProvider trackingProvider,
     CancellationToken cancellationToken) =>
 {
-    var labelInfo = new ShipmentLabel();
-
-    labelInfo.Labels.Add(new PackageLabelDetails() { TrackingId = id });
-
-    var trackingInfo = await trackingProvider.TrackShipmentAsync(labelInfo, cancellationToken);
+    var trackingInfo = await trackingProvider.TrackShipmentAsync(id, cancellationToken);
 
     return Results.Json(trackingInfo, options);
 });
@@ -219,13 +215,9 @@ app.MapDelete("/stamps/cancelShipment/{id}", async (
     IStampsShipmentProvider shipmentProvider,
     CancellationToken cancellationToken) =>
 {
-    var labelInfo = new ShipmentLabel();
+    var result = await shipmentProvider.CancelShipmentAsync(id, cancellationToken);
 
-    labelInfo.Labels.Add(new PackageLabelDetails() { TrackingId = id });
-
-    var trackingInfo = await shipmentProvider.CancelShipmentAsync(labelInfo, cancellationToken);
-
-    return Results.Json(trackingInfo, options);
+    return Results.Json(result, options);
 });
 
 await app.RunAsync();
@@ -277,7 +269,6 @@ static async Task<List<Shipment>> GetShipmentRates(
         package,
         sender,
         receiver,
-        serviceType,
         model.Package.ShipDate);
 
     var shipments = new List<Shipment>();

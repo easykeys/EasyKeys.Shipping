@@ -14,14 +14,14 @@ namespace EasyKeys.Shipping.Stamps.Tracking
             _stampsClient = stampsClient;
         }
 
-        public async Task<TrackingInformation> TrackShipmentAsync(ShipmentLabel shipmentLabel, CancellationToken cancellationToken)
+        public async Task<TrackingInformation> TrackShipmentAsync(string trackingId, CancellationToken cancellationToken)
         {
             var trackingInformation = new TrackingInformation();
 
             var trackRequest = new TrackShipmentRequest()
             {
                 Item = await _stampsClient.GetTokenAsync(cancellationToken),
-                Item1 = shipmentLabel.Labels.FirstOrDefault().TrackingId,
+                Item1 = trackingId,
                 Carrier = Carrier.All
             };
 

@@ -4,6 +4,6 @@ namespace EasyKeys.Shipping.Stamps.Tracking
 {
     public interface IStampsTrackingProvider
     {
-        Task<TrackingInformation> TrackShipmentAsync(ShipmentLabel shipmentLabel, CancellationToken cancellationToken);
+        Task<TrackingInformation> TrackShipmentAsync(string trackingId, CancellationToken cancellationToken);
     }
 }

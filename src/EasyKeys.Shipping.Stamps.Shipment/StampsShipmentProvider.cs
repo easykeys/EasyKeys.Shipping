@@ -206,13 +206,13 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         }
     }
 
-    public async Task<CancelIndiciumResponse> CancelShipmentAsync(ShipmentLabel shipmentLabel, CancellationToken cancellationToken)
+    public async Task<CancelIndiciumResponse> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken)
     {
         var client = _stampsClient.CreateClient();
 
         var request = new CancelIndiciumRequest()
         {
-            Item1 = shipmentLabel.Labels[0].TrackingId
+            Item1 = trackingId
         };
         try
         {

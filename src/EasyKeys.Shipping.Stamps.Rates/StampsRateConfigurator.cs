@@ -1,9 +1,14 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Rates.Extensions;
 
 namespace EasyKeys.Shipping.Stamps.Rates;
 
+/// <summary>
+/// Generates a list of shipments and rate details.
+/// These shipments are composed of the smallest and best priced packaging type for the service requested.
+/// </summary>
 public class StampsRateConfigurator
 {
     public StampsRateConfigurator(
@@ -12,52 +17,19 @@ public class StampsRateConfigurator
         Package package,
         ContactInfo sender,
         ContactInfo receiver,
-        StampsServiceType? serviceType = null,
         DateTime? shipDate = null)
     {
         // helpful to make sure we have business days and not regular days.
         var solidDate = shipDate ?? DateTime.Now;
 
-        serviceType ??= StampsServiceType.Unknown;
-
         // configure possible shipments
-        if (serviceType == StampsServiceType.Unknown ||
-            (!serviceType.Description.Contains("First Class") && !serviceType.Description.Contains("Priority")))
+        if (destination.IsUnitedStatesAddress())
         {
-            if (destination.IsUnitedStatesAddress())
-            {
-                CreateDomesticShipments(origin, destination, package, sender, receiver, serviceType, solidDate);
-            }
-            else
-            {
-                CreateInternationalShipments(origin, destination, package, sender, receiver, serviceType, solidDate);
-            }
+            CreateDomesticShipments(origin, destination, package, sender, receiver, solidDate);
         }
-
-        // first class is chosen, configure 1 shipment for first class.
-        else if (serviceType.Description.Contains("First Class"))
+        else
         {
-            if (destination.IsUnitedStatesAddress())
-            {
-                ConfigureDomesticFirstClass(origin, destination, package, sender, receiver, solidDate);
-            }
-            else
-            {
-                ConfigureIntlFirstClass(origin, destination, package, sender, receiver, solidDate);
-            }
-        }
-
-        // if priority or priority express is chosen, configure 1 shipment for priority
-        else if (serviceType.Description.Contains("Priority"))
-        {
-            if (destination.IsUnitedStatesAddress())
-            {
-                ConfigureDomesticPriority(origin, destination, package, sender, receiver, serviceType, solidDate);
-            }
-            else
-            {
-                ConfigureIntlPriority(origin, destination, package, sender, receiver, serviceType, solidDate);
-            }
+            CreateInternationalShipments(origin, destination, package, sender, receiver, solidDate);
         }
     }
 
@@ -219,17 +191,16 @@ public class StampsRateConfigurator
         Package package,
         ContactInfo sender,
         ContactInfo receiver,
-        StampsServiceType serviceType,
         DateTime shipDate)
     {
         if (package.DimensionsExceedFirstClassInternationalService())
         {
-            ConfigureIntlPriority(origin, destination, package, sender, receiver, serviceType, shipDate);
+            ConfigureIntlPriority(origin, destination, package, sender, receiver, shipDate);
         }
         else
         {
             ConfigureIntlFirstClass(origin, destination, package, sender, receiver, shipDate);
-            ConfigureIntlPriority(origin, destination, package, sender, receiver, serviceType, shipDate);
+            ConfigureIntlPriority(origin, destination, package, sender, receiver, shipDate);
         }
     }
 
@@ -239,18 +210,17 @@ public class StampsRateConfigurator
         Package package,
         ContactInfo sender,
         ContactInfo receiver,
-        StampsServiceType serviceType,
         DateTime shipDate)
     {
-        // if package weight is > 1 lb only configure priority
+        // 1 lb = 16 oz, must be less than 15.99
         if (package.Weight > 0.999375m)
         {
-            ConfigureDomesticPriority(origin, destination, package, sender, receiver, serviceType, shipDate);
+            ConfigureDomesticPriority(origin, destination, package, sender, receiver, shipDate);
         }
         else
         {
             ConfigureDomesticFirstClass(origin, destination, package, sender, receiver, shipDate);
-            ConfigureDomesticPriority(origin, destination, package, sender, receiver, serviceType, shipDate);
+            ConfigureDomesticPriority(origin, destination, package, sender, receiver, shipDate);
         }
     }
 
@@ -289,7 +259,6 @@ public class StampsRateConfigurator
         Package package,
         ContactInfo sender,
         ContactInfo receiver,
-        StampsServiceType serviceType,
         DateTime shipDate)
     {
         if (package.Weight > 70)
@@ -299,7 +268,7 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageType = GetFlatRatePackage(package, serviceType);
+        var packageType = GetFlatRatePackage(package);
 
         var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
@@ -308,6 +277,11 @@ public class StampsRateConfigurator
             SenderInfo = sender,
             RecipientInfo = receiver
         };
+
+        if (Shipments.Any(x => x.shipment.Options.PackagingType == packageType.Name))
+        {
+            return;
+        }
 
         Shipments.Add((shipment, new RateRequestDetails()));
     }
@@ -327,9 +301,8 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        // will need to add commodity & customs information here.
-
         var packageType = package.IsInternationalLargeEnvelope() ? PackageType.LargeEnvelopeOrFlat : PackageType.Package;
+
         var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
         var shipment = new Shipment(origin, destination, packages, shipOptions)
@@ -347,7 +320,6 @@ public class StampsRateConfigurator
         Package package,
         ContactInfo sender,
         ContactInfo receiver,
-        StampsServiceType serviceType,
         DateTime shipDate)
     {
         if (package.Weight > 70)
@@ -357,11 +329,9 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageType = GetInternationalFlatRatePackage(package, serviceType);
+        var packageType = GetInternationalFlatRatePackage(package);
 
         var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
-
-        // will need to add commodity & customs information here.
 
         var shipment = new Shipment(origin, destination, packages, shipOptions)
         {
@@ -369,13 +339,17 @@ public class StampsRateConfigurator
             RecipientInfo = receiver
         };
 
+        if (Shipments.Any(x => x.shipment.Options.PackagingType == packageType.Name))
+        {
+            return;
+        }
+
         Shipments.Add((shipment, new RateRequestDetails()));
     }
 
-    private PackageType GetFlatRatePackage(Package package, StampsServiceType serviceType)
+    private PackageType GetFlatRatePackage(Package package)
     {
         // sequence from smallest to largest
-
         if (package.IsFlatRateEnvelope())
         {
             return PackageType.FlatRatePaddedEnvelope;
@@ -389,11 +363,6 @@ public class StampsRateConfigurator
         if (package.IsLegalFlatRateEnvelope())
         {
             return PackageType.FlatRatePaddedEnvelope;
-        }
-
-        if (serviceType == StampsServiceType.PriorityExpress)
-        {
-            return PackageType.Package;
         }
 
         if (package.IsSmallFlatRateBox())
@@ -414,7 +383,7 @@ public class StampsRateConfigurator
         return PackageType.Package;
     }
 
-    private PackageType GetInternationalFlatRatePackage(Package package, StampsServiceType serviceType)
+    private PackageType GetInternationalFlatRatePackage(Package package)
     {
         if (package.IsInternationalFlatRateEnvelope())
         {
@@ -429,11 +398,6 @@ public class StampsRateConfigurator
         if (package.IsInternationalLegalFlatRateEnvelope())
         {
             return PackageType.LegalFlatRateEnvelope;
-        }
-
-        if (serviceType == StampsServiceType.PriorityExpressInternational)
-        {
-            return PackageType.Package;
         }
 
         if (package.IsInternationalSmallFlatRateBox())

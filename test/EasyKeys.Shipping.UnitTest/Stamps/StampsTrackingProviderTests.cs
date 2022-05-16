@@ -1,6 +1,5 @@
 ﻿using Bet.Extensions.Testing.Logging;
 
-using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Tracking;
 using EasyKeys.Shipping.Stamps.Tracking.DependencyInjection;
 
@@ -23,14 +22,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
         [Fact]
         public async Task Track_Shipment_Successfully()
         {
-            var shipmentLabel = new ShipmentLabel();
-
-            shipmentLabel.Labels.Add(new PackageLabelDetails()
-            {
-                TrackingId = "9400111298370020264221"
-            });
-
-            var result = await _trackingProvider.TrackShipmentAsync(shipmentLabel, CancellationToken.None);
+            var result = await _trackingProvider.TrackShipmentAsync("9400111298370020264221", CancellationToken.None);
 
             Assert.NotNull(result);
         }

@@ -25,9 +25,11 @@ public class StampsRateProvider : IStampsRateProvider
         {
             var rates = await _ratesService.GetRatesResponseAsync(shipment, rateRequestDetails, cancellationToken);
 
+            var packageType = PackageType.FromName(shipment.Options.PackagingType);
+
             foreach (var rate in rates)
             {
-                shipment.Rates.Add(new Rate($"{rate.ServiceType}", rate.ServiceDescription, rate.Amount, rate.DeliveryDate));
+                shipment.Rates.Add(new Rate($"{rate.ServiceType}", $"{rate.ServiceDescription} - {packageType.Description} ({packageType.Dimensions.Length}x{packageType.Dimensions.Width}x{packageType.Dimensions.Height})", rate.Amount, rate.DeliveryDate));
 
                 _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");
 

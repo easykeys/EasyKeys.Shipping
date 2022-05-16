@@ -171,9 +171,9 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
             }
         }
 
-        private GetRatesResponse ApplyAddOns(GetRatesResponse request, RateRequestDetails rateDetails, Shipment shipment)
+        private GetRatesResponse ApplyAddOns(GetRatesResponse response, RateRequestDetails rateDetails, Shipment shipment)
         {
-            foreach (var rate in request.Rates)
+            foreach (var rate in response.Rates)
             {
                 var addOns = new List<AddOnV17>();
 
@@ -210,7 +210,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                 rate.AddOns = addOns.ToArray();
             }
 
-            return request;
+            return response;
         }
 
         /// <summary>
@@ -267,6 +267,12 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
             request.Rate.Width = (double)shipment.Packages.FirstOrDefault().Dimensions.Width;
 
             request.Rate.Height = (double)shipment.Packages.FirstOrDefault().Dimensions.Height;
+
+            // priority express & priority express international service types do not except any box package types
+            if (request.Rate.ServiceType == ServiceType.USXM || request.Rate.ServiceType == ServiceType.USEMI)
+            {
+                request.Rate.PackageType = request.Rate.PackageType.ToString().Contains("Box") ? PackageTypeV11.Package : request.Rate.PackageType;
+            }
 
             return request;
         }

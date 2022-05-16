@@ -1,6 +1,5 @@
 ﻿using Bet.Extensions.Testing.Logging;
 
-using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Tracking;
 
 using Microsoft.Extensions.Configuration;
@@ -27,14 +26,7 @@ public class FedExTrackingProviderTests
     [InlineData("272719656012")]
     public async Task Track_Shipment_Successfully(string trackingId)
     {
-        var shipmentLabel = new ShipmentLabel();
-
-        shipmentLabel.Labels.Add(new PackageLabelDetails()
-        {
-            TrackingId = trackingId
-        });
-
-        var result = await _trackingProvider.TrackShipmentAsync(shipmentLabel, CancellationToken.None);
+        var result = await _trackingProvider.TrackShipmentAsync(trackingId, CancellationToken.None);
 
         Assert.NotNull(result.TrackingEvents);
     }

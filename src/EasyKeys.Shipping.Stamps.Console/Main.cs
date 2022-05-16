@@ -151,7 +151,7 @@ public class Main : IMain
         var rateDetails = new RateRequestDetails();
 
         // 5) get list of rates for shipment
-        var shipmentWithRates = await _rateProvider.GetRatesAsync(config.Shipments.Select(x => x.shipment).ToList(), rateDetails, cancellationToken);
+        var shipmentWithRates = await _rateProvider.GetRatesAsync(config.Shipments.FirstOrDefault().shipment, rateDetails, cancellationToken);
 
         _logger.LogError($"Rates Validation Errors : {shipmentWithRates.Errors.Count()}");
 
@@ -170,9 +170,9 @@ public class Main : IMain
 
         await File.WriteAllBytesAsync("label.png", shipmentResponse.Labels[0].Bytes[0]);
 
-        var trackingInfo = await _trackingProvider.TrackShipmentAsync(shipmentResponse, cancellationToken);
+        var trackingInfo = await _trackingProvider.TrackShipmentAsync(shipmentResponse.Labels[0].TrackingId, cancellationToken);
 
-        var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse, cancellationToken);
+        var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse.Labels[0].TrackingId, cancellationToken);
 
         return 0;
     }

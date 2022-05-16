@@ -9,6 +9,6 @@ namespace EasyKeys.Shipping.Stamps.Shipment
     {
         Task<ShipmentLabel> CreateShipmentAsync(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, CancellationToken cancellationToken);
 
-        Task<CancelIndiciumResponse> CancelShipmentAsync(ShipmentLabel shipmentLabel, CancellationToken cancellationToken);
+        Task<CancelIndiciumResponse> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken);
     }
 }
