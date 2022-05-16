@@ -30,7 +30,7 @@ public class StampsRateConfiguratorTests
     [Fact]
     public void Throw_Exception_When_Weight_Is_Greater_Than_70lbs()
     {
-        var shipment = TestShipments.CreateDomesticShipment().First();
+        var shipment = TestShipments.CreateDomesticShipment();
 
         Assert.Throws<ArgumentException>(() => new StampsRateConfigurator(
             shipment.OriginAddress,

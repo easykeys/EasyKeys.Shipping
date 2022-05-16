@@ -26,10 +26,10 @@ namespace EasyKeysShipping.UnitTest.Stamps
         [Fact]
         public async Task Process_Domestic_Shipment_Successfully()
         {
-            var rate = new Rate("USPM", string.Empty, 0m, DateTime.Now) { Name = "USPM" };
+            var rate = new Rate("USPM", string.Empty, string.Empty, 0m, DateTime.Now) { Name = "USPM" };
 
             var labels = await _shipmentProvider.CreateShipmentAsync(
-                  TestShipments.CreateDomesticShipment().First(),
+                  TestShipments.CreateDomesticShipment(),
                   new ShipmentRequestDetails() { SelectedRate = rate },
                   CancellationToken.None);
 
@@ -40,12 +40,12 @@ namespace EasyKeysShipping.UnitTest.Stamps
         [Fact]
         public async Task Process_International_Shipment_Successfully()
         {
-            var rate = new Rate("USPMI", string.Empty, 100m, DateTime.Now);
+            var rate = new Rate("USPMI", string.Empty, string.Empty, 10m, DateTime.Now);
 
             var shipmentDetails = new ShipmentRequestDetails() { DeclaredValue = 100m, SelectedRate = rate, CustomsInformation = new CustomsInformation() { CustomsSigner = "brandon moffett" } };
 
             var labels = await _shipmentProvider.CreateShipmentAsync(
-                  TestShipments.CreateInternationalShipment().First(),
+                  TestShipments.CreateInternationalShipment(),
                   shipmentDetails,
                   CancellationToken.None);
 

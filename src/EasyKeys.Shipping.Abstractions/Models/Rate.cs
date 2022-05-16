@@ -5,33 +5,37 @@ public class Rate
     public Rate(
         string name,
         string serviceName,
+        string packageType,
         decimal totalCharges,
         DateTime? guaranteedDelivery)
-        : this(name, serviceName, totalCharges, 0.0M, guaranteedDelivery, false, "US")
+        : this(name, serviceName, packageType, totalCharges, 0.0M, guaranteedDelivery, false, "US")
     {
     }
 
     public Rate(
         string name,
         string serviceName,
+        string packageType,
         decimal totalCharges,
         decimal totalCharges2,
-        DateTime? guaranteedDelivery) : this(name, serviceName, totalCharges, totalCharges2, guaranteedDelivery, false, "US")
+        DateTime? guaranteedDelivery) : this(name, serviceName, packageType, totalCharges, totalCharges2, guaranteedDelivery, false, "US")
     {
     }
 
     public Rate(
         string name,
         string serviceName,
+        string packageType,
         decimal totalCharges,
         DateTime? guaranteedDelivery,
-        bool saturdayDelivery) : this(name, serviceName, totalCharges, 0.0M, guaranteedDelivery, saturdayDelivery, "US")
+        bool saturdayDelivery) : this(name, serviceName, packageType, totalCharges, 0.0M, guaranteedDelivery, saturdayDelivery, "US")
     {
     }
 
     public Rate(
         string name,
         string serviceName,
+        string packageType,
         decimal totalCharges,
         decimal totalCharges2,
         DateTime? guaranteedDelivery,
@@ -40,6 +44,7 @@ public class Rate
     {
         Name = name;
         ServiceName = serviceName;
+        PackageType = packageType;
         TotalCharges = totalCharges;
         TotalCharges2 = totalCharges2;
         GuaranteedDelivery = guaranteedDelivery;
@@ -56,6 +61,11 @@ public class Rate
     /// Service Provider Name.
     /// </summary>
     public string ServiceName { get; set; }
+
+    /// <summary>
+    /// Package Type of shipment.
+    /// </summary>
+    public string PackageType { get; set; }
 
     /// <summary>
     ///     The guaranteed date and time of delivery for this rate.

@@ -12,7 +12,7 @@ If you like or are using this project please give it a star. Thanks!
 ## Install
 
 ```bash
-    dotnet add package EasyKeys.Shipping.Stamps.Stamps.Shipment
+    dotnet add package EasyKeys.Shipping.Stamps.Shipment
 ```
 ## Give a Star! :star:
 
@@ -21,7 +21,7 @@ If you like or are using this project please give it a star. Thanks!
 ## Install
 
 ```bash
-    dotnet add package EasyKeys.Shipping.Stamps.Stamps.Shipment
+    dotnet add package EasyKeys.Shipping.Stamps.Shipment
 ```
 
 ## Usage

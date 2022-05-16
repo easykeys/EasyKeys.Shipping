@@ -230,6 +230,7 @@ public class UspsRateProvider : IUspsRateProvider
                 shipment.Rates.Add(new Rate(
                     $"USPS {name}",
                     name,
+                    shipment.Options.PackagingType,
                     charges,
                     charges,
                     (DateTime?)deliveryDate,
@@ -241,6 +242,7 @@ public class UspsRateProvider : IUspsRateProvider
                 shipment.Rates.Add(new Rate(
                     $"USPS {name}",
                     name,
+                    shipment.Options.PackagingType,
                     charges,
                     charges,
                     rateOptions.DefaultGuaranteedDelivery,
@@ -357,6 +359,7 @@ public class UspsRateProvider : IUspsRateProvider
                     shipment.Rates.Add(new Rate(
                         $"USPS {name}",
                         name,
+                        shipment.Options.PackagingType,
                         r.TotalCharges,
                         r.TotalCharges,
                         (DateTime?)deliveryDate,
@@ -368,6 +371,7 @@ public class UspsRateProvider : IUspsRateProvider
                     shipment.Rates.Add(new Rate(
                         $"USPS {name}",
                         name,
+                        shipment.Options.PackagingType,
                         r.TotalCharges,
                         r.TotalCharges,
                         rateOptions.DefaultGuaranteedDelivery,

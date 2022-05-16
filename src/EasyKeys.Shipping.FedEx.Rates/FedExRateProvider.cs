@@ -285,6 +285,7 @@ public class FedExRateProvider : IFedExRateProvider
             var rate = new Rate(
                 uName,
                 name,
+                string.Empty,
                 netCost ?? 0.0M,
                 listCost ?? 0.0M,
                 guaranteedDelivery,

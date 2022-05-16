@@ -33,9 +33,9 @@ public class StampsRateServiceTests
     {
         var rateRequest = new RateRequestDetails();
 
-        var internationalShipment = TestShipments.CreateInternationalShipment().First();
+        var internationalShipment = TestShipments.CreateInternationalShipment();
 
-        var domesticShipment = TestShipments.CreateDomesticShipment().First();
+        var domesticShipment = TestShipments.CreateDomesticShipment();
 
         var internationalRates = await _ratesService.GetRatesResponseAsync(internationalShipment, rateRequest, CancellationToken.None);
 
@@ -68,9 +68,9 @@ public class StampsRateServiceTests
             ServiceType = serviceType
         };
 
-        var domesticShipment = TestShipments.CreateDomesticShipment().First();
+        var domesticShipment = TestShipments.CreateDomesticShipment();
 
-        var internationalShipment = TestShipments.CreateInternationalShipment().First();
+        var internationalShipment = TestShipments.CreateInternationalShipment();
 
         // Mail class UspsReturn not supported.
         var rates = serviceType.Description.Contains("International", StringComparison.OrdinalIgnoreCase) ? await _ratesService.GetRatesResponseAsync(internationalShipment, rateRequest, CancellationToken.None)
@@ -96,7 +96,7 @@ public class StampsRateServiceTests
     {
         var rateRequest = new RateRequestDetails() { ContentType = contentType };
 
-        var domesticShipment = TestShipments.CreateDomesticShipment().First();
+        var domesticShipment = TestShipments.CreateDomesticShipment();
 
         var domesticRates = await _ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
 
@@ -111,7 +111,7 @@ public class StampsRateServiceTests
     {
         var rateRequest = new RateRequestDetails() { Carrier = carrier };
 
-        var domesticShipment = TestShipments.CreateDomesticShipment().First();
+        var domesticShipment = TestShipments.CreateDomesticShipment();
 
         var domesticRates = await _ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
 
@@ -127,7 +127,7 @@ public class StampsRateServiceTests
     {
         var rateRequest = new RateRequestDetails();
 
-        var domesticShipment = TestShipments.CreateDomesticShipment().First();
+        var domesticShipment = TestShipments.CreateDomesticShipment();
 
         var shipment = new Shipment(domesticShipment.OriginAddress, domesticShipment.DestinationAddress, domesticShipment.Packages, new ShipmentOptions(packageType.Name, DateTime.Now));
 
@@ -189,7 +189,7 @@ public class StampsRateServiceTests
             };
         }
 
-        var domesticShipment = TestShipments.CreateDomesticShipment().First();
+        var domesticShipment = TestShipments.CreateDomesticShipment();
 
         var rateRequest = new RateRequestDetails();
         var stampsClientMock = new Mock<IStampsClientService>();

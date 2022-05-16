@@ -9,7 +9,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
         /// Packages dimensions are small enough to fit all service types.
         /// </summary>
         /// <returns></returns>
-        public static List<Shipment> CreateDomesticShipment()
+        public static Shipment CreateDomesticShipment()
         {
             var originAddress = new Address(
                  streetLine: "11407 Granite Street",
@@ -58,8 +58,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
             var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
 
-            return new List<Shipment>()
-            {
+            return
                 new Shipment(
                 originAddress,
                 validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
@@ -68,14 +67,13 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
                 {
                     RecipientInfo = receiver,
                     SenderInfo = sender,
-                }
-            };
+                };
         }
 
         /// <summary>
         /// Packages dimensions are small enough to fit all service types.
         /// </summary>
-        public static List<Shipment> CreateInternationalShipment()
+        public static Shipment? CreateInternationalShipment()
         {
             var originAddress = new Address(
                  streetLine: "11407 Granite Street",
@@ -100,7 +98,9 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
                     Width = 1.500M,
                     Length = 1.200M
                 },
-                3.5M),
+                10m,
+                10m,
+                false),
         };
 
             var commodity = new Commodity()
@@ -137,8 +137,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
             var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
 
-            var shipments = new List<Shipment>()
-            {
+            var shipment =
                 new Shipment(
                 originAddress,
                 validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
@@ -147,12 +146,11 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
                 {
                     RecipientInfo = receiver,
                     SenderInfo = sender
-                }
-            };
+                };
 
-            shipments?.FirstOrDefault()?.Commodities.Add(commodity);
+            shipment?.Commodities.Add(commodity);
 
-            return shipments;
+            return shipment;
         }
     }
 }
