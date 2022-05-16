@@ -8,9 +8,9 @@ public interface IStampsRateProvider
     /// <summary>
     /// Gets the rates data for the <see cref="Shipment"/>.
     /// </summary>
-    /// <param name="shipments">The list of shipments.</param>
+    /// <param name="shipment">shipment.</param>
     /// <param name="rateDetails"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<Shipment> GetRatesAsync(List<Shipment> shipments, RateRequestDetails rateDetails, CancellationToken cancellationToken = default);
+    Task<Shipment> GetRatesAsync(Shipment shipment, RateRequestDetails rateDetails, CancellationToken cancellationToken = default);
 }

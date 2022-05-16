@@ -99,9 +99,13 @@ app.MapPost("/stamps/getRates", async (
     IStampsRateProvider rateProvider,
     CancellationToken cancellationToken) =>
 {
+    var listOfRates = new List<Rate>();
+
     var result = await GetShipmentRates(model, rateProvider, sender, receiver, null, cancellationToken);
 
-    return Results.Json(result, options);
+    listOfRates.AddRange(result.SelectMany(x => x.Rates));
+
+    return Results.Json(listOfRates, options);
 })
 .Accepts<ShipmentDto>("application/json")
 .Produces<Shipment>(StatusCodes.Status200OK, "application/json")
@@ -151,13 +155,13 @@ app.MapPost("/stamps/createShipment", async (
 
     var shipmentRequestDetails = new ShipmentRequestDetails()
     {
-        SelectedRate = shipment.Rates.Where(x => x.Name == ServiceType).FirstOrDefault(),
+        SelectedRate = shipment?.FirstOrDefault()?.Rates?.Where(x => x.Name == ServiceType)?.FirstOrDefault(),
     };
 
     // adds printed message
     shipmentRequestDetails.LabelOptions.Memo = "This will be orderId";
 
-    var label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
+    var label = await shipmentProvider.CreateShipmentAsync(shipment.FirstOrDefault(), shipmentRequestDetails, cancellationToken);
 
     return Results.Json(label, options);
 })
@@ -176,7 +180,7 @@ app.MapPost("/stamps/createInternationalShipment", async (
 
     var shipmentRequestDetails = new ShipmentRequestDetails()
     {
-        SelectedRate = shipment.Rates.Where(x => x.Name == ServiceType).FirstOrDefault(),
+        SelectedRate = shipment.FirstOrDefault().Rates.Where(x => x.Name == ServiceType).FirstOrDefault(),
         CustomsInformation = new CustomsInformation() { CustomsSigner = sender.FullName },
         DeclaredValue = model.Commodity.CustomsValue
     };
@@ -184,9 +188,9 @@ app.MapPost("/stamps/createInternationalShipment", async (
     // adds printed message
     shipmentRequestDetails.LabelOptions.Memo = "This will be orderId";
 
-    shipment.Commodities.Add(model.Commodity);
+    shipment.FirstOrDefault().Commodities.Add(model.Commodity);
 
-    var label = await shipmentProvider.CreateShipmentAsync(shipment, shipmentRequestDetails, cancellationToken);
+    var label = await shipmentProvider.CreateShipmentAsync(shipment.FirstOrDefault(), shipmentRequestDetails, cancellationToken);
 
     return Results.Json(label, options);
 })
@@ -250,7 +254,7 @@ await app.RunAsync();
     return (sender, receiver);
 }
 
-static async Task<Shipment> GetShipmentRates(
+static async Task<List<Shipment>> GetShipmentRates(
     ShipmentDto model,
     IStampsRateProvider rateProvider,
     ContactInfo sender,
@@ -276,8 +280,13 @@ static async Task<Shipment> GetShipmentRates(
         serviceType,
         model.Package.ShipDate);
 
-    var shipments = configurator.Shipments;
+    var shipments = new List<Shipment>();
 
-    var result = await rateProvider.GetRatesAsync(shipments.Select(x => x.shipment).ToList(), shipments.FirstOrDefault().rateOptions, cancellationToken);
-    return result;
+    foreach (var shipment in configurator.Shipments)
+    {
+        var result = await rateProvider.GetRatesAsync(shipment.shipment, shipment.rateOptions, cancellationToken);
+        shipments.Add(result);
+    }
+
+    return shipments;
 }

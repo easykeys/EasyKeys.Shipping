@@ -24,7 +24,6 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         var ratesDetails = new RateRequestDetails()
         {
             ServiceType = StampsServiceType.FromName(shipmentDetails.SelectedRate.Name),
-            DeclaredValue = shipmentDetails.DeclaredValue,
         };
 
         var request = new CreateIndiciumRequest()

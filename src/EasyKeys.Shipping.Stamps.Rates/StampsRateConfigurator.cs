@@ -270,12 +270,6 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var options = new RateRequestDetails()
-        {
-            DeclaredValue = package.InsuredValue,
-            RegisteredValue = package.InsuredValue
-        };
-
         var packageType = package.IsFlatRateEnvelope() ? PackageType.ThickEnvelope : PackageType.Package;
 
         var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
@@ -286,7 +280,7 @@ public class StampsRateConfigurator
             RecipientInfo = receiver
         };
 
-        Shipments.Add((shipment, options));
+        Shipments.Add((shipment, new RateRequestDetails()));
     }
 
     private void ConfigureDomesticPriority(
@@ -305,12 +299,6 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var rateOptions = new RateRequestDetails()
-        {
-            DeclaredValue = package.InsuredValue,
-            RegisteredValue = package.InsuredValue
-        };
-
         var packageType = GetFlatRatePackage(package, serviceType);
 
         var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
@@ -321,7 +309,7 @@ public class StampsRateConfigurator
             RecipientInfo = receiver
         };
 
-        Shipments.Add((shipment, rateOptions));
+        Shipments.Add((shipment, new RateRequestDetails()));
     }
 
     private void ConfigureIntlFirstClass(
@@ -340,11 +328,6 @@ public class StampsRateConfigurator
         var packages = new List<Package> { package };
 
         // will need to add commodity & customs information here.
-        var rateOptions = new RateRequestDetails()
-        {
-            DeclaredValue = package.InsuredValue,
-            RegisteredValue = package.InsuredValue
-        };
 
         var packageType = package.IsInternationalLargeEnvelope() ? PackageType.LargeEnvelopeOrFlat : PackageType.Package;
         var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
@@ -355,7 +338,7 @@ public class StampsRateConfigurator
             RecipientInfo = receiver
         };
 
-        Shipments.Add((shipment, rateOptions));
+        Shipments.Add((shipment, new RateRequestDetails()));
     }
 
     private void ConfigureIntlPriority(
@@ -379,11 +362,6 @@ public class StampsRateConfigurator
         var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
         // will need to add commodity & customs information here.
-        var rateOptions = new RateRequestDetails()
-        {
-            DeclaredValue = package.InsuredValue,
-            RegisteredValue = package.InsuredValue
-        };
 
         var shipment = new Shipment(origin, destination, packages, shipOptions)
         {
@@ -391,7 +369,7 @@ public class StampsRateConfigurator
             RecipientInfo = receiver
         };
 
-        Shipments.Add((shipment, rateOptions));
+        Shipments.Add((shipment, new RateRequestDetails()));
     }
 
     private PackageType GetFlatRatePackage(Package package, StampsServiceType serviceType)

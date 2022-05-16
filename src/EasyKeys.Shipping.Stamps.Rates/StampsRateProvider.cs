@@ -19,50 +19,28 @@ public class StampsRateProvider : IStampsRateProvider
         _logger = logger;
     }
 
-    public async Task<Shipment> GetRatesAsync(List<Shipment> shipments, RateRequestDetails rateRequestDetails, CancellationToken cancellationToken = default)
+    public async Task<Shipment> GetRatesAsync(Shipment shipment, RateRequestDetails rateRequestDetails, CancellationToken cancellationToken = default)
     {
-        // loop through each possible shipment and concat the rates to the first shipment
-        // then return the first shipment with all the rates
         try
         {
-            foreach (var shipment in shipments)
+            var rates = await _ratesService.GetRatesResponseAsync(shipment, rateRequestDetails, cancellationToken);
+
+            foreach (var rate in rates)
             {
-                var rates = await _ratesService.GetRatesResponseAsync(shipment, rateRequestDetails, cancellationToken);
+                shipment.Rates.Add(new Rate($"{rate.ServiceType}", rate.ServiceDescription, rate.Amount, rate.DeliveryDate));
 
-                foreach (var rate in rates)
-                {
-                    shipments.FirstOrDefault().Rates.Add(new Rate($"{rate.ServiceType}", rate.ServiceDescription, rate.Amount, rate.DeliveryDate));
+                _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");
 
-                    _logger.LogInformation($"{rate.ServiceType} : {rate.ServiceDescription}");
+                _logger.LogInformation($" => Cost : {rate.Amount}");
 
-                    _logger.LogInformation($" => Cost : {rate.Amount}");
-
-                    _logger.LogInformation($" => Delivery Days : {rate.DeliverDays}");
-                }
-            }
-
-            var orderedRates = shipments.FirstOrDefault().Rates.OrderBy(x => x.Name)
-                                    .OrderBy(x => x.TotalCharges)
-                                    .ToArray();
-
-            shipments.FirstOrDefault().Rates.Clear();
-
-            // remove the most expensive duplicate rate in cases where there is more than one possible shipment
-            for (var i = 0; i < orderedRates.Length; i++)
-            {
-                if (shipments.FirstOrDefault().Rates.Any(x => x.Name == orderedRates[i].Name))
-                {
-                    continue;
-                }
-
-                shipments.FirstOrDefault().Rates.Add(orderedRates[i]);
+                _logger.LogInformation($" => Delivery Days : {rate.DeliverDays}");
             }
         }
         catch (Exception ex)
         {
-            shipments.FirstOrDefault().InternalErrors.Add(ex.Message);
+            shipment.InternalErrors.Add(ex.Message);
         }
 
-        return shipments.FirstOrDefault();
+        return shipment;
     }
 }
