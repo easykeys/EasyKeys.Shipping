@@ -189,8 +189,6 @@ public class Main : IMain
     {
         // 1. address validation
         // for international orders, user must enter the provice/state code, not full name
-
-
         var request = new ValidateAddress(Guid.NewGuid().ToString(), destination);
         var result = await _addressProvider.ValidateAddressAsync(request, cancellationToken);
 
