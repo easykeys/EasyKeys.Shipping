@@ -5,32 +5,32 @@ Content-Type: application/json
 
 {
   "origin": {
-    "city": "Charlotte",
+    "city": "Cincinnati",
     "countryCode": "US",
-    "streetLine": "11407 Granite Street",
+    "streetLine": "3991 kenkel ave",
     "streetLine2": null,
-    "postalCode": "28273",
-    "stateOrProvince": "NC",
+    "postalCode": "45211",
+    "stateOrProvince": "OH",
     "isResidential": false
   },
 
   "destination": {
-    "city": "RIVERSIDE",
+    "city": "Charlotte",
     "countryCode": "US",
-    "streetLine": "1550 CENTRAL AVE APT 35",
+    "streetLine": "PO Box 411248",
     "streetLine2": null,
-    "postalCode": "92507",
-    "stateOrProvince": "CA",
-    "isResidential": true
+    "postalCode": "28241",
+    "stateOrProvince": "NC",
+    "isResidential": false
   },
 
   "package": {
     "ShipDate" :null,
     "signatureRequiredOnDelivery": false,
     "insuredValue": 0,
-    "length": 8.0,
-    "width": 4.0,
+    "length": 9.0,
+    "width": 9.0,
     "height": 0.5,
-    "weight": 3.1
+    "weight": 3.0
   }
 }
