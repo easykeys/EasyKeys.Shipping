@@ -31,6 +31,6 @@ Content-Type: application/json
     "length": 9.0,
     "width": 9.0,
     "height": 0.5,
-    "weight": 3.0
+    "weight": 0.1
   }
 }
