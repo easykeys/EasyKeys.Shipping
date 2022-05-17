@@ -40,6 +40,7 @@ internal sealed class StampsClientService : IStampsClientService
 
         var authRequest = new AuthenticateUserRequest(credentials);
         var client = CreateClient();
+
         var authResponse = await client.AuthenticateUserAsync(authRequest);
         return authResponse.Authenticator;
     }
