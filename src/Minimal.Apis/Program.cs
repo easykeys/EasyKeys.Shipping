@@ -105,7 +105,7 @@ app.MapPost("/stamps/getRates", async (
 
     listOfRates.AddRange(result.SelectMany(x => x.Rates));
 
-    return Results.Json(listOfRates, options);
+    return Results.Json(listOfRates.OrderBy(x => x.Name).ThenBy(x => x.TotalCharges), options);
 })
 .Accepts<ShipmentDto>("application/json")
 .Produces<Shipment>(StatusCodes.Status200OK, "application/json")

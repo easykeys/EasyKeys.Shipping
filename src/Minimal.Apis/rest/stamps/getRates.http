@@ -4,7 +4,7 @@ Content-Type: application/json
 
 
 {
-  "origin": {
+  "destination": {
     "city": "Cincinnati",
     "countryCode": "US",
     "streetLine": "3991 kenkel ave",
@@ -14,7 +14,7 @@ Content-Type: application/json
     "isResidential": false
   },
 
-  "destination": {
+  "origin": {
     "city": "Charlotte",
     "countryCode": "US",
     "streetLine": "PO Box 411248",

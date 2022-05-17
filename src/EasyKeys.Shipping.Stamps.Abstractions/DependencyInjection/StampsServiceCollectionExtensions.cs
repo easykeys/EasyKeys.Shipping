@@ -22,7 +22,7 @@ public static class StampsServiceCollectionExtensions
     {
         services.AddChangeTokenOptions<StampsOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
 
-        services.TryAddSingleton<IStampsClientService, StampsClientService>();
+        services.TryAddScoped<IStampsClientService, StampsClientService>();
 
         return services;
     }
