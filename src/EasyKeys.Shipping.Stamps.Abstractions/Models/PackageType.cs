@@ -115,7 +115,14 @@ public abstract class PackageType : SmartEnum<PackageType>
 
     public abstract decimal MaxWeight { get; }
 
+    public abstract decimal MaxInternationalWeight { get; }
+
     public abstract decimal MinWeight { get; }
+
+    /// <summary>
+    /// Determined by the icons shown in the <b>service</b> dropdown button at <see href="https://print.testing.stamps.com/Webpostage/default2.aspx?"/>.
+    /// </summary>
+    public abstract string Category { get; }
 
     public string Description { get; }
 
@@ -129,7 +136,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => .0625m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "PostCard";
     }
 
     private sealed class LetterType : PackageType
@@ -142,7 +153,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => .21875m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "Letter";
     }
 
     private sealed class LargeEnvelopeOrFlatType : PackageType
@@ -155,7 +170,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => .8125m;
 
+        public override decimal MaxInternationalWeight => 4.4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "FlatRateEnvelope";
     }
 
     private sealed class ThickEnvelopeType : PackageType
@@ -168,7 +187,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => .999375m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "LargeEnvelope";
     }
 
     private sealed class SmallFlatRateBoxType : PackageType
@@ -181,7 +204,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 70m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "FlatRateBox";
     }
 
     private sealed class Default : PackageType
@@ -192,9 +219,13 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override Dimensions Dimensions => new Dimensions(22m, 15m, 15m);
 
-        public override decimal MaxWeight => .999375m;
+        public override decimal MaxWeight => 70m;
+
+        public override decimal MaxInternationalWeight => 70m;
 
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "DefaultPackage";
     }
 
     private sealed class FlatRateBoxType : PackageType
@@ -207,7 +238,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 70m;
 
+        public override decimal MaxInternationalWeight => 20m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "FlatRateBox";
     }
 
     private sealed class FlatRatePaddedEnvelopeType : PackageType
@@ -216,11 +251,15 @@ public abstract class PackageType : SmartEnum<PackageType>
         {
         }
 
-        public override Dimensions Dimensions => new Dimensions(12.5m, 0m, 9.5m);
+        public override Dimensions Dimensions => new Dimensions(12.5m, 0.75m, 9.5m);
 
         public override decimal MaxWeight => 70m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "FlatRateEnvelope";
     }
 
     private sealed class LargePackageType : PackageType
@@ -233,7 +272,12 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 70m;
 
+        public override decimal MaxInternationalWeight => 70m;
+
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "DefaultPackage";
     }
 
     private sealed class OversizedPackageType : PackageType
@@ -246,7 +290,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 70m;
 
+        public override decimal MaxInternationalWeight => 70m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "DefaultPackage";
     }
 
     private sealed class RegionalRateBoxAType : PackageType
@@ -259,7 +307,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 15m;
 
+        public override decimal MaxInternationalWeight => 15m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "RegionalRateBox";
     }
 
     private sealed class RegionalRateBoxBType : PackageType
@@ -272,7 +324,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 20m;
 
+        public override decimal MaxInternationalWeight => 20m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "RegionalRateBox";
     }
 
     private sealed class RegionalRateBoxCType : PackageType
@@ -285,7 +341,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 25m;
 
+        public override decimal MaxInternationalWeight => 25m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "RegionalRateBox";
     }
 
     private sealed class LegalFlatRateEnvelopeType : PackageType
@@ -294,15 +354,19 @@ public abstract class PackageType : SmartEnum<PackageType>
         {
         }
 
-        public override Dimensions Dimensions => new Dimensions(15m, 0m, 9.5m);
+        public override Dimensions Dimensions => new Dimensions(15m, 0.75m, 9.5m);
 
         public override decimal MaxWeight => 4m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "FlatRateEnvelope";
     }
 
     /// <summary>
-    /// Unknown.
+    /// Unkown.Enum selection is available from the wsdl but no documentation found on the type.
     /// </summary>
     private sealed class ExpressEnvelopeType : PackageType
     {
@@ -314,11 +378,15 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 4m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "Unknown";
     }
 
     /// <summary>
-    /// Unknown.
+    /// Unkown.Enum selection is available from the wsdl but no documentation found on the type.
     /// </summary>
     private sealed class DocumentType : PackageType
     {
@@ -330,11 +398,15 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 4m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "Unknown";
     }
 
     /// <summary>
-    /// Unknown.
+    /// Unkown.Enum selection is available from the wsdl but no documentation found on the type.
     /// </summary>
     private sealed class EnvelopeType : PackageType
     {
@@ -346,11 +418,15 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 4m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "Unknown";
     }
 
     /// <summary>
-    /// Unknown.
+    /// Unkown.Enum selection is available from the wsdl but no documentation found on the type.
     /// </summary>
     private sealed class PakType : PackageType
     {
@@ -362,7 +438,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 4m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "Unknown";
     }
 
     private sealed class LargeFlatRateBoxType : PackageType
@@ -375,7 +455,11 @@ public abstract class PackageType : SmartEnum<PackageType>
 
         public override decimal MaxWeight => 70m;
 
+        public override decimal MaxInternationalWeight => 20m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "FlatRateBox";
     }
 
     private sealed class FlatRateEnvelopeType : PackageType
@@ -384,10 +468,14 @@ public abstract class PackageType : SmartEnum<PackageType>
         {
         }
 
-        public override Dimensions Dimensions => new Dimensions(9.5m, 0m, 12.5m);
+        public override Dimensions Dimensions => new Dimensions(9.5m, 0.75m, 12.5m);
 
         public override decimal MaxWeight => 70m;
 
+        public override decimal MaxInternationalWeight => 4m;
+
         public override decimal MinWeight => 0.001m;
+
+        public override string Category => "FlatRateEnvelope";
     }
 }

@@ -145,6 +145,9 @@ public class RateRequestDetails
     /// </summary>
     public CarrierType Carrier { get; set; } = CarrierType.Usps;
 
+    /// <summary>
+    /// The collect on delivery value for this shipment, in dollars and cents.
+    /// </summary>
     public decimal CODValue { get; set; }
 
     /// <summary>

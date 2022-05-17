@@ -180,7 +180,7 @@ app.MapPost("/stamps/createInternationalShipment", async (
 
     var shipmentRequestDetails = new ShipmentRequestDetails()
     {
-        SelectedRate = shipment.FirstOrDefault().Rates.Where(x => x.Name == ServiceType).FirstOrDefault(),
+        SelectedRate = shipment.Where(x => x.Rates != null).SelectMany(x => x.Rates).FirstOrDefault(x => x.Name == ServiceType) ?? throw new ArgumentNullException("Rate Not Found"),
         CustomsInformation = new CustomsInformation() { CustomsSigner = sender.FullName },
         DeclaredValue = model.Commodity.CustomsValue
     };
@@ -272,9 +272,9 @@ static async Task<List<Shipment>> GetShipmentRates(
         model.Package.ShipDate);
 
     var shipments = new List<Shipment>();
-
     foreach (var shipment in configurator.Shipments)
     {
+
         var result = await rateProvider.GetRatesAsync(shipment.shipment, shipment.rateOptions, cancellationToken);
         shipments.Add(result);
     }

@@ -5,16 +5,6 @@ Content-Type: application/json
 
 {
   "origin": {
-    "city": "Cincinnati",
-    "countryCode": "US",
-    "streetLine": "3991 kenkel ave",
-    "streetLine2": null,
-    "postalCode": "45211",
-    "stateOrProvince": "OH",
-    "isResidential": false
-  },
-
-  "destination": {
     "city": "Charlotte",
     "countryCode": "US",
     "streetLine": "PO Box 411248",
@@ -23,14 +13,22 @@ Content-Type: application/json
     "stateOrProvince": "NC",
     "isResidential": false
   },
-
+  "destination": {
+    "city": "RIVERSIDE",
+    "countryCode": "US",
+    "streetLine": "1550 CENTRAL AVE APT 35",
+    "streetLine2": null,
+    "postalCode": "92507",
+    "stateOrProvince": "CA",
+    "isResidential": true
+  },
   "package": {
     "ShipDate" :null,
     "signatureRequiredOnDelivery": false,
     "insuredValue": 0,
-    "length": 9.0,
-    "width": 9.0,
-    "height": 0.5,
-    "weight": 3.0
+    "length": 8.0,
+    "width": 0.10,
+    "height": 1.0,
+    "weight": 0.1865
   }
 }

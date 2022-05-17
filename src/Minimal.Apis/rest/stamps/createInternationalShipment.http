@@ -1,37 +1,38 @@
 
-POST https://localhost:7141/createInternationalShipment?ServiceType=USFCI
+POST https://{{host}}/stamps/createInternationalShipment?ServiceType=USPMI
 Content-Type: application/json
 
 {
   "origin": {
-    "city": "riverside",
+    "city": "Charlotte",
     "countryCode": "US",
-    "countryName": "string",
-    "streetLine": "1550 central ave",
-    "streetLine2": "apt 35",
-    "postalCode": "92507",
-    "stateOrProvince": "CA",
-    "isResidential": true
+    "streetLine": "PO Box 411248",
+    "streetLine2": null,
+    "postalCode": "28241",
+    "stateOrProvince": "NC",
+    "isResidential": false
   },
+
   "destination": {
-    "city": "L' Peres del Puerto",
-    "countryCode": "ES",
-    "countryName": "",
-    "streetLine": "Calle Dario",
-    "streetLine2": "",
-    "postalCode": "94199",
-    "stateOrProvince": "Álava",
-    "isResidential": true
+    "city": "St-Dominique",
+    "countryCode": "CA",
+    "streetLine": "500 7e Rang",
+    "streetLine2": null,
+    "postalCode": "J0H 1L0",
+    "stateOrProvince": "QC",
+    "isResidential": false
   },
+
   "package": {
-    "shipDate": "2022-05-13T20:04:18.617Z",
-    "signatureRequiredOnDelivery": true,
-    "insuredValue": 20,
-    "length": 1,
-    "width": 1,
-    "height": 1,
-    "weight": 0.80
-  },
+    "ShipDate" :null,
+    "signatureRequiredOnDelivery": false,
+    "insuredValue": 0,
+    "length": 1.0,
+    "width": 0.25,
+    "height": 1.0,
+    "weight": 19.0
+  }
+,
   "commodity": {
     "name": "package of keys",
     "numberOfPieces": 1,

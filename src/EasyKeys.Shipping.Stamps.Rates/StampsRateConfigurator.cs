@@ -240,17 +240,24 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageType = package.IsFlatRateEnvelope() ? PackageType.ThickEnvelope : PackageType.Package;
+        var packageTypes = PackageType.List
+            .Where(x => x.Category == "DefaultPackage" || x.Category == "LargeEnvelope");
 
-        var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
-
-        var shipment = new Shipment(origin, destination, packages, shipmentOptions)
+        foreach (var packageType in packageTypes)
         {
-            SenderInfo = sender,
-            RecipientInfo = receiver
-        };
+            if (FitsPackageType(package, packageType))
+            {
+                var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
-        Shipments.Add((shipment, new RateRequestDetails()));
+                var shipment = new Shipment(origin, destination, packages, shipmentOptions)
+                {
+                    SenderInfo = sender,
+                    RecipientInfo = receiver
+                };
+
+                Shipments.Add((shipment, new RateRequestDetails()));
+            }
+        }
     }
 
     private void ConfigureDomesticPriority(
@@ -268,22 +275,30 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageType = GetFlatRatePackage(package);
+        var packageTypes = PackageType.List.Where(x => x.Category != "Unknown"
+                            && x.Category != "Letter"
+                            && x.Category != "PostCard");
 
-        var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
-
-        var shipment = new Shipment(origin, destination, packages, shipOptions)
+        foreach (var packageType in packageTypes)
         {
-            SenderInfo = sender,
-            RecipientInfo = receiver
-        };
+            if (FitsPackageType(package, packageType))
+            {
+                var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
-        if (Shipments.Any(x => x.shipment.Options.PackagingType == packageType.Name))
-        {
-            return;
+                var shipment = new Shipment(origin, destination, packages, shipOptions)
+                {
+                    SenderInfo = sender,
+                    RecipientInfo = receiver
+                };
+
+                if (Shipments.Any(x => x.shipment.Options.PackagingType == packageType.Name))
+                {
+                    return;
+                }
+
+                Shipments.Add((shipment, new RateRequestDetails()));
+            }
         }
-
-        Shipments.Add((shipment, new RateRequestDetails()));
     }
 
     private void ConfigureIntlFirstClass(
@@ -301,17 +316,24 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageType = package.IsInternationalLargeEnvelope() ? PackageType.LargeEnvelopeOrFlat : PackageType.Package;
+        var packageTypes = PackageType.List
+            .Where(x => x.Category == "DefaultPackage" || x.Category == "LargeEnvelope");
 
-        var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
-
-        var shipment = new Shipment(origin, destination, packages, shipOptions)
+        foreach (var packageType in packageTypes)
         {
-            SenderInfo = sender,
-            RecipientInfo = receiver
-        };
+            if (FitsPackageType(package, packageType, isInternational: true))
+            {
+                var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
-        Shipments.Add((shipment, new RateRequestDetails()));
+                var shipment = new Shipment(origin, destination, packages, shipmentOptions)
+                {
+                    SenderInfo = sender,
+                    RecipientInfo = receiver
+                };
+
+                Shipments.Add((shipment, new RateRequestDetails()));
+            }
+        }
     }
 
     private void ConfigureIntlPriority(
@@ -329,92 +351,37 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageType = GetInternationalFlatRatePackage(package);
+        var packageTypes = PackageType.List.Where(x => x.Category != "Unknown"
+                    || x.Category != "Letter"
+                    || x.Category == "PostCard");
 
-        var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
-
-        var shipment = new Shipment(origin, destination, packages, shipOptions)
+        foreach (var packageType in packageTypes)
         {
-            SenderInfo = sender,
-            RecipientInfo = receiver
-        };
+            if (FitsPackageType(package, packageType, isInternational: true))
+            {
+                var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
-        if (Shipments.Any(x => x.shipment.Options.PackagingType == packageType.Name))
-        {
-            return;
+                var shipment = new Shipment(origin, destination, packages, shipOptions)
+                {
+                    SenderInfo = sender,
+                    RecipientInfo = receiver
+                };
+
+                if (Shipments.Any(x => x.shipment.Options.PackagingType == packageType.Name))
+                {
+                    return;
+                }
+
+                Shipments.Add((shipment, new RateRequestDetails()));
+            }
         }
-
-        Shipments.Add((shipment, new RateRequestDetails()));
     }
 
-    private PackageType GetFlatRatePackage(Package package)
+    private bool FitsPackageType(Package package, PackageType packageType, bool isInternational = false)
     {
-        // sequence from smallest to largest
-        if (package.IsFlatRateEnvelope())
-        {
-            return PackageType.FlatRatePaddedEnvelope;
-        }
-
-        if (package.IsPaddedFlatRateEnvelope())
-        {
-            return PackageType.FlatRatePaddedEnvelope;
-        }
-
-        if (package.IsLegalFlatRateEnvelope())
-        {
-            return PackageType.FlatRatePaddedEnvelope;
-        }
-
-        if (package.IsSmallFlatRateBox())
-        {
-            return PackageType.SmallFlatRateBox;
-        }
-
-        if (package.IsMediumFlatRateBox())
-        {
-            return PackageType.FlatRateBox;
-        }
-
-        if (package.IsLargeFlatRateBox())
-        {
-            return PackageType.LargeFlatRateBox;
-        }
-
-        return PackageType.Package;
-    }
-
-    private PackageType GetInternationalFlatRatePackage(Package package)
-    {
-        if (package.IsInternationalFlatRateEnvelope())
-        {
-            return PackageType.FlatRateEnvelope;
-        }
-
-        if (package.IsInternationalPaddedFlatRateEnvelope())
-        {
-            return PackageType.FlatRatePaddedEnvelope;
-        }
-
-        if (package.IsInternationalLegalFlatRateEnvelope())
-        {
-            return PackageType.LegalFlatRateEnvelope;
-        }
-
-        if (package.IsInternationalSmallFlatRateBox())
-        {
-            return PackageType.SmallFlatRateBox;
-        }
-
-        if (package.IsInternationalMediumFlatRateBox())
-        {
-            return PackageType.FlatRateBox;
-        }
-
-        if (package.IsInternationalLargeFlatRateBox())
-        {
-            return PackageType.LargeFlatRateBox;
-        }
-
-        return PackageType.Package;
+        return package.Dimensions.Length <= packageType.Dimensions.Length &&
+               package.Dimensions.Width <= packageType.Dimensions.Width &&
+               package.Dimensions.Height <= packageType.Dimensions.Height &&
+               package.Weight <= (isInternational ? packageType.MaxInternationalWeight : packageType.MaxWeight);
     }
 }
