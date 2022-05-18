@@ -1,8 +1,11 @@
-﻿using EasyKeys.Shipping.Abstractions.Extensions;
+﻿using System.ServiceModel;
+
+using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
-using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
+
+using Polly;
 
 using StampsClient.v111;
 
@@ -12,16 +15,20 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 {
     private readonly IStampsClientService _stampsClient;
     private readonly IRatesService _ratesService;
+    private readonly IPolicyService _policy;
 
-    public StampsShipmentProvider(IStampsClientService stampsClientService, IRatesService ratesService)
+    public StampsShipmentProvider(IStampsClientService stampsClientService, IRatesService ratesService, IPolicyService policy)
     {
         _stampsClient = stampsClientService;
         _ratesService = ratesService;
+        _policy = policy;
     }
 
     public async Task<ShipmentLabel> CreateShipmentAsync(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, CancellationToken cancellationToken)
     {
-        var ratesDetails = new RateRequestDetails();
+        var client = _stampsClient.CreateClient();
+
+        var shipmentLabel = new ShipmentLabel();
 
         var request = new CreateIndiciumRequest()
         {
@@ -29,7 +36,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
             CustomerID = Guid.NewGuid().ToString(),
 
-            Customs = shipment.Commodities.Any() ? SetCustomsInformation(shipment, shipmentDetails, ratesDetails) : default,
+            Customs = shipment.Commodities.Any() ? SetCustomsInformation(shipment, shipmentDetails) : default,
 
             SampleOnly = shipmentDetails.IsSample,
 
@@ -161,9 +168,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
         try
         {
-            var client = _stampsClient.CreateClient();
-
-            var rates = await _ratesService.GetRatesResponseAsync(shipment, ratesDetails, cancellationToken);
+            var rates = await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await _ratesService.GetRatesResponseAsync(shipment, shipmentDetails.RateRequestDetails, cancellationToken));
 
             request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
 
@@ -171,11 +176,11 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
             request.ReturnTo = rates.FirstOrDefault()?.From;
 
-            var response = await client.CreateIndiciumAsync(request);
+            var response = await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await client.CreateIndiciumAsync(request));
 
-            return new ShipmentLabel()
-            {
-                Labels = new List<PackageLabelDetails>()
+            _stampsClient.SetToken(response.Authenticator);
+
+            shipmentLabel.Labels = new List<PackageLabelDetails>()
                 {
                     new PackageLabelDetails()
                     {
@@ -190,23 +195,22 @@ public class StampsShipmentProvider : IStampsShipmentProvider
                             NetCharge = response.Rate.Amount
                         }
                     }
-                }
-            };
+                };
         }
         catch (Exception ex)
         {
-            var shipmentLabel = new ShipmentLabel();
-
             shipmentLabel.InternalErrors.Add(ex.Message);
-
-            return shipmentLabel;
         }
+
+        return shipmentLabel;
     }
 
     public async Task<CancelIndiciumResponse> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken)
     {
         var client = _stampsClient.CreateClient();
-
+        var policy = Policy
+          .Handle<FaultException>(x => x.Message == "Conversation out-of-sync.")
+          .RetryAsync(1, async (ex, count, context) => await _stampsClient.RefreshTokenAsync(cancellationToken));
         var request = new CancelIndiciumRequest()
         {
             Item1 = trackingId
@@ -215,7 +219,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         {
             request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
 
-            return await client.CancelIndiciumAsync(request);
+            return await policy.ExecuteAsync(async () => await client.CancelIndiciumAsync(request));
         }
         catch (Exception ex)
         {
@@ -227,7 +231,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
     {
         var surcharges = new Dictionary<string, decimal>();
 
-        if (response.Rate.Surcharges == null)
+        if (response?.Rate?.Surcharges == null)
         {
             return surcharges;
         }
@@ -240,7 +244,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         return surcharges;
     }
 
-    private CustomsV7 SetCustomsInformation(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, RateRequestDetails rateDetails)
+    private CustomsV7 SetCustomsInformation(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails)
     {
         var customsLine = new List<CustomsLine>();
 
@@ -261,7 +265,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
         return new CustomsV7()
         {
-            ContentType = rateDetails.ContentType.Value switch
+            ContentType = shipmentDetails.ContentType.Value switch
             {
                 (int)ContentTypeV2.CommercialSample => ContentTypeV2.CommercialSample,
                 (int)ContentTypeV2.DangerousGoods => ContentTypeV2.DangerousGoods,

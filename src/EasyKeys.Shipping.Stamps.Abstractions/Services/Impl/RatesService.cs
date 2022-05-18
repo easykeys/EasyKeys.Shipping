@@ -1,4 +1,5 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 using StampsClient.v111;
@@ -8,10 +9,12 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
     public class RatesService : IRatesService
     {
         private readonly IStampsClientService _stampsClient;
+        private readonly IPolicyService _policy;
 
-        public RatesService(IStampsClientService stampsClientService)
+        public RatesService(IStampsClientService stampsClientService, IPolicyService policy)
         {
             _stampsClient = stampsClientService;
+            _policy = policy;
         }
 
         public async Task<List<RateV40>> GetRatesResponseAsync(Shipment shipment, RateRequestDetails rateDetails, CancellationToken cancellationToken)
@@ -131,19 +134,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                         CubicPricing = rateDetails.CubicPricing,
 
-                        ContentType = rateDetails.ContentType.Value switch
-                        {
-                            (int)ContentTypeV2.CommercialSample => ContentTypeV2.CommercialSample,
-                            (int)ContentTypeV2.DangerousGoods => ContentTypeV2.DangerousGoods,
-                            (int)ContentTypeV2.Document => ContentTypeV2.Document,
-                            (int)ContentTypeV2.Gift => ContentTypeV2.Gift,
-                            (int)ContentTypeV2.HumanitarianDonation => ContentTypeV2.HumanitarianDonation,
-                            (int)ContentTypeV2.Merchandise => ContentTypeV2.Merchandise,
-                            (int)ContentTypeV2.ReturnedGoods => ContentTypeV2.ReturnedGoods,
-                            _ => ContentTypeV2.Other
-                        },
-
-                        ContentTypeSpecified = rateDetails.ContentTypeSpecified,
+                        ContentTypeSpecified = false,
 
                         // dont know what this is
                         EntryFacility = EntryFacilityV1.Unknown,
@@ -163,11 +154,20 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                 request = ApplyPackageDetails(request, shipment);
 
-                var response = await stampsClient.GetRatesAsync(request);
+                try
+                {
+                    var response = await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await stampsClient.GetRatesAsync(request));
 
-                response = ApplyAddOns(response, rateDetails, shipment);
+                    _stampsClient.SetToken(response.Authenticator);
 
-                return response.Rates.ToList();
+                    response = ApplyAddOns(response, rateDetails, shipment);
+
+                    return response.Rates.ToList();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
             }
         }
 

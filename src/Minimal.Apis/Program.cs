@@ -101,9 +101,27 @@ app.MapPost("/stamps/getRates", async (
 {
     var listOfRates = new List<Rate>();
 
-    var result = await GetShipmentRates(model, rateProvider, sender, receiver, null, cancellationToken);
+    var package = new Package(
+    model!.Package!.Length,
+    model.Package.Width,
+    model.Package.Height,
+    model.Package.Weight,
+    model.Package.InsuredValue,
+    model.Package.SignatureRequiredOnDelivery);
 
-    listOfRates.AddRange(result.SelectMany(x => x.Rates));
+    var configurator = new StampsRateConfigurator(
+    model.Origin!,
+    model.Destination!,
+    package,
+    sender,
+    receiver,
+    model.Package.ShipDate);
+
+    foreach (var shipment in configurator.Shipments)
+    {
+        var result = await rateProvider.GetRatesAsync(shipment.shipment, shipment.rateOptions, cancellationToken);
+        listOfRates.AddRange(result.Rates);
+    }
 
     return Results.Json(listOfRates.OrderBy(x => x.Name).ThenBy(x => x.TotalCharges), options);
 })
@@ -152,16 +170,31 @@ app.MapPost("/stamps/createShipment", async (
     IStampsShipmentProvider shipmentProvider,
     CancellationToken cancellationToken) =>
 {
-    var shipment = await GetShipmentRates(model, rateProvider, sender, receiver, StampsServiceType.FromName(ServiceType), cancellationToken);
+    var package = new Package(
+        model!.Package!.Length,
+        model.Package.Width,
+        model.Package.Height,
+        model.Package.Weight,
+        model.Package.InsuredValue,
+        model.Package.SignatureRequiredOnDelivery);
 
-    // adds printed message
-    var correctShipment = shipment.Where(x => x.Options.PackagingType == PackageTypeSelected);
+    var configurator = new StampsRateConfigurator(
+        model.Origin!,
+        model.Destination!,
+        package,
+        sender,
+        receiver,
+        model.Package.ShipDate);
+
+    var correctShipment = configurator.Shipments.Where(x => x.shipment.Options.PackagingType == PackageTypeSelected).FirstOrDefault();
 
     var shipmentRequestDetails = new ShipmentRequestDetails();
 
     shipmentRequestDetails.LabelOptions.Memo = "This will be orderId";
 
-    var label = await shipmentProvider.CreateShipmentAsync(correctShipment.FirstOrDefault(), shipmentRequestDetails, cancellationToken);
+    shipmentRequestDetails.RateRequestDetails.ServiceType = StampsServiceType.FromName(ServiceType);
+
+    var label = await shipmentProvider.CreateShipmentAsync(correctShipment.shipment, shipmentRequestDetails, cancellationToken);
 
     return Results.Json(label, options);
 })
@@ -172,25 +205,43 @@ app.MapPost("/stamps/createShipment", async (
 app.MapPost("/stamps/createInternationalShipment", async (
     InternationalShipmentDto model,
     string ServiceType,
+    string PackageTypeSelected,
     IStampsRateProvider rateProvider,
     IStampsShipmentProvider shipmentProvider,
     CancellationToken cancellationToken) =>
 {
-    var shipment = await GetShipmentRates(model, rateProvider, sender, receiver, StampsServiceType.FromName(ServiceType), cancellationToken);
+    var package = new Package(
+        model!.Package!.Length,
+        model.Package.Width,
+        model.Package.Height,
+        model.Package.Weight,
+        model.Package.InsuredValue,
+        model.Package.SignatureRequiredOnDelivery);
 
-    var shipmentRequestDetails = new ShipmentRequestDetails()
-    {
-        SelectedRate = shipment.Where(x => x.Rates != null).SelectMany(x => x.Rates).FirstOrDefault(x => x.Name == ServiceType) ?? throw new ArgumentNullException("Rate Not Found"),
-        CustomsInformation = new CustomsInformation() { CustomsSigner = sender.FullName },
-        DeclaredValue = model.Commodity.CustomsValue
-    };
+    var configurator = new StampsRateConfigurator(
+        model.Origin!,
+        model.Destination!,
+        package,
+        sender,
+        receiver,
+        model.Package.ShipDate);
 
-    // adds printed message
+    var correctShipment = configurator.Shipments.Where(x => x.shipment.Options.PackagingType == PackageTypeSelected).FirstOrDefault();
+
+    var shipmentRequestDetails = new ShipmentRequestDetails();
+
+    shipmentRequestDetails.RateRequestDetails.ServiceType = StampsServiceType.FromName(ServiceType);
+
     shipmentRequestDetails.LabelOptions.Memo = "This will be orderId";
 
-    shipment.FirstOrDefault().Commodities.Add(model.Commodity);
+    if (correctShipment.shipment == null)
+    {
+        return Results.Json($"No Shipment Found with PackageType: {PackageTypeSelected}");
+    }
 
-    var label = await shipmentProvider.CreateShipmentAsync(shipment.FirstOrDefault(), shipmentRequestDetails, cancellationToken);
+    correctShipment.shipment.Commodities.Add(model.Commodity);
+
+    var label = await shipmentProvider.CreateShipmentAsync(correctShipment.shipment, shipmentRequestDetails, cancellationToken);
 
     return Results.Json(label, options);
 })

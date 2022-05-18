@@ -1,4 +1,5 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 
 using StampsClient.v111;
@@ -8,14 +9,18 @@ namespace EasyKeys.Shipping.Stamps.Tracking
     public class StampsTrackingProvider : IStampsTrackingProvider
     {
         private readonly IStampsClientService _stampsClient;
+        private readonly IPolicyService _policy;
 
-        public StampsTrackingProvider(IStampsClientService stampsClient)
+        public StampsTrackingProvider(IStampsClientService stampsClient, IPolicyService policy)
         {
             _stampsClient = stampsClient;
+            _policy = policy;
         }
 
         public async Task<TrackingInformation> TrackShipmentAsync(string trackingId, CancellationToken cancellationToken)
         {
+            var client = _stampsClient.CreateClient();
+
             var trackingInformation = new TrackingInformation();
 
             var trackRequest = new TrackShipmentRequest()
@@ -27,9 +32,9 @@ namespace EasyKeys.Shipping.Stamps.Tracking
 
             try
             {
-                var client = _stampsClient.CreateClient();
+                var trackingResults = await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await client.TrackShipmentAsync(trackRequest));
 
-                var trackingResults = await client.TrackShipmentAsync(trackRequest);
+                _stampsClient.SetToken(trackingResults.Authenticator);
 
                 foreach (var trackingEvent in trackingResults.TrackingEvents)
                 {

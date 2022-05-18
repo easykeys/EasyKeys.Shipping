@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.ServiceModel;
 
 using Bet.Extensions.Testing.Logging;
 
@@ -14,6 +15,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Moq;
+
+using StampsClient.v111;
 
 namespace EasyKeysShipping.UnitTest.Stamps;
 
@@ -88,21 +91,6 @@ public class StampsRateServiceTests
         {
             Assert.True(rates.All(x => x.ServiceType == returnServiceType));
         }
-    }
-
-    [Theory]
-    [ClassData(typeof(ContentTypeData))]
-    public async Task Return_RatesV40_ContentType_Successfully(ContentType contentType, StampsClient.v111.ContentTypeV2 returnedContentType)
-    {
-        var rateRequest = new RateRequestDetails() { ContentType = contentType };
-
-        var domesticShipment = TestShipments.CreateDomesticShipment();
-
-        var domesticRates = await _ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
-
-        Assert.NotNull(domesticRates);
-
-        Assert.True(domesticRates.All(x => x.ContentType == returnedContentType));
     }
 
     [Theory]
@@ -202,13 +190,88 @@ public class StampsRateServiceTests
         stampsClientMock.Setup(x => x.CreateClient())
             .Returns(swsimV111SoapClientMock.Object);
 
-        var ratesService = new RatesService(stampsClientMock.Object);
+        var ratesService = new RatesService(stampsClientMock.Object, new PolicyService(stampsClientMock.Object));
 
         var response = await ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
 
         Assert.NotNull(response);
 
         Assert.True(response.All(x => x.AddOns.Any(x => x.AddOnType == addOnTypeV17)));
+    }
+
+    [Theory]
+    [InlineData("Conversation out-of-sync.")]
+    public async void RateService_Handles_Exceptions_Successfully(string exMessage)
+    {
+        // arrange
+        var domesticShipment = TestShipments.CreateDomesticShipment();
+
+        var rateOptions = new RateRequestDetails();
+
+        var stampsClientMock = new Mock<IStampsClientService>();
+
+        var swsimV111Mock = new Mock<SwsimV111Soap>();
+
+        stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
+            .Verifiable();
+
+        swsimV111Mock.Setup(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
+            .Verifiable();
+
+        swsimV111Mock.SetupSequence(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
+            .ThrowsAsync(new FaultException(exMessage))
+            .ThrowsAsync(new Exception(exMessage));
+
+        stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
+
+        var stampsAddressValidationProvider = new RatesService(stampsClientMock.Object, new PolicyService(stampsClientMock.Object));
+
+        // act - assert
+        var ex = await Assert.ThrowsAsync<Exception>(async () => await stampsAddressValidationProvider.GetRatesResponseAsync(domesticShipment, rateOptions, CancellationToken.None));
+
+        Assert.True(ex.Message == exMessage);
+
+        stampsClientMock.Verify(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()), Times.Exactly(1));
+
+        swsimV111Mock.Verify(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()), Times.Exactly(2));
+    }
+
+    [Theory]
+    [InlineData("Conversation out-of-sync.")]
+    public async void RateService_Refreshes_Token_And_Returns_Rates_Successfully(string exMessage)
+    {
+        // arrange
+        var domesticShipment = TestShipments.CreateDomesticShipment();
+
+        var rateOptions = new RateRequestDetails();
+
+        var stampsClientMock = new Mock<IStampsClientService>();
+
+        var swsimV111Mock = new Mock<SwsimV111Soap>();
+
+        stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
+            .Verifiable();
+
+        swsimV111Mock.Setup(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
+            .Verifiable();
+
+        swsimV111Mock.SetupSequence(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
+            .ThrowsAsync(new FaultException(exMessage))
+            .ReturnsAsync(new GetRatesResponse() { Authenticator = "test", Rates = new RateV40[0] });
+
+        stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
+
+        var stampsAddressValidationProvider = new RatesService(stampsClientMock.Object, new PolicyService(stampsClientMock.Object));
+
+        // act
+        var result = await stampsAddressValidationProvider.GetRatesResponseAsync(domesticShipment, rateOptions, CancellationToken.None);
+
+        // assert
+        Assert.IsType<List<RateV40>>(result);
+
+        stampsClientMock.Verify(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()), Times.Exactly(1));
+
+        swsimV111Mock.Verify(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()), Times.Exactly(2));
     }
 
     private ServiceProvider GetServices()
@@ -359,41 +422,6 @@ public class StampsRateServiceTests
 
             // when unknown, defaults to all available
             yield return new object[] { StampsServiceType.Unknown, StampsClient.v111.ServiceType.USPM };
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-    }
-
-    public class ContentTypeData : IEnumerable<object[]>
-    {
-        public IEnumerator<object[]> GetEnumerator()
-        {
-            yield return new object[] { ContentType.CommcercialSample, StampsClient.v111.ContentTypeV2.CommercialSample };
-
-            /* Mailpiece is over maximum weight of 0 lb 15.999 oz
-             * Cannot ship First-Class packages larger than 22" x 18" x 15"
-             */
-            yield return new object[] { ContentType.DangerousGoods, StampsClient.v111.ContentTypeV2.DangerousGoods };
-
-            yield return new object[] { ContentType.Document, StampsClient.v111.ContentTypeV2.Document };
-
-            yield return new object[] { ContentType.Gift, StampsClient.v111.ContentTypeV2.Gift };
-
-            yield return new object[] { ContentType.HumanitarianDonation, StampsClient.v111.ContentTypeV2.HumanitarianDonation };
-
-            // Mail class 'ExpressMailInternational' is not available for the destination country.
-            yield return new object[] { ContentType.Merchandise, StampsClient.v111.ContentTypeV2.Merchandise };
-
-            // only for international
-            yield return new object[] { ContentType.ReturnedGoods, StampsClient.v111.ContentTypeV2.ReturnedGoods };
-
-            // Mail class UspsReturn not supported.
-            // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
-
-            yield return new object[] { ContentType.Other, StampsClient.v111.ContentTypeV2.Other };
         }
 
         IEnumerator IEnumerable.GetEnumerator()

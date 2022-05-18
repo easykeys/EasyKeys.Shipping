@@ -1,4 +1,5 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.AddressValidation.Extensions;
 
@@ -9,10 +10,12 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation;
 public class StampsAddressValidationProvider : IStampsAddressValidationProvider
 {
     private readonly IStampsClientService _stampsClient;
+    private readonly IPolicyService _policy;
 
-    public StampsAddressValidationProvider(IStampsClientService stampsClientService)
+    public StampsAddressValidationProvider(IStampsClientService stampsClientService, IPolicyService policy)
     {
         _stampsClient = stampsClientService;
+        _policy = policy;
     }
 
     public async Task<ValidateAddress> ValidateAddressAsync(ValidateAddress validateAddress, CancellationToken cancellationToken)
@@ -22,13 +25,16 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
             Address = validateAddress.OriginalAddress.GetStampsAddress(),
         };
 
+        var client = _stampsClient.CreateClient();
+
         try
         {
-            var client = _stampsClient.CreateClient();
-
             request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
 
-            var response = await client.CleanseAddressAsync(request);
+            var response = await _policy.GetRetryWithRefreshToken(cancellationToken)
+                                    .ExecuteAsync(async () => await client.CleanseAddressAsync(request));
+
+            _stampsClient.SetToken(response.Authenticator);
 
             return VerifyAddress(response, validateAddress);
         }

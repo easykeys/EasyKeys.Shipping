@@ -1,5 +1,5 @@
 
-POST https://{{host}}/stamps/createShipment?ServiceType=USFC
+POST https://{{host}}/stamps/createShipment?ServiceType=USFC&PackageTypeSelected=ThickEnvelope
 Content-Type: application/json
 
 

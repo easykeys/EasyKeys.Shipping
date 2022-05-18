@@ -83,44 +83,6 @@ public class RateRequestDetails
 
     /// <summary>
     /// <list type="bullet">
-    ///    <listheader>
-    ///    <term>Fedex Options</term>
-    ///    <description>description</description>
-    ///    <see href="https://developer.stamps.com/soap-api/reference/swsimv111.html#getratesresponse-object">more documentation</see>
-    ///     </listheader>
-    /// <item>
-    /// <description>default = Merchandise</description>
-    /// </item>
-    /// <item>
-    /// <description>Commercial_Sample</description>
-    /// </item>
-    /// <item>
-    /// <description>Dangerous_Goods</description>
-    /// </item>
-    /// <item>
-    /// <description>Document</description>
-    /// </item>
-    /// <item>
-    /// <description>Gift</description>
-    /// </item>
-    /// <item>
-    /// <description>Humanitarian_Donation</description>
-    /// </item>
-    /// <item>
-    /// <description>Returned_Goods</description>
-    /// </item>
-    /// <item>
-    /// <description>Other</description>
-    /// </item>
-    /// </list>
-    /// One of: Commercial_Sample, Dangerous_Goods, Document, Gift, Humanitarian_Donation, Merchandise, Returned_Goods, or Other.
-    /// </summary>
-    public ContentType ContentType { get; set; } = ContentType.Merchandise;
-
-    public bool ContentTypeSpecified { get; set; } = true;
-
-    /// <summary>
-    /// <list type="bullet">
     /// <item>
     /// <description>
     /// USPS

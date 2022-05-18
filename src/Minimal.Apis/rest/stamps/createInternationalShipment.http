@@ -1,5 +1,5 @@
 
-POST https://{{host}}/stamps/createInternationalShipment?ServiceType=USPMI
+POST https://{{host}}/stamps/createInternationalShipment?ServiceType=USPMI&localhost:7142/stamps/createShipment?ServiceType=USFC&PackageTypeSelected=ThickEnvelope
 Content-Type: application/json
 
 {
@@ -26,7 +26,7 @@ Content-Type: application/json
   "package": {
     "ShipDate" :null,
     "signatureRequiredOnDelivery": false,
-    "insuredValue": 0,
+    "insuredValue": 100,
     "length": 1.0,
     "width": 0.25,
     "height": 1.0,
