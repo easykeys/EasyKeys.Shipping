@@ -1,4 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 namespace EasyKeys.Shipping.Stamps.Rates.Extensions;
 
@@ -21,6 +22,14 @@ public static class PackageExtensions
             || package.Dimensions.Width > 24
             || package.Dimensions.Height > 24
             || totalDimensions > 36;
+    }
+
+    public static bool FitsPackageType(this Package package, PackageType packageType, bool isInternational = false)
+    {
+        return package.Dimensions.Length <= packageType.Dimensions.Length &&
+               package.Dimensions.Width <= packageType.Dimensions.Width &&
+               package.Dimensions.Height <= packageType.Dimensions.Height &&
+               package.Weight <= (isInternational ? packageType.MaxInternationalWeight : packageType.MaxWeight);
     }
 
     public static bool IsInternationalLargeEnvelope(this Package package)

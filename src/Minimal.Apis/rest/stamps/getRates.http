@@ -28,9 +28,9 @@ Content-Type: application/json
     "ShipDate" :null,
     "signatureRequiredOnDelivery": false,
     "insuredValue": 0,
-    "length": 9.0,
-    "width": 9.0,
-    "height": 0.5,
+    "length": 8.0,
+    "width": 0.0,
+    "height": 1,
     "weight": 0.1
   }
 }

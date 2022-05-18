@@ -245,7 +245,7 @@ public class StampsRateConfigurator
 
         foreach (var packageType in packageTypes)
         {
-            if (FitsPackageType(package, packageType))
+            if (package.FitsPackageType(packageType))
             {
                 var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
@@ -281,7 +281,7 @@ public class StampsRateConfigurator
 
         foreach (var packageType in packageTypes)
         {
-            if (FitsPackageType(package, packageType))
+            if (package.FitsPackageType(packageType))
             {
                 var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
@@ -321,7 +321,7 @@ public class StampsRateConfigurator
 
         foreach (var packageType in packageTypes)
         {
-            if (FitsPackageType(package, packageType, isInternational: true))
+            if (package.FitsPackageType(packageType, isInternational: true))
             {
                 var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
@@ -352,12 +352,12 @@ public class StampsRateConfigurator
         var packages = new List<Package> { package };
 
         var packageTypes = PackageType.List.Where(x => x.Category != "Unknown"
-                    || x.Category != "Letter"
-                    || x.Category == "PostCard");
+                    && x.Category != "Letter"
+                    && x.Category == "PostCard");
 
         foreach (var packageType in packageTypes)
         {
-            if (FitsPackageType(package, packageType, isInternational: true))
+            if (package.FitsPackageType(packageType, isInternational: true))
             {
                 var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
@@ -375,13 +375,5 @@ public class StampsRateConfigurator
                 Shipments.Add((shipment, new RateRequestDetails()));
             }
         }
-    }
-
-    private bool FitsPackageType(Package package, PackageType packageType, bool isInternational = false)
-    {
-        return package.Dimensions.Length <= packageType.Dimensions.Length &&
-               package.Dimensions.Width <= packageType.Dimensions.Width &&
-               package.Dimensions.Height <= packageType.Dimensions.Height &&
-               package.Weight <= (isInternational ? packageType.MaxInternationalWeight : packageType.MaxWeight);
     }
 }

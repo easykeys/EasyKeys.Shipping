@@ -166,7 +166,6 @@ app.MapPost("/stamps/createShipment", async (
     ShipmentDto model,
     string ServiceType,
     string PackageTypeSelected,
-    IStampsRateProvider rateProvider,
     IStampsShipmentProvider shipmentProvider,
     CancellationToken cancellationToken) =>
 {
@@ -194,6 +193,11 @@ app.MapPost("/stamps/createShipment", async (
 
     shipmentRequestDetails.RateRequestDetails.ServiceType = StampsServiceType.FromName(ServiceType);
 
+    if (correctShipment.shipment == null)
+    {
+        return Results.Json($"No Shipment Found with PackageType: {PackageTypeSelected}");
+    }
+
     var label = await shipmentProvider.CreateShipmentAsync(correctShipment.shipment, shipmentRequestDetails, cancellationToken);
 
     return Results.Json(label, options);
@@ -206,7 +210,6 @@ app.MapPost("/stamps/createInternationalShipment", async (
     InternationalShipmentDto model,
     string ServiceType,
     string PackageTypeSelected,
-    IStampsRateProvider rateProvider,
     IStampsShipmentProvider shipmentProvider,
     CancellationToken cancellationToken) =>
 {
