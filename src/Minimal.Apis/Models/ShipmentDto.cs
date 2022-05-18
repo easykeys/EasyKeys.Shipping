@@ -1,4 +1,5 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿
+using EasyKeys.Shipping.Abstractions.Models;
 
 namespace Minimal.Apis.Models;
 

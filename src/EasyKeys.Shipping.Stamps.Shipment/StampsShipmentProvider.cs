@@ -21,10 +21,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
     public async Task<ShipmentLabel> CreateShipmentAsync(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, CancellationToken cancellationToken)
     {
-        var ratesDetails = new RateRequestDetails()
-        {
-            ServiceType = StampsServiceType.FromName(shipmentDetails.SelectedRate.Name),
-        };
+        var ratesDetails = new RateRequestDetails();
 
         var request = new CreateIndiciumRequest()
         {

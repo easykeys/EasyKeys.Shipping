@@ -147,21 +147,21 @@ app.MapPost("/fedex/getRates", async (
 app.MapPost("/stamps/createShipment", async (
     ShipmentDto model,
     string ServiceType,
+    string PackageTypeSelected,
     IStampsRateProvider rateProvider,
     IStampsShipmentProvider shipmentProvider,
     CancellationToken cancellationToken) =>
 {
     var shipment = await GetShipmentRates(model, rateProvider, sender, receiver, StampsServiceType.FromName(ServiceType), cancellationToken);
 
-    var shipmentRequestDetails = new ShipmentRequestDetails()
-    {
-        SelectedRate = shipment?.FirstOrDefault()?.Rates?.Where(x => x.Name == ServiceType)?.FirstOrDefault(),
-    };
-
     // adds printed message
+    var correctShipment = shipment.Where(x => x.Options.PackagingType == PackageTypeSelected);
+
+    var shipmentRequestDetails = new ShipmentRequestDetails();
+
     shipmentRequestDetails.LabelOptions.Memo = "This will be orderId";
 
-    var label = await shipmentProvider.CreateShipmentAsync(shipment.FirstOrDefault(), shipmentRequestDetails, cancellationToken);
+    var label = await shipmentProvider.CreateShipmentAsync(correctShipment.FirstOrDefault(), shipmentRequestDetails, cancellationToken);
 
     return Results.Json(label, options);
 })
@@ -272,9 +272,10 @@ static async Task<List<Shipment>> GetShipmentRates(
         model.Package.ShipDate);
 
     var shipments = new List<Shipment>();
+
     foreach (var shipment in configurator.Shipments)
     {
-
+        shipment.rateOptions.ServiceType = serviceType ?? StampsServiceType.Unknown;
         var result = await rateProvider.GetRatesAsync(shipment.shipment, shipment.rateOptions, cancellationToken);
         shipments.Add(result);
     }
