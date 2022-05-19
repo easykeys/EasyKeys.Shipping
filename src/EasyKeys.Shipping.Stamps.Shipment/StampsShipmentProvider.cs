@@ -1,11 +1,10 @@
-﻿using System.ServiceModel;
-
+﻿
 using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 
-using Polly;
+using Microsoft.Extensions.Logging;
 
 using StampsClient.v111;
 
@@ -16,12 +15,14 @@ public class StampsShipmentProvider : IStampsShipmentProvider
     private readonly IStampsClientService _stampsClient;
     private readonly IRatesService _ratesService;
     private readonly IPolicyService _policy;
+    private readonly ILogger<StampsShipmentProvider> _logger;
 
-    public StampsShipmentProvider(IStampsClientService stampsClientService, IRatesService ratesService, IPolicyService policy)
+    public StampsShipmentProvider(IStampsClientService stampsClientService, IRatesService ratesService, IPolicyService policy, ILogger<StampsShipmentProvider> logger)
     {
         _stampsClient = stampsClientService;
         _ratesService = ratesService;
         _policy = policy;
+        _logger = logger;
     }
 
     public async Task<ShipmentLabel> CreateShipmentAsync(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, CancellationToken cancellationToken)
@@ -199,6 +200,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         }
         catch (Exception ex)
         {
+            _logger.LogError("{name} : {message}", nameof(StampsShipmentProvider), ex.Message);
             shipmentLabel.InternalErrors.Add(ex.Message);
         }
 
@@ -208,9 +210,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
     public async Task<CancelIndiciumResponse> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken)
     {
         var client = _stampsClient.CreateClient();
-        var policy = Policy
-          .Handle<FaultException>(x => x.Message == "Conversation out-of-sync.")
-          .RetryAsync(1, async (ex, count, context) => await _stampsClient.RefreshTokenAsync(cancellationToken));
+
         var request = new CancelIndiciumRequest()
         {
             Item1 = trackingId
@@ -219,7 +219,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         {
             request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
 
-            return await policy.ExecuteAsync(async () => await client.CancelIndiciumAsync(request));
+            return await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await client.CancelIndiciumAsync(request));
         }
         catch (Exception ex)
         {

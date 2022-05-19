@@ -38,7 +38,7 @@ internal sealed class StampsClientService : IStampsClientService
             return savedToken;
         }
 
-        return await AuthenticateUser(cancellationToken);
+        return await RefreshTokenAsync(cancellationToken);
     }
 
     public bool SetToken(string newToken)
@@ -52,11 +52,6 @@ internal sealed class StampsClientService : IStampsClientService
     }
 
     public async Task<string> RefreshTokenAsync(CancellationToken cancellationToken)
-    {
-        return await AuthenticateUser(cancellationToken);
-    }
-
-    private async Task<string> AuthenticateUser(CancellationToken cancellationToken)
     {
         var credentials = new Credentials()
         {

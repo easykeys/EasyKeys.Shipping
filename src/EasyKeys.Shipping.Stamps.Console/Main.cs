@@ -111,26 +111,25 @@ public class Main : IMain
             PhoneNumber = "867-338-2737"
         };
 
-        var fileName = "Embeded.intnl-addresses.json";
-        //var fileName = "Embeded.domestic-addresses.json";
+        //var fileName = "Embeded.intnl-addresses.json";
+        var fileName = "Embeded.domestic-addresses.json";
         var models = LoadModels<List<RateModelDto>>(fileName);
-
+        models.AddRange(models);
+        models.AddRange(models);
         var time = DateTime.Now;
+        var arrayTask = new List<Task>();
         foreach (var model in models)
         {
-            _ = await GetRatesAsync(originAddress, model.Address, model.Packages.FirstOrDefault(), sender, receiver, cancellationToken);
+            arrayTask.Add(GetRatesAsync(originAddress, model.Address, model.Packages.FirstOrDefault(), sender, receiver, cancellationToken));
 
-            var proposedAddress = await ValidateAsync(model.Address, true, cancellationToken);
+            arrayTask.Add(ValidateAsync(model.Address, true, cancellationToken));
 
-            _ = await GetRatesAsync(originAddress, model.Address, model.Packages.FirstOrDefault(), sender, receiver, cancellationToken);
+            arrayTask.Add(GetRatesAsync(originAddress, model.Address, model.Packages.FirstOrDefault(), sender, receiver, cancellationToken));
 
-            _ = await CreateShipmentAsync(originAddress, model.Address, model.Packages.FirstOrDefault(), sender, receiver, cancellationToken);
-
-            if (DateTime.Now > time.AddMinutes(5))
-            {
-                break;
-            }
+            arrayTask.Add(CreateShipmentAsync(originAddress, model.Address, model.Packages.FirstOrDefault(), sender, receiver, cancellationToken));
         }
+
+        await Task.WhenAll(arrayTask.ToArray());
 
         return 0;
         // 1) create validate address request
@@ -198,7 +197,7 @@ public class Main : IMain
         return models;
     }
 
-    private async Task<ValidateAddress> ValidateAsync(Address destination, bool debug = false, CancellationToken cancellationToken = default)
+    private async Task ValidateAsync(Address destination, bool debug = false, CancellationToken cancellationToken = default)
     {
         // 1. address validation
         // for international orders, user must enter the provice/state code, not full name
@@ -218,11 +217,9 @@ public class Main : IMain
             // 1.a display validation bag
             _logger.LogInformation(Environment.NewLine + result.ValidationBag.Select(x => $"{x.Key}-{x.Value}").Flatten(Environment.NewLine));
         }
-
-        return result;
     }
 
-    private async Task<int> GetRatesAsync(Address origin, Address destination, Package package, ContactInfo sender, ContactInfo receiver, CancellationToken cancellationToken = default)
+    private async Task GetRatesAsync(Address origin, Address destination, Package package, ContactInfo sender, ContactInfo receiver, CancellationToken cancellationToken = default)
     {
         var config = new StampsRateConfigurator(origin, destination, package, sender, receiver);
 
@@ -230,11 +227,9 @@ public class Main : IMain
         {
             await _rateProvider.GetRatesAsync(shipment.shipment, shipment.rateOptions, cancellationToken);
         }
-
-        return 0;
     }
 
-    private async Task<int> CreateShipmentAsync(Address origin, Address destination, Package package, ContactInfo sender, ContactInfo receiver, CancellationToken cancellationToken = default)
+    private async Task CreateShipmentAsync(Address origin, Address destination, Package package, ContactInfo sender, ContactInfo receiver, CancellationToken cancellationToken = default)
     {
         var config = new StampsRateConfigurator(origin, destination, package, sender, receiver);
 
@@ -243,7 +238,5 @@ public class Main : IMain
         shipmentDetails.RateRequestDetails = config.Shipments.FirstOrDefault().rateOptions;
 
         await _shipmentProvider.CreateShipmentAsync(config.Shipments.FirstOrDefault().shipment, shipmentDetails, cancellationToken);
-
-        return 0;
     }
 }

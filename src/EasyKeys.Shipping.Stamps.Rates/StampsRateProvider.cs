@@ -40,6 +40,7 @@ public class StampsRateProvider : IStampsRateProvider
         }
         catch (Exception ex)
         {
+            _logger.LogError("{name} : {message}", nameof(StampsRateProvider), ex.Message);
             shipment.InternalErrors.Add(ex.Message);
         }
 

@@ -3,6 +3,8 @@ using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.AddressValidation.Extensions;
 
+using Microsoft.Extensions.Logging;
+
 using StampsClient.v111;
 
 namespace EasyKeys.Shipping.Stamps.AddressValidation;
@@ -11,11 +13,13 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
 {
     private readonly IStampsClientService _stampsClient;
     private readonly IPolicyService _policy;
+    private readonly ILogger<StampsAddressValidationProvider> _logger;
 
-    public StampsAddressValidationProvider(IStampsClientService stampsClientService, IPolicyService policy)
+    public StampsAddressValidationProvider(IStampsClientService stampsClientService, IPolicyService policy, ILogger<StampsAddressValidationProvider> logger)
     {
         _stampsClient = stampsClientService;
         _policy = policy;
+        _logger = logger;
     }
 
     public async Task<ValidateAddress> ValidateAddressAsync(ValidateAddress validateAddress, CancellationToken cancellationToken)
@@ -40,6 +44,8 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
         }
         catch (Exception ex)
         {
+            _logger.LogError("{name} : {message}", nameof(StampsAddressValidationProvider), ex.Message);
+
             validateAddress.InternalErrors.Add(ex.Message);
             validateAddress.ValidationBag.Add("CityStateZipOK", "false");
             validateAddress.ValidationBag.Add("AddressMatch", "false");

@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 using StampsClient.v111;
@@ -24,8 +23,6 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                 var request = new GetRatesRequest()
                 {
-                    Item = await _stampsClient.GetTokenAsync(cancellationToken),
-
                     Rate = new RateV40()
                     {
                         From = new StampsClient.v111.Address()
@@ -156,6 +153,8 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                 try
                 {
+                    request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
+
                     var response = await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await stampsClient.GetRatesAsync(request));
 
                     _stampsClient.SetToken(response.Authenticator);

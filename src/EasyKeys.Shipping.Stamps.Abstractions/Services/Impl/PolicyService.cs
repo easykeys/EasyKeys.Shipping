@@ -26,6 +26,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
             return Policy
                   .Handle<FaultException>(x => x.Message == "Conversation out-of-sync.")
+                  .Or<FaultException>(x => x.Message == "Invalid conversation token.")
                   .WaitAndRetryAsync(
                     retryCount: 1,
                     sleepDurationProvider: (retryAttempt, context) =>
