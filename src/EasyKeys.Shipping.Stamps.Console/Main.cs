@@ -115,11 +115,24 @@ public class Main : IMain
         //var fileName = "Embeded.domestic-addresses.json";
         var models = LoadModels<List<RateModelDto>>(fileName);
 
+        var time = DateTime.Now;
         foreach (var model in models)
         {
+            _ = await GetRatesAsync(originAddress, model.Address, model.Packages.FirstOrDefault(), sender, receiver, cancellationToken);
+
             var proposedAddress = await ValidateAsync(model.Address, true, cancellationToken);
+
+            _ = await GetRatesAsync(originAddress, model.Address, model.Packages.FirstOrDefault(), sender, receiver, cancellationToken);
+
+            _ = await CreateShipmentAsync(originAddress, model.Address, model.Packages.FirstOrDefault(), sender, receiver, cancellationToken);
+
+            if (DateTime.Now > time.AddMinutes(5))
+            {
+                break;
+            }
         }
 
+        return 0;
         // 1) create validate address request
         var validateRequest = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
 
@@ -207,5 +220,30 @@ public class Main : IMain
         }
 
         return result;
+    }
+
+    private async Task<int> GetRatesAsync(Address origin, Address destination, Package package, ContactInfo sender, ContactInfo receiver, CancellationToken cancellationToken = default)
+    {
+        var config = new StampsRateConfigurator(origin, destination, package, sender, receiver);
+
+        foreach (var shipment in config.Shipments)
+        {
+            await _rateProvider.GetRatesAsync(shipment.shipment, shipment.rateOptions, cancellationToken);
+        }
+
+        return 0;
+    }
+
+    private async Task<int> CreateShipmentAsync(Address origin, Address destination, Package package, ContactInfo sender, ContactInfo receiver, CancellationToken cancellationToken = default)
+    {
+        var config = new StampsRateConfigurator(origin, destination, package, sender, receiver);
+
+        var shipmentDetails = new ShipmentRequestDetails();
+
+        shipmentDetails.RateRequestDetails = config.Shipments.FirstOrDefault().rateOptions;
+
+        await _shipmentProvider.CreateShipmentAsync(config.Shipments.FirstOrDefault().shipment, shipmentDetails, cancellationToken);
+
+        return 0;
     }
 }
