@@ -1,5 +1,7 @@
 ﻿using System.ServiceModel;
 
+using Microsoft.Extensions.Logging;
+
 using Polly;
 using Polly.Timeout;
 
@@ -8,15 +10,17 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
     public class PolicyService : IPolicyService
     {
         private readonly IStampsClientService _stampsClient;
+        private readonly ILogger<PolicyService> _logger;
 
-        public PolicyService(IStampsClientService stampsClient)
+        public PolicyService(IStampsClientService stampsClient, ILogger<PolicyService> logger)
         {
             _stampsClient = stampsClient;
+            _logger = logger;
         }
 
         public IAsyncPolicy GetRetryWithRefreshToken(CancellationToken cancellationToken)
         {
-            var timeoutPolicy = Policy.TimeoutAsync(3, TimeoutStrategy.Pessimistic);
+            var timeoutPolicy = Policy.TimeoutAsync(10, TimeoutStrategy.Pessimistic);
 
             var jitterer = new Random();
 
@@ -31,6 +35,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
                     },
                     onRetry: async (ex, count, context) =>
                     {
+                        _logger.LogError("Refreshing Token, {ex} : {message} was thrown.", ex.GetType().ToString(), ex.Message);
                         await _stampsClient.RefreshTokenAsync(cancellationToken);
                     })
                     .WrapAsync(timeoutPolicy);

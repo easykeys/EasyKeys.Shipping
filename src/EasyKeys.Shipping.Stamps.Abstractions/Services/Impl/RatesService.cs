@@ -164,9 +164,9 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                     return response.Rates.ToList();
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw new Exception(ex.Message);
+                    throw;
                 }
             }
         }
