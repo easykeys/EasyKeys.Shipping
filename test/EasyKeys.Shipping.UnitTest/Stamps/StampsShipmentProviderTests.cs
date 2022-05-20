@@ -15,6 +15,7 @@ using EasyKeysShipping.UnitTest.TestHelpers;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using Moq;
 
@@ -93,6 +94,10 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
             var rateServiceMock = new Mock<IRatesService>();
 
+            var mockLogger = new Mock<ILogger<PolicyService>>();
+
+            var mockLogger2 = new Mock<ILogger<StampsShipmentProvider>>();
+
             stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
                 .Verifiable();
 
@@ -108,7 +113,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
             stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
 
-            var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, new PolicyService(stampsClientMock.Object));
+            var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object), mockLogger2.Object);
 
             // act
             var result = await stampsShipmentProvider.CreateShipmentAsync(domesticShipment, shipmentDetails, CancellationToken.None);
@@ -138,6 +143,10 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
             var rateServiceMock = new Mock<IRatesService>();
 
+            var mockLogger = new Mock<ILogger<PolicyService>>();
+
+            var mockLogger2 = new Mock<ILogger<StampsShipmentProvider>>();
+
             stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
                 .Verifiable();
 
@@ -154,7 +163,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
             stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
 
-            var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, new PolicyService(stampsClientMock.Object));
+            var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object), mockLogger2.Object);
 
             // act
             var result = await stampsShipmentProvider.CreateShipmentAsync(domesticShipment, shipmentDetails, CancellationToken.None);

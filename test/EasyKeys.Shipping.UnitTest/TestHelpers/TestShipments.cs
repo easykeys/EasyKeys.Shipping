@@ -98,7 +98,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
                     Width = 1.500M,
                     Length = 1.200M
                 },
-                10m,
+                3m,
                 10m,
                 false),
         };

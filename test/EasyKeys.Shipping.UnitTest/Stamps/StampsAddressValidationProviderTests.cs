@@ -10,6 +10,7 @@ using EasyKeys.Shipping.Stamps.AddressValidation;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using Moq;
 
@@ -66,6 +67,10 @@ public class StampsAddressValidationProviderTests
 
         var swsimV111Mock = new Mock<SwsimV111Soap>();
 
+        var mockLogger = new Mock<ILogger<PolicyService>>();
+
+        var mockLogger2 = new Mock<ILogger<StampsAddressValidationProvider>>();
+
         stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
             .Verifiable();
 
@@ -78,7 +83,7 @@ public class StampsAddressValidationProviderTests
 
         stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
 
-        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, new PolicyService(stampsClientMock.Object));
+        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object), mockLogger2.Object);
 
         var validateAddress = new ValidateAddress(
             "test",
@@ -114,6 +119,10 @@ public class StampsAddressValidationProviderTests
 
         var swsimV111Mock = new Mock<SwsimV111Soap>();
 
+        var mockLogger = new Mock<ILogger<PolicyService>>();
+
+        var mockLogger2 = new Mock<ILogger<StampsAddressValidationProvider>>();
+
         stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
             .Verifiable();
 
@@ -127,7 +136,7 @@ public class StampsAddressValidationProviderTests
 
         stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
 
-        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, new PolicyService(stampsClientMock.Object));
+        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object), mockLogger2.Object);
 
         var validateAddress = new ValidateAddress(
             "test",
