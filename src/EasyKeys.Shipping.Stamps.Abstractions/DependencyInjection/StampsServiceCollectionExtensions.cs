@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.Stamps.Abstractions.Options;
+﻿using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
 
@@ -23,9 +22,8 @@ public static class StampsServiceCollectionExtensions
     {
         services.AddChangeTokenOptions<StampsOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
 
-        services.TryAddSingleton<IPolicyService, PolicyService>();
-
         services.TryAddSingleton<IStampsClientService, StampsClientService>();
+        services.TryAddSingleton<IStampsClientAuthenticator, StampsClientAuthenticator>();
 
         return services;
     }

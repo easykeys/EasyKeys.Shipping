@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.AddressValidation.Extensions;
 
@@ -12,14 +11,14 @@ namespace EasyKeys.Shipping.Stamps.AddressValidation;
 public class StampsAddressValidationProvider : IStampsAddressValidationProvider
 {
     private readonly IStampsClientService _stampsClient;
-    private readonly IPolicyService _policy;
     private readonly ILogger<StampsAddressValidationProvider> _logger;
 
-    public StampsAddressValidationProvider(IStampsClientService stampsClientService, IPolicyService policy, ILogger<StampsAddressValidationProvider> logger)
+    public StampsAddressValidationProvider(
+        IStampsClientService stampsClientService,
+        ILogger<StampsAddressValidationProvider> logger)
     {
-        _stampsClient = stampsClientService;
-        _policy = policy;
-        _logger = logger;
+        _stampsClient = stampsClientService ?? throw new ArgumentNullException(nameof(stampsClientService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<ValidateAddress> ValidateAddressAsync(ValidateAddress validateAddress, CancellationToken cancellationToken)
@@ -29,16 +28,9 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
             Address = validateAddress.OriginalAddress.GetStampsAddress(),
         };
 
-        var client = _stampsClient.CreateClient();
-
         try
         {
-            request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
-
-            var response = await _policy.GetRetryWithRefreshToken(cancellationToken)
-                                    .ExecuteAsync(async () => await client.CleanseAddressAsync(request));
-
-            _stampsClient.SetToken(response.Authenticator);
+            var response = await _stampsClient.CleanseAddressAsync(request, cancellationToken);
 
             return VerifyAddress(response, validateAddress);
         }

@@ -13,7 +13,6 @@ using EasyKeysShipping.UnitTest.TestHelpers;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 using Moq;
 
@@ -183,17 +182,12 @@ public class StampsRateServiceTests
         var rateRequest = new RateRequestDetails();
         var stampsClientMock = new Mock<IStampsClientService>();
 
-        var mockLogger = new Mock<ILogger<PolicyService>>();
-
         var swsimV111SoapClientMock = new Mock<StampsClient.v111.SwsimV111Soap>();
 
         swsimV111SoapClientMock.Setup(x => x.GetRatesAsync(It.IsAny<StampsClient.v111.GetRatesRequest>()))
             .ReturnsAsync(getRatesResponse);
 
-        stampsClientMock.Setup(x => x.CreateClient())
-            .Returns(swsimV111SoapClientMock.Object);
-
-        var ratesService = new RatesService(stampsClientMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object));
+        var ratesService = new RatesService(stampsClientMock.Object);
 
         var response = await ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
 
@@ -215,11 +209,6 @@ public class StampsRateServiceTests
 
         var swsimV111Mock = new Mock<SwsimV111Soap>();
 
-        var mockLogger = new Mock<ILogger<PolicyService>>();
-
-        stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
-            .Verifiable();
-
         swsimV111Mock.Setup(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
             .Verifiable();
 
@@ -227,16 +216,12 @@ public class StampsRateServiceTests
             .ThrowsAsync(new FaultException(exMessage))
             .ThrowsAsync(new Exception(exMessage));
 
-        stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
-
-        var stampsAddressValidationProvider = new RatesService(stampsClientMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object));
+        var stampsAddressValidationProvider = new RatesService(stampsClientMock.Object);
 
         // act - assert
         var ex = await Assert.ThrowsAsync<Exception>(async () => await stampsAddressValidationProvider.GetRatesResponseAsync(domesticShipment, rateOptions, CancellationToken.None));
 
         Assert.True(ex.Message == exMessage);
-
-        stampsClientMock.Verify(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()), Times.Exactly(1));
 
         swsimV111Mock.Verify(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()), Times.Exactly(2));
     }
@@ -254,11 +239,6 @@ public class StampsRateServiceTests
 
         var swsimV111Mock = new Mock<SwsimV111Soap>();
 
-        var mockLogger = new Mock<ILogger<PolicyService>>();
-
-        stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
-            .Verifiable();
-
         swsimV111Mock.Setup(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
             .Verifiable();
 
@@ -266,17 +246,13 @@ public class StampsRateServiceTests
             .ThrowsAsync(new FaultException(exMessage))
             .ReturnsAsync(new GetRatesResponse() { Authenticator = "test", Rates = new RateV40[0] });
 
-        stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
-
-        var stampsAddressValidationProvider = new RatesService(stampsClientMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object));
+        var stampsAddressValidationProvider = new RatesService(stampsClientMock.Object);
 
         // act
         var result = await stampsAddressValidationProvider.GetRatesResponseAsync(domesticShipment, rateOptions, CancellationToken.None);
 
         // assert
         Assert.IsType<List<RateV40>>(result);
-
-        stampsClientMock.Verify(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()), Times.Exactly(1));
 
         swsimV111Mock.Verify(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()), Times.Exactly(2));
     }

@@ -5,7 +5,6 @@ using Bet.Extensions.Testing.Logging;
 
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
-using EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
 using EasyKeys.Shipping.Stamps.AddressValidation;
 
 using Microsoft.Extensions.Configuration;
@@ -67,12 +66,7 @@ public class StampsAddressValidationProviderTests
 
         var swsimV111Mock = new Mock<SwsimV111Soap>();
 
-        var mockLogger = new Mock<ILogger<PolicyService>>();
-
         var mockLogger2 = new Mock<ILogger<StampsAddressValidationProvider>>();
-
-        stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
-            .Verifiable();
 
         swsimV111Mock.Setup(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
             .Verifiable();
@@ -81,9 +75,7 @@ public class StampsAddressValidationProviderTests
             .ThrowsAsync(new FaultException(exMessage))
             .ThrowsAsync(new Exception(exMessage));
 
-        stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
-
-        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object), mockLogger2.Object);
+        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, mockLogger2.Object);
 
         var validateAddress = new ValidateAddress(
             "test",
@@ -99,8 +91,6 @@ public class StampsAddressValidationProviderTests
 
         // act
         var result = await stampsAddressValidationProvider.ValidateAddressAsync(validateAddress, CancellationToken.None);
-
-        stampsClientMock.Verify(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()), Times.Exactly(1));
 
         swsimV111Mock.Verify(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()), Times.Exactly(2));
 
@@ -119,12 +109,7 @@ public class StampsAddressValidationProviderTests
 
         var swsimV111Mock = new Mock<SwsimV111Soap>();
 
-        var mockLogger = new Mock<ILogger<PolicyService>>();
-
         var mockLogger2 = new Mock<ILogger<StampsAddressValidationProvider>>();
-
-        stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
-            .Verifiable();
 
         swsimV111Mock.Setup(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
             .Verifiable();
@@ -134,9 +119,7 @@ public class StampsAddressValidationProviderTests
             .ReturnsAsync(new CleanseAddressResponse()
             { Authenticator = "test", CandidateAddresses = new StampsClient.v111.Address[0], Address = new StampsClient.v111.Address() });
 
-        stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
-
-        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object), mockLogger2.Object);
+        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, mockLogger2.Object);
 
         var validateAddress = new ValidateAddress(
             "test",
@@ -152,8 +135,6 @@ public class StampsAddressValidationProviderTests
 
         // act
         var result = await stampsAddressValidationProvider.ValidateAddressAsync(validateAddress, CancellationToken.None);
-
-        stampsClientMock.Verify(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()), Times.Exactly(1));
 
         swsimV111Mock.Verify(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()), Times.Exactly(2));
 

@@ -111,7 +111,7 @@ public class Main : IMain
             PhoneNumber = "867-338-2737"
         };
 
-        //var fileName = "Embeded.intnl-addresses.json";
+        // var fileName = "Embeded.intnl-addresses.json";
         var fileName = "Embeded.domestic-addresses.json";
         var models = LoadModels<List<RateModelDto>>(fileName);
         models.AddRange(models);
@@ -132,6 +132,7 @@ public class Main : IMain
         await Task.WhenAll(arrayTask.ToArray());
 
         return 0;
+
         // 1) create validate address request
         var validateRequest = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
 

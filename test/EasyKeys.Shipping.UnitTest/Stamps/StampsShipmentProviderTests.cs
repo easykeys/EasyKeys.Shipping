@@ -6,7 +6,6 @@ using Bet.Extensions.Testing.Logging;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
-using EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
 using EasyKeys.Shipping.Stamps.Shipment;
 using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
@@ -94,12 +93,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
             var rateServiceMock = new Mock<IRatesService>();
 
-            var mockLogger = new Mock<ILogger<PolicyService>>();
-
             var mockLogger2 = new Mock<ILogger<StampsShipmentProvider>>();
-
-            stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
-                .Verifiable();
 
             swsimV111Mock.Setup(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
                 .Verifiable();
@@ -111,14 +105,10 @@ namespace EasyKeysShipping.UnitTest.Stamps
             rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateRequestDetails>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<RateV40>());
 
-            stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
-
-            var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object), mockLogger2.Object);
+            var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, mockLogger2.Object);
 
             // act
             var result = await stampsShipmentProvider.CreateShipmentAsync(domesticShipment, shipmentDetails, CancellationToken.None);
-
-            stampsClientMock.Verify(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()), Times.Exactly(1));
 
             swsimV111Mock.Verify(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()), Times.Exactly(2));
 
@@ -143,12 +133,7 @@ namespace EasyKeysShipping.UnitTest.Stamps
 
             var rateServiceMock = new Mock<IRatesService>();
 
-            var mockLogger = new Mock<ILogger<PolicyService>>();
-
             var mockLogger2 = new Mock<ILogger<StampsShipmentProvider>>();
-
-            stampsClientMock.Setup(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()))
-                .Verifiable();
 
             swsimV111Mock.Setup(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
                 .Verifiable();
@@ -161,14 +146,10 @@ namespace EasyKeysShipping.UnitTest.Stamps
             rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateRequestDetails>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<RateV40>());
 
-            stampsClientMock.Setup(x => x.CreateClient()).Returns(swsimV111Mock.Object);
-
-            var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, new PolicyService(stampsClientMock.Object, mockLogger.Object), mockLogger2.Object);
+            var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, mockLogger2.Object);
 
             // act
             var result = await stampsShipmentProvider.CreateShipmentAsync(domesticShipment, shipmentDetails, CancellationToken.None);
-
-            stampsClientMock.Verify(x => x.RefreshTokenAsync(It.IsAny<CancellationToken>()), Times.Exactly(1));
 
             swsimV111Mock.Verify(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()), Times.Exactly(2));
 

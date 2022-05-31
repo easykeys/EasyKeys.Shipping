@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.Abstractions.Extensions;
+﻿using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
@@ -14,28 +13,30 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 {
     private readonly IStampsClientService _stampsClient;
     private readonly IRatesService _ratesService;
-    private readonly IPolicyService _policy;
     private readonly ILogger<StampsShipmentProvider> _logger;
 
-    public StampsShipmentProvider(IStampsClientService stampsClientService, IRatesService ratesService, IPolicyService policy, ILogger<StampsShipmentProvider> logger)
+    public StampsShipmentProvider(
+        IStampsClientService stampsClientService,
+        IRatesService ratesService,
+        ILogger<StampsShipmentProvider> logger)
     {
-        _stampsClient = stampsClientService;
-        _ratesService = ratesService;
-        _policy = policy;
-        _logger = logger;
+        _stampsClient = stampsClientService ?? throw new ArgumentNullException(nameof(stampsClientService));
+        _ratesService = ratesService ?? throw new ArgumentNullException(nameof(ratesService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<ShipmentLabel> CreateShipmentAsync(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, CancellationToken cancellationToken)
+    public async Task<ShipmentLabel> CreateShipmentAsync(
+        Shipping.Abstractions.Models.Shipment shipment,
+        ShipmentRequestDetails shipmentDetails,
+        CancellationToken cancellationToken)
     {
-        var client = _stampsClient.CreateClient();
-
         var shipmentLabel = new ShipmentLabel();
 
         var request = new CreateIndiciumRequest()
         {
-            IntegratorTxID = Guid.NewGuid().ToString(),
+            IntegratorTxID = shipmentDetails.IntegratorTxId,
 
-            CustomerID = Guid.NewGuid().ToString(),
+            CustomerID = shipmentDetails.CustomerId,
 
             Customs = shipment.Commodities.Any() ? SetCustomsInformation(shipment, shipmentDetails) : default,
 
@@ -43,9 +44,9 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
             PostageMode = shipmentDetails.LabelOptions.PostageMode.Value switch
             {
-                (int)StampsClient.v111.PostageMode.Normal => StampsClient.v111.PostageMode.Normal,
-                (int)StampsClient.v111.PostageMode.NoPostage => StampsClient.v111.PostageMode.NoPostage,
-                _ => StampsClient.v111.PostageMode.Normal
+                (int)PostageMode.Normal => PostageMode.Normal,
+                (int)PostageMode.NoPostage => PostageMode.NoPostage,
+                _ => PostageMode.Normal
             },
 
             ImageType = shipmentDetails.LabelOptions.ImageType.Value switch
@@ -169,17 +170,13 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
         try
         {
-            var rates = await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await _ratesService.GetRatesResponseAsync(shipment, shipmentDetails.RateRequestDetails, cancellationToken));
-
-            request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
+            var rates = await _ratesService.GetRatesResponseAsync(shipment, shipmentDetails.RateRequestDetails, cancellationToken);
 
             request.Rate = rates.FirstOrDefault();
 
             request.ReturnTo = rates.FirstOrDefault()?.From;
 
-            var response = await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await client.CreateIndiciumAsync(request));
-
-            _stampsClient.SetToken(response.Authenticator);
+            var response = await _stampsClient.CreateIndiciumAsync(request, cancellationToken);
 
             shipmentLabel.Labels = new List<PackageLabelDetails>()
                 {
@@ -209,21 +206,17 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
     public async Task<CancelIndiciumResponse> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken)
     {
-        var client = _stampsClient.CreateClient();
-
         var request = new CancelIndiciumRequest()
         {
             Item1 = trackingId
         };
         try
         {
-            request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
-
-            return await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await client.CancelIndiciumAsync(request));
+            return await _stampsClient.CancelIndiciumAsync(request, cancellationToken);
         }
-        catch (Exception ex)
+        catch
         {
-            throw new Exception(ex.Message);
+            throw;
         }
     }
 

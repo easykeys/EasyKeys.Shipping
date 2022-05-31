@@ -8,19 +8,15 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
     public class RatesService : IRatesService
     {
         private readonly IStampsClientService _stampsClient;
-        private readonly IPolicyService _policy;
 
-        public RatesService(IStampsClientService stampsClientService, IPolicyService policy)
+        public RatesService(IStampsClientService stampsClientService)
         {
-            _stampsClient = stampsClientService;
-            _policy = policy;
+            _stampsClient = stampsClientService ?? throw new ArgumentNullException(nameof(stampsClientService));
         }
 
         public async Task<List<RateV40>> GetRatesResponseAsync(Shipment shipment, RateRequestDetails rateDetails, CancellationToken cancellationToken)
         {
             {
-                var stampsClient = _stampsClient.CreateClient();
-
                 var request = new GetRatesRequest()
                 {
                     Rate = new RateV40()
@@ -153,11 +149,7 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl
 
                 try
                 {
-                    request.Item = await _stampsClient.GetTokenAsync(cancellationToken);
-
-                    var response = await _policy.GetRetryWithRefreshToken(cancellationToken).ExecuteAsync(async () => await stampsClient.GetRatesAsync(request));
-
-                    _stampsClient.SetToken(response.Authenticator);
+                    var response = await _stampsClient.GetRatesAsync(request, cancellationToken);
 
                     response = ApplyAddOns(response, rateDetails, shipment);
 
