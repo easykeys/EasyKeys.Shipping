@@ -29,13 +29,9 @@ public class StampsRateProvider : IStampsRateProvider
 
             foreach (var rate in rates)
             {
-                shipment.Rates.Add(new Rate($"{rate.ServiceType}", $"{rate.ServiceDescription}", $"{rate.PackageType} ({packageType.Dimensions.Length}x{packageType.Dimensions.Width}x{packageType.Dimensions.Height})", rate.Amount, rate.DeliveryDate));
+                shipment.Rates.Add(new Rate($"{rate.ServiceType}", $"{rate.ServiceDescription}", $"{rate.PackageType}", rate.Amount, rate.DeliveryDate));
 
-                _logger.LogDebug($"{rate.ServiceType} : {rate.ServiceDescription}");
-
-                _logger.LogDebug($" => Cost : {rate.Amount}");
-
-                _logger.LogDebug($" => Delivery Days : {rate.DeliverDays}");
+                _logger.LogDebug($"{rate.ServiceType} : {rate.ServiceDescription}  => Cost : {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
             }
         }
         catch (Exception ex)
