@@ -1,7 +1,14 @@
-﻿namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
-public class RateRequestDetails
+namespace EasyKeys.Shipping.Stamps.Rates.Models;
+
+public class RateOptions
 {
+    public ContactInfo Sender { get; set; } = new ContactInfo();
+
+    public ContactInfo Recipient { get; set; } = new ContactInfo();
+
     /// <summary>
     /// Required for CreateIndicium web method.
     /// Not required for GetRates web method.If not specified in GetRates, <b>rate</b> object in the response will include rates for all ServiceTypes.
@@ -29,21 +36,6 @@ public class RateRequestDetails
     public bool RectangularShaped { get; set; } = true;
 
     /// <summary>
-    /// List of items prohibited from mailing based on country of destination. Only used for International.
-    /// </summary>
-    public string Prohibitions { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Restrictions on items being shipped based on country of destination. Only used for International.
-    /// </summary>
-    public string Restrictions { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Notes specific to Priority Mail Express International service. Only used for international when ServiceType is US-GEM.
-    /// </summary>
-    public string GEMNotes { get; set; } = string.Empty;
-
-    /// <summary>
     /// Only returned for international mail classes, this field explains the maximum package dimensions for this mail class and destination country.
     /// </summary>
     public string MaxDimensions { get; set; } = string.Empty;
@@ -52,16 +44,6 @@ public class RateRequestDetails
     /// If a <b>rate</b> object is returned from a GetRates call with DimWeighting = "Y", this indicates that the dimensions of the package may have an impact on the rate. Be sure to also include the Length, Width and Height for proper rating whenever DimWeighting = "Y".
     /// </summary>
     public string DimWeighting { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Additional mailing information based on country of destination. Only used for International.
-    /// </summary>
-    public string Observations { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Additional regulations for shipping to destination country. Only used for International.
-    /// </summary>
-    public string Regulations { get; set; } = string.Empty;
 
     /// <summary>
     /// <para>

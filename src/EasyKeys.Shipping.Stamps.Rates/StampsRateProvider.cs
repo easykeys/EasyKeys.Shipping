@@ -1,6 +1,7 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
+using EasyKeys.Shipping.Stamps.Rates.Models;
 
 using Microsoft.Extensions.Logging;
 
@@ -19,19 +20,59 @@ public class StampsRateProvider : IStampsRateProvider
         _logger = logger;
     }
 
-    public async Task<Shipment> GetRatesAsync(Shipment shipment, RateRequestDetails rateRequestDetails, CancellationToken cancellationToken = default)
+    public async Task<Shipment> GetInternationalRatesAsync(
+        Shipment shipment,
+        RateInternationalOptions rateOptions,
+        CancellationToken cancellationToken)
     {
         try
         {
-            var rates = await _ratesService.GetRatesResponseAsync(shipment, rateRequestDetails, cancellationToken);
+            var rates = await _ratesService.GetInternationalRatesAsync(shipment, rateOptions, cancellationToken);
 
             var packageType = PackageType.FromName(shipment.Options.PackagingType);
 
             foreach (var rate in rates)
             {
-                shipment.Rates.Add(new Rate($"{rate.ServiceType}", $"{rate.ServiceDescription}", $"{rate.PackageType}", rate.Amount, rate.DeliveryDate));
+                shipment.Rates.Add(new Rate(
+                    $"{rate.ServiceType}",
+                    $"{rate.ServiceDescription}",
+                    $"{rate.PackageType}",
+                    rate.Amount,
+                    rate.DeliveryDate));
 
-                _logger.LogDebug($"{rate.ServiceType} : {rate.ServiceDescription}  => Cost : {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
+                _logger.LogDebug($"{rate.ServiceType} - {rate.ServiceDescription} => Packaging: {rate.PackageType} => Amount: {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("{name} : {message}", nameof(StampsRateProvider), ex.Message);
+            shipment.InternalErrors.Add(ex.Message);
+        }
+
+        return shipment;
+    }
+
+    public async Task<Shipment> GetRatesAsync(
+        Shipment shipment,
+        RateOptions rateOptions,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var rates = await _ratesService.GetRatesResponseAsync(shipment, rateOptions, cancellationToken);
+
+            var packageType = PackageType.FromName(shipment.Options.PackagingType);
+
+            foreach (var rate in rates)
+            {
+                shipment.Rates.Add(new Rate(
+                    $"{rate.ServiceType}",
+                    $"{rate.ServiceDescription}",
+                    $"{rate.PackageType}",
+                    rate.Amount,
+                    rate.DeliveryDate));
+
+                _logger.LogDebug($"{rate.ServiceType} - {rate.ServiceDescription} => Packaging: {rate.PackageType} => Amount: {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
             }
         }
         catch (Exception ex)

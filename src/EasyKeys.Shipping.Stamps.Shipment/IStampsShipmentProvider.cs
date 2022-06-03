@@ -3,12 +3,11 @@ using EasyKeys.Shipping.Stamps.Shipment.Models;
 
 using StampsClient.v111;
 
-namespace EasyKeys.Shipping.Stamps.Shipment
-{
-    public interface IStampsShipmentProvider
-    {
-        Task<ShipmentLabel> CreateShipmentAsync(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails, CancellationToken cancellationToken);
+namespace EasyKeys.Shipping.Stamps.Shipment;
 
-        Task<CancelIndiciumResponse> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken);
-    }
+public interface IStampsShipmentProvider
+{
+    Task<ShipmentLabel> CreateShipmentAsync(Shipping.Abstractions.Models.Shipment shipment, ShipmentDetails shipmentDetails, CancellationToken cancellationToken);
+
+    Task<CancelIndiciumResponse> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken);
 }

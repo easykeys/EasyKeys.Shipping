@@ -16,7 +16,7 @@ public static class RateAddressExtensions
             Province = !address.IsUnitedStatesAddress() ? address.StateOrProvince : null,
             ZIPCode = address.IsUnitedStatesAddress() ? address.PostalCode.Substring(0, 5) : null,
             PostalCode = (!address.IsUnitedStatesAddress()) ? address.PostalCode : null,
-            Country = address.CountryCode,
+            Country = address.GetCountryCode(),
         };
     }
 }

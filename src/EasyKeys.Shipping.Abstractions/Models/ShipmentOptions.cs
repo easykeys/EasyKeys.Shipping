@@ -4,7 +4,10 @@ public class ShipmentOptions
 {
     public const string DefaultCurrencyCode = "USD";
 
-    public ShipmentOptions(string packagingType, DateTime shippingDate, bool saturdayDelivery = true)
+    public ShipmentOptions(
+        string packagingType,
+        DateTime shippingDate,
+        bool saturdayDelivery = true)
     {
         PackagingType = packagingType;
         ShippingDate = shippingDate;

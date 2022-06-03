@@ -3,7 +3,7 @@
 /// <summary>
 /// The class definition for actual material shipping package.
 /// </summary>
-public class Package
+public class Package : ValueObject
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Package"/> class.
@@ -117,5 +117,14 @@ public class Package
 
             return poundsAndOunces;
         }
+    }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Dimensions;
+        yield return InsuredValue;
+        yield return IsOversize;
+        yield return Weight;
+        yield return SignatureRequiredOnDelivery;
     }
 }

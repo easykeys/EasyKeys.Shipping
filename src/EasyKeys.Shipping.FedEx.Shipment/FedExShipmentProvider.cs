@@ -233,51 +233,41 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             Value = shipment.Packages.Sum(x => x.Weight)
         };
 
-        SetSender(request, shipment);
+        SetSender(request, shipment, details);
 
-        SetRecipient(request, shipment);
+        SetRecipient(request, shipment, details);
 
-        SetPayment(request, shipment, details);
+        SetPayment(request, details);
 
         SetLabelDetails(request, shipment, details);
     }
 
     private void SetSender(
         ProcessShipmentRequest request,
-        Shipping.Abstractions.Models.Shipment shipment)
+        Shipping.Abstractions.Models.Shipment shipment,
+        ShipmentDetails details)
     {
         request.RequestedShipment.Shipper = new Party
         {
-            Contact = new ShipClient.v25.Contact()
-            {
-                PersonName = shipment.SenderInfo.FullName,
-                CompanyName = shipment.SenderInfo.Company,
-                PhoneNumber = shipment.SenderInfo.PhoneNumber,
-                EMailAddress = shipment.SenderInfo.Email
-            },
+            Contact = details.Sender.Map(),
             Address = shipment.OriginAddress.GetFedExAddress()
         };
     }
 
     private void SetRecipient(
         ProcessShipmentRequest request,
-        Shipping.Abstractions.Models.Shipment shipment)
+        Shipping.Abstractions.Models.Shipment shipment,
+        ShipmentDetails details)
     {
         request.RequestedShipment.Recipient = new Party
         {
-            Contact = new ShipClient.v25.Contact()
-            {
-                PersonName = shipment.RecipientInfo.FullName,
-                EMailAddress = shipment.RecipientInfo.Email,
-                PhoneNumber = shipment.RecipientInfo.PhoneNumber
-            },
+            Contact = details.Recipient.Map(),
             Address = shipment.DestinationAddress.GetFedExAddress()
         };
     }
 
     private void SetPayment(
         ProcessShipmentRequest request,
-        Shipping.Abstractions.Models.Shipment shipment,
         ShipmentDetails details)
     {
         var paymentType = details.PaymentType.ToLower() switch
@@ -299,12 +289,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     {
                         ResponsibleParty = new Party()
                         {
-                            Contact = new ShipClient.v25.Contact()
-                            {
-                                PersonName = shipment.SenderInfo.FullName,
-                                EMailAddress = shipment.SenderInfo.Email,
-                                PhoneNumber = shipment.SenderInfo.PhoneNumber
-                            },
+                            Contact = details.Sender.Map(),
                             AccountNumber = request.ClientDetail.AccountNumber,
                         },
                     }
@@ -321,12 +306,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     {
                         ResponsibleParty = new Party()
                         {
-                            Contact = new ShipClient.v25.Contact()
-                            {
-                                PersonName = shipment.RecipientInfo.FullName,
-                                EMailAddress = shipment.RecipientInfo.Email,
-                                PhoneNumber = shipment.RecipientInfo.PhoneNumber
-                            },
+                            Contact = details.Recipient.Map(),
                             AccountNumber = details.AccountNumber,
                         },
                     }
@@ -359,13 +339,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             ImageTypeSpecified = true,
             PrintedLabelOrigin = new ContactAndAddress()
             {
-                Contact = new ShipClient.v25.Contact()
-                {
-                    PersonName = shipment.SenderInfo.FullName,
-                    CompanyName = shipment.SenderInfo.Company,
-                    EMailAddress = shipment.SenderInfo.Email,
-                    PhoneNumber = shipment.SenderInfo.PhoneNumber
-                },
+                Contact = details.Sender.Map(),
                 Address = shipment.OriginAddress.GetFedExAddress()
             },
 
@@ -461,6 +435,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
         {
             SpecialServiceTypes = specialServiceTypes.Append("EVENT_NOTIFICATION").ToArray(),
+
             EventNotificationDetail = new ShipmentEventNotificationDetail
             {
                 // notification event message
@@ -475,8 +450,8 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                             NotificationType = NotificationType.EMAIL,
                             EmailDetail = new EMailDetail()
                             {
-                                EmailAddress = shipment.RecipientInfo.Email,
-                                Name = shipment.RecipientInfo.FullName,
+                                EmailAddress = details.Recipient.Email,
+                                Name = details.Recipient.FullName,
                             },
                             Localization = new Localization
                             {
@@ -534,9 +509,15 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
         if (shipment.DestinationAddress.CountryCode != "US")
         {
-            request.RequestedShipment.CustomsClearanceDetail.CustomsValue = new Money() { Amount = shipment.Commodities.Sum(x => x.UnitPrice), Currency = shipment.Options.GetCurrencyCode() };
+            request.RequestedShipment.CustomsClearanceDetail.CustomsValue = new Money()
+            {
+                Amount = details.Commodities.Sum(x => x.UnitPrice),
+                Currency = shipment.Options.GetCurrencyCode()
+            };
+
             request.RequestedShipment.CustomsClearanceDetail.DutiesPayment = request.RequestedShipment.ShippingChargesPayment;
-            foreach (var commodity in shipment.Commodities)
+
+            foreach (var commodity in details.Commodities)
             {
                 request.RequestedShipment.CustomsClearanceDetail.Commodities = new ShipClient.v25.Commodity[]
                 {

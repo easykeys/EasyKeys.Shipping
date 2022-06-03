@@ -1,10 +1,27 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Rates.Models;
 
 namespace EasyKeys.Shipping.Stamps.Shipment.Models;
 
-public class ShipmentRequestDetails
+public class ShipmentDetails
 {
+    /// <summary>
+    /// Sender Contact Info.
+    /// </summary>
+    public ContactInfo Sender { get; set; } = new ContactInfo();
+
+    /// <summary>
+    /// Recipient Contact Info.
+    /// </summary>
+    public ContactInfo Recipient { get; set; } = new ContactInfo();
+
+    /// <summary>
+    /// Required for International Shipments Only.
+    /// A collection shipment contents that are considered to be dutiable.
+    /// </summary>
+    public IList<Commodity> Commodities { get; } = new List<Commodity>();
+
     public CustomsInformation CustomsInformation { get; set; } = new CustomsInformation();
 
     public LabelOptions LabelOptions { get; set; } = new LabelOptions();
@@ -13,7 +30,7 @@ public class ShipmentRequestDetails
 
     public Rate? SelectedRate { get; set; }
 
-    public RateRequestDetails RateRequestDetails { get; set; } = new RateRequestDetails();
+    public RateOptions RateRequestDetails { get; set; } = new RateOptions();
 
     public PackageType PackageType { get; set; } = PackageType.Package;
 

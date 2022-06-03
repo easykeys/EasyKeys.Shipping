@@ -3,7 +3,7 @@ using System.Text;
 
 namespace EasyKeys.Shipping.Abstractions.Models;
 
-public class Address
+public class Address : ValueObject
 {
     public Address()
     {
@@ -85,6 +85,26 @@ public class Address
             return string.Empty;
         }
 
+        try
+        {
+            var regionInfo = new RegionInfo(GetCountryCode());
+            return regionInfo.EnglishName;
+        }
+        catch
+        {
+            // causes the whole application to crash.
+        }
+
+        return string.Empty;
+    }
+
+    public string GetCountryCode()
+    {
+        if (string.IsNullOrEmpty(CountryCode))
+        {
+            return string.Empty;
+        }
+
         var countryCode = CountryCode;
 
         // UK = GB United Kingdom
@@ -105,17 +125,7 @@ public class Address
             countryCode = "FR";
         }
 
-        try
-        {
-            var regionInfo = new RegionInfo(countryCode);
-            return regionInfo.EnglishName;
-        }
-        catch
-        {
-            // causes the whole application to crash.
-        }
-
-        return string.Empty;
+        return countryCode;
     }
 
     public bool IsCanadaAddress()
@@ -146,5 +156,17 @@ public class Address
             PostalCode,
             CountryCode);
         return builder.ToString();
+    }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return City;
+        yield return CountryCode;
+        yield return CountryName;
+        yield return StreetLine;
+        yield return StreetLine2;
+        yield return PostalCode;
+        yield return StateOrProvince;
+        yield return IsResidential;
     }
 }

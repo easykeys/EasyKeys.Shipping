@@ -1,5 +1,6 @@
 ﻿using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 
@@ -27,7 +28,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
     public async Task<ShipmentLabel> CreateShipmentAsync(
         Shipping.Abstractions.Models.Shipment shipment,
-        ShipmentRequestDetails shipmentDetails,
+        ShipmentDetails shipmentDetails,
         CancellationToken cancellationToken)
     {
         var shipmentLabel = new ShipmentLabel();
@@ -38,7 +39,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
             CustomerID = shipmentDetails.CustomerId,
 
-            Customs = shipment.Commodities.Any() ? SetCustomsInformation(shipment, shipmentDetails) : default,
+            Customs = shipmentDetails.Commodities.Any() ? SetCustomsInformation(shipment, shipmentDetails) : default,
 
             SampleOnly = shipmentDetails.IsSample,
 
@@ -69,7 +70,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
             deliveryNotification = shipmentDetails.NotificationOptions.IsActive,
 
-            ShipmentNotification = SetShipmentNotification(shipment, shipmentDetails),
+            ShipmentNotification = SetShipmentNotification(shipment, shipmentDetails, shipmentDetails.Recipient),
 
             rotationDegrees = shipmentDetails.LabelOptions.RotationDegrees,
 
@@ -172,7 +173,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         {
             var rates = await _ratesService.GetRatesResponseAsync(shipment, shipmentDetails.RateRequestDetails, cancellationToken);
 
-            request.Rate = rates.FirstOrDefault();
+            request.Rate = rates.FirstOrDefault(x => (int)x.ServiceType == StampsServiceType.FromName(shipmentDetails.SelectedRate.Name).Value);
 
             request.ReturnTo = rates.FirstOrDefault()?.From;
 
@@ -184,7 +185,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
                     {
                         ProviderLabelId = response.StampsTxID.ToString(),
                         ImageType = shipmentDetails.LabelOptions.ImageType.Name,
-                        TrackingId = response.TrackingNumber.ToString(),
+                        TrackingId = response.TrackingNumber,
                         Bytes = response.ImageData.ToList(),
                         Charges = new PackageCharges()
                         {
@@ -237,11 +238,11 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         return surcharges;
     }
 
-    private CustomsV7 SetCustomsInformation(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails)
+    private CustomsV7 SetCustomsInformation(Shipping.Abstractions.Models.Shipment shipment, ShipmentDetails shipmentDetails)
     {
         var customsLine = new List<CustomsLine>();
 
-        foreach (var commodity in shipment.Commodities)
+        foreach (var commodity in shipmentDetails.Commodities)
         {
             customsLine.Add(new CustomsLine
             {
@@ -270,9 +271,9 @@ public class StampsShipmentProvider : IStampsShipmentProvider
                 _ => ContentTypeV2.Other
             },
 
-            Comments = shipment?.Commodities?.FirstOrDefault()?.Comments,
+            Comments = shipmentDetails?.Commodities?.FirstOrDefault()?.Comments,
 
-            LicenseNumber = shipment?.Commodities?.FirstOrDefault()?.ExportLicenseNumber,
+            LicenseNumber = shipmentDetails?.Commodities?.FirstOrDefault()?.ExportLicenseNumber,
 
             CertificateNumber = shipmentDetails.CustomsInformation.CertificateNumber,
 
@@ -296,18 +297,21 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         };
     }
 
-    private ShipmentNotification SetShipmentNotification(Shipping.Abstractions.Models.Shipment shipment, ShipmentRequestDetails shipmentDetails)
+    private ShipmentNotification SetShipmentNotification(
+        Shipping.Abstractions.Models.Shipment shipment,
+        ShipmentDetails shipmentDetails,
+        ContactInfo recipient)
     {
         return new ShipmentNotification()
         {
-            Email = string.IsNullOrEmpty(shipmentDetails.NotificationOptions.Email) ? shipment.RecipientInfo.Email : shipmentDetails.NotificationOptions.Email,
+            Email = string.IsNullOrEmpty(shipmentDetails.NotificationOptions.Email) ? recipient.Email : shipmentDetails.NotificationOptions.Email,
             CCToAccountHolder = shipmentDetails.NotificationOptions.CC_ToAccountHolder,
             UseCompanyNameInFromLine = shipmentDetails.NotificationOptions.UseCompanyNameInFromLine,
             UseCompanyNameInSubject = shipmentDetails.NotificationOptions.UseCompanyNameInSubject,
         };
     }
 
-    private LabelRecipientInfo SetEmailLabelTo(ShipmentRequestDetails details)
+    private LabelRecipientInfo SetEmailLabelTo(ShipmentDetails details)
     {
         return new LabelRecipientInfo()
         {

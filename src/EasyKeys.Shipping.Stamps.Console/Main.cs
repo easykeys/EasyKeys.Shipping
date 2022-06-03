@@ -3,9 +3,11 @@
 using Bet.Extensions;
 
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.AddressValidation;
 using EasyKeys.Shipping.Stamps.Rates;
+using EasyKeys.Shipping.Stamps.Rates.Models;
 using EasyKeys.Shipping.Stamps.Shipment;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 using EasyKeys.Shipping.Stamps.Tracking;
@@ -53,7 +55,7 @@ public class Main : IMain
         // use this token for stopping the services
         var cancellationToken = _applicationLifetime.ApplicationStopping;
 
-        var originAddress = new Address(
+        var origin = new Address(
             streetLine: "11407 Granite Street",
             city: "Charlotte",
             stateOrProvince: "NC",
@@ -63,7 +65,7 @@ public class Main : IMain
         var sender = new ContactInfo()
         {
             FirstName = "EasyKeys.com",
-            LastName = string.Empty,
+            LastName = "Inc.",
             Company = "EasyKeys.com",
             Email = "info@EasyKeys.com",
             PhoneNumber = "877.839.5397"
@@ -79,57 +81,10 @@ public class Main : IMain
         var dometicModels = LoadModels<List<RateModelDto>>(dometsticFileName);
         models.AddRange(dometicModels);
 
-        var startTime = DateTime.Now;
+        await RunConcurrentlyAsync(origin, sender, models, cancellationToken);
 
-        var tasks = new List<Task>();
-        var addressValidationTasks = new List<Task<Address>>();
-        var ratesTasks = new List<Task<IEnumerable<Shipment>>>();
-        var shipmentTasks = new List<Task<ShipmentLabel>>();
-
-        foreach (var model in models)
-        {
-            var addressValidationTask = ValidateAsync(model.Address, true, cancellationToken);
-            addressValidationTasks.Add(addressValidationTask);
-
-            var rateTask = GetRatesAsync(originAddress, model.Address, model.Packages[0], sender, model.Contact, model.Commodity, cancellationToken);
-            ratesTasks.Add(rateTask);
-
-            var shipmentTask = CreateShipmentAsync(originAddress, model.Address, model.Packages[0], sender, model.Contact, cancellationToken);
-            shipmentTasks.Add(shipmentTask);
-        }
-
-        tasks.AddRange(addressValidationTasks);
-        tasks.AddRange(ratesTasks);
-        tasks.AddRange(shipmentTasks);
-
-        await Task.WhenAll(tasks.ToArray());
-
-        // 1. display address validation
-        foreach (var validTask in addressValidationTasks)
-        {
-            var address = validTask.Result;
-            _logger.LogInformation("{street} {city} {newLine}", address.StreetLine, address.City, Environment.NewLine);
-        }
-
-        // display shipmment rates
-        foreach (var rateTask in ratesTasks)
-        {
-            var rateShipments = rateTask.Result;
-            _logger.LogInformation(
-                    "{street} {city}",
-                    rateShipments.First().DestinationAddress.StreetLine,
-                    rateShipments.First().DestinationAddress.City);
-
-            foreach (var rateShipment in rateShipments)
-            {
-                foreach (var rate in rateShipment.Rates)
-                {
-                    _logger.LogInformation("{name}-{packageType}-{serviceName} => {charge}", rate.Name, rate.PackageType, rate.ServiceName, rate.TotalCharges);
-                }
-            }
-
-            _logger.LogInformation(Environment.NewLine);
-        }
+        // test tasks based execution
+        // await RunNoneConcurrentlyAsync(originAddress, sender, models, cancellationToken);
 
         return 0;
 
@@ -144,7 +99,6 @@ public class Main : IMain
         //var (shipment, ratesOptions) = config.Shipments.First();
 
         //shipment.Errors.Concat(validatedAddress.Errors);
-
         //if (!destinationAddress.IsUnitedStatesAddress())
         //{
         //    shipment.Commodities.Add(commodity);
@@ -180,6 +134,155 @@ public class Main : IMain
         //return 0;
     }
 
+    private async Task RunNoneConcurrentlyAsync(
+        Address originAddress,
+        ContactInfo sender,
+        List<RateModelDto> models,
+        CancellationToken cancellationToken)
+    {
+        var tasks = new List<Task>();
+        var addressValidationTasks = new List<Task<(Address address, bool isValid)>>();
+        var ratesTasks = new List<Task<IEnumerable<Shipment>>>();
+        var shipmentTasks = new List<Task<ShipmentLabel>>();
+
+        foreach (var model in models)
+        {
+            var addressValidationTask = ValidateAsync(model.Address, true, cancellationToken);
+            addressValidationTasks.Add(addressValidationTask);
+
+            var rateTask = GetRatesAsync(originAddress, model.Address, model.Packages[0], sender, model.Contact, model.Commodity, cancellationToken);
+            ratesTasks.Add(rateTask);
+
+            var shipmentTask = CreateShipmentAsync(originAddress, model.Address, model.Packages[0], sender, model.Contact, cancellationToken);
+            shipmentTasks.Add(shipmentTask);
+        }
+
+        tasks.AddRange(addressValidationTasks);
+        tasks.AddRange(ratesTasks);
+        tasks.AddRange(shipmentTasks);
+
+        await Task.WhenAll(tasks.ToArray());
+
+        Display(addressValidationTasks, ratesTasks, shipmentTasks);
+    }
+
+    private void Display(
+        List<Task<(Address addres, bool isValid)>> addressValidationTasks,
+        List<Task<IEnumerable<Shipment>>> ratesTasks,
+        List<Task<ShipmentLabel>> shipmentTasks)
+    {
+        // 1. display address validation
+        foreach (var validTask in addressValidationTasks)
+        {
+            var address = validTask.Result;
+            _logger.LogInformation("{street} {city} {newLine}", address.addres.StreetLine, address.addres.City, Environment.NewLine);
+        }
+
+        // 2. display shipmment rates
+        foreach (var rateTask in ratesTasks)
+        {
+            var rateShipments = rateTask.Result;
+            _logger.LogInformation(
+                    "{street} {city}",
+                    rateShipments.First().DestinationAddress.StreetLine,
+                    rateShipments.First().DestinationAddress.City);
+
+            foreach (var rateShipment in rateShipments)
+            {
+                foreach (var rate in rateShipment.Rates)
+                {
+                    _logger.LogInformation("{name}-{packageType}-{serviceName} => {charge}", rate.Name, rate.PackageType, rate.ServiceName, rate.TotalCharges);
+                }
+            }
+
+            _logger.LogInformation(Environment.NewLine);
+        }
+
+        // 3. shipment labels
+        foreach (var shipmentTask in shipmentTasks)
+        {
+            var shipmentLabel = shipmentTask.Result;
+        }
+    }
+
+    private async Task RunConcurrentlyAsync(
+        Address origin,
+        ContactInfo sender,
+        List<RateModelDto> models,
+        CancellationToken cancellationToken)
+    {
+        foreach (var model in models)
+        {
+            var uuid = Guid.NewGuid().ToString();
+
+            // 1. validate an address
+            var validatedRequest = new ValidateAddress(uuid, origin);
+            var (address, valid) = await ValidateAsync(model.Address, true, cancellationToken);
+
+            // 2. get rates based on the package dimensions
+            var shipments = new List<Shipment>();
+
+            foreach (var package in model.Packages)
+            {
+                var rate = await GetRatesAsync(origin, address, package, sender, model.Contact, model.Commodity, cancellationToken);
+                shipments.AddRange(rate);
+            }
+
+            var rates = shipments.SelectMany(x => x.Rates);
+            var flatRates = rates.Select(x => $"{x.Name}:{x.ServiceName}:{x.PackageType}:{x.TotalCharges}");
+
+            foreach (var flatRate in flatRates)
+            {
+                _logger.LogInformation("{address} - {rate}", address.ToString(), flatRate);
+            }
+
+            // user chooses which type of service
+            var shipmentDetails = new ShipmentDetails()
+            {
+                DeclaredValue = 100m,
+            };
+
+            Rate? firstClassPackage = null;
+            // Rate? priority = null;
+
+            // 3. select a quoted rate
+            if (address.IsUnitedStatesAddress())
+            {
+                // USPS First-Class Mail:Package:3.7200
+                firstClassPackage = rates.SingleOrDefault(x => x.Name == "USFC" && x.PackageType == "Package");
+            }
+            else
+            {
+                // USPS First-Class Mail International:Package:14.11
+                firstClassPackage = rates.SingleOrDefault(x => x.Name == "USFCI" && x.PackageType == "Package");
+                shipmentDetails.CustomsInformation = new CustomsInformation()
+                {
+                    CustomsSigner = "brandon moffett",
+                    InvoiceNumber = "123234",
+                };
+            }
+
+            shipmentDetails.SelectedRate = firstClassPackage;
+            shipmentDetails.IsSample = true;
+            shipmentDetails.Sender = sender;
+            shipmentDetails.Recipient = model.Contact;
+
+            if (model?.Commodity != null)
+            {
+                shipmentDetails.Commodities.Add(model.Commodity);
+            }
+
+            var shipmentOptions = new ShipmentOptions(PackageType.FromName(firstClassPackage.PackageType).Name, DateTime.Now);
+
+            var shipment = new Shipment(origin, model.Address, model.Packages, shipmentOptions);
+
+
+            var label = await _shipmentProvider.CreateShipmentAsync(shipment, shipmentDetails, cancellationToken);
+
+            await File.WriteAllBytesAsync(Path.Combine("Labels", $"{model.Address.City}-label.png"), label.Labels[0].Bytes[0]);
+        }
+    }
+
     private static T? LoadModels<T>(string fileName) where T : class
     {
         using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly(fileName);
@@ -188,7 +291,7 @@ public class Main : IMain
         return models;
     }
 
-    private async Task<Address> ValidateAsync(Address destination, bool debug = false, CancellationToken cancellationToken = default)
+    private async Task<(Address address, bool valid)> ValidateAsync(Address destination, bool debug = false, CancellationToken cancellationToken = default)
     {
         // 1. address validation
         // for international orders, user must enter the provice/state code, not full name
@@ -198,23 +301,24 @@ public class Main : IMain
         // no result return intial address
         if (result == null)
         {
-            return destination;
+            return (destination, false);
         }
 
-        // var originalAddress = JsonSerializer.Serialize(validationResult.OriginalAddress, new JsonSerializerOptions() { WriteIndented = true });
-        // _logger.LogInformation(originalAddress);
-        if (request.OriginalAddress != request.ProposedAddress && debug)
+        var jsonOptions = new JsonSerializerOptions()
         {
-            var propsedAddress = JsonSerializer.Serialize(result.ProposedAddress, new JsonSerializerOptions() { WriteIndented = true });
-            _logger.LogInformation(propsedAddress);
-        }
+            WriteIndented = true
+        };
+
+        var originalAddress = JsonSerializer.Serialize(request.OriginalAddress, jsonOptions);
+        _logger.LogInformation(Environment.NewLine + "Original Address: {originalAddress}", originalAddress);
+
+        var propsedAddress = JsonSerializer.Serialize(result.ProposedAddress, new JsonSerializerOptions() { WriteIndented = true });
+        _logger.LogInformation(Environment.NewLine + "Proposed Address {proposedAddress}", propsedAddress);
 
         if (debug)
         {
             // 1.a display validation bag
-            _logger.LogInformation(Environment.NewLine + result.ValidationBag.Select(x => $"{x.Key}-{x.Value}").Flatten(Environment.NewLine));
-
-            _logger.LogWarning($"Address Validation Result : {result.ValidationBag.Select(x => x.Key + ": " + x.Value).Aggregate((x, y) => x + ", " + y)}");
+            _logger.LogInformation(Environment.NewLine + result.ValidationBag.Select(x => $"[{x.Key}]:[{x.Value}]").Flatten(Environment.NewLine));
 
             if (result.Errors.Count > 0)
             {
@@ -222,7 +326,29 @@ public class Main : IMain
             }
         }
 
-        return result.ProposedAddress ?? result.OriginalAddress;
+        var isValidated = false;
+
+        // international valid addresses
+        if (!destination.IsUnitedStatesAddress()
+            && result.Errors.Count == 0
+            && result.ValidationBag["CityStateZipOK"] == "True"
+            && result.ValidationBag["AddressMatch"] == "True"
+            && result.ValidationBag["ValidationResult"] == "To Country Verified.")
+        {
+            isValidated = true;
+        }
+
+        // domestic valid addresses
+        if (!destination.IsUnitedStatesAddress()
+            && result.Errors.Count == 0
+            && result.ValidationBag["CityStateZipOK"] == "True"
+            && result.ValidationBag["AddressMatch"] == "True"
+            && result.ValidationBag["ValidationResult"] == "Full Address Verified.")
+        {
+            isValidated = true;
+        }
+
+        return (result.ProposedAddress, isValidated);
     }
 
     private async Task<IEnumerable<Shipment>> GetRatesAsync(
@@ -234,19 +360,23 @@ public class Main : IMain
         Commodity? commodity = null,
         CancellationToken cancellationToken = default)
     {
-        var shipmentConfigurator = new StampsRateConfigurator(origin, destination, package, sender, receiver);
+        // 1. configurator selects the correct pacakge type based on the dimensions
+        var shipmentConfigurator = new StampsRateConfigurator(origin, destination, package);
 
         var shipments = new List<Shipment>();
 
+        // 2. now shipments contains different packages to be used to query the rate service.
         foreach (var shipment in shipmentConfigurator.Shipments)
         {
-            if (!destination.IsUnitedStatesAddress()
-                && commodity != null)
+            // 2.1 add commonidity for the international mail
+            var rateOptions = new RateOptions
             {
-                shipment.shipment.Commodities.Add(commodity);
-            }
+                Sender = sender,
+                Recipient = receiver,
+            };
 
-            var result = await _rateProvider.GetRatesAsync(shipment.shipment, shipment.rateOptions, cancellationToken);
+            // 2.2. call the services for specified mail.
+            var result = await _rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
 
             if (result.Errors.Count > 0)
             {
@@ -270,13 +400,21 @@ public class Main : IMain
         ContactInfo receiver,
         CancellationToken cancellationToken = default)
     {
-        var config = new StampsRateConfigurator(origin, destination, package, sender, receiver);
+        var config = new StampsRateConfigurator(origin, destination, package);
 
-        var shipmentDetails = new ShipmentRequestDetails
+        var rateOptions = new RateOptions
         {
-            RateRequestDetails = config.Shipments[0].rateOptions
+            Sender = sender,
+            Recipient = receiver,
         };
 
-        return await _shipmentProvider.CreateShipmentAsync(config.Shipments[0].shipment, shipmentDetails, cancellationToken);
+        var shipmentDetails = new ShipmentDetails
+        {
+            RateRequestDetails = rateOptions,
+            Sender = sender,
+            Recipient = receiver,
+        };
+
+        return await _shipmentProvider.CreateShipmentAsync(config.Shipments[0], shipmentDetails, cancellationToken);
     }
 }

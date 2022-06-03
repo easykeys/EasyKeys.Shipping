@@ -1,7 +1,25 @@
-﻿namespace EasyKeys.Shipping.FedEx.Shipment.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
+
+namespace EasyKeys.Shipping.FedEx.Shipment.Models;
 
 public class ShipmentDetails
 {
+    /// <summary>
+    /// Sender Contact Info.
+    /// </summary>
+    public ContactInfo Sender { get; set; } = new ContactInfo();
+
+    /// <summary>
+    /// Recipient Contact Info.
+    /// </summary>
+    public ContactInfo Recipient { get; set; } = new ContactInfo();
+
+    /// <summary>
+    /// Required for International Shipments Only.
+    /// A collection shipment contents that are considered to be dutiable.
+    /// </summary>
+    public IList<Commodity> Commodities { get; } = new List<Commodity>();
+
     /// <summary>
     /// Custom transaction id passed to the request.
     /// </summary>

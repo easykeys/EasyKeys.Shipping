@@ -1,5 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
-using EasyKeys.Shipping.Stamps.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Rates.Models;
 
 namespace EasyKeys.Shipping.Stamps.Rates;
 
@@ -9,8 +9,17 @@ public interface IStampsRateProvider
     /// Gets the rates data for the <see cref="Shipment"/>.
     /// </summary>
     /// <param name="shipment">shipment.</param>
-    /// <param name="rateDetails"></param>
+    /// <param name="rateOptions"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<Shipment> GetRatesAsync(Shipment shipment, RateRequestDetails rateDetails, CancellationToken cancellationToken = default);
+    Task<Shipment> GetRatesAsync(Shipment shipment, RateOptions rateOptions, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Gets international rates.
+    /// </summary>
+    /// <param name="shipment"></param>
+    /// <param name="rateOptions"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<Shipment> GetInternationalRatesAsync(Shipment shipment, RateInternationalOptions rateOptions, CancellationToken cancellationToken);
 }

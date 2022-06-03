@@ -108,10 +108,11 @@ public class FedExRateProvider : IFedExRateProvider
                     AmountSpecified = true,
                 }
             },
-            CarrierCodes = new[] {
+            CarrierCodes = new[]
+            {
                     CarrierCodeType.FDXE,
                     CarrierCodeType.FDXG
-                }
+            }
         };
 
         if (shipment.DestinationAddress.IsUnitedStatesAddress())

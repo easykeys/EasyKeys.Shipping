@@ -2,7 +2,7 @@
   {
     "Commodity": {
       "Name": "Keys",
-      "Description": "Padlocks and locks (key, combination or electrically operated), of base metal; clasps and frames with clasps, incorporating locks, of base metal; keys and parts of any of the foregoing articles, of base metal",
+      "Description": "Padlocks and locks",
       "HarmonizedCode": "8301",
       "Quantity": 2,
       "CountryOfManufacturer": "US",
@@ -14,9 +14,9 @@
       "FirstName": "EasyKeys.com",
       "LastName": "Customer",
       "Company": null,
-      "Department": null,
+      "Department": "",
       "Email": "info@easykeys.com",
-      "Extension": null,
+      "Extension": "",
       "PhoneNumber": "877.839.5397"
     },
 
@@ -37,7 +37,7 @@
           "Width": 4.00,
           "Height": 0.20
         },
-        "InsuredValue": 0,
+        "InsuredValue": 50,
         "IsOversize": false,
         "Weight": 0.078125,
         "SignatureRequiredOnDelivery": false
@@ -49,7 +49,7 @@
   {
     "Commodity": {
       "Name": "Keys",
-      "Description": "Padlocks and locks (key, combination or electrically operated), of base metal; clasps and frames with clasps, incorporating locks, of base metal; keys and parts of any of the foregoing articles, of base metal",
+      "Description": "Padlocks and locks",
       "HarmonizedCode": "8301",
       "Quantity": 2,
       "CountryOfManufacturer": "US",
@@ -84,7 +84,7 @@
           "Width": 4.00,
           "Height": 0.20
         },
-        "InsuredValue": 0,
+        "InsuredValue": 50,
         "IsOversize": false,
         "Weight": 1.0,
         "SignatureRequiredOnDelivery": false
@@ -96,7 +96,7 @@
   {
     "Commodity": {
       "Name": "Keys",
-      "Description": "Padlocks and locks (key, combination or electrically operated), of base metal; clasps and frames with clasps, incorporating locks, of base metal; keys and parts of any of the foregoing articles, of base metal",
+      "Description": "Padlocks and locks",
       "HarmonizedCode": "8301",
       "Quantity": 2,
       "CountryOfManufacturer": "US",
@@ -131,7 +131,7 @@
           "Width": 4.00,
           "Height": 0.20
         },
-        "InsuredValue": 0,
+        "InsuredValue": 50,
         "IsOversize": false,
         "Weight": 1.0,
         "SignatureRequiredOnDelivery": false
@@ -143,7 +143,7 @@
   {
     "Commodity": {
       "Name": "Keys",
-      "Description": "Padlocks and locks (key, combination or electrically operated), of base metal; clasps and frames with clasps, incorporating locks, of base metal; keys and parts of any of the foregoing articles, of base metal",
+      "Description": "Padlocks and locks",
       "HarmonizedCode": "8301",
       "Quantity": 2,
       "CountryOfManufacturer": "US",
@@ -178,7 +178,7 @@
           "Width": 4.00,
           "Height": 0.20
         },
-        "InsuredValue": 0,
+        "InsuredValue": 50,
         "IsOversize": false,
         "Weight": 1.0,
         "SignatureRequiredOnDelivery": false
@@ -190,7 +190,7 @@
   {
     "Commodity": {
       "Name": "Keys",
-      "Description": "Padlocks and locks (key, combination or electrically operated), of base metal; clasps and frames with clasps, incorporating locks, of base metal; keys and parts of any of the foregoing articles, of base metal",
+      "Description": "Padlocks and locks",
       "HarmonizedCode": "8301",
       "Quantity": 2,
       "CountryOfManufacturer": "US",
@@ -225,7 +225,7 @@
           "Width": 4.00,
           "Height": 0.20
         },
-        "InsuredValue": 0,
+        "InsuredValue": 50,
         "IsOversize": false,
         "Weight": 1.0,
         "SignatureRequiredOnDelivery": false
@@ -237,7 +237,7 @@
   {
     "Commodity": {
       "Name": "Keys",
-      "Description": "Padlocks and locks (key, combination or electrically operated), of base metal; clasps and frames with clasps, incorporating locks, of base metal; keys and parts of any of the foregoing articles, of base metal",
+      "Description": "Padlocks and locks",
       "HarmonizedCode": "8301",
       "Quantity": 2,
       "CountryOfManufacturer": "US",
@@ -272,7 +272,7 @@
           "Width": 4.00,
           "Height": 0.20
         },
-        "InsuredValue": 0,
+        "InsuredValue": 50,
         "IsOversize": false,
         "Weight": 1.0,
         "SignatureRequiredOnDelivery": false
@@ -285,7 +285,7 @@
   {
     "Commodity": {
       "Name": "Keys",
-      "Description": "Padlocks and locks (key, combination or electrically operated), of base metal; clasps and frames with clasps, incorporating locks, of base metal; keys and parts of any of the foregoing articles, of base metal",
+      "Description": "Padlocks and locks",
       "HarmonizedCode": "8301",
       "Quantity": 2,
       "CountryOfManufacturer": "US",
@@ -320,7 +320,7 @@
           "Width": 4.00,
           "Height": 0.20
         },
-        "InsuredValue": 0,
+        "InsuredValue": 50,
         "IsOversize": false,
         "Weight": 1.0,
         "SignatureRequiredOnDelivery": false
@@ -333,7 +333,7 @@
   {
     "Commodity": {
       "Name": "Keys",
-      "Description": "Padlocks and locks (key, combination or electrically operated), of base metal; clasps and frames with clasps, incorporating locks, of base metal; keys and parts of any of the foregoing articles, of base metal",
+      "Description": "Padlocks and locks",
       "HarmonizedCode": "8301",
       "Quantity": 2,
       "CountryOfManufacturer": "US",
@@ -368,7 +368,7 @@
           "Width": 4.00,
           "Height": 0.20
         },
-        "InsuredValue": 0,
+        "InsuredValue": 50,
         "IsOversize": false,
         "Weight": 1.0,
         "SignatureRequiredOnDelivery": false

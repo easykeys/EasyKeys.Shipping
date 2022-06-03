@@ -14,8 +14,6 @@ public class StampsRateConfigurator
         Address origin,
         Address destination,
         Package package,
-        ContactInfo sender,
-        ContactInfo receiver,
         DateTime? shipDate = null)
     {
         // helpful to make sure we have business days and not regular days.
@@ -24,15 +22,15 @@ public class StampsRateConfigurator
         // configure possible shipments
         if (destination.IsUnitedStatesAddress())
         {
-            CreateDomesticShipments(origin, destination, package, sender, receiver, solidDate);
+            CreateDomesticShipments(origin, destination, package, solidDate);
         }
         else
         {
-            CreateInternationalShipments(origin, destination, package, sender, receiver, solidDate);
+            CreateInternationalShipments(origin, destination, package, solidDate);
         }
     }
 
-    public List<(Shipment shipment, RateRequestDetails rateOptions)> Shipments { get; } = new List<(Shipment shipment, RateRequestDetails rateOptions)>();
+    public List<Shipment> Shipments { get; } = new List<Shipment>();
 
     /// <summary>
     /// Large envelope or flat. Has one dimension that is between 11 ½” and 15” long, 6 1/8” and 12” high, or ¼” and ¾ thick.
@@ -188,18 +186,16 @@ public class StampsRateConfigurator
         Address origin,
         Address destination,
         Package package,
-        ContactInfo sender,
-        ContactInfo receiver,
         DateTime shipDate)
     {
         if (package.DimensionsExceedFirstClassInternationalService())
         {
-            ConfigureIntlPriority(origin, destination, package, sender, receiver, shipDate);
+            ConfigureIntlPriority(origin, destination, package, shipDate);
         }
         else
         {
-            ConfigureIntlFirstClass(origin, destination, package, sender, receiver, shipDate);
-            ConfigureIntlPriority(origin, destination, package, sender, receiver, shipDate);
+            ConfigureIntlFirstClass(origin, destination, package, shipDate);
+            ConfigureIntlPriority(origin, destination, package, shipDate);
         }
     }
 
@@ -207,19 +203,17 @@ public class StampsRateConfigurator
         Address origin,
         Address destination,
         Package package,
-        ContactInfo sender,
-        ContactInfo receiver,
         DateTime shipDate)
     {
         // 1 lb = 16 oz, must be less than 15.99
         if (package.Weight > 0.999375m)
         {
-            ConfigureDomesticPriority(origin, destination, package, sender, receiver, shipDate);
+            ConfigureDomesticPriority(origin, destination, package, shipDate);
         }
         else
         {
-            ConfigureDomesticFirstClass(origin, destination, package, sender, receiver, shipDate);
-            ConfigureDomesticPriority(origin, destination, package, sender, receiver, shipDate);
+            ConfigureDomesticFirstClass(origin, destination, package, shipDate);
+            ConfigureDomesticPriority(origin, destination, package, shipDate);
         }
     }
 
@@ -227,8 +221,6 @@ public class StampsRateConfigurator
         Address origin,
         Address destination,
         Package package,
-        ContactInfo sender,
-        ContactInfo receiver,
         DateTime shipDate)
     {
         // 1 lb = 16 oz, must be less than 15.99
@@ -239,8 +231,7 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageTypes = PackageType.List
-            .Where(x => x.Category == "DefaultPackage" || x.Category == "LargeEnvelope");
+        var packageTypes = PackageType.List.Where(x => x.Category == "DefaultPackage" || x.Category == "LargeEnvelope");
 
         foreach (var packageType in packageTypes)
         {
@@ -248,13 +239,9 @@ public class StampsRateConfigurator
             {
                 var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
-                var shipment = new Shipment(origin, destination, packages, shipmentOptions)
-                {
-                    SenderInfo = sender,
-                    RecipientInfo = receiver
-                };
+                var shipment = new Shipment(origin, destination, packages, shipmentOptions);
 
-                Shipments.Add((shipment, new RateRequestDetails()));
+                Shipments.Add(shipment);
             }
         }
     }
@@ -263,8 +250,6 @@ public class StampsRateConfigurator
         Address origin,
         Address destination,
         Package package,
-        ContactInfo sender,
-        ContactInfo receiver,
         DateTime shipDate)
     {
         if (package.Weight > 70)
@@ -284,18 +269,14 @@ public class StampsRateConfigurator
             {
                 var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
-                var shipment = new Shipment(origin, destination, packages, shipOptions)
-                {
-                    SenderInfo = sender,
-                    RecipientInfo = receiver
-                };
+                var shipment = new Shipment(origin, destination, packages, shipOptions);
 
-                if (Shipments.Any(x => x.shipment.Options.PackagingType == packageType.Name))
+                if (Shipments.Any(x => x.Options.PackagingType == packageType.Name))
                 {
                     return;
                 }
 
-                Shipments.Add((shipment, new RateRequestDetails()));
+                Shipments.Add(shipment);
             }
         }
     }
@@ -304,8 +285,6 @@ public class StampsRateConfigurator
         Address origin,
         Address destination,
         Package package,
-        ContactInfo sender,
-        ContactInfo receiver,
         DateTime shipDate)
     {
         if (package.DimensionsExceedFirstClassInternationalService())
@@ -324,13 +303,9 @@ public class StampsRateConfigurator
             {
                 var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
 
-                var shipment = new Shipment(origin, destination, packages, shipmentOptions)
-                {
-                    SenderInfo = sender,
-                    RecipientInfo = receiver
-                };
+                var shipment = new Shipment(origin, destination, packages, shipmentOptions);
 
-                Shipments.Add((shipment, new RateRequestDetails()));
+                Shipments.Add(shipment);
             }
         }
     }
@@ -339,8 +314,6 @@ public class StampsRateConfigurator
         Address origin,
         Address destination,
         Package package,
-        ContactInfo sender,
-        ContactInfo receiver,
         DateTime shipDate)
     {
         if (package.Weight > 70)
@@ -360,18 +333,14 @@ public class StampsRateConfigurator
             {
                 var shipOptions = new ShipmentOptions(packageType.Name, shipDate);
 
-                var shipment = new Shipment(origin, destination, packages, shipOptions)
-                {
-                    SenderInfo = sender,
-                    RecipientInfo = receiver
-                };
+                var shipment = new Shipment(origin, destination, packages, shipOptions);
 
-                if (Shipments.Any(x => x.shipment.Options.PackagingType == packageType.Name))
+                if (Shipments.Any(x => x.Options.PackagingType == packageType.Name))
                 {
                     return;
                 }
 
-                Shipments.Add((shipment, new RateRequestDetails()));
+                Shipments.Add(shipment);
             }
         }
     }

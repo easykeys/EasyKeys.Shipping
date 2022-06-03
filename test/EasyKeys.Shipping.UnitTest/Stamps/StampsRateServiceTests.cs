@@ -8,6 +8,7 @@ using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
+using EasyKeys.Shipping.Stamps.Rates.Models;
 
 using EasyKeysShipping.UnitTest.TestHelpers;
 
@@ -34,7 +35,7 @@ public class StampsRateServiceTests
     [Fact]
     public async Task Return_RatesV40_Address_Successfully()
     {
-        var rateRequest = new RateRequestDetails();
+        var rateRequest = new RateOptions();
 
         var internationalShipment = TestShipments.CreateInternationalShipment();
 
@@ -66,7 +67,7 @@ public class StampsRateServiceTests
     [ClassData(typeof(ServiceTypeData))]
     public async Task Return_RatesV40_ServiceType_Successfully(StampsServiceType serviceType, StampsClient.v111.ServiceType returnServiceType)
     {
-        var rateRequest = new RateRequestDetails()
+        var rateRequest = new RateOptions()
         {
             ServiceType = serviceType
         };
@@ -97,7 +98,10 @@ public class StampsRateServiceTests
     [ClassData(typeof(CarrierTypeData))]
     public async Task Return_RatesV40_Carrier_Successfully(CarrierType carrier, int ratesReturnedCount)
     {
-        var rateRequest = new RateRequestDetails() { Carrier = carrier };
+        var rateRequest = new RateOptions()
+        {
+            Carrier = carrier
+        };
 
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
@@ -113,7 +117,7 @@ public class StampsRateServiceTests
     [ClassData(typeof(PackageTypeData))]
     public async Task Return_RatesV40_PackageType_Successfully(PackageType packageType, StampsClient.v111.PackageTypeV11 stampsPackageType)
     {
-        var rateRequest = new RateRequestDetails();
+        var rateRequest = new RateOptions();
 
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
@@ -179,7 +183,7 @@ public class StampsRateServiceTests
 
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
-        var rateRequest = new RateRequestDetails();
+        var rateRequest = new RateOptions();
         var stampsClientMock = new Mock<IStampsClientService>();
 
         var swsimV111SoapClientMock = new Mock<StampsClient.v111.SwsimV111Soap>();
@@ -203,7 +207,7 @@ public class StampsRateServiceTests
         // arrange
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
-        var rateOptions = new RateRequestDetails();
+        var rateOptions = new RateOptions();
 
         var stampsClientMock = new Mock<IStampsClientService>();
 
@@ -233,7 +237,7 @@ public class StampsRateServiceTests
         // arrange
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
-        var rateOptions = new RateRequestDetails();
+        var rateOptions = new RateOptions();
 
         var stampsClientMock = new Mock<IStampsClientService>();
 

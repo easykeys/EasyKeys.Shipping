@@ -1,6 +1,6 @@
 ﻿namespace EasyKeys.Shipping.Abstractions.Models;
 
-public class Rate
+public class Rate : ValueObject
 {
     public Rate(
         string name,
@@ -91,4 +91,16 @@ public class Rate
     ///     Currency code, if applicable.
     /// </summary>
     public string CurrencyCode { get; }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Name;
+        yield return ServiceName;
+        yield return PackageType;
+        yield return GuaranteedDelivery;
+        yield return SaturdayDelivery;
+        yield return TotalCharges;
+        yield return TotalCharges2;
+        yield return CurrencyCode;
+    }
 }

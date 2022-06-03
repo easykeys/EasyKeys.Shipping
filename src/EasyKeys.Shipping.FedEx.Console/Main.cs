@@ -123,6 +123,7 @@ public class Main : IMain
             var config = new FedExRateConfigurator(originAddress, proposedAddress.ProposedAddress, defaultPackage);
 
             _logger.LogInformation("Rates for: {address}", proposedAddress.ProposedAddress.ToString());
+
             foreach (var (shipment, serviceType) in config.Shipments)
             {
                 // 2. shipment rates
@@ -137,11 +138,15 @@ public class Main : IMain
                 {
                     _logger.LogInformation("{serviceName} - {name} - {cost}", rate.ServiceName, rate.Name, rate.TotalCharges2);
                 }
-
-                shipment.SenderInfo = sender;
-                shipment.RecipientInfo = recipient;
-                shipment.Commodities.Add(commodity);
             }
+
+            var shipmentDetails = new ShipmentDetails
+            {
+                Sender = sender,
+                Recipient = recipient,
+            };
+
+            shipmentDetails.Commodities.Add(commodity);
 
             //if (shipment.DestinationAddress.CountryCode != "US")
             //{

@@ -61,12 +61,12 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
             {
                 request.ProposedAddress = new Shipping.Abstractions.Models.Address()
                 {
-                    StreetLine = response.CandidateAddresses?.FirstOrDefault()?.Address1 ?? string.Empty,
-                    StreetLine2 = response.CandidateAddresses?.FirstOrDefault()?.Address2 ?? string.Empty,
-                    City = response.CandidateAddresses?.FirstOrDefault()?.City ?? string.Empty,
-                    StateOrProvince = response.CandidateAddresses?.FirstOrDefault()?.State ?? string.Empty,
-                    CountryCode = response.CandidateAddresses?.FirstOrDefault()?.Country ?? string.Empty,
-                    PostalCode = response.CandidateAddresses?.FirstOrDefault()?.ZIPCode ?? string.Empty
+                    StreetLine = cleansedAddress?.Address1 ?? string.Empty,
+                    StreetLine2 = cleansedAddress?.Address2 ?? string.Empty,
+                    City = cleansedAddress?.City ?? string.Empty,
+                    StateOrProvince = cleansedAddress?.State ?? (cleansedAddress?.Province ?? string.Empty),
+                    CountryCode = cleansedAddress?.Country ?? string.Empty,
+                    PostalCode = cleansedAddress?.ZIPCode ?? (cleansedAddress?.PostalCode ?? string.Empty)
                 };
             }
             else
@@ -76,9 +76,9 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
                     StreetLine = response?.Address?.Address1 ?? string.Empty,
                     StreetLine2 = response?.Address?.Address2 ?? string.Empty,
                     City = response?.Address?.City ?? string.Empty,
-                    StateOrProvince = response?.Address?.State ?? string.Empty,
+                    StateOrProvince = response?.Address?.State ?? (response?.Address?.Province ?? string.Empty),
                     CountryCode = response?.Address?.Country ?? string.Empty,
-                    PostalCode = response?.Address?.ZIPCode ?? string.Empty
+                    PostalCode = response?.Address?.ZIPCode ?? (response?.Address?.PostalCode ?? string.Empty)
                 };
             }
 

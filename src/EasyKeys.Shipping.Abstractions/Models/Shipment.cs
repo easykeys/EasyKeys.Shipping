@@ -17,25 +17,9 @@ public class Shipment
     }
 
     /// <summary>
-    /// Shipment information of the Recipient.
-    /// </summary>
-    public ContactInfo RecipientInfo { get; set; } = new ContactInfo();
-
-    /// <summary>
-    /// Shipment information of the Sender.
-    /// </summary>
-    public ContactInfo SenderInfo { get; set; } = new ContactInfo();
-
-    /// <summary>
     /// A collection of the packages to be shipped.
     /// </summary>
     public ReadOnlyCollection<Package> Packages { get; }
-
-    /// <summary>
-    /// Required for International Shipments Only.
-    /// A collection shipment contents that are considered to be dutiable.
-    /// </summary>
-    public IList<Commodity> Commodities { get; } = new List<Commodity>();
 
     /// <summary>
     /// Destination Address of the shipment.

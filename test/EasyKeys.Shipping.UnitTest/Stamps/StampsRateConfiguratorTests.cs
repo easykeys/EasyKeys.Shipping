@@ -18,9 +18,7 @@ public class StampsRateConfiguratorTests
         Assert.Throws<ArgumentException>(() => new StampsRateConfigurator(
             shipment.OriginAddress,
             shipment.DestinationAddress,
-            new Package(1m, 1m, 1m, 80m, 20m),
-            shipment.SenderInfo,
-            shipment.RecipientInfo));
+            new Package(1m, 1m, 1m, 80m, 20m)));
     }
 
     public class StampConfigTypeData : IEnumerable<object[]>
