@@ -4,12 +4,17 @@ using System.ServiceModel;
 using Bet.Extensions.Testing.Logging;
 
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.AddressValidation;
+
+using EasyKeysShipping.UnitTest.Stubs;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 using Moq;
 
@@ -59,23 +64,37 @@ public class StampsAddressValidationProviderTests
 
     [Theory]
     [InlineData("Conversation out-of-sync.")]
+    [InlineData("Invalid conversation token.")]
+    [InlineData("Authentication failed.")]
     public async Task Address_Validation_Handles_Exceptions_Successfully(string exMessage)
     {
         // arrange
-        var stampsClientMock = new Mock<IStampsClientService>();
+        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
+        var mockAuth = new Mock<IStampsClientAuthenticator>();
+        var loggerFactory = new NullLoggerFactory();
+        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
+        var mockSoapClient = new Mock<SwsimV111Soap>();
 
-        var swsimV111Mock = new Mock<SwsimV111Soap>();
+        mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
+        mockAuth.Setup(x => x.GetToken()).Returns("testing");
+        mockSoapClient.Setup(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
+            .Verifiable();
+
+        mockSoapClient.SetupSequence(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
+            .ThrowsAsync(new FaultException(exMessage))
+            .ThrowsAsync(new Exception(exMessage))
+            .ReturnsAsync(new CleanseAddressResponse() { Authenticator = "testing", CityStateZipOK = true, AddressMatch = true, CandidateAddresses = new StampsClient.v111.Address[0] });
+
+        var stampsClient = new StampsClientServiceMock(
+            mockOptions.Object,
+            mockAuth.Object,
+            mockSoapClient.Object,
+            loggerFactory,
+            mockLogger.Object);
 
         var mockLogger2 = new Mock<ILogger<StampsAddressValidationProvider>>();
 
-        swsimV111Mock.Setup(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
-            .Verifiable();
-
-        swsimV111Mock.SetupSequence(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
-            .ThrowsAsync(new FaultException(exMessage))
-            .ThrowsAsync(new Exception(exMessage));
-
-        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, mockLogger2.Object);
+        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClient, mockLogger2.Object);
 
         var validateAddress = new ValidateAddress(
             "test",
@@ -92,7 +111,7 @@ public class StampsAddressValidationProviderTests
         // act
         var result = await stampsAddressValidationProvider.ValidateAddressAsync(validateAddress, CancellationToken.None);
 
-        swsimV111Mock.Verify(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()), Times.Exactly(2));
+        mockSoapClient.Verify(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()), Times.Exactly(2));
 
         // assert
         Assert.IsType<ValidateAddress>(result);
@@ -101,25 +120,36 @@ public class StampsAddressValidationProviderTests
     }
 
     [Theory]
-    [InlineData("Conversation out-of-sync.")]
+    [InlineData("Authentication failed.")]
     public async Task Address_Validation_Refreshes_Token_And_Returns_Address_Successfully(string exMessage)
     {
         // arrange
-        var stampsClientMock = new Mock<IStampsClientService>();
+        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
+        var mockAuth = new Mock<IStampsClientAuthenticator>();
+        var loggerFactory = new NullLoggerFactory();
+        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
+        var mockSoapClient = new Mock<SwsimV111Soap>();
 
-        var swsimV111Mock = new Mock<SwsimV111Soap>();
+        mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
+        mockAuth.Setup(x => x.GetToken()).Returns("testing");
+        mockAuth.Setup(x => x.ClearTokens()).Verifiable();
+        mockSoapClient.Setup(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
+            .Verifiable();
+
+        mockSoapClient.SetupSequence(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
+            .ThrowsAsync(new FaultException(exMessage))
+            .ReturnsAsync(new CleanseAddressResponse() { Authenticator = "testing", CityStateZipOK = true, AddressMatch = true, CandidateAddresses = new StampsClient.v111.Address[0] });
+
+        var stampsClient = new StampsClientServiceMock(
+            mockOptions.Object,
+            mockAuth.Object,
+            mockSoapClient.Object,
+            loggerFactory,
+            mockLogger.Object);
 
         var mockLogger2 = new Mock<ILogger<StampsAddressValidationProvider>>();
 
-        swsimV111Mock.Setup(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
-            .Verifiable();
-
-        swsimV111Mock.SetupSequence(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()))
-            .ThrowsAsync(new FaultException(exMessage))
-            .ReturnsAsync(new CleanseAddressResponse()
-            { Authenticator = "test", CandidateAddresses = new StampsClient.v111.Address[0], Address = new StampsClient.v111.Address() });
-
-        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClientMock.Object, mockLogger2.Object);
+        var stampsAddressValidationProvider = new StampsAddressValidationProvider(stampsClient, mockLogger2.Object);
 
         var validateAddress = new ValidateAddress(
             "test",
@@ -136,8 +166,8 @@ public class StampsAddressValidationProviderTests
         // act
         var result = await stampsAddressValidationProvider.ValidateAddressAsync(validateAddress, CancellationToken.None);
 
-        swsimV111Mock.Verify(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()), Times.Exactly(2));
-
+        mockSoapClient.Verify(x => x.CleanseAddressAsync(It.IsAny<CleanseAddressRequest>()), Times.Exactly(2));
+        mockAuth.Verify(x => x.ClearTokens(), Times.Once);
         // assert
         Assert.IsType<ValidateAddress>(result);
     }

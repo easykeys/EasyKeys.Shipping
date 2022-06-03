@@ -5,14 +5,18 @@ using Bet.Extensions.Testing.Logging;
 
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
-
+using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
 
+using EasyKeysShipping.UnitTest.Stubs;
 using EasyKeysShipping.UnitTest.TestHelpers;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 using Moq;
 
@@ -180,14 +184,26 @@ public class StampsRateServiceTests
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
         var rateRequest = new RateRequestDetails();
-        var stampsClientMock = new Mock<IStampsClientService>();
+        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
+        var mockAuth = new Mock<IStampsClientAuthenticator>();
+        var loggerFactory = new NullLoggerFactory();
+        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
+        var mockSoapClient = new Mock<SwsimV111Soap>();
 
-        var swsimV111SoapClientMock = new Mock<StampsClient.v111.SwsimV111Soap>();
+        mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
+        mockAuth.Setup(x => x.GetToken()).Returns("testing");
 
-        swsimV111SoapClientMock.Setup(x => x.GetRatesAsync(It.IsAny<StampsClient.v111.GetRatesRequest>()))
+        mockSoapClient.Setup(x => x.GetRatesAsync(It.IsAny<StampsClient.v111.GetRatesRequest>()))
             .ReturnsAsync(getRatesResponse);
 
-        var ratesService = new RatesService(stampsClientMock.Object);
+        var stampsClient = new StampsClientServiceMock(
+            mockOptions.Object,
+            mockAuth.Object,
+            mockSoapClient.Object,
+            loggerFactory,
+            mockLogger.Object);
+
+        var ratesService = new RatesService(stampsClient);
 
         var response = await ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
 
@@ -198,6 +214,8 @@ public class StampsRateServiceTests
 
     [Theory]
     [InlineData("Conversation out-of-sync.")]
+    [InlineData("Invalid conversation token.")]
+    [InlineData("Authentication failed.")]
     public async void RateService_Handles_Exceptions_Successfully(string exMessage)
     {
         // arrange
@@ -205,25 +223,36 @@ public class StampsRateServiceTests
 
         var rateOptions = new RateRequestDetails();
 
-        var stampsClientMock = new Mock<IStampsClientService>();
+        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
+        var mockAuth = new Mock<IStampsClientAuthenticator>();
+        var loggerFactory = new NullLoggerFactory();
+        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
+        var mockSoapClient = new Mock<SwsimV111Soap>();
 
-        var swsimV111Mock = new Mock<SwsimV111Soap>();
-
-        swsimV111Mock.Setup(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
+        mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
+        mockAuth.Setup(x => x.GetToken()).Returns("testing");
+        mockSoapClient.Setup(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
             .Verifiable();
 
-        swsimV111Mock.SetupSequence(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
+        mockSoapClient.SetupSequence(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
             .ThrowsAsync(new FaultException(exMessage))
             .ThrowsAsync(new Exception(exMessage));
 
-        var stampsAddressValidationProvider = new RatesService(stampsClientMock.Object);
+        var stampsClient = new StampsClientServiceMock(
+            mockOptions.Object,
+            mockAuth.Object,
+            mockSoapClient.Object,
+            loggerFactory,
+            mockLogger.Object);
+
+        var stampsAddressValidationProvider = new RatesService(stampsClient);
 
         // act - assert
         var ex = await Assert.ThrowsAsync<Exception>(async () => await stampsAddressValidationProvider.GetRatesResponseAsync(domesticShipment, rateOptions, CancellationToken.None));
 
         Assert.True(ex.Message == exMessage);
 
-        swsimV111Mock.Verify(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()), Times.Exactly(2));
+        mockSoapClient.Verify(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()), Times.Exactly(2));
     }
 
     [Theory]
@@ -235,26 +264,38 @@ public class StampsRateServiceTests
 
         var rateOptions = new RateRequestDetails();
 
-        var stampsClientMock = new Mock<IStampsClientService>();
+        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
+        var mockAuth = new Mock<IStampsClientAuthenticator>();
+        var loggerFactory = new NullLoggerFactory();
+        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
+        var mockSoapClient = new Mock<SwsimV111Soap>();
 
-        var swsimV111Mock = new Mock<SwsimV111Soap>();
-
-        swsimV111Mock.Setup(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
+        mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
+        mockAuth.Setup(x => x.GetToken()).Returns("testing");
+        mockAuth.Setup(x => x.ClearTokens()).Verifiable();
+        mockSoapClient.Setup(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
             .Verifiable();
 
-        swsimV111Mock.SetupSequence(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
+        mockSoapClient.SetupSequence(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
             .ThrowsAsync(new FaultException(exMessage))
             .ReturnsAsync(new GetRatesResponse() { Authenticator = "test", Rates = new RateV40[0] });
 
-        var stampsAddressValidationProvider = new RatesService(stampsClientMock.Object);
+        var stampsClient = new StampsClientServiceMock(
+            mockOptions.Object,
+            mockAuth.Object,
+            mockSoapClient.Object,
+            loggerFactory,
+            mockLogger.Object);
+
+        var stampsAddressValidationProvider = new RatesService(stampsClient);
 
         // act
         var result = await stampsAddressValidationProvider.GetRatesResponseAsync(domesticShipment, rateOptions, CancellationToken.None);
 
         // assert
         Assert.IsType<List<RateV40>>(result);
-
-        swsimV111Mock.Verify(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()), Times.Exactly(2));
+        mockAuth.Verify(x => x.ClearTokens(), Times.Once);
+        mockSoapClient.Verify(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()), Times.Exactly(2));
     }
 
     private ServiceProvider GetServices()

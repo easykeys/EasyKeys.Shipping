@@ -10,7 +10,6 @@ using Polly;
 using StampsClient.v111;
 
 namespace EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
-
 internal sealed class StampsClientService : IStampsClientService
 {
     private readonly IStampsClientAuthenticator _stampsClientAuthenticator;
@@ -34,11 +33,11 @@ internal sealed class StampsClientService : IStampsClientService
         _stampsClientAuthenticator = stampsClientAuthenticator;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _client = new SwsimV111SoapClient(
-         new BasicHttpsBinding(BasicHttpsSecurityMode.Transport)
-         {
-             MaxReceivedMessageSize = int.MaxValue,
-         },
-         new EndpointAddress(_options.Url));
+             new BasicHttpsBinding(BasicHttpsSecurityMode.Transport)
+             {
+                 MaxReceivedMessageSize = int.MaxValue,
+             },
+             new EndpointAddress(_options.Url));
 
         _policy = Policies.GetWaitRetryAsyc(stampsClientAuthenticator, loggerFactory);
     }
