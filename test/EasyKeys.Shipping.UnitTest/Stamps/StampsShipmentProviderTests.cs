@@ -5,17 +5,21 @@ using Bet.Extensions.Testing.Logging;
 
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
+using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Rates.Models;
 using EasyKeys.Shipping.Stamps.Shipment;
 using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 
+using EasyKeysShipping.UnitTest.Stubs;
 using EasyKeysShipping.UnitTest.TestHelpers;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 using Moq;
 
@@ -81,6 +85,8 @@ public class StampsShipmentProviderTests
 
     [Theory]
     [InlineData("Conversation out-of-sync.")]
+    [InlineData("Invalid conversation token.")]
+    [InlineData("Authentication failed.")]
     public async Task ShipmentProvider_Handles_Exceptions_Successfully(string exMessage)
     {
         // arrange
@@ -88,30 +94,37 @@ public class StampsShipmentProviderTests
 
         var shipmentDetails = new ShipmentDetails();
 
-        var stampsClientMock = new Mock<IStampsClientService>();
-
-        var swsimV111Mock = new Mock<SwsimV111Soap>();
-
+        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
+        var mockAuth = new Mock<IStampsClientAuthenticator>();
+        var loggerFactory = new NullLoggerFactory();
+        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
+        var mockSoapClient = new Mock<SwsimV111Soap>();
         var rateServiceMock = new Mock<IRatesService>();
-
         var mockLogger2 = new Mock<ILogger<StampsShipmentProvider>>();
-
-        swsimV111Mock.Setup(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
+        mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
+        mockSoapClient.Setup(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
             .Verifiable();
 
-        swsimV111Mock.SetupSequence(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
+        mockSoapClient.SetupSequence(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
             .ThrowsAsync(new FaultException(exMessage))
             .ThrowsAsync(new Exception(exMessage));
+
+        var stampsClient = new StampsClientServiceMock(
+            mockOptions.Object,
+            mockAuth.Object,
+            mockSoapClient.Object,
+            loggerFactory,
+            mockLogger.Object);
 
         rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateOptions>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<RateV40>());
 
-        var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, mockLogger2.Object);
+        var stampsShipmentProvider = new StampsShipmentProvider(stampsClient, rateServiceMock.Object, mockLogger2.Object);
 
         // act
         var result = await stampsShipmentProvider.CreateShipmentAsync(domesticShipment, shipmentDetails, CancellationToken.None);
 
-        swsimV111Mock.Verify(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()), Times.Exactly(2));
+        mockSoapClient.Verify(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()), Times.Exactly(2));
 
         // assert
         Assert.IsType<ShipmentLabel>(result);
@@ -128,31 +141,41 @@ public class StampsShipmentProviderTests
 
         var shipmentDetails = new ShipmentDetails();
 
-        var stampsClientMock = new Mock<IStampsClientService>();
-
-        var swsimV111Mock = new Mock<SwsimV111Soap>();
-
+        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
+        var mockAuth = new Mock<IStampsClientAuthenticator>();
+        var loggerFactory = new NullLoggerFactory();
+        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
+        var mockSoapClient = new Mock<SwsimV111Soap>();
         var rateServiceMock = new Mock<IRatesService>();
-
         var mockLogger2 = new Mock<ILogger<StampsShipmentProvider>>();
-
-        swsimV111Mock.Setup(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
+        mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
+        mockSoapClient.Setup(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
             .Verifiable();
 
-        swsimV111Mock.SetupSequence(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
+        mockSoapClient.SetupSequence(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
             .ThrowsAsync(new FaultException(exMessage))
             .ReturnsAsync(new CreateIndiciumResponse()
             { Rate = new RateV40(), ImageData = new byte[0][], Authenticator = "test", StampsTxID = Guid.NewGuid(), TrackingNumber = "test" });
 
+        var stampsClient = new StampsClientServiceMock(
+            mockOptions.Object,
+            mockAuth.Object,
+            mockSoapClient.Object,
+            loggerFactory,
+            mockLogger.Object);
+
         rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateOptions>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<RateV40>());
 
-        var stampsShipmentProvider = new StampsShipmentProvider(stampsClientMock.Object, rateServiceMock.Object, mockLogger2.Object);
+        rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateOptions>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<RateV40>());
+
+        var stampsShipmentProvider = new StampsShipmentProvider(stampsClient, rateServiceMock.Object, mockLogger2.Object);
 
         // act
         var result = await stampsShipmentProvider.CreateShipmentAsync(domesticShipment, shipmentDetails, CancellationToken.None);
 
-        swsimV111Mock.Verify(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()), Times.Exactly(2));
+        mockSoapClient.Verify(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()), Times.Exactly(2));
 
         // assert
         Assert.IsType<ShipmentLabel>(result);
