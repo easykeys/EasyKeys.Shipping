@@ -187,10 +187,10 @@ public class StampsShipmentProvider : IStampsShipmentProvider
                         ImageType = shipmentDetails.LabelOptions.ImageType.Name,
                         TrackingId = response.TrackingNumber,
                         Bytes = response.ImageData.ToList(),
-                        Charges = new PackageCharges()
+                        TotalCharges = new ShipmentCharges()
                         {
-                            Surcharges = SetSurcharges(response),
-                            TotalSurCharges = SetSurcharges(response).Values.Sum(),
+                            SurchargesList = SetSurcharges(response),
+                            Surcharges = SetSurcharges(response).Values.Sum(),
                             NetCharge = response.Rate.Amount
                         }
                     }

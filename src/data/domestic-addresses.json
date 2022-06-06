@@ -1,40 +1,53 @@
 [
-  {
-    "Contact": {
-      "FirstName": "EasyKeys.com",
-      "LastName": "Customer",
-      "Company": null,
-      "Department": null,
-      "Email": "info@easykeys.com",
-      "Extension": null,
-      "PhoneNumber": "877.839.5397"
-    },
+  //{
+  //  "Commodity": {
+  //    "Name": "Keys",
+  //    "Description": "Padlocks and locks",
+  //    "HarmonizedCode": "8301",
+  //    "Quantity": 2,
+  //    "CountryOfManufacturer": "US",
+  //    "CustomsValue": 50.00,
+  //    "UnitPrice": 25.00,
+  //    "NumberOfPieces": 2,
+  //    "QuantityUnits": "EA"
+  //  },
 
-    "Address": {
-      "StreetLine": "URB SAN GERARDO",
-      "StreetLine2": "1647 CALLE ANAPOLIS",
-      "City": "San Juan",
-      "StateOrProvince": "PR",
-      "PostalCode": "00926",
-      "CountryCode": "US",
-      "IsResidential": false
-    },
+  //  "Contact": {
+  //    "FirstName": "EasyKeys.com",
+  //    "LastName": "Customer",
+  //    "Company": null,
+  //    "Department": null,
+  //    "Email": "info@easykeys.com",
+  //    "Extension": null,
+  //    "PhoneNumber": "877.839.5397"
+  //  },
 
-    "Packages": [
-      {
-        "Dimensions": {
-          "Length": 8.00,
-          "Width": 4.00,
-          "Height": 0.20
-        },
-        "InsuredValue": 50,
-        "IsOversize": false,
-        "Weight": 0.078125,
-        "SignatureRequiredOnDelivery": false
-      }
+  //  "Address": {
+  //    "StreetLine": "URB SAN GERARDO",
+  //    "StreetLine2": "1647 CALLE ANAPOLIS",
+  //    "City": "San Juan",
+  //    "StateOrProvince": "PR",
+  //    "PostalCode": "00926",
+  //    "CountryCode": "US",
+  //    "IsResidential": false
+  //  },
 
-    ]
-  },
+  //  "Packages": [
+  //    {
+  //      "Dimensions": {
+  //        "Length": 8.00,
+  //        "Width": 4.00,
+  //        "Height": 0.20
+  //      },
+  //      "InsuredValue": 50,
+  //      "IsOversize": false,
+  //      "Weight": 0.078125,
+  //      "SignatureRequiredOnDelivery": false
+  //    }
+
+  //  ]
+  //},
+
   {
     "Contact": {
       "FirstName": "EasyKeys.com",

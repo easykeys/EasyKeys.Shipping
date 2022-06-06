@@ -57,41 +57,6 @@ public class Main : IMain
             postalCode: "28273",
             countryCode: "US");
 
-        var shipmentOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now, true)
-        {
-            PreferredCurrencyCode = "USD",
-        };
-
-        var details = new ShipmentDetails
-        {
-            TransactionId = "1234-transaction",
-            PaymentType = "sender",
-            CollectOnDelivery = new CollectOnDelivery()
-            {
-                Activated = false,
-                Amount = 250,
-                CollectionType = "guaranteed_funds",
-                Currency = "USD"
-            },
-            DeliverySignatureOptions = "NoSignatureRequired",
-            LabelOptions = new LabelOptions()
-            {
-                LabelFormatType = "COMMON2D",
-                ImageType = "PDF",
-            }
-        };
-
-        var commodity = new Commodity()
-        {
-            Name = "Keys",
-            NumberOfPieces = 3,
-            Description = "A set of 4 Steel Keys for office furniture",
-            CountryOfManufacturer = "US",
-            Quantity = 3,
-            QuantityUnits = "EA",
-            UnitPrice = 15.0M
-        };
-
         var sender = new ContactInfo
         {
             FirstName = "EasyKeys.com",
@@ -101,79 +66,130 @@ public class Main : IMain
             Email = string.Empty
         };
 
-        var recipient = new ContactInfo
-        {
-            FirstName = "Ed",
-            LastName = "Moicoachv",
-            Company = "companyname",
-            Email = "moincoachv@easykeys.com",
-            PhoneNumber = "444-444-4444"
-        };
+        // load shipping info for dometic and international
+        var models = new List<RateModelDto>();
 
-        //var fileName = "Embeded.intnl-addresses.json";
-        var fileName = "Embeded.domestic-addresses.json";
+        var internationalFileName = "Embeded.intnl-addresses.json";
+        var internationModels = LoadModels<List<RateModelDto>>(internationalFileName);
+        models.AddRange(internationModels);
 
-        var models = LoadModels<List<RateModelDto>>(fileName);
+        var dometsticFileName = "Embeded.domestic-addresses.json";
+        var dometicModels = LoadModels<List<RateModelDto>>(dometsticFileName);
+        models.AddRange(dometicModels);
 
         foreach (var model in models)
         {
+            // 1. Address validation
             var proposedAddress = await ValidateAsync(model.Address, false, cancellationToken);
-            var defaultPackage = new Package(model.Packages[0].Dimensions, model.Packages[0].Weight, 100m, false);
 
-            var config = new FedExRateConfigurator(originAddress, proposedAddress.ProposedAddress, defaultPackage);
+            // 2. get rates based on the package size
+            var shipments = await GetRatesAsync(originAddress, proposedAddress.ProposedAddress, model.Packages[0], cancellationToken);
+            var rates = shipments.SelectMany(x => x.Rates);
+            var flatRates = rates.Select(x => $"{x.Name}:{x.ServiceName}:{x.PackageType} - {x.TotalCharges} - {x.TotalCharges2}");
 
-            _logger.LogInformation("Rates for: {address}", proposedAddress.ProposedAddress.ToString());
-
-            foreach (var (shipment, serviceType) in config.Shipments)
+            foreach (var flatRate in flatRates)
             {
-                // 2. shipment rates
-                var rates = await _fedexRateProvider.GetRatesAsync(shipment, serviceType, cancellationToken);
-                if (rates.Errors.Any())
-                {
-                    var errors = rates.Errors.Select(x => x.Description).Flatten(",");
-                    _logger.LogError(errors);
-                }
-
-                foreach (var rate in rates.Rates)
-                {
-                    _logger.LogInformation("{serviceName} - {name} - {cost}", rate.ServiceName, rate.Name, rate.TotalCharges2);
-                }
+                _logger.LogInformation("{address} - {rate}", model.Address.ToString(), flatRate);
             }
 
-            var shipmentDetails = new ShipmentDetails
+            // if cod = null then nothing to process.
+            var cod = new CollectOnDelivery
             {
-                Sender = sender,
-                Recipient = recipient,
+                Amount = 250,
+                CollectionType = "guaranteed_funds",
+                Currency = "USD"
             };
 
-            shipmentDetails.Commodities.Add(commodity);
+            var details = new ShipmentDetails
+            {
+                Sender = sender,
+                Recipient = model.Contact,
 
-            //if (shipment.DestinationAddress.CountryCode != "US")
-            //{
-            //    details.CollectOnDelivery.Activated = false;
-            //}
+                TransactionId = "1234-transaction",
 
-            //// 3. get shipment label
-            //var result = await _fedExShipmentProvider.CreateShipmentAsync(
-            //    serviceType: shipment.DestinationAddress.CountryCode == "US" ? FedExServiceType.FedExSecondDay : FedExServiceType.FedExInternationalEconomy,
-            //    shipment,
-            //    details,
-            //    cancellationToken);
+                PaymentType = "sender",
 
-            //await File.WriteAllBytesAsync("label.png", result.Labels[0].Bytes[0]);
+                RateRequestType = "list",
 
-            //var info = await _fedExTrackingProvider.TrackShipmentAsync(result, cancellationToken);
+                // CollectOnDelivery = cod,
+                // AU with economy is not working
+                // DeliverySignatureOptions = "NoSignatureRequired",
+                LabelOptions = new LabelOptions()
+                {
+                    LabelFormatType = "COMMON2D",
+                    ImageType = "PNG",
+                }
+            };
+
+            FedExServiceType? selectedRate = null;
+            Shipping.Abstractions.Models.Shipment? shipment = null;
+
+            if (!rates.Any(x => x.Name.Contains("INTERNATIONAL")))
+            {
+                selectedRate = FedExServiceType.FedExStandardOvernight;
+                shipment = GetShipment(shipments, selectedRate);
+            }
+            else
+            {
+                selectedRate = FedExServiceType.FedExInternationalPriority;
+                shipment = GetShipment(shipments, selectedRate);
+
+                details.Commodities.Add(model.Commodity);
+
+                // var shipmentOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now, false);
+                // shipment = new Shipping.Abstractions.Models.Shipment(originAddress, proposedAddress.ProposedAddress, model.Packages, shipmentOptions);
+            }
+
+            // 3. get shipment label
+            var result = await _fedExShipmentProvider.CreateShipmentAsync(selectedRate, shipment, details, cancellationToken);
+
+            if (result.InternalErrors.Count > 0)
+            {
+                _logger.LogWarning("Failed {city} to generate label", proposedAddress.ProposedAddress.City);
+                continue;
+            }
+
+            var label = result.Labels[0];
+
+            _logger.LogInformation(
+                "{trackingId} - {TotalCharges} - {TotalCharges2}",
+                label.TrackingId,
+                label.TotalCharges.NetCharge,
+                label.TotalCharges2.NetCharge);
+
+            var fileName = $"{model.Address.City}-{label.TrackingId}label.png";
+
+            Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Labels"));
+
+            await File.WriteAllBytesAsync(Path.Combine(AppContext.BaseDirectory, "Labels", fileName), label.Bytes[0]);
+
+            var info = await _fedExTrackingProvider.TrackShipmentAsync(label.TrackingId, cancellationToken);
+            foreach (var @event in info.TrackingEvents)
+            {
+                _logger.LogInformation("{eve}", @event.Event);
+            }
         }
 
-        // A multiple - package shipment(MPS) consists of two or more packages shipped to the same recipient.
-        // The first package in the shipment request is considered the master package.
-        // To create a multiple - package shipment,
-        // • Include the shipment level information such as TotalWeight, PackageCount, SignatureOptions)
-        // on the master package. The SequenceID for this package is 1.
-        // • In the master package reply, assign the tracking number of the first package in the
-        // MasterTrackingID element for all subsequent packages.You must return the master tracking
-        // number and increment the package number(SequenceID) for subsequent packages
         return 0;
+    }
+
+    private static Shipping.Abstractions.Models.Shipment? GetShipment(
+        IEnumerable<Shipping.Abstractions.Models.Shipment> shipments,
+        FedExServiceType serviceType)
+    {
+        foreach (var item in shipments)
+        {
+            var rate = item?.Rates?.FirstOrDefault(x => x.Name == serviceType.Name);
+
+            if (rate is not null)
+            {
+                item.Rates.Clear();
+                item.Rates.Add(rate);
+                return item;
+            }
+        }
+
+        return null;
     }
 
     private static T LoadModels<T>(string fileName) where T : class
@@ -190,21 +206,63 @@ public class Main : IMain
         // for international orders, user must enter the provice/state code, not full name
         var request = new ValidateAddress(Guid.NewGuid().ToString(), destination);
         var result = await _validationClient.ValidateAddressAsync(request, cancellationToken);
-
-        // var originalAddress = JsonSerializer.Serialize(validationResult.OriginalAddress, new JsonSerializerOptions() { WriteIndented = true });
-        // _logger.LogInformation(originalAddress);
-        if (request.OriginalAddress != request.ProposedAddress && debug)
+        var jsonOptions = new JsonSerializerOptions()
         {
-            var propsedAddress = JsonSerializer.Serialize(result.ProposedAddress, new JsonSerializerOptions() { WriteIndented = true });
-            _logger.LogInformation(propsedAddress);
-        }
+            WriteIndented = true
+        };
+
+        var originalAddress = JsonSerializer.Serialize(request.OriginalAddress, jsonOptions);
+        _logger.LogInformation(Environment.NewLine + "Original Address: {originalAddress}", originalAddress);
+
+        var propsedAddress = JsonSerializer.Serialize(result.ProposedAddress, new JsonSerializerOptions() { WriteIndented = true });
+        _logger.LogInformation(Environment.NewLine + "Proposed Address {proposedAddress}", propsedAddress);
 
         if (debug)
         {
             // 1.a display validation bag
             _logger.LogInformation(Environment.NewLine + result.ValidationBag.Select(x => $"{x.Key}-{x.Value}").Flatten(Environment.NewLine));
+
+            if (result.Errors.Count > 0)
+            {
+                _logger.LogError($"Address Validation Errors: {result.Errors.Select(x => x.Description).Flatten(Environment.NewLine)}");
+            }
         }
 
         return result;
+    }
+
+    private async Task<IEnumerable<Shipping.Abstractions.Models.Shipment>> GetRatesAsync(
+        Address origin,
+        Address destination,
+        Package defaultPackage,
+        CancellationToken cancellationToken)
+    {
+        var shipments = new List<Shipping.Abstractions.Models.Shipment>();
+
+        var config = new FedExRateConfigurator(origin, destination, defaultPackage);
+
+        _logger.LogInformation("Rates for: {address}", destination);
+
+        foreach (var (shipment, serviceType) in config.Shipments)
+        {
+            // 2. shipment rates
+            var result = await _fedexRateProvider.GetRatesAsync(shipment, serviceType, cancellationToken);
+            if (result.Errors.Any())
+            {
+                _logger.LogError("Rates Validation Errors : {errors}", result.Errors.Select(x => x.Description).Flatten(Environment.NewLine));
+            }
+
+            foreach (var rate in result.Rates)
+            {
+                _logger.LogInformation("{serviceName} - {name} - {specialPrice} - {listPrice}", rate.ServiceName, rate.Name, rate.TotalCharges, rate.TotalCharges2);
+            }
+
+            if (result != null)
+            {
+                shipments.Add(result);
+            }
+        }
+
+        return shipments;
     }
 }

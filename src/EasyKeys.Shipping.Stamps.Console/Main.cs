@@ -380,7 +380,7 @@ public class Main : IMain
 
             if (result.Errors.Count > 0)
             {
-                _logger.LogError($"Rates Validation Errors : {result.Errors.Select(x => x.Description).Flatten(Environment.NewLine)}");
+                _logger.LogError("Rates Validation Errors : {errors}", result.Errors.Select(x => x.Description).Flatten(Environment.NewLine));
             }
 
             if (result != null)

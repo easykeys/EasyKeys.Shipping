@@ -25,7 +25,7 @@ public static class RateAddressExtensions
             City = address.City?.Trim(),
             StateOrProvinceCode = stateOrProvince,
             PostalCode = address.PostalCode?.Trim(),
-            CountryCode = address.CountryCode?.Trim(),
+            CountryCode = address.GetCountryCode().Trim(),
             CountryName = address.GetCountryName(),
             Residential = address.IsResidential,
             ResidentialSpecified = address.IsResidential,

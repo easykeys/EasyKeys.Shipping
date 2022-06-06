@@ -71,7 +71,7 @@ public class ShipmentDetails
     /// <summary>
     /// Collect on delivery is defaulted to false.
     /// </summary>
-    public CollectOnDelivery CollectOnDelivery { get; set; } = new CollectOnDelivery();
+    public CollectOnDelivery? CollectOnDelivery { get; set; }
 
     /// <summary>
     /// FedEx label options.

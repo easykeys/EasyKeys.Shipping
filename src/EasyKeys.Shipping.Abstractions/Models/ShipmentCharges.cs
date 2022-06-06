@@ -1,6 +1,6 @@
 ﻿namespace EasyKeys.Shipping.Abstractions.Models;
 
-public class PackageCharges
+public class ShipmentCharges
 {
     /// <summary>
     /// Charge by the provider to customer.
@@ -15,10 +15,10 @@ public class PackageCharges
     /// <summary>
     /// Surchage for the <see cref="Package"/>.
     /// </summary>
-    public Dictionary<string, decimal> Surcharges { get; set; } = new Dictionary<string, decimal>();
+    public Dictionary<string, decimal> SurchargesList { get; set; } = new Dictionary<string, decimal>();
 
     /// <summary>
     /// Total charge for <see cref="Package"/>.
     /// </summary>
-    public decimal TotalSurCharges { get; set; }
+    public decimal Surcharges { get; set; }
 }

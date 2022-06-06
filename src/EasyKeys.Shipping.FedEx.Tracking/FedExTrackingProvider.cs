@@ -27,7 +27,10 @@ public class FedExTrackingProvider : IFedExTrackingProvider
 
     public async Task<TrackingInformation> TrackShipmentAsync(string trackingId, CancellationToken cancellation)
     {
-        var trackingInformation = new TrackingInformation() { TrackingEvents = new List<TrackingEvent>() };
+        var trackingInformation = new TrackingInformation()
+        {
+            TrackingEvents = new List<TrackingEvent>()
+        };
 
         var trackingRequest = new trackRequest1()
         {
@@ -86,12 +89,20 @@ public class FedExTrackingProvider : IFedExTrackingProvider
             if ((trackingReply.TrackReply?.HighestSeverity != NotificationSeverityType.ERROR)
                     && (trackingReply.TrackReply?.HighestSeverity != NotificationSeverityType.FAILURE))
             {
-                var events = trackingReply?.TrackReply?.CompletedTrackDetails.SelectMany(x => x.TrackDetails)
-                    .SelectMany(x => x.Events);
+                var events = trackingReply?.TrackReply?.CompletedTrackDetails?.SelectMany(x => x?.TrackDetails)
+                                                                             ?.SelectMany(x => x?.Events) ?? new List<TrackEvent>();
 
-                if (events == null)
+                var d = trackingReply?.TrackReply?.Notifications.Select(x => x.Message);
+
+                if (d.Any())
                 {
-                    trackingInformation.InternalErrors.Add("No Tracking events available");
+                    trackingInformation.TrackingEvents.Add(new TrackingEvent()
+                    {
+                        Event = d.First(),
+                        TimeStamp = DateTime.Now,
+                        Address = new Shipping.Abstractions.Models.Address(),
+                    });
+
                     return trackingInformation;
                 }
 

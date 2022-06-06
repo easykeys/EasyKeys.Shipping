@@ -202,7 +202,10 @@ public class FedExRateProvider : IFedExRateProvider
             if (package.SignatureRequiredOnDelivery)
             {
                 var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.INDIRECT };
-                request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested() { SignatureOptionDetail = signatureOptionDetail };
+                request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested()
+                {
+                    SignatureOptionDetail = signatureOptionDetail
+                };
             }
 
             i++;
@@ -228,7 +231,13 @@ public class FedExRateProvider : IFedExRateProvider
 
         foreach (var rateReplyDetail in reply.RateReplyDetails)
         {
-            var name = rateReplyDetail.ServiceType;
+            var serviceName = rateReplyDetail.ServiceType;
+
+            if (serviceName == "FEDEX_INTERNATIONAL_PRIORITY")
+            {
+                serviceName = "INTERNATIONAL_PRIORITY";
+            }
+
             var saturdayDelievery = rateReplyDetail?.AppliedOptions?.Contains(ServiceOptionType.SATURDAY_DELIVERY) ?? false;
 
             var netCost = rateReplyDetail!.RatedShipmentDetails.FirstOrDefault(r => r.ShipmentRateDetail.RateType == ReturnedRateType.PAYOR_ACCOUNT_PACKAGE
@@ -250,28 +259,27 @@ public class FedExRateProvider : IFedExRateProvider
                     guaranteedDelivery = shipDate.AddBusinessDays(index + 1);
                 }
 
-                if (FedExServiceType.TryFromName(name, out var tp))
+                if (FedExServiceType.TryFromName(serviceName, out var tp))
                 {
                     // FEDEX_INTERNATIONAL_PRIORITY
-                    if (name == tp.Name)
+                    if (serviceName == tp.Name)
                     {
                         guaranteedDelivery = shipDate.AddBusinessDays(3);
                     }
-                    else if (name == tp.Name)
+                    else if (serviceName == tp.Name)
                     {
                         guaranteedDelivery = shipDate.AddBusinessDays(6);
                     }
-                    else if (name == tp.Name)
+                    else if (serviceName == tp.Name)
                     {
                         guaranteedDelivery = shipDate.AddBusinessDays(1);
                     }
                 }
             }
 
-            var uName = name.Replace("_", " ");
+            var uName = serviceName.Replace("_", " ");
 
-            // var deliveryDate = rateReplyDetail.DeliveryTimestampSpecified ? rateReplyDetail.DeliveryTimestamp : DateTime.Now.AddDays(30);
-            if (FedExServiceType.TryFromName(name, out var serviceType))
+            if (FedExServiceType.TryFromName(serviceName, out var serviceType))
             {
                 uName = serviceType.ServiceName;
             }
@@ -284,9 +292,9 @@ public class FedExRateProvider : IFedExRateProvider
             }
 
             var rate = new Rate(
+                serviceName,
                 uName,
-                name,
-                string.Empty,
+                shipment.Options.PackagingType,
                 netCost ?? 0.0M,
                 listCost ?? 0.0M,
                 guaranteedDelivery,

@@ -20,7 +20,7 @@ public static class ShipmentAddressExtensions
             City = address.City?.Trim(),
             StateOrProvinceCode = address.StateOrProvince?.Trim(),
             PostalCode = address.PostalCode?.Trim(),
-            CountryCode = address.CountryCode?.Trim(),
+            CountryCode = address.GetCountryCode().Trim(),
             CountryName = address.GetCountryName(),
             Residential = address.IsResidential,
             ResidentialSpecified = address.IsResidential,

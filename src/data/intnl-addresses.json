@@ -7,7 +7,9 @@
       "Quantity": 2,
       "CountryOfManufacturer": "US",
       "CustomsValue": 50.00,
-      "NumberOfPieces": 2
+      "UnitPrice": 25.00,
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
     },
 
     "Contact": {
@@ -37,7 +39,7 @@
           "Width": 4.00,
           "Height": 0.20
         },
-        "InsuredValue": 50,
+        "InsuredValue": 50.00,
         "IsOversize": false,
         "Weight": 0.078125,
         "SignatureRequiredOnDelivery": false
@@ -54,7 +56,8 @@
       "Quantity": 2,
       "CountryOfManufacturer": "US",
       "CustomsValue": 50.00,
-      "NumberOfPieces": 2
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
     },
 
     "Contact": {
@@ -101,7 +104,8 @@
       "Quantity": 2,
       "CountryOfManufacturer": "US",
       "CustomsValue": 50.00,
-      "NumberOfPieces": 2
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
     },
 
     "Contact": {
@@ -148,7 +152,8 @@
       "Quantity": 2,
       "CountryOfManufacturer": "US",
       "CustomsValue": 50.00,
-      "NumberOfPieces": 2
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
     },
 
     "Contact": {
@@ -195,7 +200,8 @@
       "Quantity": 2,
       "CountryOfManufacturer": "US",
       "CustomsValue": 50.00,
-      "NumberOfPieces": 2
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
     },
 
     "Contact": {
@@ -242,7 +248,8 @@
       "Quantity": 2,
       "CountryOfManufacturer": "US",
       "CustomsValue": 50.00,
-      "NumberOfPieces": 2
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
     },
 
     "Contact": {
@@ -274,7 +281,7 @@
         },
         "InsuredValue": 50,
         "IsOversize": false,
-        "Weight": 1.0,
+        "Weight": 0.9375,
         "SignatureRequiredOnDelivery": false
       }
 
@@ -290,7 +297,8 @@
       "Quantity": 2,
       "CountryOfManufacturer": "US",
       "CustomsValue": 50.00,
-      "NumberOfPieces": 2
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
     },
 
     "Contact": {
@@ -322,7 +330,7 @@
         },
         "InsuredValue": 50,
         "IsOversize": false,
-        "Weight": 1.0,
+        "Weight": 0.9375,
         "SignatureRequiredOnDelivery": false
       }
 
@@ -338,7 +346,8 @@
       "Quantity": 2,
       "CountryOfManufacturer": "US",
       "CustomsValue": 50.00,
-      "NumberOfPieces": 2
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
     },
 
     "Contact": {
@@ -370,7 +379,7 @@
         },
         "InsuredValue": 50,
         "IsOversize": false,
-        "Weight": 1.0,
+        "Weight": 0.9375,
         "SignatureRequiredOnDelivery": false
       }
 

@@ -58,7 +58,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
                 var shipmentRequest = new processShipmentRequest1(request);
 
-                shipmentRequest.ProcessShipmentRequest.RequestedShipment.MasterTrackingId = masterTrackingId == default(TrackingId) ? null : masterTrackingId;
+                shipmentRequest.ProcessShipmentRequest.RequestedShipment.MasterTrackingId = masterTrackingId ?? null;
 
                 var response = await client.processShipmentAsync(shipmentRequest);
 
@@ -67,53 +67,58 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 if ((reply?.HighestSeverity != NotificationSeverityType.ERROR)
                          && (reply?.HighestSeverity != NotificationSeverityType.FAILURE))
                 {
-                    var charges = new PackageCharges();
+                    var totalCharges = new ShipmentCharges();
+                    var totalCharges2 = new ShipmentCharges();
 
-                    var packageDetails = reply?.CompletedShipmentDetail?.CompletedPackageDetails?.ToList();
+                    var packageDetails = reply?.CompletedShipmentDetail?.CompletedPackageDetails?.ToList() ?? new List<CompletedPackageDetail>();
+                    var rateDetails = reply?.CompletedShipmentDetail?.ShipmentRating?.ShipmentRateDetails?.ToList() ?? new List<ShipmentRateDetail>();
 
-                    var totalShipmentDetails = reply?.CompletedShipmentDetail.ShipmentRating?.ShipmentRateDetails.ToList();
-                    reply?.CompletedShipmentDetail.CompletedPackageDetails.ToList().
-                        ForEach(x =>
+                    // international labels only
+                    if (reply?.CompletedShipmentDetail?.ShipmentRating != null)
+                    {
+                        var payerAccounIntl = rateDetails.Where(x => x?.RateType == ReturnedRateType.PAYOR_ACCOUNT_SHIPMENT
+                                                                      || x?.RateType == ReturnedRateType.PAYOR_ACCOUNT_PACKAGE);
+
+                        if (payerAccounIntl.Any())
                         {
-                            charges.Surcharges = new Dictionary<string, decimal>();
+                            payerAccounIntl.SelectMany(x => x.Surcharges)
+                                        .ToList()
+                                        .ForEach(x => totalCharges.SurchargesList[x.Description] = x.Amount.Amount);
 
-                            // if shipment destination is international
-                            if (reply?.CompletedShipmentDetail.ShipmentRating != null)
-                            {
-                                charges.BaseCharge = totalShipmentDetails.Select(x => x.TotalBaseCharge).Sum(x => x.Amount);
-                                charges.NetCharge = totalShipmentDetails.Select(x => x.TotalNetCharge).Sum(x => x.Amount);
-                                charges.TotalSurCharges = totalShipmentDetails.Select(x => x.TotalSurcharges).Sum(x => x.Amount);
-                                totalShipmentDetails.SelectMany(x => x.Surcharges)
-                                                        .ToList()
-                                                        .ForEach(x => charges.Surcharges[x.Description] = x.Amount.Amount);
-                            }
+                            totalCharges.BaseCharge = payerAccounIntl.Sum(x => x.TotalBaseCharge.Amount);
+                            totalCharges.NetCharge = payerAccounIntl.Sum(x => x.TotalNetCharge.Amount);
+                            totalCharges.Surcharges = payerAccounIntl.Sum(x => x.TotalSurcharges.Amount);
+                        }
 
-                            // if shipment destination is domestic
-                            if (x.PackageRating != null)
-                            {
-                                charges.BaseCharge = x.PackageRating.PackageRateDetails.Select(x => x.BaseCharge).Sum(s => s.Amount);
-                                charges.NetCharge = x.PackageRating.PackageRateDetails.Select(x => x.NetCharge).Sum(s => s.Amount);
+                        var payerListIntl = rateDetails.Where(x => x?.RateType == ReturnedRateType.PAYOR_LIST_SHIPMENT
+                                                                      || x?.RateType == ReturnedRateType.PAYOR_LIST_PACKAGE);
 
-                                x.PackageRating.PackageRateDetails
-                                                    .SelectMany(x => x.Surcharges)
-                                                    .ToList()
-                                                    .ForEach(x => charges.Surcharges[x.Description] = x.Amount.Amount);
+                        if (payerListIntl.Any())
+                        {
+                            payerListIntl.SelectMany(x => x.Surcharges)
+                                        .ToList()
+                                        .ForEach(x => totalCharges2.SurchargesList[x.Description] = x.Amount.Amount);
 
-                                charges.TotalSurCharges = x.PackageRating.PackageRateDetails.Select(x => x.TotalSurcharges).Sum(s => s.Amount);
-                            }
+                            totalCharges2.BaseCharge = payerListIntl.Sum(x => x.TotalBaseCharge.Amount);
+                            totalCharges2.NetCharge = payerListIntl.Sum(x => x.TotalNetCharge.Amount);
+                            totalCharges2.Surcharges = payerListIntl.Sum(x => x.TotalSurcharges.Amount);
+                        }
+                    }
 
-                            label.Labels.Add(
-                            new PackageLabelDetails
-                            {
-                                Charges = charges,
+                    // add byte array for actual generated lablels.
+                    label.Labels.Add(
+                                new PackageLabelDetails
+                                {
+                                    TotalCharges = totalCharges,
 
-                                TrackingId = x.TrackingIds.Select(x => x.TrackingNumber).Flatten(";"),
+                                    TotalCharges2 = totalCharges2,
 
-                                ImageType = x.Label.ImageType.ToString(),
+                                    TrackingId = packageDetails?.SelectMany(x => x?.TrackingIds)?.Select(x => x?.TrackingNumber)?.Flatten(";") ?? string.Empty,
 
-                                Bytes = x.Label.Parts.Select(x => x.Image).ToList()
-                            });
-                        });
+                                    ImageType = packageDetails?.Select(x => x?.Label.ImageType)?.ToString() ?? string.Empty,
+
+                                    Bytes = packageDetails.Select(x => x?.Label?.Parts)?.SelectMany(x => x)?.Select(x => x.Image)?.ToList(),
+                                });
 
                     masterTrackingId = reply?.CompletedShipmentDetail.MasterTrackingId;
                 }
@@ -133,9 +138,8 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         {
             _logger.LogError(ex, "{providerName} failed", nameof(FedExShipmentProvider));
 
-            // this does not explain fault exceptions well, must debug handler
-            // TODO: possible needed to have Inner Exception support added.
-            label.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExShipmentProvider)} failed");
+            var error = ex?.InnerException?.Message ?? ex?.Message;
+            label.InternalErrors.Add($"{nameof(FedExShipmentProvider)} failed: {error}");
         }
 
         return label;
@@ -155,7 +159,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             shipment,
             details);
 
-        SetpackageLineItems(
+        SetPackageLineItems(
             request,
             shipment,
             details,
@@ -201,9 +205,10 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             ServiceType = serviceType.Name,
             PackagingType = shipment.Options.PackagingType,
             PackageCount = shipment.Packages.Count.ToString(),
+
             TotalWeight = new Weight
             {
-                Value = shipment.Packages.Sum(x => x.Weight),
+                Value = shipment.GetTotalWeight(),
                 Units = WeightUnits.LB
             },
 
@@ -213,17 +218,17 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 "list" => new RateRequestType[1] { RateRequestType.LIST },
                 "preferred" => new RateRequestType[1] { RateRequestType.PREFERRED },
                 _ => throw new NotImplementedException(),
-            }
-        };
+            },
 
-        request.RequestedShipment.DropoffType = shipment.Options.DropOffType.ToLower() switch
-        {
-            "regularpickup" => DropoffType.REGULAR_PICKUP,
-            "dropbox" => DropoffType.DROP_BOX,
-            "businessservicecenter" => DropoffType.BUSINESS_SERVICE_CENTER,
-            "requestcourier" => DropoffType.REQUEST_COURIER,
-            "station" => DropoffType.STATION,
-            _ => DropoffType.REGULAR_PICKUP
+            DropoffType = shipment.Options.DropOffType.ToLower() switch
+            {
+                "regularpickup" => DropoffType.REGULAR_PICKUP,
+                "dropbox" => DropoffType.DROP_BOX,
+                "businessservicecenter" => DropoffType.BUSINESS_SERVICE_CENTER,
+                "requestcourier" => DropoffType.REQUEST_COURIER,
+                "station" => DropoffType.STATION,
+                _ => DropoffType.REGULAR_PICKUP
+            }
         };
 
         request.RequestedShipment.PackageCount = shipment.Packages.Count.ToString();
@@ -279,6 +284,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             "collect" => PaymentType.COLLECT,
             _ => PaymentType.SENDER
         };
+
         switch (paymentType)
         {
             case PaymentType.SENDER:
@@ -354,7 +360,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         };
     }
 
-    private void SetpackageLineItems(
+    private void SetPackageLineItems(
         ProcessShipmentRequest request,
         Shipping.Abstractions.Models.Shipment shipment,
         ShipmentDetails details,
@@ -362,7 +368,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
     {
         request.RequestedShipment.RequestedPackageLineItems = new RequestedPackageLineItem[1];
 
-        request.RequestedShipment.RequestedPackageLineItems[0] = new RequestedPackageLineItem()
+        request.RequestedShipment.RequestedPackageLineItems[0] = new RequestedPackageLineItem
         {
             SequenceNumber = (sequenceNumber + 1).ToString(),
             GroupPackageCount = "1",
@@ -370,7 +376,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             Weight = new Weight()
             {
                 Units = WeightUnits.LB,
-                Value = shipment.Packages[sequenceNumber].RoundedWeight,
+                Value = shipment.Packages[sequenceNumber].Weight,
             },
 
             Dimensions = new ShipClient.v25.Dimensions()
@@ -379,12 +385,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 Width = shipment.Packages[sequenceNumber].Dimensions.RoundedWidth.ToString(),
                 Height = shipment.Packages[sequenceNumber].Dimensions.RoundedHeight.ToString(),
                 Units = LinearUnits.IN
+            },
+            InsuredValue = new Money
+            {
+                Amount = shipment.Packages[sequenceNumber].InsuredValue,
+                Currency = shipment.Options.GetCurrencyCode()
             }
-        };
-        request.RequestedShipment.RequestedPackageLineItems[0].InsuredValue = new Money
-        {
-            Amount = shipment.Packages[sequenceNumber].InsuredValue,
-            Currency = shipment.Options.GetCurrencyCode()
         };
 
         var specialServiceTypes = new string[0];
@@ -482,100 +488,108 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             }
         };
 
-        request.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
+
+        if (!shipment.DestinationAddress.IsUnitedStatesAddress())
         {
-            CommercialInvoice = new CommercialInvoice
+            request.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
             {
-                CustomerReferences = new CustomerReference[]
+                CommercialInvoice = new CommercialInvoice
                 {
-                    new CustomerReference
+                    CustomerReferences = new CustomerReference[]
                     {
-                        CustomerReferenceType = details.CustomerReferenceType.ToLower() switch
-                                            {
-                                                "customer_reference" => CustomerReferenceType.CUSTOMER_REFERENCE,
-                                                "department_number" => CustomerReferenceType.DEPARTMENT_NUMBER,
-                                                "intracountry_regulatory_reference" => CustomerReferenceType.INTRACOUNTRY_REGULATORY_REFERENCE,
-                                                "invoice_number" => CustomerReferenceType.INVOICE_NUMBER,
-                                                "po_number" => CustomerReferenceType.P_O_NUMBER,
-                                                "rma_association" => CustomerReferenceType.RMA_ASSOCIATION,
-                                                "shipment_integrity" => CustomerReferenceType.SHIPMENT_INTEGRITY,
-                                                _ => CustomerReferenceType.CUSTOMER_REFERENCE
-                                            },
-                        Value = request.TransactionDetail.CustomerTransactionId
+                                new CustomerReference
+                                {
+                                    CustomerReferenceType = details.CustomerReferenceType.ToLower() switch
+                                                        {
+                                                            "customer_reference" => CustomerReferenceType.CUSTOMER_REFERENCE,
+                                                            "department_number" => CustomerReferenceType.DEPARTMENT_NUMBER,
+                                                            "intracountry_regulatory_reference" => CustomerReferenceType.INTRACOUNTRY_REGULATORY_REFERENCE,
+                                                            "invoice_number" => CustomerReferenceType.INVOICE_NUMBER,
+                                                            "po_number" => CustomerReferenceType.P_O_NUMBER,
+                                                            "rma_association" => CustomerReferenceType.RMA_ASSOCIATION,
+                                                            "shipment_integrity" => CustomerReferenceType.SHIPMENT_INTEGRITY,
+                                                            _ => CustomerReferenceType.CUSTOMER_REFERENCE
+                                                        },
+                                    Value = request.TransactionDetail.CustomerTransactionId
+                                }
                     }
                 }
-            }
-        };
+            };
 
-        if (shipment.DestinationAddress.CountryCode != "US")
-        {
             request.RequestedShipment.CustomsClearanceDetail.CustomsValue = new Money()
             {
-                Amount = details.Commodities.Sum(x => x.UnitPrice),
-                Currency = shipment.Options.GetCurrencyCode()
+                Amount = details.Commodities.Sum(x => x.CustomsValue),
+                Currency = shipment.Options.GetCurrencyCode(),
             };
 
             request.RequestedShipment.CustomsClearanceDetail.DutiesPayment = request.RequestedShipment.ShippingChargesPayment;
 
+            var commodities = new List<ShipClient.v25.Commodity>();
+
             foreach (var commodity in details.Commodities)
             {
-                request.RequestedShipment.CustomsClearanceDetail.Commodities = new ShipClient.v25.Commodity[]
+                var commodityInstance = new ShipClient.v25.Commodity()
                 {
-                    new ShipClient.v25.Commodity()
+                    Description = !string.IsNullOrEmpty(commodity.Description) ? commodity.Description : string.Empty,
+
+                    Name = !string.IsNullOrEmpty(commodity.Name) ? commodity.Name : string.Empty,
+
+                    NumberOfPieces = !string.IsNullOrEmpty(commodity.NumberOfPieces.ToString()) ? commodity.NumberOfPieces.ToString() : string.Empty,
+
+                    CountryOfManufacture = !string.IsNullOrEmpty(commodity.CountryOfManufacturer) ? commodity.CountryOfManufacturer : string.Empty,
+
+                    Weight = new Weight()
                     {
-                        Description = commodity.Description,
+                        Units = WeightUnits.LB,
+                        Value = shipment.GetTotalWeight(),
+                    },
 
-                        Name = commodity.Name,
+                    Quantity = commodity.Quantity,
 
-                        NumberOfPieces = commodity.NumberOfPieces.ToString(),
+                    QuantityUnits = !string.IsNullOrEmpty(commodity.QuantityUnits) ? commodity.QuantityUnits : string.Empty,
 
-                        CountryOfManufacture = commodity.CountryOfManufacturer,
+                    UnitPrice = new Money()
+                    {
+                        Amount = commodity.UnitPrice,
+                        Currency = shipment.Options.GetCurrencyCode()
+                    },
 
-                        Weight = new Weight()
-                            {
-                                Units = WeightUnits.LB,
-                                Value = shipment.GetTotalWeight(),
-                            },
+                    HarmonizedCode = !string.IsNullOrEmpty(commodity.HarmonizedCode) ? commodity.HarmonizedCode : string.Empty,
 
-                        Quantity = commodity.Quantity,
+                    ExportLicenseNumber = !string.IsNullOrEmpty(commodity.ExportLicenseNumber) ? commodity.ExportLicenseNumber : string.Empty,
 
-                        QuantityUnits = commodity.QuantityUnits,
+                    ExportLicenseExpirationDate = commodity.ExportLicenseExpirationDate,
 
-                        UnitPrice = new Money()
-                            {
-                                Amount = commodity.UnitPrice,
-                                Currency = shipment.Options.GetCurrencyCode()
-                            },
+                    PartNumber = !string.IsNullOrEmpty(commodity.PartNumber) ? commodity.PartNumber : string.Empty,
 
-                        HarmonizedCode = commodity.HarmonizedCode,
+                    Purpose = commodity.Purpose.ToUpper() switch
+                    {
+                        "BUSINESS" => CommodityPurposeType.BUSINESS,
+                        "CONSUMER" => CommodityPurposeType.CONSUMER,
+                        _ => CommodityPurposeType.BUSINESS
+                    },
+                    PurposeSpecified = true,
 
-                        ExportLicenseNumber = commodity.ExportLicenseNumber,
+                    CustomsValue = new Money()
+                    {
+                        Amount = commodity.CustomsValue,
+                        Currency = shipment.Options.GetCurrencyCode()
+                    },
 
-                        ExportLicenseExpirationDate = commodity.ExportLicenseExpirationDate,
+                    CIMarksAndNumbers = commodity.CIMarksandNumbers,
 
-                        PartNumber = commodity.PartNumber,
+                    QuantitySpecified = commodity.Quantity > 0,
 
-                        Purpose = commodity.Purpose.ToUpper() switch
-                        {
-                            "BUSINESS" => CommodityPurposeType.BUSINESS,
-                            "CONSUMER" => CommodityPurposeType.CONSUMER,
-                            _ => CommodityPurposeType.BUSINESS
-                        },
-                        CustomsValue = new Money() { Amount = commodity.CustomsValue, Currency = shipment.Options.GetCurrencyCode() },
-
-                        CIMarksAndNumbers = commodity.CIMarksandNumbers,
-
-                        PurposeSpecified = true,
-
-                        QuantitySpecified = true,
-
-                        ExportLicenseExpirationDateSpecified = true
-                    }
+                    ExportLicenseExpirationDateSpecified = commodity.ExportLicenseExpirationDate != default,
                 };
+
+                commodities.Add(commodityInstance);
             }
+
+            request.RequestedShipment.CustomsClearanceDetail.Commodities = commodities.ToArray();
         }
 
-        if (details.CollectOnDelivery.Activated)
+        if (details?.CollectOnDelivery != null)
         {
             request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
             {
@@ -587,6 +601,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         Amount = details.CollectOnDelivery.Amount,
                         Currency = shipment.Options.PreferredCurrencyCode
                     },
+
                     CollectionType = details.CollectOnDelivery.CollectionType.ToUpper() switch
                     {
                         "GUARANTEED_FUNDS" => CodCollectionType.GUARANTEED_FUNDS,

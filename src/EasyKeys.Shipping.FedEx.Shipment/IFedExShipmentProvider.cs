@@ -7,7 +7,17 @@ namespace EasyKeys.Shipping.FedEx.Shipment;
 public interface IFedExShipmentProvider
 {
     /// <summary>
-    /// Creates a fedex shipping label.
+    /// <para>Creates a fedex shipping label.</para>
+    /// <para>
+    /// A multiple - package shipment(MPS) consists of two or more packages shipped to the same recipient.
+    /// The first package in the shipment request is considered the master package.
+    /// To create a multiple - package shipment,
+    /// • Include the shipment level information such as TotalWeight, PackageCount, SignatureOptions)
+    /// on the master package. The SequenceID for this package is 1.
+    /// • In the master package reply, assign the tracking number of the first package in the
+    /// MasterTrackingID element for all subsequent packages.You must return the master tracking
+    /// number and increment the package number(SequenceID) for subsequent packages.
+    /// </para>
     /// </summary>
     /// <param name="serviceType"></param>
     /// <param name="shipment"></param>

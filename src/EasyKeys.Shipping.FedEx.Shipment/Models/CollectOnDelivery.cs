@@ -2,8 +2,6 @@
 
 public class CollectOnDelivery
 {
-    public bool Activated { get; set; }
-
     /// <summary>
     /// guaranteed_funds, cash, company_check, personal_check.
     /// </summary>

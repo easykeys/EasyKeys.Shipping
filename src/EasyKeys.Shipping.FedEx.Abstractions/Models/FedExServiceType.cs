@@ -234,7 +234,7 @@ public abstract class FedExServiceType : SmartEnum<FedExServiceType>
 
     private sealed class FedExInternationalPriorityType : FedExServiceType
     {
-        public FedExInternationalPriorityType() : base("FEDEX_INTERNATIONAL_PRIORITY", 17)
+        public FedExInternationalPriorityType() : base("INTERNATIONAL_PRIORITY", 17)
         {
         }
 
