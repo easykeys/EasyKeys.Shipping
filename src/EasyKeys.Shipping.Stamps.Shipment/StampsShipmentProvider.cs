@@ -70,7 +70,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
             deliveryNotification = shipmentDetails.NotificationOptions.IsActive,
 
-            ShipmentNotification = SetShipmentNotification(shipment, shipmentDetails, shipmentDetails.Recipient),
+            ShipmentNotification = SetShipmentNotification(shipment, shipmentDetails, shipmentDetails.RateRequestDetails.Recipient),
 
             rotationDegrees = shipmentDetails.LabelOptions.RotationDegrees,
 
@@ -175,7 +175,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
 
             request.Rate = rates.FirstOrDefault(x => (int)x.ServiceType == StampsServiceType.FromName(shipmentDetails.SelectedRate.Name).Value);
 
-            request.ReturnTo = rates.FirstOrDefault()?.From;
+            request.ReturnTo = request.Rate.From;
 
             var response = await _stampsClient.CreateIndiciumAsync(request, cancellationToken);
 

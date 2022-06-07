@@ -73,9 +73,9 @@ public class Main : IMain
 
         var models = new List<RateModelDto>();
 
-        var internationalFileName = "Embeded.intnl-addresses.json";
-        var internationModels = LoadModels<List<RateModelDto>>(internationalFileName);
-        models.AddRange(internationModels);
+        //var internationalFileName = "Embeded.intnl-addresses.json";
+        //var internationModels = LoadModels<List<RateModelDto>>(internationalFileName);
+        //models.AddRange(internationModels);
 
         var dometsticFileName = "Embeded.domestic-addresses.json";
         var dometicModels = LoadModels<List<RateModelDto>>(dometsticFileName);
@@ -229,7 +229,7 @@ public class Main : IMain
             }
 
             var rates = shipments.SelectMany(x => x.Rates);
-            var flatRates = rates.Select(x => $"{x.Name}:{x.ServiceName}:{x.PackageType}:{x.TotalCharges}");
+            var flatRates = rates.Select(x => $"{x.Name}:{x.ServiceName} - {x.PackageType} - {x.TotalCharges}");
 
             foreach (var flatRate in flatRates)
             {
@@ -249,7 +249,7 @@ public class Main : IMain
             if (address.IsUnitedStatesAddress())
             {
                 // USPS First-Class Mail:Package:3.7200
-                firstClassPackage = rates.SingleOrDefault(x => x.Name == "USFC" && x.PackageType == "Package");
+                firstClassPackage = rates.SingleOrDefault(x => x.Name == "USPM" && x.PackageType == "SmallFlatRateBox");
             }
             else
             {
@@ -263,9 +263,9 @@ public class Main : IMain
             }
 
             shipmentDetails.SelectedRate = firstClassPackage;
-            shipmentDetails.IsSample = true;
-            shipmentDetails.Sender = sender;
-            shipmentDetails.Recipient = model.Contact;
+            shipmentDetails.IsSample = false;
+            shipmentDetails.RateRequestDetails.Sender = sender;
+            shipmentDetails.RateRequestDetails.Recipient = model.Contact;
 
             if (model?.Commodity != null)
             {
@@ -274,12 +274,29 @@ public class Main : IMain
 
             var shipmentOptions = new ShipmentOptions(PackageType.FromName(firstClassPackage.PackageType).Name, DateTime.Now);
 
-            var shipment = new Shipment(origin, model.Address, model.Packages, shipmentOptions);
+            var shipment = new Shipment(origin, address, model.Packages, shipmentOptions);
 
+            var result = await _shipmentProvider.CreateShipmentAsync(shipment, shipmentDetails, cancellationToken);
 
-            var label = await _shipmentProvider.CreateShipmentAsync(shipment, shipmentDetails, cancellationToken);
+            if (result.InternalErrors.Count > 0)
+            {
+                _logger.LogWarning("Failed {city} to generate label", address.City);
+                continue;
+            }
 
-            await File.WriteAllBytesAsync(Path.Combine("Labels", $"{model.Address.City}-label.png"), label.Labels[0].Bytes[0]);
+            var label = result?.Labels[0];
+
+            _logger.LogInformation(
+                "{trackingId} - {TotalCharges} - {TotalCharges2}",
+                label.TrackingId,
+                label.TotalCharges.NetCharge,
+                label.TotalCharges2.NetCharge);
+
+            var fileName = $"{model.Address.City}-{label.TrackingId}label.png";
+
+            Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Labels"));
+
+            await File.WriteAllBytesAsync(Path.Combine(AppContext.BaseDirectory, "Labels", fileName), label.Bytes[0]);
         }
     }
 
@@ -411,8 +428,6 @@ public class Main : IMain
         var shipmentDetails = new ShipmentDetails
         {
             RateRequestDetails = rateOptions,
-            Sender = sender,
-            Recipient = receiver,
         };
 
         return await _shipmentProvider.CreateShipmentAsync(config.Shipments[0], shipmentDetails, cancellationToken);

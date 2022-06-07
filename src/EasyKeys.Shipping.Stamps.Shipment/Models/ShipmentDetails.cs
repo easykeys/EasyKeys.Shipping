@@ -7,16 +7,6 @@ namespace EasyKeys.Shipping.Stamps.Shipment.Models;
 public class ShipmentDetails
 {
     /// <summary>
-    /// Sender Contact Info.
-    /// </summary>
-    public ContactInfo Sender { get; set; } = new ContactInfo();
-
-    /// <summary>
-    /// Recipient Contact Info.
-    /// </summary>
-    public ContactInfo Recipient { get; set; } = new ContactInfo();
-
-    /// <summary>
     /// Required for International Shipments Only.
     /// A collection shipment contents that are considered to be dutiable.
     /// </summary>
