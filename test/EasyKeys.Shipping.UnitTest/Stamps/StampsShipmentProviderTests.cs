@@ -43,9 +43,13 @@ public class StampsShipmentProviderTests
     {
         var rate = new Rate("USPM", string.Empty, string.Empty, 0m, DateTime.Now) { Name = "USPM" };
 
+        var (sender, recipient) = TestShipments.CreateContactInfo();
+
+        var shipmentDetails = new ShipmentDetails() { SelectedRate = rate, RateRequestDetails = new RateOptions() { Sender = sender, Recipient = recipient } };
+
         var labels = await _shipmentProvider.CreateShipmentAsync(
               TestShipments.CreateDomesticShipment(),
-              new ShipmentDetails(),
+              shipmentDetails,
               CancellationToken.None);
 
         Assert.NotNull(labels);
@@ -57,7 +61,33 @@ public class StampsShipmentProviderTests
     {
         var rate = new Rate("USPMI", string.Empty, string.Empty, 10m, DateTime.Now);
 
-        var shipmentDetails = new ShipmentDetails() { DeclaredValue = 100m, CustomsInformation = new CustomsInformation() { CustomsSigner = "brandon moffett" } };
+        var (sender, recipient) = TestShipments.CreateContactInfo();
+
+        var shipmentDetails = new ShipmentDetails()
+        {
+            DeclaredValue = 100m,
+            CustomsInformation = new CustomsInformation()
+            { CustomsSigner = "brandon moffett" },
+            SelectedRate = rate,
+            RateRequestDetails = new RateOptions()
+            {
+                Sender = sender,
+                Recipient = recipient
+            }
+        };
+
+        shipmentDetails.Commodities.Add(new Commodity()
+        {
+            Description = "ekjs",
+            CountryOfManufacturer = "US",
+            PartNumber = "kjsdf",
+            Amount = 10m,
+            CustomsValue = 1m,
+            NumberOfPieces = 1,
+            Quantity = 1,
+            ExportLicenseNumber = "dsdfs",
+            Name = "sdkfsdf",
+        });
 
         var labels = await _shipmentProvider.CreateShipmentAsync(
               TestShipments.CreateInternationalShipment(),
@@ -92,7 +122,11 @@ public class StampsShipmentProviderTests
         // arrange
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
-        var shipmentDetails = new ShipmentDetails();
+        var rate = new Rate("USPS", string.Empty, string.Empty, 0m, DateTime.Now) { Name = "USPS" };
+
+        var (sender, recipient) = TestShipments.CreateContactInfo();
+
+        var shipmentDetails = new ShipmentDetails() { RateRequestDetails = new RateOptions() { Sender = sender, Recipient = recipient }, SelectedRate = rate };
 
         var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
         var mockAuth = new Mock<IStampsClientAuthenticator>();
@@ -117,7 +151,7 @@ public class StampsShipmentProviderTests
             mockLogger.Object);
 
         rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateOptions>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<RateV40>());
+            .ReturnsAsync(new List<RateV40>() { new RateV40() { ServiceType = ServiceType.USPS } });
 
         var stampsShipmentProvider = new StampsShipmentProvider(stampsClient, rateServiceMock.Object, mockLogger2.Object);
 
@@ -137,9 +171,13 @@ public class StampsShipmentProviderTests
     public async Task ShipmentProvider_Refreshes_Token_And_Returns_Shipment_Successfully(string exMessage)
     {
         // arrange
-        var domesticShipment = TestShipments.CreateDomesticShipment();
+        var rate = new Rate("USPS", string.Empty, string.Empty, 0m, DateTime.Now) { Name = "USPS" };
 
-        var shipmentDetails = new ShipmentDetails();
+        var (sender, recipient) = TestShipments.CreateContactInfo();
+
+        var shipmentDetails = new ShipmentDetails() { RateRequestDetails = new RateOptions() { Sender = sender, Recipient = recipient }, SelectedRate = rate };
+
+        var domesticShipment = TestShipments.CreateDomesticShipment();
 
         var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
         var mockAuth = new Mock<IStampsClientAuthenticator>();
@@ -165,10 +203,7 @@ public class StampsShipmentProviderTests
             mockLogger.Object);
 
         rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateOptions>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<RateV40>());
-
-        rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateOptions>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<RateV40>());
+            .ReturnsAsync(new List<RateV40>() { new RateV40() { ServiceType = ServiceType.USPS } });
 
         var stampsShipmentProvider = new StampsShipmentProvider(stampsClient, rateServiceMock.Object, mockLogger2.Object);
 

@@ -57,7 +57,6 @@ public static class TestShipments
 
         var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
         var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
-
         return
             new Shipment(
             originAddress,
@@ -112,24 +111,6 @@ public static class TestShipments
             Name = "sdkfsdf",
         };
 
-        var sender = new ContactInfo()
-        {
-            FirstName = "Brandon",
-            LastName = "Moffett",
-            Company = "EasyKeys.com",
-            Email = "TestMe@EasyKeys.com",
-            Department = "Software",
-            PhoneNumber = "951-223-2222"
-        };
-        var receiver = new ContactInfo()
-        {
-            FirstName = "Fictitious Character",
-            Company = "Marvel",
-            Email = "FictitiousCharacter@marvel.com",
-            Department = "SuperHero",
-            PhoneNumber = "867-338-2737"
-        };
-
         var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
         var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
 
@@ -141,5 +122,27 @@ public static class TestShipments
             shipmentOptions);
 
         return shipment;
+    }
+
+    public static (ContactInfo, ContactInfo) CreateContactInfo()
+    {
+        return (new ContactInfo()
+        {
+            FirstName = "Brandon",
+            LastName = "Moffett",
+            Company = "EasyKeys.com",
+            Email = "TestMe@EasyKeys.com",
+            Department = "Software",
+            PhoneNumber = "951-223-2222"
+        },
+        new ContactInfo()
+        {
+            FirstName = "Fictitious Character",
+            Company = "Marvel",
+            Email = "FictitiousCharacter@marvel.com",
+            Department = "SuperHero",
+            PhoneNumber = "867-338-2737"
+        })
+        ;
     }
 }
