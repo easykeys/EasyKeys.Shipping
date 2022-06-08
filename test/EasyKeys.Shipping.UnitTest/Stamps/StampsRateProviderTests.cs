@@ -1,11 +1,14 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Rates;
 using EasyKeys.Shipping.Stamps.Rates.Models;
 
+using EasyKeysShipping.UnitTest.Stubs;
 using EasyKeysShipping.UnitTest.TestHelpers;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 
 using Moq;
 
@@ -29,35 +32,40 @@ public class StampsRateProviderTests
         {
             new RateV40()
             {
-                ServiceType = StampsClient.v111.ServiceType.USFC,
+                ServiceType = ServiceType.USFC,
                 ServiceDescription = "TestDescription",
                 Amount = 100m,
                 DeliveryDate = DateTime.Now
             }
         };
 
-        var ratesServiceMock = new Mock<IRatesService>();
+        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
+        var mockAuth = new Mock<IStampsClientAuthenticator>();
+        var mockSoapClient = new Mock<SwsimV111Soap>();
+        var loggerFactory = new NullLoggerFactory();
+        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
 
-        ratesServiceMock.Setup(x => x.GetRatesResponseAsync(
-                            It.IsAny<Shipment>(),
-                            It.IsAny<RateOptions>(),
-                            It.IsAny<CancellationToken>()))
-        .ReturnsAsync(rateV40List);
+        var stampsClient = new StampsClientServiceMock(
+                                mockOptions.Object,
+                                mockAuth.Object,
+                                mockSoapClient.Object,
+                                loggerFactory,
+                                mockLogger.Object);
 
         var iLoggerMock = new Mock<ILogger<StampsRateProvider>>();
 
         var stampsRateProvider = new StampsRateProvider(
-                                     ratesServiceMock.Object,
+                                     stampsClient,
                                      iLoggerMock.Object);
 
-        var returnedShipment = await stampsRateProvider.GetRatesAsync(
+        var returnedShipment = await stampsRateProvider.GetDomesticRatesAsync(
             TestShipments.CreateDomesticShipment(),
             new RateOptions(),
             CancellationToken.None);
 
         Assert.NotNull(returnedShipment);
 
-        Assert.True(returnedShipment.Rates.All(x => x.Name == StampsClient.v111.ServiceType.USFC.ToString()));
+        Assert.True(returnedShipment.Rates.All(x => x.Name == ServiceType.USFC.ToString()));
 
         Assert.True(returnedShipment.Rates.All(x => x.ServiceName == "TestDescription"));
 
@@ -73,28 +81,33 @@ public class StampsRateProviderTests
         {
             new RateV40()
             {
-                ServiceType = StampsClient.v111.ServiceType.USFC,
+                ServiceType = ServiceType.USFC,
                 ServiceDescription = "TestDescription",
                 Amount = 100m,
                 DeliveryDate = DateTime.Now
             }
         };
 
-        var ratesServiceMock = new Mock<IRatesService>();
+        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
+        var mockAuth = new Mock<IStampsClientAuthenticator>();
+        var mockSoapClient = new Mock<SwsimV111Soap>();
+        var loggerFactory = new NullLoggerFactory();
+        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
 
-        ratesServiceMock.Setup(x => x.GetRatesResponseAsync(
-                            It.IsAny<Shipment>(),
-                            It.IsAny<RateOptions>(),
-                            It.IsAny<CancellationToken>()))
-            .Throws(new Exception("Test SOAP Exception"));
+        var stampsClient = new StampsClientServiceMock(
+                                mockOptions.Object,
+                                mockAuth.Object,
+                                mockSoapClient.Object,
+                                loggerFactory,
+                                mockLogger.Object);
 
         var iLoggerMock = new Mock<ILogger<StampsRateProvider>>();
 
         var stampsRateProvider = new StampsRateProvider(
-                                     ratesServiceMock.Object,
+                                     stampsClient,
                                      iLoggerMock.Object);
 
-        var returnedShipment = await stampsRateProvider.GetRatesAsync(
+        var returnedShipment = await stampsRateProvider.GetDomesticRatesAsync(
             TestShipments.CreateDomesticShipment(),
             new RateOptions(),
             CancellationToken.None);

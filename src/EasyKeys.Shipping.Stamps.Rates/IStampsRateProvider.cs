@@ -12,7 +12,7 @@ public interface IStampsRateProvider
     /// <param name="rateOptions"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<Shipment> GetRatesAsync(Shipment shipment, RateOptions rateOptions, CancellationToken cancellationToken);
+    Task<Shipment> GetDomesticRatesAsync(Shipment shipment, RateOptions rateOptions, CancellationToken cancellationToken);
 
     /// <summary>
     /// Gets international rates.

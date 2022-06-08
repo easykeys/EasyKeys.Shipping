@@ -27,7 +27,7 @@
 	<PackageLicense>https://github.com/easykeys/EasyKeys.Shipping.FedEx/master/LICENSE</PackageLicense>
 	<PackageIcon>icon.png</PackageIcon>
 	<PackageTags>EasyKeys.com, LockSmith, Extensions, Azure, AspNetCore, Shipment, Shipping, FedEx Web Services</PackageTags>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Label="SourceLink Settings">

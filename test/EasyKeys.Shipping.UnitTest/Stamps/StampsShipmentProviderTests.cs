@@ -41,14 +41,21 @@ public class StampsShipmentProviderTests
     [Fact]
     public async Task Process_Domestic_Shipment_Successfully()
     {
-        var rate = new Rate("USPM", string.Empty, string.Empty, 0m, DateTime.Now) { Name = "USPM" };
+        var rate = new Rate("USPM", string.Empty, string.Empty, 0m, DateTime.Now);
 
         var (sender, recipient) = TestShipments.CreateContactInfo();
 
-        var shipmentDetails = new ShipmentDetails() { SelectedRate = rate, RateRequestDetails = new RateOptions() { Sender = sender, Recipient = recipient } };
+        var shipmentDetails = new ShipmentDetails();
 
-        var labels = await _shipmentProvider.CreateShipmentAsync(
+        var rateOptions = new RateOptions()
+        {
+            Sender = sender,
+            Recipient = recipient
+        };
+
+        var labels = await _shipmentProvider.CreateDomesticShipmentAsync(
               TestShipments.CreateDomesticShipment(),
+              rateOptions,
               shipmentDetails,
               CancellationToken.None);
 
@@ -59,39 +66,44 @@ public class StampsShipmentProviderTests
     [Fact]
     public async Task Process_International_Shipment_Successfully()
     {
-        var rate = new Rate("USPMI", string.Empty, string.Empty, 10m, DateTime.Now);
-
         var (sender, recipient) = TestShipments.CreateContactInfo();
 
-        var shipmentDetails = new ShipmentDetails()
+        var shipmentDetails = new ShipmentDetails();
+
+        var customsInformation = new CustomsInformation()
         {
-            DeclaredValue = 100m,
-            CustomsInformation = new CustomsInformation()
-            { CustomsSigner = "brandon moffett" },
-            SelectedRate = rate,
-            RateRequestDetails = new RateOptions()
+            CustomsSigner = "brandon moffett"
+        };
+
+        var rateOptions = new RateInternationalOptions()
+        {
+            Sender = sender,
+            Recipient = recipient,
+            ServiceType = StampsServiceType.FromName("USPMI")
+        };
+
+        var commodities = new List<Commodity>
+        {
+            new Commodity()
             {
-                Sender = sender,
-                Recipient = recipient
+                Description = "ekjs",
+                CountryOfManufacturer = "US",
+                PartNumber = "kjsdf",
+                Amount = 10m,
+                CustomsValue = 1m,
+                NumberOfPieces = 1,
+                Quantity = 1,
+                ExportLicenseNumber = "dsdfs",
+                Name = "sdkfsdf",
             }
         };
 
-        shipmentDetails.Commodities.Add(new Commodity()
-        {
-            Description = "ekjs",
-            CountryOfManufacturer = "US",
-            PartNumber = "kjsdf",
-            Amount = 10m,
-            CustomsValue = 1m,
-            NumberOfPieces = 1,
-            Quantity = 1,
-            ExportLicenseNumber = "dsdfs",
-            Name = "sdkfsdf",
-        });
-
-        var labels = await _shipmentProvider.CreateShipmentAsync(
+        var labels = await _shipmentProvider.CreateInternationalShipmentAsync(
               TestShipments.CreateInternationalShipment(),
+              rateOptions,
               shipmentDetails,
+              commodities,
+              customsInformation,
               CancellationToken.None);
 
         Assert.NotNull(labels);
@@ -100,15 +112,17 @@ public class StampsShipmentProviderTests
 
     [Theory]
     [ClassData(typeof(ContentTypeData))]
-    public async Task Return_RatesV40_ContentType_Successfully(ContentType contentType, StampsClient.v111.ContentTypeV2 returnedContentType)
+    public async Task Return_RatesV40_ContentType_Successfully(ContentType contentType, ContentTypeV2 returnedContentType)
     {
-        var rateRequest = new RateOptions();
-
-        var shipmentDetails = new ShipmentDetails() { ContentType = contentType };
+        var shipmentDetails = new ShipmentDetails();
+        var rateOptions = new RateOptions
+        {
+            ContentType = contentType
+        };
 
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
-        var createdShipment = await _shipmentProvider.CreateShipmentAsync(domesticShipment, shipmentDetails, CancellationToken.None);
+        var createdShipment = await _shipmentProvider.CreateDomesticShipmentAsync(domesticShipment, rateOptions, shipmentDetails, CancellationToken.None);
 
         Assert.NotNull(createdShipment);
     }
@@ -126,15 +140,21 @@ public class StampsShipmentProviderTests
 
         var (sender, recipient) = TestShipments.CreateContactInfo();
 
-        var shipmentDetails = new ShipmentDetails() { RateRequestDetails = new RateOptions() { Sender = sender, Recipient = recipient }, SelectedRate = rate };
+        var shipmentDetails = new ShipmentDetails();
+
+        var rateOptions = new RateOptions()
+        {
+            Sender = sender,
+            Recipient = recipient
+        };
 
         var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
         var mockAuth = new Mock<IStampsClientAuthenticator>();
         var loggerFactory = new NullLoggerFactory();
         var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
         var mockSoapClient = new Mock<SwsimV111Soap>();
-        var rateServiceMock = new Mock<IRatesService>();
         var mockLogger2 = new Mock<ILogger<StampsShipmentProvider>>();
+
         mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
         mockSoapClient.Setup(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
             .Verifiable();
@@ -150,13 +170,10 @@ public class StampsShipmentProviderTests
             loggerFactory,
             mockLogger.Object);
 
-        rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateOptions>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<RateV40>() { new RateV40() { ServiceType = ServiceType.USPS } });
-
-        var stampsShipmentProvider = new StampsShipmentProvider(stampsClient, rateServiceMock.Object, mockLogger2.Object);
+        var stampsShipmentProvider = new StampsShipmentProvider(stampsClient, mockLogger2.Object);
 
         // act
-        var result = await stampsShipmentProvider.CreateShipmentAsync(domesticShipment, shipmentDetails, CancellationToken.None);
+        var result = await stampsShipmentProvider.CreateDomesticShipmentAsync(domesticShipment, rateOptions, shipmentDetails, CancellationToken.None);
 
         mockSoapClient.Verify(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()), Times.Exactly(2));
 
@@ -175,7 +192,13 @@ public class StampsShipmentProviderTests
 
         var (sender, recipient) = TestShipments.CreateContactInfo();
 
-        var shipmentDetails = new ShipmentDetails() { RateRequestDetails = new RateOptions() { Sender = sender, Recipient = recipient }, SelectedRate = rate };
+        var shipmentDetails = new ShipmentDetails();
+
+        var rateOptions = new RateOptions()
+        {
+            Sender = sender,
+            Recipient = recipient
+        };
 
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
@@ -184,7 +207,6 @@ public class StampsShipmentProviderTests
         var loggerFactory = new NullLoggerFactory();
         var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
         var mockSoapClient = new Mock<SwsimV111Soap>();
-        var rateServiceMock = new Mock<IRatesService>();
         var mockLogger2 = new Mock<ILogger<StampsShipmentProvider>>();
         mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
         mockSoapClient.Setup(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()))
@@ -202,13 +224,10 @@ public class StampsShipmentProviderTests
             loggerFactory,
             mockLogger.Object);
 
-        rateServiceMock.Setup(x => x.GetRatesResponseAsync(It.IsAny<Shipment>(), It.IsAny<RateOptions>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<RateV40>() { new RateV40() { ServiceType = ServiceType.USPS } });
-
-        var stampsShipmentProvider = new StampsShipmentProvider(stampsClient, rateServiceMock.Object, mockLogger2.Object);
+        var stampsShipmentProvider = new StampsShipmentProvider(stampsClient, mockLogger2.Object);
 
         // act
-        var result = await stampsShipmentProvider.CreateShipmentAsync(domesticShipment, shipmentDetails, CancellationToken.None);
+        var result = await stampsShipmentProvider.CreateDomesticShipmentAsync(domesticShipment, rateOptions, shipmentDetails, CancellationToken.None);
 
         mockSoapClient.Verify(x => x.CreateIndiciumAsync(It.IsAny<CreateIndiciumRequest>()), Times.Exactly(2));
 
@@ -242,29 +261,29 @@ public class StampsShipmentProviderTests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { ContentType.CommcercialSample, StampsClient.v111.ContentTypeV2.CommercialSample };
+            yield return new object[] { ContentType.CommcercialSample, ContentTypeV2.CommercialSample };
 
             /* Mailpiece is over maximum weight of 0 lb 15.999 oz
              * Cannot ship First-Class packages larger than 22" x 18" x 15"
              */
-            yield return new object[] { ContentType.DangerousGoods, StampsClient.v111.ContentTypeV2.DangerousGoods };
+            yield return new object[] { ContentType.DangerousGoods, ContentTypeV2.DangerousGoods };
 
-            yield return new object[] { ContentType.Document, StampsClient.v111.ContentTypeV2.Document };
+            yield return new object[] { ContentType.Document, ContentTypeV2.Document };
 
-            yield return new object[] { ContentType.Gift, StampsClient.v111.ContentTypeV2.Gift };
+            yield return new object[] { ContentType.Gift, ContentTypeV2.Gift };
 
-            yield return new object[] { ContentType.HumanitarianDonation, StampsClient.v111.ContentTypeV2.HumanitarianDonation };
+            yield return new object[] { ContentType.HumanitarianDonation, ContentTypeV2.HumanitarianDonation };
 
             // Mail class 'ExpressMailInternational' is not available for the destination country.
-            yield return new object[] { ContentType.Merchandise, StampsClient.v111.ContentTypeV2.Merchandise };
+            yield return new object[] { ContentType.Merchandise, ContentTypeV2.Merchandise };
 
             // only for international
-            yield return new object[] { ContentType.ReturnedGoods, StampsClient.v111.ContentTypeV2.ReturnedGoods };
+            yield return new object[] { ContentType.ReturnedGoods, ContentTypeV2.ReturnedGoods };
 
             // Mail class UspsReturn not supported.
             // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
 
-            yield return new object[] { ContentType.Other, StampsClient.v111.ContentTypeV2.Other };
+            yield return new object[] { ContentType.Other, ContentTypeV2.Other };
         }
 
         IEnumerator IEnumerable.GetEnumerator()

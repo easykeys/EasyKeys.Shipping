@@ -87,51 +87,6 @@ public class Main : IMain
         // await RunNoneConcurrentlyAsync(originAddress, sender, models, cancellationToken);
 
         return 0;
-
-        // 3) create shipment
-        //var config = new StampsRateConfigurator(
-        //    originAddress,
-        //    validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
-        //    packages.First(),
-        //    sender,
-        //    receiver);
-
-        //var (shipment, ratesOptions) = config.Shipments.First();
-
-        //shipment.Errors.Concat(validatedAddress.Errors);
-        //if (!destinationAddress.IsUnitedStatesAddress())
-        //{
-        //    shipment.Commodities.Add(commodity);
-        //}
-
-        //// 4) create generic rate details
-        //var rateDetails = new RateRequestDetails();
-
-        //// 5) get list of rates for shipment
-        //var shipmentWithRates = await _rateProvider.GetRatesAsync(config.Shipments.FirstOrDefault().shipment, rateDetails, cancellationToken);
-
-        //_logger.LogError($"Rates Validation Errors : {shipmentWithRates.Errors.Count()}");
-
-        //// user chooses which type of service
-        //var shipmentDetails = new ShipmentRequestDetails() { DeclaredValue = 100m, SelectedRate = shipmentWithRates.Rates[0] };
-
-        //if (!destinationAddress.IsUnitedStatesAddress())
-        //{
-        //    shipmentDetails.CustomsInformation = new CustomsInformation() { CustomsSigner = "brandon moffett" };
-        //}
-
-        //// 6) create shipment with shipment details
-        //var shipmentResponse = await _shipmentProvider.CreateShipmentAsync(shipmentWithRates, shipmentDetails, cancellationToken);
-
-        //_logger.LogCritical($"Tracking Number : {shipmentResponse.Labels[0].TrackingId}");
-
-        //await File.WriteAllBytesAsync("label.png", shipmentResponse.Labels[0].Bytes[0]);
-
-        //var trackingInfo = await _trackingProvider.TrackShipmentAsync(shipmentResponse.Labels[0].TrackingId, cancellationToken);
-
-        //var cancelReponse = await _shipmentProvider.CancelShipmentAsync(shipmentResponse.Labels[0].TrackingId, cancellationToken);
-
-        //return 0;
     }
 
     private async Task RunNoneConcurrentlyAsync(
@@ -236,49 +191,69 @@ public class Main : IMain
                 _logger.LogInformation("{address} - {rate}", address.ToString(), flatRate);
             }
 
-            // user chooses which type of service
-            var shipmentDetails = new ShipmentDetails()
+            var shipmentDetails = new ShipmentDetails
             {
-                DeclaredValue = 100m,
+                IsSample = false
             };
 
-            Rate? firstClassPackage = null;
-            // Rate? priority = null;
+            ShipmentLabel? result;
 
             // 3. select a quoted rate
             if (address.IsUnitedStatesAddress())
             {
                 // USPS First-Class Mail:Package:3.7200
-                firstClassPackage = rates.SingleOrDefault(x => x.Name == "USPM" && x.PackageType == "SmallFlatRateBox");
+                var selectedRate = rates.SingleOrDefault(x => x.Name == "USPM" && x.PackageType == "SmallFlatRateBox");
+
+                var shipmentOptions = new ShipmentOptions(PackageType.FromName(selectedRate.PackageType).Name, DateTime.Now);
+
+                var shipment = new Shipment(origin, address, model.Packages, shipmentOptions);
+
+                var rateOptions = new RateOptions
+                {
+                    Sender = sender,
+                    Recipient = model.Contact,
+                    ServiceType = StampsServiceType.FromName(selectedRate.Name)
+                };
+
+                result = await _shipmentProvider.CreateDomesticShipmentAsync(shipment, rateOptions, shipmentDetails, cancellationToken);
             }
             else
             {
                 // USPS First-Class Mail International:Package:14.11
-                firstClassPackage = rates.SingleOrDefault(x => x.Name == "USFCI" && x.PackageType == "Package");
-                shipmentDetails.CustomsInformation = new CustomsInformation()
+                var selectedRate = rates.SingleOrDefault(x => x.Name == "USFCI" && x.PackageType == "Package");
+
+                var shipmentOptions = new ShipmentOptions(PackageType.FromName(selectedRate.PackageType).Name, DateTime.Now);
+
+                var shipment = new Shipment(origin, address, model.Packages, shipmentOptions);
+
+                var customsInformation = new CustomsInformation()
                 {
                     CustomsSigner = "brandon moffett",
                     InvoiceNumber = "123234",
                 };
+
+                var commodities = new List<Commodity>
+                {
+                    model.Commodity
+                };
+
+                var rateOptions = new RateInternationalOptions
+                {
+                    Sender = sender,
+                    Recipient = model.Contact,
+                    ServiceType = StampsServiceType.FromName(selectedRate.Name)
+                };
+
+                result = await _shipmentProvider.CreateInternationalShipmentAsync(
+                    shipment,
+                    rateOptions,
+                    shipmentDetails,
+                    commodities,
+                    customsInformation,
+                    cancellationToken);
             }
 
-            shipmentDetails.SelectedRate = firstClassPackage;
-            shipmentDetails.IsSample = false;
-            shipmentDetails.RateRequestDetails.Sender = sender;
-            shipmentDetails.RateRequestDetails.Recipient = model.Contact;
-
-            if (model?.Commodity != null)
-            {
-                shipmentDetails.Commodities.Add(model.Commodity);
-            }
-
-            var shipmentOptions = new ShipmentOptions(PackageType.FromName(firstClassPackage.PackageType).Name, DateTime.Now);
-
-            var shipment = new Shipment(origin, address, model.Packages, shipmentOptions);
-
-            var result = await _shipmentProvider.CreateShipmentAsync(shipment, shipmentDetails, cancellationToken);
-
-            if (result.InternalErrors.Count > 0)
+            if (result?.InternalErrors.Count > 0)
             {
                 _logger.LogWarning("Failed {city} to generate label", address.City);
                 continue;
@@ -297,6 +272,10 @@ public class Main : IMain
             Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Labels"));
 
             await File.WriteAllBytesAsync(Path.Combine(AppContext.BaseDirectory, "Labels", fileName), label.Bytes[0]);
+
+            var trackingInfo = await _trackingProvider.TrackShipmentAsync(label.TrackingId, cancellationToken);
+
+            var cancelReponse = await _shipmentProvider.CancelShipmentAsync(label.TrackingId, cancellationToken);
         }
     }
 
@@ -385,15 +364,30 @@ public class Main : IMain
         // 2. now shipments contains different packages to be used to query the rate service.
         foreach (var shipment in shipmentConfigurator.Shipments)
         {
-            // 2.1 add commonidity for the international mail
-            var rateOptions = new RateOptions
-            {
-                Sender = sender,
-                Recipient = receiver,
-            };
+            Shipment? result = null;
 
-            // 2.2. call the services for specified mail.
-            var result = await _rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
+            if (destination.IsUnitedStatesAddress())
+            {
+                // 2.1 add commonidity for the international mail
+                var rateOptions = new RateOptions
+                {
+                    Sender = sender,
+                    Recipient = receiver,
+                };
+
+                // 2.2. call the services for specified mail.
+                result = await _rateProvider.GetDomesticRatesAsync(shipment, rateOptions, cancellationToken);
+            }
+            else
+            {
+                var rateOptions = new RateInternationalOptions
+                {
+                    Sender = sender,
+                    Recipient = receiver,
+                };
+
+                result = await _rateProvider.GetInternationalRatesAsync(shipment, rateOptions, cancellationToken);
+            }
 
             if (result.Errors.Count > 0)
             {
@@ -425,11 +419,8 @@ public class Main : IMain
             Recipient = receiver,
         };
 
-        var shipmentDetails = new ShipmentDetails
-        {
-            RateRequestDetails = rateOptions,
-        };
+        var shipmentDetails = new ShipmentDetails();
 
-        return await _shipmentProvider.CreateShipmentAsync(config.Shipments[0], shipmentDetails, cancellationToken);
+        return await _shipmentProvider.CreateDomesticShipmentAsync(config.Shipments[0], rateOptions, shipmentDetails, cancellationToken);
     }
 }

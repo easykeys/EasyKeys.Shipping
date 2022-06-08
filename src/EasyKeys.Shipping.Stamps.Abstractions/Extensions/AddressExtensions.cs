@@ -1,6 +1,6 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 
-namespace EasyKeys.Shipping.Stamps.Rates.Extensions;
+namespace EasyKeys.Shipping.Stamps.Abstractions.Extensions;
 
 public static class AddressExtensions
 {

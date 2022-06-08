@@ -1,6 +1,4 @@
 ﻿using EasyKeys.Shipping.Stamps.Abstractions.Options;
-using EasyKeys.Shipping.Stamps.Abstractions.Services;
-using EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
 using EasyKeys.Shipping.Stamps.Rates;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -22,8 +20,6 @@ public static class StampsRatesServiceCollectionExtensions
         Action<StampsOptions, IServiceProvider>? configure = null)
     {
         services.AddStampsClient(sectionName, configure);
-
-        services.TryAddScoped<IRatesService, RatesService>();
 
         services.TryAddScoped<IStampsRateProvider, StampsRateProvider>();
 

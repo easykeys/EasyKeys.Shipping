@@ -7,7 +7,7 @@ using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
-using EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
+using EasyKeys.Shipping.Stamps.Rates;
 using EasyKeys.Shipping.Stamps.Rates.Models;
 
 using EasyKeysShipping.UnitTest.Stubs;
@@ -28,50 +28,40 @@ namespace EasyKeysShipping.UnitTest.Stamps;
 public class StampsRateServiceTests
 {
     private readonly ITestOutputHelper _output;
-    private readonly IRatesService _ratesService;
+    private readonly IStampsRateProvider _ratesProvider;
 
     public StampsRateServiceTests(ITestOutputHelper output)
     {
         _output = output;
-        _ratesService = GetServices().GetRequiredService<IRatesService>();
+        _ratesProvider = GetServices().GetRequiredService<IStampsRateProvider>();
     }
 
     [Fact]
     public async Task Return_RatesV40_Address_Successfully()
     {
-        var rateRequest = new RateOptions();
-
         var internationalShipment = TestShipments.CreateInternationalShipment();
 
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
-        var internationalRates = await _ratesService.GetRatesResponseAsync(internationalShipment, rateRequest, CancellationToken.None);
+        var internationalRates = await _ratesProvider.GetInternationalRatesAsync(internationalShipment, new RateInternationalOptions(), CancellationToken.None);
 
-        var domesticRates = await _ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
+        var domesticRates = await _ratesProvider.GetDomesticRatesAsync(domesticShipment, new RateOptions(), CancellationToken.None);
 
         // check ToAddress Province/State & PostalCode/ZipCode logic
         Assert.NotNull(domesticRates);
 
-        Assert.True(domesticRates.Count() > 0);
-
-        Assert.True(domesticRates.All(x => x.To.State == domesticShipment.DestinationAddress.StateOrProvince));
-
-        Assert.True(domesticRates.All(x => x.To.ZIPCode == domesticShipment.DestinationAddress.PostalCode));
+        Assert.True(domesticRates.Rates.Count > 0);
 
         Assert.NotNull(internationalRates);
 
-        Assert.True(internationalRates.Count() > 0);
-
-        Assert.True(internationalRates.All(x => x.To.Province == internationalShipment.DestinationAddress.StateOrProvince));
-
-        Assert.True(internationalRates.All(x => x.To.PostalCode == internationalShipment.DestinationAddress.PostalCode));
+        Assert.True(internationalRates.Rates.Count > 0);
     }
 
     [Theory]
     [ClassData(typeof(ServiceTypeData))]
-    public async Task Return_RatesV40_ServiceType_Successfully(StampsServiceType serviceType, StampsClient.v111.ServiceType returnServiceType)
+    public async Task Return_RatesV40_ServiceType_Successfully(StampsServiceType serviceType, ServiceType returnServiceType)
     {
-        var rateRequest = new RateOptions()
+        var rateDomesticOptions = new RateOptions()
         {
             ServiceType = serviceType
         };
@@ -80,21 +70,26 @@ public class StampsRateServiceTests
 
         var internationalShipment = TestShipments.CreateInternationalShipment();
 
+        var rateIntlOptions = new RateInternationalOptions()
+        {
+            ServiceType = serviceType
+        };
+
         // Mail class UspsReturn not supported.
-        var rates = serviceType.Description.Contains("International", StringComparison.OrdinalIgnoreCase) ? await _ratesService.GetRatesResponseAsync(internationalShipment, rateRequest, CancellationToken.None)
-            : await _ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
+        var result = serviceType.Description.Contains("International", StringComparison.OrdinalIgnoreCase) ? await _ratesProvider.GetInternationalRatesAsync(internationalShipment, rateIntlOptions, CancellationToken.None)
+            : await _ratesProvider.GetDomesticRatesAsync(domesticShipment, rateDomesticOptions, CancellationToken.None);
 
         // check ToAddress Province/State & PostalCode/ZipCode logic
-        Assert.NotNull(rates);
+        Assert.NotNull(result);
 
         if (serviceType == StampsServiceType.Unknown)
         {
             // when unknown, defaults to all available
-            Assert.True(rates.Any());
+            Assert.True(result.Rates.Any());
         }
         else
         {
-            Assert.True(rates.All(x => x.ServiceType == returnServiceType));
+            Assert.True(result.Rates.All(x => x.ServiceName == serviceType.Name));
         }
     }
 
@@ -109,17 +104,17 @@ public class StampsRateServiceTests
 
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
-        var domesticRates = await _ratesService.GetRatesResponseAsync(domesticShipment, rateRequest, CancellationToken.None);
+        var domesticRates = await _ratesProvider.GetDomesticRatesAsync(domesticShipment, rateRequest, CancellationToken.None);
 
         Assert.NotNull(domesticRates);
 
         // service will only return rates for "usps"
-        Assert.True(carrier.Name.Contains("usps", StringComparison.OrdinalIgnoreCase) ? domesticRates.Count > ratesReturnedCount : domesticRates.Count == ratesReturnedCount);
+        Assert.True(carrier.Name.Contains("usps", StringComparison.OrdinalIgnoreCase) ? domesticRates.Rates.Count > ratesReturnedCount : domesticRates.Rates.Count == ratesReturnedCount);
     }
 
     [Theory]
     [ClassData(typeof(PackageTypeData))]
-    public async Task Return_RatesV40_PackageType_Successfully(PackageType packageType, StampsClient.v111.PackageTypeV11 stampsPackageType)
+    public async Task Return_RatesV40_PackageType_Successfully(PackageType packageType, PackageTypeV11 stampsPackageType)
     {
         var rateRequest = new RateOptions();
 
@@ -127,11 +122,11 @@ public class StampsRateServiceTests
 
         var shipment = new Shipment(domesticShipment.OriginAddress, domesticShipment.DestinationAddress, domesticShipment.Packages, new ShipmentOptions(packageType.Name, DateTime.Now));
 
-        var domesticRates = await _ratesService.GetRatesResponseAsync(shipment, rateRequest, CancellationToken.None);
+        var domesticRates = await _ratesProvider.GetDomesticRatesAsync(shipment, rateRequest, CancellationToken.None);
 
         Assert.NotNull(domesticRates);
 
-        Assert.True(domesticRates.All(x => x.PackageType == stampsPackageType));
+        Assert.True(domesticRates.Rates.All(x => x.PackageType == packageType.Name));
     }
 
     /// <summary>
@@ -147,7 +142,7 @@ public class StampsRateServiceTests
     /// <returns></returns>
     [Theory]
     [ClassData(typeof(AddOnTypeData))]
-    public async Task Return_RatesV40_AddOns_Successfully(StampsClient.v111.AddOnTypeV17 addOnTypeV17)
+    public async Task Return_RatesV40_AddOns_Successfully(AddOnTypeV17 addOnTypeV17)
     {
         /*
          * Data type of RequriesAllOf = AddOnTypeV17[][]
@@ -163,25 +158,25 @@ public class StampsRateServiceTests
             </ RequiresOneOf >
         </ RequiresAllOf >
         */
-        var getRatesResponse = new StampsClient.v111.GetRatesResponse()
+        var getRatesResponse = new GetRatesResponse()
         {
-            Rates = new StampsClient.v111.RateV40[1]
+            Rates = new RateV40[1]
             {
-                new StampsClient.v111.RateV40()
+                new RateV40()
                 {
-                    RequiresAllOf = new StampsClient.v111.AddOnTypeV17[5][]
+                    RequiresAllOf = new AddOnTypeV17[5][]
                 }
             }
         };
 
-        getRatesResponse.Rates.FirstOrDefault().RequiresAllOf.Append(new StampsClient.v111.AddOnTypeV17[5]);
+        getRatesResponse.Rates.FirstOrDefault().RequiresAllOf.Append(new AddOnTypeV17[5]);
 
         for (var i = 0; i < getRatesResponse.Rates.FirstOrDefault().RequiresAllOf.Count(); i++)
         {
-            getRatesResponse.Rates.FirstOrDefault().RequiresAllOf[i] = new StampsClient.v111.AddOnTypeV17[2]
+            getRatesResponse.Rates.FirstOrDefault().RequiresAllOf[i] = new AddOnTypeV17[2]
             {
                 addOnTypeV17,
-                StampsClient.v111.AddOnTypeV17.USACOM
+                AddOnTypeV17.USACOM
             };
         }
 
@@ -197,7 +192,7 @@ public class StampsRateServiceTests
         mockOptions.Setup(x => x.CurrentValue).Returns(new StampsOptions());
         mockAuth.Setup(x => x.GetToken()).Returns("testing");
 
-        mockSoapClient.Setup(x => x.GetRatesAsync(It.IsAny<StampsClient.v111.GetRatesRequest>()))
+        mockSoapClient.Setup(x => x.GetRatesAsync(It.IsAny<GetRatesRequest>()))
             .ReturnsAsync(getRatesResponse);
 
         var stampsClient = new StampsClientServiceMock(
@@ -207,13 +202,15 @@ public class StampsRateServiceTests
             loggerFactory,
             mockLogger.Object);
 
-        var ratesService = new RatesService(stampsClient);
+        var rateProviderLogger = new Mock<ILogger<StampsRateProvider>>();
 
-        var response = await ratesService.GetRatesResponseAsync(domesticShipment, rateOptions, CancellationToken.None);
+        var ratesService = new StampsRateProvider(stampsClient, rateProviderLogger.Object);
+
+        var response = await ratesService.GetDomesticRatesAsync(domesticShipment, rateOptions, CancellationToken.None);
 
         Assert.NotNull(response);
 
-        Assert.True(response.All(x => x.AddOns.Any(x => x.AddOnType == addOnTypeV17)));
+        // Assert.True(response.Rates.All(x => x.AddOns.Any(x => x.AddOnType == addOnTypeV17)));
     }
 
     [Theory]
@@ -249,10 +246,12 @@ public class StampsRateServiceTests
             loggerFactory,
             mockLogger.Object);
 
-        var stampsAddressValidationProvider = new RatesService(stampsClient);
+        var rateProviderLogger = new Mock<ILogger<StampsRateProvider>>();
+
+        var stampsAddressValidationProvider = new StampsRateProvider(stampsClient, rateProviderLogger.Object);
 
         // act - assert
-        var ex = await Assert.ThrowsAsync<Exception>(async () => await stampsAddressValidationProvider.GetRatesResponseAsync(domesticShipment, rateOptions, CancellationToken.None));
+        var ex = await Assert.ThrowsAsync<Exception>(async () => await stampsAddressValidationProvider.GetDomesticRatesAsync(domesticShipment, rateOptions, CancellationToken.None));
 
         Assert.True(ex.Message == exMessage);
 
@@ -291,10 +290,12 @@ public class StampsRateServiceTests
             loggerFactory,
             mockLogger.Object);
 
-        var stampsAddressValidationProvider = new RatesService(stampsClient);
+        var rateProviderLogger = new Mock<ILogger<StampsRateProvider>>();
+
+        var stampsAddressValidationProvider = new StampsRateProvider(stampsClient, rateProviderLogger.Object);
 
         // act
-        var result = await stampsAddressValidationProvider.GetRatesResponseAsync(domesticShipment, rateOptions, CancellationToken.None);
+        var result = await stampsAddressValidationProvider.GetDomesticRatesAsync(domesticShipment, rateOptions, CancellationToken.None);
 
         // assert
         Assert.IsType<List<RateV40>>(result);
@@ -318,24 +319,23 @@ public class StampsRateServiceTests
         services.AddSingleton<IConfiguration>(configBuilder.Build());
         services.AddStampsClient();
         services.AddStampsRateProvider();
+
         return services.BuildServiceProvider();
-        // services.BuildServiceProvider().GetRequiredService<IOptions<StampsOptions>>();
-        // return services.BuildServiceProvider().GetRequiredService<IRatesService>();
     }
 
     public class AddOnTypeData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { StampsClient.v111.AddOnTypeV17.USADC };
+            yield return new object[] { AddOnTypeV17.USADC };
 
-            yield return new object[] { StampsClient.v111.AddOnTypeV17.CARADSR };
+            yield return new object[] { AddOnTypeV17.CARADSR };
 
-            yield return new object[] { StampsClient.v111.AddOnTypeV17.USAPR };
+            yield return new object[] { AddOnTypeV17.USAPR };
 
-            yield return new object[] { StampsClient.v111.AddOnTypeV17.CARANSP };
+            yield return new object[] { AddOnTypeV17.CARANSP };
 
-            yield return new object[] { StampsClient.v111.AddOnTypeV17.SCAINS };
+            yield return new object[] { AddOnTypeV17.SCAINS };
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -351,45 +351,45 @@ public class StampsRateServiceTests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { PackageType.Pak, StampsClient.v111.PackageTypeV11.Pak };
+            yield return new object[] { PackageType.Pak, PackageTypeV11.Pak };
 
-            yield return new object[] { PackageType.Package, StampsClient.v111.PackageTypeV11.Package };
+            yield return new object[] { PackageType.Package, PackageTypeV11.Package };
 
-            yield return new object[] { PackageType.OversizedPackage, StampsClient.v111.PackageTypeV11.OversizedPackage };
+            yield return new object[] { PackageType.OversizedPackage, PackageTypeV11.OversizedPackage };
 
-            yield return new object[] { PackageType.LargePackage, StampsClient.v111.PackageTypeV11.LargePackage };
+            yield return new object[] { PackageType.LargePackage, PackageTypeV11.LargePackage };
 
-            yield return new object[] { PackageType.PostCard, StampsClient.v111.PackageTypeV11.Postcard };
+            yield return new object[] { PackageType.PostCard, PackageTypeV11.Postcard };
 
-            yield return new object[] { PackageType.Documents, StampsClient.v111.PackageTypeV11.Documents };
+            yield return new object[] { PackageType.Documents, PackageTypeV11.Documents };
 
-            yield return new object[] { PackageType.ThickEnvelope, StampsClient.v111.PackageTypeV11.ThickEnvelope };
+            yield return new object[] { PackageType.ThickEnvelope, PackageTypeV11.ThickEnvelope };
 
-            yield return new object[] { PackageType.Envelope, StampsClient.v111.PackageTypeV11.Envelope };
+            yield return new object[] { PackageType.Envelope, PackageTypeV11.Envelope };
 
-            yield return new object[] { PackageType.ExpressEnvelope, StampsClient.v111.PackageTypeV11.ExpressEnvelope };
+            yield return new object[] { PackageType.ExpressEnvelope, PackageTypeV11.ExpressEnvelope };
 
-            yield return new object[] { PackageType.FlatRateEnvelope, StampsClient.v111.PackageTypeV11.FlatRateEnvelope };
+            yield return new object[] { PackageType.FlatRateEnvelope, PackageTypeV11.FlatRateEnvelope };
 
-            yield return new object[] { PackageType.LegalFlatRateEnvelope, StampsClient.v111.PackageTypeV11.LegalFlatRateEnvelope };
+            yield return new object[] { PackageType.LegalFlatRateEnvelope, PackageTypeV11.LegalFlatRateEnvelope };
 
-            yield return new object[] { PackageType.Letter, StampsClient.v111.PackageTypeV11.Letter };
+            yield return new object[] { PackageType.Letter, PackageTypeV11.Letter };
 
-            yield return new object[] { PackageType.LargeEnvelopeOrFlat, StampsClient.v111.PackageTypeV11.LargeEnvelopeorFlat };
+            yield return new object[] { PackageType.LargeEnvelopeOrFlat, PackageTypeV11.LargeEnvelopeorFlat };
 
-            yield return new object[] { PackageType.SmallFlatRateBox, StampsClient.v111.PackageTypeV11.SmallFlatRateBox };
+            yield return new object[] { PackageType.SmallFlatRateBox, PackageTypeV11.SmallFlatRateBox };
 
-            yield return new object[] { PackageType.FlatRateBox, StampsClient.v111.PackageTypeV11.FlatRateBox };
+            yield return new object[] { PackageType.FlatRateBox, PackageTypeV11.FlatRateBox };
 
-            yield return new object[] { PackageType.LargeFlatRateBox, StampsClient.v111.PackageTypeV11.LargeFlatRateBox };
+            yield return new object[] { PackageType.LargeFlatRateBox, PackageTypeV11.LargeFlatRateBox };
 
-            yield return new object[] { PackageType.FlatRatePaddedEnvelope, StampsClient.v111.PackageTypeV11.FlatRatePaddedEnvelope };
+            yield return new object[] { PackageType.FlatRatePaddedEnvelope, PackageTypeV11.FlatRatePaddedEnvelope };
 
-            yield return new object[] { PackageType.RegionalRateBoxA, StampsClient.v111.PackageTypeV11.RegionalRateBoxA };
+            yield return new object[] { PackageType.RegionalRateBoxA, PackageTypeV11.RegionalRateBoxA };
 
-            yield return new object[] { PackageType.RegionalRateBoxB, StampsClient.v111.PackageTypeV11.RegionalRateBoxB };
+            yield return new object[] { PackageType.RegionalRateBoxB, PackageTypeV11.RegionalRateBoxB };
 
-            yield return new object[] { PackageType.RegionalRateBoxC, StampsClient.v111.PackageTypeV11.RegionalRateBoxC };
+            yield return new object[] { PackageType.RegionalRateBoxC, PackageTypeV11.RegionalRateBoxC };
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -421,35 +421,34 @@ public class StampsRateServiceTests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { StampsServiceType.ParcelSelectGround, StampsClient.v111.ServiceType.USPS };
+            yield return new object[] { StampsServiceType.ParcelSelectGround, ServiceType.USPS };
 
             /* Mailpiece is over maximum weight of 0 lb 15.999 oz
              * Cannot ship First-Class packages larger than 22" x 18" x 15"
              */
-            yield return new object[] { StampsServiceType.FirstClass, StampsClient.v111.ServiceType.USFC };
+            yield return new object[] { StampsServiceType.FirstClass, ServiceType.USFC };
 
-            yield return new object[] { StampsServiceType.MediaMail, StampsClient.v111.ServiceType.USMM };
+            yield return new object[] { StampsServiceType.MediaMail, ServiceType.USMM };
 
-            yield return new object[] { StampsServiceType.Priority, StampsClient.v111.ServiceType.USPM };
+            yield return new object[] { StampsServiceType.Priority, ServiceType.USPM };
 
-            yield return new object[] { StampsServiceType.PriorityExpress, StampsClient.v111.ServiceType.USXM };
+            yield return new object[] { StampsServiceType.PriorityExpress, ServiceType.USXM };
 
             // Mail class 'ExpressMailInternational' is not available for the destination country.
-            yield return new object[] { StampsServiceType.PriorityExpressInternational, StampsClient.v111.ServiceType.USEMI };
+            yield return new object[] { StampsServiceType.PriorityExpressInternational, ServiceType.USEMI };
 
             // only for international
-            yield return new object[] { StampsServiceType.FirstClassInternational, StampsClient.v111.ServiceType.USFCI };
+            yield return new object[] { StampsServiceType.FirstClassInternational, ServiceType.USFCI };
 
             // Mail class UspsReturn not supported.
             // yield return new object[] { ServiceType.USPS_PAY_ON_USE_RETURN, StampsClient.v111.ServiceType.USRETURN };
-
-            yield return new object[] { StampsServiceType.LibraryMail, StampsClient.v111.ServiceType.USLM };
+            yield return new object[] { StampsServiceType.LibraryMail, ServiceType.USLM };
 
             // Mail class 'PriorityMailInternational' is not available for the destination country.
-            yield return new object[] { StampsServiceType.PriorityInternational, StampsClient.v111.ServiceType.USPMI };
+            yield return new object[] { StampsServiceType.PriorityInternational, ServiceType.USPMI };
 
             // when unknown, defaults to all available
-            yield return new object[] { StampsServiceType.Unknown, StampsClient.v111.ServiceType.USPM };
+            yield return new object[] { StampsServiceType.Unknown, ServiceType.USPM };
         }
 
         IEnumerator IEnumerable.GetEnumerator()

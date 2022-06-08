@@ -21,24 +21,16 @@ public class RateOptions
     public decimal RegisteredValue { get; set; }
 
     /// <summary>
-    /// The amount to declare for this shipment, in dollars and cents. Required for International.
+    ///     Default: false This is used to calculate a potential additional handling surcharge for certain types of items being sent.
+    ///     See DMM 401 for what qualifies.
     /// </summary>
-    public decimal DeclaredValue { get; set; }
+    public bool NonMachinable { get; set; }
 
     /// <summary>
-    ///     Default: false This is used to calculate a potential additional handling surcharge for certain types of items being sent. See DMM 401 for what qualifies.
-    /// </summary>
-    public bool NonMachinable { get; set; } = false;
-
-    /// <summary>
-    /// Default: true Represents whether or not the parcel being sent is rectangular-shaped, or box-like. For dim-weight-based rates (Priority Mail), non-rectangular-shaped parcels may lower the effective weight.
+    /// Default: true Represents whether or not the parcel being sent is rectangular-shaped, or box-like.
+    /// For dim-weight-based rates (Priority Mail), non-rectangular-shaped parcels may lower the effective weight.
     /// </summary>
     public bool RectangularShaped { get; set; } = true;
-
-    /// <summary>
-    /// Only returned for international mail classes, this field explains the maximum package dimensions for this mail class and destination country.
-    /// </summary>
-    public string MaxDimensions { get; set; } = string.Empty;
 
     /// <summary>
     /// If a <b>rate</b> object is returned from a GetRates call with DimWeighting = "Y", this indicates that the dimensions of the package may have an impact on the rate. Be sure to also include the Length, Width and Height for proper rating whenever DimWeighting = "Y".
@@ -100,7 +92,7 @@ public class RateOptions
     /// If this is blank or missing, check the error attribute for a reason.
     /// If there is not enough information in the input Rate object to calculate an exact amount,
     /// Amount will be set to the lower bound of the known range and MaxAmount will be set to the upper bound.
-    /// For example, if the the ToZipCode is omitted and the Rate is for a zone-based service,
+    /// For example, if the ToZipCode is omitted and the Rate is for a zone-based service,
     /// Amount will be the amount for the closest zone (1) and MaxAmount will be the amount for the furthest zone (8).
     /// In this case, some other elements of the Rate object may not apply in all cases.
     /// For example, when Amount and MaxAmount indicate a range of possible amounts, DimWeighting may only apply for the furthest zones (5-8).
@@ -114,11 +106,30 @@ public class RateOptions
     /// When the exact rate can be calculated, MaxAmount will be equal to Amount.
     /// If there is not enough information in the input Rate object to calculate an exact amount,
     /// Amount will be set to the lower bound of the known range and MaxAmount will be set to the upper bound.
-    /// For example, if the the ToZipCode is omitted and the Rate is for a zone-based service,
+    /// For example, if the ToZipCode is omitted and the Rate is for a zone-based service,
     /// Amount will be the amount for the closest zone (1) and MaxAmount will be the amount for the furthest zone (8).
     /// In this case, some other elements of the Rate object may not apply in all cases.
     /// For example, when Amount and MaxAmount indicate a range of possible amounts, DimWeighting may only apply for the furthest zones (5-8).
     /// </para>
     /// </summary>
     public decimal MaxAmount { get; set; }
+
+    /// <summary>
+    /// <list type="bullet">
+    ///    <listheader>
+    ///    <term>Fedex Options</term>
+    ///    <description>description</description>
+    ///    <see href="https://developer.stamps.com/soap-api/reference/swsimv111.html#getratesresponse-object">more documentation</see>
+    ///     </listheader>
+    /// <item><description>default = Merchandise</description></item>
+    /// <item> <description>Commercial_Sample</description></item>
+    /// <item><description>Dangerous_Goods</description></item>
+    /// <item><description>Document</description></item>
+    /// <item><description>Gift</description> </item>
+    /// <item><description>Humanitarian_Donation</description></item>
+    /// <item><description>Returned_Goods</description> </item>
+    /// <item><description>Other</description></item>
+    /// </list>
+    /// </summary>
+    public ContentType ContentType { get; set; } = ContentType.Merchandise;
 }
