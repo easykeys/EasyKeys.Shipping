@@ -1,119 +1,55 @@
-﻿using EasyKeys.Shipping.Stamps.Abstractions.Options;
-using EasyKeys.Shipping.Stamps.Abstractions.Services;
+﻿using Bet.Extensions.Testing.Logging;
+
 using EasyKeys.Shipping.Stamps.Rates;
 using EasyKeys.Shipping.Stamps.Rates.Models;
 
-using EasyKeysShipping.UnitTest.Stubs;
 using EasyKeysShipping.UnitTest.TestHelpers;
 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
-
-using Moq;
-
-using StampsClient.v111;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyKeysShipping.UnitTest.Stamps;
 
 public class StampsRateProviderTests
 {
     private readonly ITestOutputHelper _output;
+    private readonly IStampsRateProvider _rateProvider;
 
     public StampsRateProviderTests(ITestOutputHelper output)
     {
         _output = output;
+        _rateProvider = GetRateProvider();
     }
 
     [Fact]
     public async Task Return_Shipment_With_Rates_Successfully()
     {
-        var rateV40List = new List<RateV40>()
-        {
-            new RateV40()
-            {
-                ServiceType = ServiceType.USFC,
-                ServiceDescription = "TestDescription",
-                Amount = 100m,
-                DeliveryDate = DateTime.Now
-            }
-        };
+        var result = await _rateProvider.GetDomesticRatesAsync(TestShipments.CreateDomesticShipment(), new RateOptions(), CancellationToken.None);
 
-        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
-        var mockAuth = new Mock<IStampsClientAuthenticator>();
-        var mockSoapClient = new Mock<SwsimV111Soap>();
-        var loggerFactory = new NullLoggerFactory();
-        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
+        Assert.NotNull(result);
 
-        var stampsClient = new StampsClientServiceMock(
-                                mockOptions.Object,
-                                mockAuth.Object,
-                                mockSoapClient.Object,
-                                loggerFactory,
-                                mockLogger.Object);
+        Assert.NotNull(result.Rates);
 
-        var iLoggerMock = new Mock<ILogger<StampsRateProvider>>();
-
-        var stampsRateProvider = new StampsRateProvider(
-                                     stampsClient,
-                                     iLoggerMock.Object);
-
-        var returnedShipment = await stampsRateProvider.GetDomesticRatesAsync(
-            TestShipments.CreateDomesticShipment(),
-            new RateOptions(),
-            CancellationToken.None);
-
-        Assert.NotNull(returnedShipment);
-
-        Assert.True(returnedShipment.Rates.All(x => x.Name == ServiceType.USFC.ToString()));
-
-        Assert.True(returnedShipment.Rates.All(x => x.ServiceName == "TestDescription"));
-
-        Assert.True(returnedShipment.Rates.All(x => x.TotalCharges == 100m));
-
-        Assert.True(returnedShipment.Rates.All(x => x.GuaranteedDelivery.GetValueOrDefault().Day == DateTime.Now.Day));
+        Assert.Empty(result.InternalErrors);
     }
 
-    [Fact]
-    public async Task Return_Shipment_With_InternalErrors()
+    private IStampsRateProvider GetRateProvider()
     {
-        var rateV40List = new List<RateV40>()
+        var services = new ServiceCollection();
+
+        var dic = new Dictionary<string, string>
         {
-            new RateV40()
-            {
-                ServiceType = ServiceType.USFC,
-                ServiceDescription = "TestDescription",
-                Amount = 100m,
-                DeliveryDate = DateTime.Now
-            }
+            { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
         };
 
-        var mockOptions = new Mock<IOptionsMonitor<StampsOptions>>();
-        var mockAuth = new Mock<IStampsClientAuthenticator>();
-        var mockSoapClient = new Mock<SwsimV111Soap>();
-        var loggerFactory = new NullLoggerFactory();
-        var mockLogger = new Mock<ILogger<StampsClientServiceMock>>();
+        var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
+        configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
 
-        var stampsClient = new StampsClientServiceMock(
-                                mockOptions.Object,
-                                mockAuth.Object,
-                                mockSoapClient.Object,
-                                loggerFactory,
-                                mockLogger.Object);
-
-        var iLoggerMock = new Mock<ILogger<StampsRateProvider>>();
-
-        var stampsRateProvider = new StampsRateProvider(
-                                     stampsClient,
-                                     iLoggerMock.Object);
-
-        var returnedShipment = await stampsRateProvider.GetDomesticRatesAsync(
-            TestShipments.CreateDomesticShipment(),
-            new RateOptions(),
-            CancellationToken.None);
-
-        Assert.NotNull(returnedShipment);
-
-        Assert.Equal("Test SOAP Exception", returnedShipment.InternalErrors.FirstOrDefault());
+        services.AddLogging(builder => builder.AddXunit(_output));
+        services.AddSingleton<IConfiguration>(configBuilder.Build());
+        services.AddStampsRateProvider();
+        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development");
+        var sp = services.BuildServiceProvider();
+        return sp.GetRequiredService<IStampsRateProvider>();
     }
 }

@@ -37,24 +37,6 @@ public static class TestShipments
             .5M),
     };
 
-        var sender = new ContactInfo()
-        {
-            FirstName = "Brandon",
-            LastName = "Moffett",
-            Company = "EasyKeys.com",
-            Email = "TestMe@EasyKeys.com",
-            Department = "Software",
-            PhoneNumber = "951-223-2222"
-        };
-        var receiver = new ContactInfo()
-        {
-            FirstName = "Fictitious Character",
-            Company = "Marvel",
-            Email = "FictitiousCharacter@marvel.com",
-            Department = "SuperHero",
-            PhoneNumber = "867-338-2737"
-        };
-
         var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
         var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
         return
@@ -97,20 +79,6 @@ public static class TestShipments
             10m,
             false),
     };
-
-        var commodity = new Commodity()
-        {
-            Description = "ekjs",
-            CountryOfManufacturer = "US",
-            PartNumber = "kjsdf",
-            Amount = 10m,
-            CustomsValue = 1m,
-            NumberOfPieces = 1,
-            Quantity = 1,
-            ExportLicenseNumber = "dsdfs",
-            Name = "sdkfsdf",
-        };
-
         var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
         var shipmentOptions = new ShipmentOptions(PackageType.Package.Name, DateTime.Now);
 

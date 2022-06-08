@@ -49,7 +49,7 @@ internal sealed class StampsClientService : IStampsClientService
 
     public async Task<CleanseAddressResponse> CleanseAddressAsync(CleanseAddressRequest request, CancellationToken cancellationToken)
     {
-        var respone = await _policy.ExecuteAsync(
+        var response = await _policy.ExecuteAsync(
             async (ctx, cts) =>
             {
                 await _mutex.WaitAsync();
@@ -70,12 +70,12 @@ internal sealed class StampsClientService : IStampsClientService
             context: new Context(),
             cancellationToken: cancellationToken);
 
-        return respone;
+        return response;
     }
 
     public async Task<GetRatesResponse> GetRatesAsync(GetRatesRequest request, CancellationToken cancellationToken)
     {
-        var respone = await _policy.ExecuteAsync(
+        var response = await _policy.ExecuteAsync(
               async (ctx, cts) =>
               {
                   await _mutex.WaitAsync();
@@ -97,12 +97,12 @@ internal sealed class StampsClientService : IStampsClientService
               context: new Context(),
               cancellationToken: cancellationToken);
 
-        return respone;
+        return response;
     }
 
     public async Task<CreateIndiciumResponse> CreateIndiciumAsync(CreateIndiciumRequest request, CancellationToken cancellationToken)
     {
-        var respone = await _policy.ExecuteAsync(
+        var response = await _policy.ExecuteAsync(
               async (ctx, cts) =>
               {
                   await _mutex.WaitAsync();
@@ -122,12 +122,12 @@ internal sealed class StampsClientService : IStampsClientService
               context: new Context(),
               cancellationToken: cancellationToken);
 
-        return respone;
+        return response;
     }
 
     public async Task<CancelIndiciumResponse> CancelIndiciumAsync(CancelIndiciumRequest request, CancellationToken cancellationToken)
     {
-        var respone = await _policy.ExecuteAsync(
+        var response = await _policy.ExecuteAsync(
               async (ctx, cts) =>
               {
                   await _mutex.WaitAsync();
@@ -147,12 +147,12 @@ internal sealed class StampsClientService : IStampsClientService
               context: new Context(),
               cancellationToken: cancellationToken);
 
-        return respone;
+        return response;
     }
 
     public async Task<TrackShipmentResponse> TrackShipmentAsync(TrackShipmentRequest request, CancellationToken cancellationToken)
     {
-        var respone = await _policy.ExecuteAsync(
+        var response = await _policy.ExecuteAsync(
               async (ctx, cts) =>
               {
                   await _mutex.WaitAsync();
@@ -172,6 +172,6 @@ internal sealed class StampsClientService : IStampsClientService
               context: new Context(),
               cancellationToken: cancellationToken);
 
-        return respone;
+        return response;
     }
 }
