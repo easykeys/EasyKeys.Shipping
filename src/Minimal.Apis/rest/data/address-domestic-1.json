@@ -1,0 +1,12 @@
+{
+    "id": "2345465",
+    "address": {
+        "streetLine": "1550 central ave",
+        "streetLine2": "apt 35",
+        "city": "riverside",
+        "stateOrProvince": "CA",
+        "postalCode": "92507",
+        "countryCode": "US",
+        "isResidential": true
+    }
+}

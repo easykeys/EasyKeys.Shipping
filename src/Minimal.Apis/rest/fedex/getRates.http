@@ -1,36 +1,9 @@
+#@fileName=domestic-rates-fedex-1.json
+
+@fileName=rates-fedex-intl-1.json
 
 POST https://{{host}}/fedex/getRates
 Content-Type: application/json
 
+< ./src/Minimal.Apis/rest/data/{{fileName}}
 
-{
-  "origin": {
-    "city": "Charlotte",
-    "countryCode": "US",
-    "streetLine": "11407 Granite Street",
-    "streetLine2": null,
-    "postalCode": "28273",
-    "stateOrProvince": "NC",
-    "isResidential": false
-  },
-
-  "destination": {
-    "city": "RIVERSIDE",
-    "countryCode": "US",
-    "streetLine": "1550 CENTRAL AVE APT 35",
-    "streetLine2": null,
-    "postalCode": "92507",
-    "stateOrProvince": "CA",
-    "isResidential": true
-  },
-
-  "package": {
-    "ShipDate" :null,
-    "signatureRequiredOnDelivery": false,
-    "insuredValue": 0,
-    "length": 9.0,
-    "width": 5.0,
-    "height": 0.5,
-    "weight": 0.1
-  }
-}

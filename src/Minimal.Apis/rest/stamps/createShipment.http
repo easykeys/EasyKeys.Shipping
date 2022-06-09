@@ -1,36 +1,15 @@
 
-POST https://{{host}}/stamps/createShipment?ServiceType=USFC&PackageTypeSelected=ThickEnvelope
+@serviceType = USFC
+@packageType = Package
+
+@orderId = ek-123456
+
+@isSample = true
+
+@fileName=rates-stamps-domestic-2.json
+
+POST https://{{host}}/stamps/createShipment?serviceType={{serviceType}}&packageType={{packageType}}&orderId={{orderId}}&isSample={{isSample}}
 Content-Type: application/json
 
 
-{
-  "origin": {
-    "city": "Charlotte",
-    "countryCode": "US",
-    "streetLine": "11407 Granite Street",
-    "streetLine2": null,
-    "postalCode": "28273",
-    "stateOrProvince": "NC",
-    "isResidential": false
-  },
-
-  "destination": {
-    "city": "RIVERSIDE",
-    "countryCode": "US",
-    "streetLine": "1550 CENTRAL AVE APT 35",
-    "streetLine2": null,
-    "postalCode": "92507",
-    "stateOrProvince": "CA",
-    "isResidential": true
-  },
-
-  "package": {
-    "ShipDate" :null,
-    "signatureRequiredOnDelivery": false,
-    "insuredValue": 0,
-    "length": 9.0,
-    "width": 0.10,
-    "height": 1.5,
-    "weight": 0.1865
-  }
-}
+< ./src/Minimal.Apis/rest/data/{{fileName}}

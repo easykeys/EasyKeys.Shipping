@@ -75,6 +75,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         try
         {
             var response = await _stampsClient.CreateIndiciumAsync(request, cancellationToken);
+            var surcharge = SetSurcharges(response);
 
             shipmentLabel.Labels = new List<PackageLabelDetails>()
             {
@@ -86,9 +87,17 @@ public class StampsShipmentProvider : IStampsShipmentProvider
                     Bytes = response.ImageData.ToList(),
                     TotalCharges = new ShipmentCharges()
                     {
-                        SurchargesList = SetSurcharges(response),
-                        Surcharges = SetSurcharges(response).Values.Sum(),
-                        NetCharge = response.Rate.Amount
+                        SurchargesList = surcharge,
+                        Surcharges = surcharge.Values.Sum(),
+                        NetCharge = response.Rate.Amount,
+                        BaseCharge = response.Rate.Amount,
+                    },
+                    TotalCharges2 = new ShipmentCharges()
+                    {
+                        SurchargesList = surcharge,
+                        Surcharges = surcharge.Values.Sum(),
+                        NetCharge = response.Rate.Amount,
+                        BaseCharge = response.Rate.Amount,
                     }
                 }
             };

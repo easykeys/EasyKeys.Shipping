@@ -1,0 +1,31 @@
+{
+    "recipient": {
+        "firstName": "EasyKeys.com",
+        "lastName": "Customer",
+        "company": "",
+        "department": "",
+        "email": "info@easykeys.com",
+        "extension": null,
+        "phoneNumber": "877.839.5397"
+    },
+
+    "destination": {
+        "StreetLine": "12 Margaret street Sefton Park",
+        "StreetLine2": null,
+        "City": "SEFTON PARK",
+        "StateOrProvince": "",
+        "PostalCode": "5083",
+        "CountryCode": "AU",
+        "IsResidential": false
+    },
+
+    "package": {
+        "ShipDate": null,
+        "signatureRequiredOnDelivery": false,
+        "insuredValue": 0,
+        "length": 8.0,
+        "width": 4.0,
+        "height": 0.5,
+        "weight": 0.015625
+    }
+}

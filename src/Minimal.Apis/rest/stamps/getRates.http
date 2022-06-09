@@ -1,36 +1,9 @@
 
+#@fileName=rates-stamps-domestic-2.json
+
+@fileName = rates-stamps-intl-1.json
+
 POST https://{{host}}/stamps/getRates
 Content-Type: application/json
 
-
-{
-  "destination": {
-    "city": "Cincinnati",
-    "countryCode": "US",
-    "streetLine": "3991 kenkel ave",
-    "streetLine2": null,
-    "postalCode": "45211",
-    "stateOrProvince": "OH",
-    "isResidential": false
-  },
-
-  "origin": {
-    "city": "Charlotte",
-    "countryCode": "US",
-    "streetLine": "PO Box 411248",
-    "streetLine2": null,
-    "postalCode": "28241",
-    "stateOrProvince": "NC",
-    "isResidential": false
-  },
-
-  "package": {
-    "ShipDate" :null,
-    "signatureRequiredOnDelivery": false,
-    "insuredValue": 0,
-    "length": 8.0,
-    "width": 0.0,
-    "height": 1,
-    "weight": 0.1
-  }
-}
+< ./src/Minimal.Apis/rest/data/{{fileName}}

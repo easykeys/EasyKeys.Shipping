@@ -1,0 +1,32 @@
+{
+    "destination": {
+        "streetLine": "3991 kenkel ave",
+        "streetLine2": null,
+        "city": "Cincinnati",
+        "stateOrProvince": "OH",
+        "postalCode": "45211",
+        "countryCode": "US",
+
+        "isResidential": false
+    },
+
+    "origin": {
+        "streetLine": "PO Box 411248",
+        "streetLine2": null,
+        "city": "Charlotte",
+        "stateOrProvince": "NC",
+        "postalCode": "28241",
+        "countryCode": "US",
+        "isResidential": false
+    },
+
+    "package": {
+        "ShipDate": null,
+        "signatureRequiredOnDelivery": false,
+        "insuredValue": 0,
+        "length": 8.0,
+        "width": 0.0,
+        "height": 1,
+        "weight": 0.1
+    }
+}

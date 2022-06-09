@@ -1,18 +1,10 @@
 
 # validate the address
 
+#@fileName = address-domestic-2.json
+@fileName =address-intl-1.json
+
 POST https://{{host}}/stamps/addressValidation
 Content-Type: application/json
 
-{
-    "id" : "2345465",
-    "address": {
-    "city": "riverside",
-    "countryCode": "US",
-    "streetLine": "1550 central ave",
-    "streetLine2": "apt 35",
-    "postalCode": "92507",
-    "stateOrProvince": "CA",
-    "isResidential": true
-    }
-}
+< ./src/Minimal.Apis/rest/data/{{fileName}}

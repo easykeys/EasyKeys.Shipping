@@ -43,7 +43,8 @@ public class StampsRateProvider : IStampsRateProvider
                     $"{rate.ServiceDescription}",
                     $"{rate.PackageType}",
                     rate.Amount,
-                    rate.DeliveryDate));
+                    rate.DeliveryDate)
+                { TotalCharges2 = rate.Amount });
 
                 _logger.LogDebug($"{rate.ServiceType} - {rate.ServiceDescription} => Packaging: {rate.PackageType} => Amount: {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
             }
@@ -77,7 +78,8 @@ public class StampsRateProvider : IStampsRateProvider
                     $"{rate.ServiceDescription}",
                     $"{rate.PackageType}",
                     rate.Amount,
-                    rate.DeliveryDate));
+                    rate.DeliveryDate)
+                { TotalCharges2 = rate.Amount });
 
                 _logger.LogDebug($"{rate.ServiceType} - {rate.ServiceDescription} => Packaging: {rate.PackageType} => Amount: {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
             }
