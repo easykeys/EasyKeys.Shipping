@@ -1,13 +1,13 @@
-version: 1.0.{build}
+version: 2.0.{build}
 branches:
-    only:
-      - master
+  only:
+    - master
 pull_requests:
   do_not_increment_build_number: true
-image: Visual Studio 2019
-## temporary until 6.0.100 sdk is installed
+image: Visual Studio 2022
+## temporary until 6.03100 sdk is installed
 install:
-  - ps: $urlCurrent = "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/6.0.100/dotnet-sdk-6.0.100-win-x64.zip"
+  - ps: $urlCurrent = "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/6.0.300/dotnet-sdk-6.0.300-win-x64.zip"
   - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
   - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
   - ps: $tempFileCurrent = [System.IO.Path]::GetTempFileName()
@@ -28,13 +28,13 @@ build_script:
 #  - ps: dotnet test test/EasyKeys.Extensions.UnitTest/EasyKeys.Extensions.UnitTest.csproj -c Release --no-build
 
 artifacts:
-- path: .\packages\**\*.nupkg
-  name: NuGet package
+  - path: .\packages\**\*.nupkg
+    name: NuGet package
 
 deploy:
-- provider: NuGet
-  artifact: /NuGet/
-  api_key:
-    secure: NQKu5E4vmJDSVO0FKcDATTLUTPKhcWWtenwZVi4wm8f81lfuTjoKAOt6oscduKV9
-  on:
-    branch: master
+  - provider: NuGet
+    artifact: /NuGet/
+    api_key:
+      secure: NQKu5E4vmJDSVO0FKcDATTLUTPKhcWWtenwZVi4wm8f81lfuTjoKAOt6oscduKV9
+    on:
+      branch: master
