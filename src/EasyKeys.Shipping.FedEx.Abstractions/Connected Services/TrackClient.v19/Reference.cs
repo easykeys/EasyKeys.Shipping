@@ -352,7 +352,7 @@ namespace TrackClient.v19
 
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayAttribute(Order=5)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("NotificationEventsAvailable", typeof(NotificationEventType), IsNullable=false)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("NotificationEventsAvailable", typeof(NotificationEventType[]), IsNullable=false)]
         public NotificationEventType[][] RecipientDetails
         {
             get

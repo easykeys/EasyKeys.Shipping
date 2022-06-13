@@ -1,0 +1,12 @@
+{
+    "id": "2345465",
+    "address": {
+        "streetLine": "URB SAN GERARDO",
+        "streetLine2": "1647 CALLE ANAPOLIS",
+        "city": "San Juan",
+        "stateOrProvince": "PR",
+        "postalCode": "00926",
+        "countryCode": "US",
+        "isResidential": false
+    }
+}

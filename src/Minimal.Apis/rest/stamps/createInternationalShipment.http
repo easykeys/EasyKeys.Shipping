@@ -1,0 +1,14 @@
+
+@serviceType = USFCI
+@packageType = Package
+
+@orderId = ek-123456
+
+@isSample = true
+
+@fileName=rates-stamps-intl-1.json
+
+POST https://{{host}}/stamps/createInternationalShipment?serviceType={{serviceType}}&packageType={{packageType}}&orderId={{orderId}}&isSample={{isSample}}
+Content-Type: application/json
+
+< ./src/Minimal.Apis/rest/data/{{fileName}}

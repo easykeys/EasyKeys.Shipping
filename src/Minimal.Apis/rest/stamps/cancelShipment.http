@@ -1,0 +1,5 @@
+@id=9400111899560259459328
+
+DELETE https://{{host}}/stamps/cancelShipment/{{id}}
+Content-Type: application/json
+

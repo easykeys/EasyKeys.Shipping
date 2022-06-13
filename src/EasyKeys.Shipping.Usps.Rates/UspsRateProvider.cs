@@ -4,7 +4,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Usps.Abstractions.Options;
@@ -161,7 +160,7 @@ public class UspsRateProvider : IUspsRateProvider
                 {
                     writer.WriteElementString(
                         "ShipDate",
-                        shipment.Options.ShippingDate.Value.AddDays(1).ToString("yyyy-MM-dd"));
+                        shipment.Options.ShippingDate.AddDays(1).ToString("yyyy-MM-dd"));
                 }
 
                 if (package.SignatureRequiredOnDelivery)
@@ -231,6 +230,7 @@ public class UspsRateProvider : IUspsRateProvider
                 shipment.Rates.Add(new Rate(
                     $"USPS {name}",
                     name,
+                    shipment.Options.PackagingType,
                     charges,
                     charges,
                     (DateTime?)deliveryDate,
@@ -242,6 +242,7 @@ public class UspsRateProvider : IUspsRateProvider
                 shipment.Rates.Add(new Rate(
                     $"USPS {name}",
                     name,
+                    shipment.Options.PackagingType,
                     charges,
                     charges,
                     rateOptions.DefaultGuaranteedDelivery,
@@ -288,7 +289,7 @@ public class UspsRateProvider : IUspsRateProvider
                 //  <Girth></Girth>
                 //  <CommercialFlag>N</CommercialFlag>
                 // </Package>
-                var container = shipment.Options.PackagingType.Replace("_", " ");
+                var container = shipment.Options.PackagingType?.Replace("_", " ");
 
                 writer.WriteStartElement("Package");
                 writer.WriteAttributeString("ID", i.ToString());
@@ -308,7 +309,7 @@ public class UspsRateProvider : IUspsRateProvider
 
                 if (!string.IsNullOrEmpty(shipment.DestinationAddress.PostalCode))
                 {
-                    writer.WriteElementString("AcceptanceDateTime", shipment.Options.ShippingDate.Value.AddDays(1).ToString("yyyy-MM-ddTHH\\:mm\\:ssZ"));
+                    writer.WriteElementString("AcceptanceDateTime", shipment.Options.ShippingDate.AddDays(1).ToString("yyyy-MM-ddTHH\\:mm\\:ssZ"));
                     writer.WriteElementString("DestinationPostalCode", shipment.DestinationAddress.PostalCode);
                 }
 
@@ -358,6 +359,7 @@ public class UspsRateProvider : IUspsRateProvider
                     shipment.Rates.Add(new Rate(
                         $"USPS {name}",
                         name,
+                        shipment.Options.PackagingType,
                         r.TotalCharges,
                         r.TotalCharges,
                         (DateTime?)deliveryDate,
@@ -369,6 +371,7 @@ public class UspsRateProvider : IUspsRateProvider
                     shipment.Rates.Add(new Rate(
                         $"USPS {name}",
                         name,
+                        shipment.Options.PackagingType,
                         r.TotalCharges,
                         r.TotalCharges,
                         rateOptions.DefaultGuaranteedDelivery,

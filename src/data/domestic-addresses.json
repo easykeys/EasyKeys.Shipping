@@ -1,0 +1,199 @@
+[
+  //{
+  //  "Commodity": {
+  //    "Name": "Keys",
+  //    "Description": "Padlocks and locks",
+  //    "HarmonizedCode": "8301",
+  //    "Quantity": 2,
+  //    "CountryOfManufacturer": "US",
+  //    "CustomsValue": 50.00,
+  //    "UnitPrice": 25.00,
+  //    "NumberOfPieces": 2,
+  //    "QuantityUnits": "EA"
+  //  },
+
+  //  "Contact": {
+  //    "FirstName": "EasyKeys.com",
+  //    "LastName": "Customer",
+  //    "Company": null,
+  //    "Department": null,
+  //    "Email": "info@easykeys.com",
+  //    "Extension": null,
+  //    "PhoneNumber": "877.839.5397"
+  //  },
+
+  //  "Address": {
+  //    "StreetLine": "URB SAN GERARDO",
+  //    "StreetLine2": "1647 CALLE ANAPOLIS",
+  //    "City": "San Juan",
+  //    "StateOrProvince": "PR",
+  //    "PostalCode": "00926",
+  //    "CountryCode": "US",
+  //    "IsResidential": false
+  //  },
+
+  //  "Packages": [
+  //    {
+  //      "Dimensions": {
+  //        "Length": 8.00,
+  //        "Width": 4.00,
+  //        "Height": 0.20
+  //      },
+  //      "InsuredValue": 50,
+  //      "IsOversize": false,
+  //      "Weight": 0.078125,
+  //      "SignatureRequiredOnDelivery": false
+  //    }
+
+  //  ]
+  //},
+
+  {
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "One Microsoft Way",
+      "StreetLine2": null,
+      "City": "Redmond",
+      "StateOrProvince": "Washington",
+      "PostalCode": "98052",
+      "CountryCode": "US",
+      "IsResidential": true
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 0,
+        "IsOversize": false,
+        "Weight": 1.0,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+
+  {
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "5925 sycamore canyon blvd",
+      "StreetLine2": "Apt 2105",
+      "City": "Riverside",
+      "StateOrProvince": "CA",
+      "PostalCode": "92507",
+      "CountryCode": "US",
+      "IsResidential": true
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 0,
+        "IsOversize": false,
+        "Weight": 1.0,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+  {
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "100 East Capitol Street",
+      "StreetLine2": "Suite 1000",
+      "City": "Jackson",
+      "StateOrProvince": "MS",
+      "PostalCode": "39201",
+      "CountryCode": "US",
+      "IsResidential": true
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 0,
+        "IsOversize": false,
+        "Weight": 1.0,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+  {
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "1500 S STRONG DR",
+      "StreetLine2": "Apartment, suite, unit, etc. (optional)",
+      "City": "BLOOMINGTON",
+      "StateOrProvince": "IL",
+      "PostalCode": "47403",
+      "CountryCode": "US",
+      "IsResidential": true
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 0,
+        "IsOversize": false,
+        "Weight": 1.0,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  }
+]

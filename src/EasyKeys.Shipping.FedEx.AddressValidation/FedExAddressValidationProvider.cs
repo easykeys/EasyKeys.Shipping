@@ -1,6 +1,9 @@
-﻿using EasyKeys.Shipping.Abstractions;
+﻿using AddressValidationClient.v4;
+
+using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
+using EasyKeys.Shipping.FedEx.Abstractions.Services;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,13 +15,18 @@ namespace EasyKeys.Shipping.FedEx.AddressValidation;
 public class FedExAddressValidationProvider : IFedExAddressValidationProvider
 {
     private readonly ILogger<FedExAddressValidationProvider> _logger;
+    private readonly AddressValidationPortType _addressValidationClient;
     private FedExOptions _options;
 
     public FedExAddressValidationProvider(
         IOptionsMonitor<FedExOptions> optionsMonitor,
+        IFedExClientService fedExClient,
         ILogger<FedExAddressValidationProvider> logger)
     {
         _options = optionsMonitor.CurrentValue;
+
+        _addressValidationClient = fedExClient.CreateAddressValidationClient();
+
         optionsMonitor.OnChange(n => _options = n);
 
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -28,24 +36,15 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
     {
         try
         {
-            // don't waste resources
-            if (!AddressAttributes.SupportedCountries.ContainsKey(request.OriginalAddress.CountryCode))
-            {
-                return request;
-            }
-
-            var client = new v4.AddressValidationPortTypeClient(
-                                v4.AddressValidationPortTypeClient.EndpointConfiguration.AddressValidationServicePort,
-                                _options.Url);
-
+            var client = _addressValidationClient;
             var wrap = CreateRequest(request);
 
             var serviceRequest = new v4.addressValidationRequest1(wrap);
 
             var reply = await client.addressValidationAsync(serviceRequest);
-            if (reply.AddressValidationReply.HighestSeverity == v4.NotificationSeverityType.SUCCESS
-                || reply.AddressValidationReply.HighestSeverity == v4.NotificationSeverityType.NOTE
-                || reply.AddressValidationReply.HighestSeverity == v4.NotificationSeverityType.WARNING)
+            if (reply.AddressValidationReply.HighestSeverity == NotificationSeverityType.SUCCESS
+                || reply.AddressValidationReply.HighestSeverity == NotificationSeverityType.NOTE
+                || reply.AddressValidationReply.HighestSeverity == NotificationSeverityType.WARNING)
             {
                 var result = reply.AddressValidationReply;
                 var addressResults = result.AddressResults[0];
@@ -53,7 +52,7 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
                 var parsedAddress = addressResults.ParsedAddressPartsDetail;
                 var lines = effectiveAddress?.StreetLines ?? new string[1] { string.Empty };
 
-                request.ProposedAddress = new Address(
+                request.ProposedAddress = new Shipping.Abstractions.Models.Address(
                     lines[0],
                     effectiveAddress?.City ?? string.Empty,
                     effectiveAddress?.StateOrProvinceCode ?? string.Empty,
@@ -68,8 +67,8 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
 
                 request.ProposedAddress.IsResidential = addressResults.Classification switch
                 {
-                    v4.FedExAddressClassificationType.MIXED => false,
-                    v4.FedExAddressClassificationType.BUSINESS => false,
+                    FedExAddressClassificationType.MIXED => false,
+                    FedExAddressClassificationType.BUSINESS => false,
                     _ => true,
                 };
 
@@ -104,13 +103,14 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
                         Description = notification.Message
                     });
                 }
+
+                _logger.LogError("{providerName} failed: {errors} ", nameof(FedExAddressValidationProvider), request.Errors.Select(x => x.Description).Flatten(","));
             }
         }
         catch (Exception ex)
         {
-            var exMsg = "FedExValidation client failed";
-            _logger.LogError(ex, exMsg);
-            request.InternalErrors.Add(ex?.Message ?? exMsg);
+            _logger.LogError(ex, "{providerName} failed", nameof(FedExAddressValidationProvider));
+            request.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExAddressValidationProvider)} failed");
         }
 
         return request;

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,12 +8,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bet.Extensions.Templating.Console" Version="1.0.*" />
+    <Compile Include="..\data\RateModelDto.cs" Link="Models\RateModelDto.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\data\domestic-addresses.json" Link="Embeded\domestic-addresses.json" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\data\intnl-addresses.json" Link="Embeded\intnl-addresses.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bet.Extensions.Templating.Console" Version="2.0.*" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EasyKeys.Shipping.FedEx.AddressValidation\EasyKeys.Shipping.FedEx.AddressValidation.csproj" />
+    <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Rates\EasyKeys.Shipping.FedEx.Rates.csproj" />
+    <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Shipment\EasyKeys.Shipping.FedEx.Shipment.csproj" />
+    <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Tracking\EasyKeys.Shipping.FedEx.Tracking.csproj" />
+    <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
+    <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Rates\EasyKeys.Shipping.Stamps.Rates.csproj" />
   </ItemGroup>
+
 </Project>

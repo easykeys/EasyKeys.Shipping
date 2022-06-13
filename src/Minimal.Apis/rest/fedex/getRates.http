@@ -1,0 +1,9 @@
+#@fileName=rates-fedex-domestic-1.json
+
+@fileName=rates-fedex-intl-1.json
+
+POST https://{{host}}/fedex/getRates
+Content-Type: application/json
+
+< ./src/Minimal.Apis/rest/data/{{fileName}}
+

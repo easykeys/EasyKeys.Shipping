@@ -1,0 +1,388 @@
+[
+  {
+    "Commodity": {
+      "Name": "Keys",
+      "Description": "Padlocks and locks",
+      "HarmonizedCode": "8301",
+      "Quantity": 2,
+      "CountryOfManufacturer": "US",
+      "CustomsValue": 50.00,
+      "UnitPrice": 25.00,
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
+    },
+
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": "",
+      "Email": "info@easykeys.com",
+      "Extension": "",
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "500 7e Rang",
+      "StreetLine2": null,
+      "City": "St-Dominique",
+      "StateOrProvince": "QC",
+      "PostalCode": "J0H 1L0",
+      "CountryCode": "CA",
+      "IsResidential": false
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 50.00,
+        "IsOversize": false,
+        "Weight": 0.078125,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+  {
+    "Commodity": {
+      "Name": "Keys",
+      "Description": "Padlocks and locks",
+      "HarmonizedCode": "8301",
+      "Quantity": 2,
+      "CountryOfManufacturer": "US",
+      "CustomsValue": 50.00,
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
+    },
+
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "512 Venture Place",
+      "StreetLine2": null,
+      "City": "Barrhead",
+      "StateOrProvince": "AB",
+      "PostalCode": "T0G 0E0",
+      "CountryCode": "CA",
+      "IsResidential": false
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 50,
+        "IsOversize": false,
+        "Weight": 1.0,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+  {
+    "Commodity": {
+      "Name": "Keys",
+      "Description": "Padlocks and locks",
+      "HarmonizedCode": "8301",
+      "Quantity": 2,
+      "CountryOfManufacturer": "US",
+      "CustomsValue": 50.00,
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
+    },
+
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "Eugenio Garza Sada",
+      "StreetLine2": "3869 S/N, CONTRY, 64860",
+      "City": "Nuevo Leon",
+      "StateOrProvince": "",
+      "PostalCode": "64860",
+      "CountryCode": "MX",
+      "IsResidential": false
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 50,
+        "IsOversize": false,
+        "Weight": 1.0,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+  {
+    "Commodity": {
+      "Name": "Keys",
+      "Description": "Padlocks and locks",
+      "HarmonizedCode": "8301",
+      "Quantity": 2,
+      "CountryOfManufacturer": "US",
+      "CustomsValue": 50.00,
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
+    },
+
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "12 Margaret street Sefton Park",
+      "StreetLine2": null,
+      "City": "SEFTON PARK",
+      "StateOrProvince": "",
+      "PostalCode": "5083",
+      "CountryCode": "AU",
+      "IsResidential": false
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 50,
+        "IsOversize": false,
+        "Weight": 1.0,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+  {
+    "Commodity": {
+      "Name": "Keys",
+      "Description": "Padlocks and locks",
+      "HarmonizedCode": "8301",
+      "Quantity": 2,
+      "CountryOfManufacturer": "US",
+      "CustomsValue": 50.00,
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
+    },
+
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "2 Marsham Street",
+      "StreetLine2": null,
+      "City": "London",
+      "StateOrProvince": null,
+      "PostalCode": "SW1P 4DF",
+      "CountryCode": "UK",
+      "IsResidential": false
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 50,
+        "IsOversize": false,
+        "Weight": 1.0,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+  {
+    "Commodity": {
+      "Name": "Keys",
+      "Description": "Padlocks and locks",
+      "HarmonizedCode": "8301",
+      "Quantity": 2,
+      "CountryOfManufacturer": "US",
+      "CustomsValue": 50.00,
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
+    },
+
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "Avda. Rio Nalon 70",
+      "StreetLine2": null,
+      "City": "Siero",
+      "StateOrProvince": "AS",
+      "PostalCode": "33510",
+      "CountryCode": "ES",
+      "IsResidential": false
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 50,
+        "IsOversize": false,
+        "Weight": 0.9375,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+
+  {
+    "Commodity": {
+      "Name": "Keys",
+      "Description": "Padlocks and locks",
+      "HarmonizedCode": "8301",
+      "Quantity": 2,
+      "CountryOfManufacturer": "US",
+      "CustomsValue": 50.00,
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
+    },
+
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "Baambrugse Zuwe 141D",
+      "StreetLine2": null,
+      "City": "Other North Holland",
+      "StateOrProvince": "North Holland",
+      "PostalCode": "3645 AE",
+      "CountryCode": "NL",
+      "IsResidential": false
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 50,
+        "IsOversize": false,
+        "Weight": 0.9375,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  },
+
+
+  {
+    "Commodity": {
+      "Name": "Keys",
+      "Description": "Padlocks and locks",
+      "HarmonizedCode": "8301",
+      "Quantity": 2,
+      "CountryOfManufacturer": "US",
+      "CustomsValue": 50.00,
+      "NumberOfPieces": 2,
+      "QuantityUnits": "EA"
+    },
+
+    "Contact": {
+      "FirstName": "EasyKeys.com",
+      "LastName": "Customer",
+      "Company": null,
+      "Department": null,
+      "Email": "info@easykeys.com",
+      "Extension": null,
+      "PhoneNumber": "877.839.5397"
+    },
+
+    "Address": {
+      "StreetLine": "Mauerberger Building",
+      "StreetLine2": "2nd floor",
+      "City": "Technion City",
+      "StateOrProvince": "Haifa",
+      "PostalCode": "3200003",
+      "CountryCode": "IL",
+      "IsResidential": false
+    },
+
+    "Packages": [
+      {
+        "Dimensions": {
+          "Length": 8.00,
+          "Width": 4.00,
+          "Height": 0.20
+        },
+        "InsuredValue": 50,
+        "IsOversize": false,
+        "Weight": 0.9375,
+        "SignatureRequiredOnDelivery": false
+      }
+
+    ]
+  }
+]

@@ -1,9 +1,8 @@
-﻿namespace EasyKeys.Shipping.Abstractions
-{
-    public struct PoundsAndOunces
-    {
-        public int Pounds { get; set; }
+﻿namespace EasyKeys.Shipping.Abstractions.Models;
 
-        public int Ounces { get; set; }
-    }
+public struct PoundsAndOunces
+{
+    public int Pounds { get; set; }
+
+    public int Ounces { get; set; }
 }

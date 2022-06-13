@@ -1,0 +1,12 @@
+{
+    "id": "2345465",
+    "address": {
+        "streetLine": "Eugenio Garza Sada",
+        "streetLine2": "3869 S/N, CONTRY, 64860",
+        "city": "Nuevo Leon",
+        "stateOrProvince": "",
+        "postalCode": "64860",
+        "countryCode": "MX",
+        "isResidential": true
+    }
+}
