@@ -7,7 +7,7 @@ public static class ShipmentOptionsExtensions
     public static string GetCurrencyCode(this ShipmentOptions options)
     {
         return !string.IsNullOrEmpty(options?.PreferredCurrencyCode)
-            ? options.PreferredCurrencyCode
+            ? options?.PreferredCurrencyCode ?? ShipmentOptions.DefaultCurrencyCode
             : ShipmentOptions.DefaultCurrencyCode;
     }
 }

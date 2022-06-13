@@ -1,0 +1,31 @@
+{
+    "origin": {
+        "streetLine": "11407 Granite Street",
+        "streetLine2": null,
+        "city": "Charlotte",
+        "stateOrProvince": "NC",
+        "postalCode": "28273",
+        "countryCode": "US",
+        "isResidential": false
+    },
+
+    "destination": {
+        "streetLine": "1550 CENTRAL AVE APT 35",
+        "streetLine2": null,
+        "city": "RIVERSIDE",
+        "stateOrProvince": "CA",
+        "postalCode": "92507",
+        "countryCode": "US",
+        "isResidential": true
+    },
+
+    "package": {
+        "ShipDate": null,
+        "signatureRequiredOnDelivery": false,
+        "insuredValue": 0,
+        "length": 8.0,
+        "width": 4.0,
+        "height": 0.5,
+        "weight": 0.1
+    }
+}

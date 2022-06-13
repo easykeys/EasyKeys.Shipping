@@ -8,5 +8,8 @@ public static class ConsoleServiceCollectionExtensions
     {
         services.AddScoped<IMain, Main>();
         services.AddFedExAddressValidation();
+        services.AddFedExRateProvider();
+        services.AddFedExShipmenProvider();
+        services.AddFedExTrackingProvider();
     }
 }

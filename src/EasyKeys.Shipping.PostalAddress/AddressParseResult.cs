@@ -32,11 +32,12 @@ public class AddressParseResult
                 BindingFlags.Instance |
                 BindingFlags.Public |
                 BindingFlags.IgnoreCase;
+
             var propertyInfo = type.GetProperty(pair.Key, bindingFlags);
+
             if (propertyInfo != null)
             {
-                var methodInfo = propertyInfo.GetSetMethod(true);
-                methodInfo?.Invoke(this, new[] { pair.Value });
+                propertyInfo.SetValue(this, Convert.ChangeType(pair.Value, propertyInfo.PropertyType), null);
             }
         }
     }
@@ -44,50 +45,32 @@ public class AddressParseResult
     /// <summary>
     /// Gets the city name.
     /// </summary>
-    public string? City
-    {
-        get;
-    }
+    public string? City { get; private set; }
 
     /// <summary>
     /// Gets the house number.
     /// </summary>
-    public string? Number
-    {
-        get;
-    }
+    public string? Number { get; private set; }
 
     /// <summary>
     /// Gets the predirectional, such as "N" in "500 N Main St".
     /// </summary>
-    public string? Predirectional
-    {
-        get;
-    }
+    public string? Predirectional { get; private set; }
 
     /// <summary>
     /// Gets the postdirectional, such as "NW" in "500 Main St NW".
     /// </summary>
-    public string? Postdirectional
-    {
-        get;
-    }
+    public string? Postdirectional { get; private set; }
 
     /// <summary>
     /// Gets the state or territory.
     /// </summary>
-    public string? State
-    {
-        get;
-    }
+    public string? State { get; private set; }
 
     /// <summary>
     /// Gets the name of the street, such as "Main" in "500 N Main St".
     /// </summary>
-    public string? Street
-    {
-        get;
-    }
+    public string? Street { get; private set; }
 
     /// <summary>
     /// Gets the full street line, such as "500 N Main St" in "500 N Main St".
@@ -129,34 +112,22 @@ public class AddressParseResult
     /// <summary>
     /// Gets the street suffix, such as "ST" in "500 N MAIN ST".
     /// </summary>
-    public string? Suffix
-    {
-        get;
-    }
+    public string? Suffix { get; private set; }
 
     /// <summary>
     /// Gets the secondary unit, such as "APT" in "500 N MAIN ST APT 3".
     /// </summary>
-    public string? SecondaryUnit
-    {
-        get;
-    }
+    public string? SecondaryUnit { get; private set; }
 
     /// <summary>
     /// Gets the secondary unit, such as "3" in "500 N MAIN ST APT 3".
     /// </summary>
-    public string? SecondaryNumber
-    {
-        get;
-    }
+    public string? SecondaryNumber { get; private set; }
 
     /// <summary>
     /// Gets the ZIP code.
     /// </summary>
-    public string? Zip
-    {
-        get;
-    }
+    public string? Zip { get; private set; }
 
     /// <summary>
     /// Returns a <see cref="string"/> that represents this instance.

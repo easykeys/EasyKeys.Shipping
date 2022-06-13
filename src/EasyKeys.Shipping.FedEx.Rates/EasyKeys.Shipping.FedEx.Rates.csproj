@@ -1,11 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net5.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Nuget Package Settings">
 		<Description>DotNetCore Implementation of FedEx Web Services 2020 for Rates Available Endpoint.</Description>
+		<PackageTags>DotNetCore, FedEx Shipment Rates, FedEx 2020 WCF</PackageTags>
 	</PropertyGroup>
+
 
 	<ItemGroup>
 		<PackageReference Include="Bet.Extensions.Options" />

@@ -1,0 +1,14 @@
+
+#@serviceType = STANDARD_OVERNIGHT
+@serviceType = INTERNATIONAL_PRIORITY
+@packageType =FEDEX_ENVELOPE
+@orderId = ek-123456
+
+#@fileName=label-fedex-domestic-2.json
+@fileName=rates-stamps-intl-1.json
+
+POST https://{{host}}/fedex/createShipment?serviceType={{serviceType}}&packageType={{packageType}}&orderId={{orderId}}
+Content-Type: application/json
+
+
+< ./src/Minimal.Apis/rest/data/{{fileName}}

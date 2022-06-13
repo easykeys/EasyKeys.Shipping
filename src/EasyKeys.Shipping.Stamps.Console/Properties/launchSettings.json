@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "EasyKeys.Shipping.Stamps.Console": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": "true"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

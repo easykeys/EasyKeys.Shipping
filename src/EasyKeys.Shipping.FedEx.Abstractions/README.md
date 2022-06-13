@@ -5,5 +5,13 @@
 ![Nuget](https://img.shields.io/nuget/dt/EasyKeys.Shipping.FedEx.Abstractions)
 [![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https://f.feedz.io/easykeys/core/shield/EasyKeys.Shipping.FedEx.Abstractions/latest)](https://f.feedz.io/easykeys/core/packages/EasyKeys.Shipping.FedEx.Abstractions/latest/download)
 
+This library provides abstractions for options, models and wsdls generated contracts.
 
-This repo include models and extensions methods reused for the rest of the shipping specific provides.
+## Give a Star! :star:
+
+If you like or are using this project please give it a star. Thanks!
+
+## Install
+
+```bash
+    dotnet add package EasyKeys.Shipping.FedEx.Abstractions

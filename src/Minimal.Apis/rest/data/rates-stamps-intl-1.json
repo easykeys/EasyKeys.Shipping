@@ -1,0 +1,68 @@
+{
+    "sender": {
+        "firstName": "EasyKeys.com",
+        "lastName": "Fulfillment Center",
+        "company": "EasyKeys.com",
+        "department": "Warehouse",
+        "email": "info@EasyKeys.com",
+        "extension": null,
+        "phoneNumber": "877.839.5397"
+    },
+
+    "origin": {
+        "streetLine": "11407 Granite Street",
+        "streetLine2": null,
+        "city": "Charlotte",
+        "stateOrProvince": "NC",
+        "postalCode": "28273",
+        "countryCode": "US",
+        "isResidential": false
+    },
+
+    "recipient": {
+        "firstName": "EasyKeys.com",
+        "lastName": "Customer",
+        "company": "",
+        "department": "",
+        "email": "info@easykeys.com",
+        "extension": null,
+        "phoneNumber": "877.839.5397"
+    },
+
+    "destination": {
+        "StreetLine": "12 Margaret street Sefton Park",
+        "StreetLine2": null,
+        "City": "SEFTON PARK",
+        "StateOrProvince": "",
+        "PostalCode": "5083",
+        "CountryCode": "AU",
+        "IsResidential": false
+    },
+
+    "package": {
+        "ShipDate": null,
+        "signatureRequiredOnDelivery": false,
+        "insuredValue": 0,
+        "length": 8.0,
+        "width": 4.0,
+        "height": 0.5,
+        "weight": 0.015625
+    },
+
+    "commodity": {
+        "name": "Keys",
+        "numberOfPieces": 2,
+        "description": "Padlocks and locks",
+        "countryOfManufacturer": "US",
+        "harmonizedCode": "8301",
+        "quantity": 2,
+        "quantityUnits": "EA",
+        "unitPrice": 25.0,
+        "customsValue": 50.0,
+        "amount": 50.0,
+        "exportLicenseNumber": "string",
+        "exportLicenseExpirationDate": "2025-06-09T12:02:51.790Z",
+        "comments": "Keys and locks",
+        "purpose": "Keys and locks"
+    }
+}
