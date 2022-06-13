@@ -56,7 +56,7 @@ If you like or are using this project please give it a star. Thanks!
     private IAsyncPolicy GetRetryWithTimeOutPolicy()
     {
         // each call is limited to 30 seconds in case when fedex is non-reponsive and it is 1min timeout, it is way to long
-        // The request channel timed out attempting to send after 00:01:00. 
+        // The request channel timed out attempting to send after 00:01:00.
         // Increase the timeout value passed to the call to Request or increase the SendTimeout value on the Binding. The time allotted to this operation may have been a portion of a longer timeout.
         var timeoutPolicy = Policy.TimeoutAsync(30, TimeoutStrategy.Pessimistic);
 
@@ -90,5 +90,5 @@ If you like or are using this project please give it a star. Thanks!
 
 ## References
 
-- <https://github.com/leoboles/Integration.Stamps.git>
-- <https://github.com/oparamo/StampsService.git>
+- https://github.com/leoboles/Integration.Stamps.git
+- https://github.com/oparamo/StampsService.git
