@@ -42,9 +42,9 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
             var serviceRequest = new v4.addressValidationRequest1(wrap);
 
             var reply = await client.addressValidationAsync(serviceRequest);
-            if (reply.AddressValidationReply.HighestSeverity == v4.NotificationSeverityType.SUCCESS
-                || reply.AddressValidationReply.HighestSeverity == v4.NotificationSeverityType.NOTE
-                || reply.AddressValidationReply.HighestSeverity == v4.NotificationSeverityType.WARNING)
+            if (reply.AddressValidationReply.HighestSeverity == NotificationSeverityType.SUCCESS
+                || reply.AddressValidationReply.HighestSeverity == NotificationSeverityType.NOTE
+                || reply.AddressValidationReply.HighestSeverity == NotificationSeverityType.WARNING)
             {
                 var result = reply.AddressValidationReply;
                 var addressResults = result.AddressResults[0];
@@ -67,8 +67,8 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
 
                 request.ProposedAddress.IsResidential = addressResults.Classification switch
                 {
-                    v4.FedExAddressClassificationType.MIXED => false,
-                    v4.FedExAddressClassificationType.BUSINESS => false,
+                    FedExAddressClassificationType.MIXED => false,
+                    FedExAddressClassificationType.BUSINESS => false,
                     _ => true,
                 };
 

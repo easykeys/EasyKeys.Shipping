@@ -1,6 +1,7 @@
-﻿using RateClient.v28;
+﻿
+using RateClient.v28;
 
-namespace EasyKeys.Shipping.FedEx.Extensions;
+namespace EasyKeys.Shipping.FedEx.Rates.Extensions;
 
 /// <summary>
 /// Extension methods for RequestedShipment.

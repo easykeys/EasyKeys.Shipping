@@ -44,7 +44,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.LargeEnvelopeOrFlat.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.LargeEnvelopeOrFlat.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.ThickEnvelope.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.ThickEnvelope.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.Package.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.Package.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     /// <summary>
@@ -89,7 +89,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.SmallFlatRateBox.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.SmallFlatRateBox.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.FlatRateBox.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.FlatRateBox.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.LargeFlatRateBox.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.LargeFlatRateBox.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     /// <summary>
@@ -134,7 +134,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.RegionalRateBoxA.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.RegionalRateBoxA.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     /// <summary>
@@ -149,7 +149,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.RegionalRateBoxB.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.RegionalRateBoxB.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     /// <summary>
@@ -164,7 +164,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.RegionalRateBoxC.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.RegionalRateBoxC.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     /// <summary>
@@ -179,7 +179,7 @@ public class StampsRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(PackageType.FlatRateEnvelope.Dimensions, weight, insuredValue, isSignatureRequired);
+        return new Package(StampsPackageType.FlatRateEnvelope.Dimensions, weight, insuredValue, isSignatureRequired);
     }
 
     private void CreateInternationalShipments(
@@ -231,7 +231,7 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageTypes = PackageType.List.Where(x => x.Category == "DefaultPackage" || x.Category == "LargeEnvelope");
+        var packageTypes = StampsPackageType.List.Where(x => x.Category == "DefaultPackage" || x.Category == "LargeEnvelope");
 
         foreach (var packageType in packageTypes)
         {
@@ -259,7 +259,7 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageTypes = PackageType.List.Where(x => x.Category != "Unknown"
+        var packageTypes = StampsPackageType.List.Where(x => x.Category != "Unknown"
                             && x.Category != "Letter"
                             && x.Category != "PostCard");
 
@@ -294,7 +294,7 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageTypes = PackageType.List
+        var packageTypes = StampsPackageType.List
             .Where(x => x.Category == "DefaultPackage" || x.Category == "LargeEnvelope");
 
         foreach (var packageType in packageTypes)
@@ -323,7 +323,7 @@ public class StampsRateConfigurator
 
         var packages = new List<Package> { package };
 
-        var packageTypes = PackageType.List.Where(x => x.Category != "Unknown"
+        var packageTypes = StampsPackageType.List.Where(x => x.Category != "Unknown"
                     && x.Category != "Letter"
                     && x.Category == "PostCard");
 

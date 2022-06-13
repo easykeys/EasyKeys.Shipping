@@ -7,7 +7,7 @@ public class ShipmentDetails
     /// <summary>
     /// This is an important value for the label generation.
     /// </summary>
-    public PackageType PackageType { get; set; } = PackageType.Package;
+    public StampsPackageType PackageType { get; set; } = StampsPackageType.Package;
 
     public LabelOptions LabelOptions { get; set; } = new LabelOptions();
 

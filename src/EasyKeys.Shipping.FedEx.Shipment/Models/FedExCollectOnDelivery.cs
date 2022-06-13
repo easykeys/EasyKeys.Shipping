@@ -1,11 +1,11 @@
 ﻿namespace EasyKeys.Shipping.FedEx.Shipment.Models;
 
-public class CollectOnDelivery
+public class FedExCollectOnDelivery
 {
     /// <summary>
     /// guaranteed_funds, cash, company_check, personal_check.
     /// </summary>
-    public string CollectionType { get; set; } = "GUARANTEED_FUNDS";
+    public FedExCollectionType CollectionType { get; set; } = FedExCollectionType.GuaranteedFunds;
 
     public decimal Amount { get; set; }
 

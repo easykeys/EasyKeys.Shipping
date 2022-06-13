@@ -17,11 +17,9 @@ public static class FedExRatesServiceCollectionExtensions
         string sectionName = nameof(FedExOptions),
         Action<FedExOptions, IServiceProvider>? configure = null)
     {
-        services.AddChangeTokenOptions<FedExOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
-
         services.AddLogging();
 
-        services.AddFedExClient();
+        services.AddFedExClient(sectionName, configure);
 
         services.AddTransient<IFedExRateProvider, FedExRateProvider>();
 

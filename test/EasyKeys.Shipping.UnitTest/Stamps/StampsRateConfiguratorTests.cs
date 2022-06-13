@@ -35,7 +35,7 @@ public class StampsRateConfiguratorTests
                         StateOrProvince = "CA",
                         CountryCode = "US",
                         PostalCode = "92507"
-                    }, .1m, StampsServiceType.FirstClass, PackageType.LargeEnvelopeOrFlat, "USPS First Class Mail"
+                    }, .1m, StampsServiceType.FirstClass, StampsPackageType.LargeEnvelopeOrFlat, "USPS First Class Mail"
             };
             yield return new object[]
             {
@@ -46,7 +46,7 @@ public class StampsRateConfiguratorTests
                         StateOrProvince = "Brescia",
                         CountryCode = "IT",
                         PostalCode = "64921"
-                    }, .1m, StampsServiceType.FirstClassInternational, PackageType.Package, "USPS First Class Mail International"
+                    }, .1m, StampsServiceType.FirstClassInternational, StampsPackageType.Package, "USPS First Class Mail International"
             };
             yield return new object[]
             {
@@ -58,7 +58,7 @@ public class StampsRateConfiguratorTests
                         StateOrProvince = "CA",
                         CountryCode = "US",
                         PostalCode = "92507"
-                    }, 1m, StampsServiceType.Priority, PackageType.SmallFlatRateBox, "USPS Priority Mail"
+                    }, 1m, StampsServiceType.Priority, StampsPackageType.SmallFlatRateBox, "USPS Priority Mail"
             };
             yield return new object[]
             {
@@ -69,7 +69,7 @@ public class StampsRateConfiguratorTests
                         StateOrProvince = "Brescia",
                         CountryCode = "IT",
                         PostalCode = "64921"
-                    }, 1m, StampsServiceType.FirstClassInternational, PackageType.Package, "USPS First Class Mail International"
+                    }, 1m, StampsServiceType.FirstClassInternational, StampsPackageType.Package, "USPS First Class Mail International"
             };
         }
 

@@ -79,7 +79,7 @@ public class RateOptions
     /// </item>
     /// </list>
     /// </summary>
-    public CarrierType Carrier { get; set; } = CarrierType.Usps;
+    public StampsCarrierType Carrier { get; set; } = StampsCarrierType.Usps;
 
     /// <summary>
     /// The collect on delivery value for this shipment, in dollars and cents.
@@ -131,5 +131,5 @@ public class RateOptions
     /// <item><description>Other</description></item>
     /// </list>
     /// </summary>
-    public ContentType ContentType { get; set; } = ContentType.Merchandise;
+    public StampsContentType ContentType { get; set; } = StampsContentType.Merchandise;
 }

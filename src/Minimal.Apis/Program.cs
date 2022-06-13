@@ -287,7 +287,7 @@ app.MapPost("/fedex/createShipment", async (
 
         TransactionId = orderId,
 
-        PaymentType = "sender",
+        PaymentType = FedExPaymentType.Sender,
 
         RateRequestType = "list",
 
@@ -301,7 +301,10 @@ app.MapPost("/fedex/createShipment", async (
         }
     };
 
-    shipmentDetails.Commodities.Add(model.Commodity);
+    if (model?.Commodity != null)
+    {
+        shipmentDetails.Commodities.Add(model.Commodity);
+    }
 
     if (correctShipment == null)
     {

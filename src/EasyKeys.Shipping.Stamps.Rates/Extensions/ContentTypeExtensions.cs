@@ -6,7 +6,7 @@ namespace EasyKeys.Shipping.Stamps.Rates.Extensions;
 
 public static class ContentTypeExtensions
 {
-    public static ContentTypeV2 Map(this ContentType contentType)
+    public static ContentTypeV2 Map(this StampsContentType contentType)
     {
         return contentType.Value switch
         {

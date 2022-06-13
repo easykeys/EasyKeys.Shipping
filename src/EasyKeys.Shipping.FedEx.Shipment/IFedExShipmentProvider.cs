@@ -19,8 +19,8 @@ public interface IFedExShipmentProvider
     /// number and increment the package number(SequenceID) for subsequent packages.
     /// </para>
     /// </summary>
-    /// <param name="serviceType"></param>
-    /// <param name="shipment"></param>
+    /// <param name="serviceType">The type of the service to be used for the label generation.</param>
+    /// <param name="shipment">The shipment.</param>
     /// <param name="shipmentDetails"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>

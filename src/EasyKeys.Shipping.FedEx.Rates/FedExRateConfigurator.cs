@@ -1,5 +1,6 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Rates.Extensions;
 
 namespace EasyKeys.Shipping.FedEx.Rates;
 
@@ -47,7 +48,11 @@ public class FedExRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(FedExPackageType.FedExEnvelope.Dimensions, weight, insuredValue, signatureRequiredOnDelivery: isSignatureRequired);
+        return new Package(
+            FedExPackageType.FedExEnvelope.Dimensions,
+            weight,
+            insuredValue,
+            signatureRequiredOnDelivery: isSignatureRequired);
     }
 
     /// <summary>
@@ -62,7 +67,11 @@ public class FedExRateConfigurator
         decimal insuredValue = 20,
         bool isSignatureRequired = false)
     {
-        return new Package(FedExPackageType.FedExPak.Dimensions, weight, insuredValue, signatureRequiredOnDelivery: isSignatureRequired);
+        return new Package(
+            FedExPackageType.FedExPak.Dimensions,
+            weight,
+            insuredValue,
+            signatureRequiredOnDelivery: isSignatureRequired);
     }
 
     private void ConfigureGroundPackage(

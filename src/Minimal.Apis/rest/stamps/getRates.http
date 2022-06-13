@@ -1,7 +1,7 @@
 
-#@fileName=rates-stamps-domestic-2.json
+@fileName=rates-stamps-domestic-2.json
 
-@fileName = rates-stamps-intl-1.json
+#@fileName = rates-stamps-intl-1.json
 
 POST https://{{host}}/stamps/getRates
 Content-Type: application/json

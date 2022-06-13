@@ -3,19 +3,20 @@
 public class EmailNotification
 {
     /// <summary>
-    /// On_Delivery,
-    /// On_Estimated_Delivery,
-    /// On_Exception,
-    /// On_Pickup_Driver_Arrived,
-    /// On_Pickup_Driver_Assigned,
-    /// On_Pickup_Driver_Departed,
-    /// On_Pickup_Driver_En_Route,
-    /// On_Shipment,On_Tender.
+    /// <para>On_Delivery.</para>
+    /// <para>On_Estimated_Delivery.</para>
+    /// <para>On_Exception.</para>
+    /// <para>On_Pickup_Driver_Arrived.</para>
+    /// <para>On_Pickup_Driver_Assigned.</para>
+    /// <para>On_Pickup_Driver_Departed.</para>
+    /// <para>On_Pickup_Driver_En_Route.</para>
+    /// <para>On_Shipment.</para>
+    /// <para>On_Tender.</para>
     /// </summary>
-    public IList<string> EmailNotificationTypes { get; set; } = new List<string>
+    public IList<FedExNotificationEventType> EmailNotificationTypes { get; set; } = new List<FedExNotificationEventType>
     {
-       "On_Shipment",
-       "On_Delivery"
+       FedExNotificationEventType.OnShipment,
+       FedExNotificationEventType.OnDelivery,
     };
 
     /// <summary>

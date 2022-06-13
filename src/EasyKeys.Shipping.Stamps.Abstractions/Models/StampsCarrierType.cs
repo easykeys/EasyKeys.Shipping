@@ -2,45 +2,45 @@
 
 namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
 
-public abstract class CarrierType : SmartEnum<CarrierType>
+public abstract class StampsCarrierType : SmartEnum<StampsCarrierType>
 {
-    public static readonly CarrierType FedEx = new FedExType();
+    public static readonly StampsCarrierType FedEx = new FedExType();
 
-    public static readonly CarrierType Ups = new UpsType();
+    public static readonly StampsCarrierType Ups = new UpsType();
 
-    public static readonly CarrierType Usps = new UspsType();
+    public static readonly StampsCarrierType Usps = new UspsType();
 
-    public static readonly CarrierType DhlExpress = new DhlExpressType();
+    public static readonly StampsCarrierType DhlExpress = new DhlExpressType();
 
-    public CarrierType(string name, int value, string description) : base(name, value)
+    protected StampsCarrierType(string name, int value, string description) : base(name, value)
     {
         Description = description;
     }
 
     public string Description { get; }
 
-    private sealed class FedExType : CarrierType
+    private sealed class FedExType : StampsCarrierType
     {
         public FedExType() : base(nameof(StampsClient.v111.Carrier.FedEx), (int)StampsClient.v111.Carrier.FedEx, "FedEx")
         {
         }
     }
 
-    private sealed class UpsType : CarrierType
+    private sealed class UpsType : StampsCarrierType
     {
         public UpsType() : base(nameof(StampsClient.v111.Carrier.UPS), (int)StampsClient.v111.Carrier.UPS, "UPS")
         {
         }
     }
 
-    private sealed class UspsType : CarrierType
+    private sealed class UspsType : StampsCarrierType
     {
         public UspsType() : base(nameof(StampsClient.v111.Carrier.USPS), (int)StampsClient.v111.Carrier.USPS, "USPS")
         {
         }
     }
 
-    private sealed class DhlExpressType : CarrierType
+    private sealed class DhlExpressType : StampsCarrierType
     {
         public DhlExpressType() : base(nameof(StampsClient.v111.Carrier.DHLExpress), (int)StampsClient.v111.Carrier.DHLExpress, "DHL Express")
         {

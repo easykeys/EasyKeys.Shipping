@@ -4,7 +4,7 @@
 
 @orderId = ek-123456
 
-@isSample = true
+@isSample = false
 
 @fileName=rates-stamps-domestic-2.json
 

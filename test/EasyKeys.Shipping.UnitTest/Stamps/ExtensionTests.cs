@@ -71,7 +71,7 @@ public class ExtensionTests
 
     [Theory]
     [ClassData(typeof(PackageTypeData))]
-    public void Map_Shipment_ToRate_Successfully(PackageType packageType)
+    public void Map_Shipment_ToRate_Successfully(StampsPackageType packageType)
     {
         var domesticShipment = TestShipments.CreateDomesticShipment();
 
@@ -86,7 +86,7 @@ public class ExtensionTests
 
     [Theory]
     [ClassData(typeof(ContentTypeData))]
-    public void Map_ContentType_Successfully(ContentType contentType)
+    public void Map_ContentType_Successfully(StampsContentType contentType)
     {
         Assert.Equal(contentType.Value, (int)contentType.Map());
     }
@@ -141,45 +141,45 @@ public class ExtensionTests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { PackageType.Pak };
+            yield return new object[] { StampsPackageType.Pak };
 
-            yield return new object[] { PackageType.Package };
+            yield return new object[] { StampsPackageType.Package };
 
-            yield return new object[] { PackageType.OversizedPackage };
+            yield return new object[] { StampsPackageType.OversizedPackage };
 
-            yield return new object[] { PackageType.LargePackage };
+            yield return new object[] { StampsPackageType.LargePackage };
 
-            yield return new object[] { PackageType.PostCard };
+            yield return new object[] { StampsPackageType.PostCard };
 
-            yield return new object[] { PackageType.Documents };
+            yield return new object[] { StampsPackageType.Documents };
 
-            yield return new object[] { PackageType.ThickEnvelope };
+            yield return new object[] { StampsPackageType.ThickEnvelope };
 
-            yield return new object[] { PackageType.Envelope };
+            yield return new object[] { StampsPackageType.Envelope };
 
-            yield return new object[] { PackageType.ExpressEnvelope };
+            yield return new object[] { StampsPackageType.ExpressEnvelope };
 
-            yield return new object[] { PackageType.FlatRateEnvelope };
+            yield return new object[] { StampsPackageType.FlatRateEnvelope };
 
-            yield return new object[] { PackageType.LegalFlatRateEnvelope };
+            yield return new object[] { StampsPackageType.LegalFlatRateEnvelope };
 
-            yield return new object[] { PackageType.Letter };
+            yield return new object[] { StampsPackageType.Letter };
 
-            yield return new object[] { PackageType.LargeEnvelopeOrFlat };
+            yield return new object[] { StampsPackageType.LargeEnvelopeOrFlat };
 
-            yield return new object[] { PackageType.SmallFlatRateBox };
+            yield return new object[] { StampsPackageType.SmallFlatRateBox };
 
-            yield return new object[] { PackageType.FlatRateBox };
+            yield return new object[] { StampsPackageType.FlatRateBox };
 
-            yield return new object[] { PackageType.LargeFlatRateBox };
+            yield return new object[] { StampsPackageType.LargeFlatRateBox };
 
-            yield return new object[] { PackageType.FlatRatePaddedEnvelope };
+            yield return new object[] { StampsPackageType.FlatRatePaddedEnvelope };
 
-            yield return new object[] { PackageType.RegionalRateBoxA };
+            yield return new object[] { StampsPackageType.RegionalRateBoxA };
 
-            yield return new object[] { PackageType.RegionalRateBoxB };
+            yield return new object[] { StampsPackageType.RegionalRateBoxB };
 
-            yield return new object[] { PackageType.RegionalRateBoxC };
+            yield return new object[] { StampsPackageType.RegionalRateBoxC };
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -192,21 +192,21 @@ public class ExtensionTests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { ContentType.CommcercialSample };
+            yield return new object[] { StampsContentType.CommcercialSample };
 
-            yield return new object[] { ContentType.DangerousGoods };
+            yield return new object[] { StampsContentType.DangerousGoods };
 
-            yield return new object[] { ContentType.Document };
+            yield return new object[] { StampsContentType.Document };
 
-            yield return new object[] { ContentType.Gift };
+            yield return new object[] { StampsContentType.Gift };
 
-            yield return new object[] { ContentType.HumanitarianDonation };
+            yield return new object[] { StampsContentType.HumanitarianDonation };
 
-            yield return new object[] { ContentType.Merchandise };
+            yield return new object[] { StampsContentType.Merchandise };
 
-            yield return new object[] { ContentType.ReturnedGoods };
+            yield return new object[] { StampsContentType.ReturnedGoods };
 
-            yield return new object[] { ContentType.Other };
+            yield return new object[] { StampsContentType.Other };
         }
 
         IEnumerator IEnumerable.GetEnumerator()

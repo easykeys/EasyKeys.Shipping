@@ -1,7 +1,7 @@
 ﻿using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Models;
 
-namespace EasyKeys.Shipping.FedEx.Extensions;
+namespace EasyKeys.Shipping.FedEx.Rates.Extensions;
 
 public static class RateAddressExtensions
 {
@@ -15,7 +15,7 @@ public static class RateAddressExtensions
         address = address ?? throw new ArgumentNullException(nameof(address));
 
         // https://github.com/nopSolutions/FedEx-plugin-for-nopcommerce/blob/4f65483b4463b85d5a0c70c7aa84ff9a7cb5fde6/Nop.Plugin.Shipping.Fedex/Services/FedexService.cs#L485
-        var stateOrProvince = (!address.IsUnitedStatesAddress() && address?.StateOrProvince?.Trim()?.Length > 2)
+        var stateOrProvince = !address.IsUnitedStatesAddress() && address?.StateOrProvince?.Trim()?.Length > 2
             ? string.Empty
             : address?.StateOrProvince ?? string.Empty;
 

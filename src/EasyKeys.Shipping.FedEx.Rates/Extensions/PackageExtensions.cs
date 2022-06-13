@@ -1,7 +1,7 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 
-namespace EasyKeys.Shipping.FedEx;
+namespace EasyKeys.Shipping.FedEx.Rates.Extensions;
 
 public static class PackageExtensions
 {

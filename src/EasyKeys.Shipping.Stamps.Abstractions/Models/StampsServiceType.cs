@@ -18,7 +18,7 @@ public abstract class StampsServiceType : SmartEnum<StampsServiceType>
     public static readonly StampsServiceType LibraryMail = new LibraryMailType();
     public static readonly StampsServiceType Unknown = new UnknownType();
 
-    public StampsServiceType(string name, int value, string description) : base(name, value)
+    protected StampsServiceType(string name, int value, string description) : base(name, value)
     {
         Description = description;
     }

@@ -204,7 +204,7 @@ public class Main : IMain
                 // USPS First-Class Mail:Package:3.7200
                 var selectedRate = rates.SingleOrDefault(x => x.Name == "USPM" && x.PackageType == "SmallFlatRateBox");
 
-                var shipmentOptions = new ShipmentOptions(PackageType.FromName(selectedRate.PackageType).Name, DateTime.Now);
+                var shipmentOptions = new ShipmentOptions(StampsPackageType.FromName(selectedRate.PackageType).Name, DateTime.Now);
 
                 var shipment = new Shipment(origin, address, model.Packages, shipmentOptions);
 
@@ -222,7 +222,7 @@ public class Main : IMain
                 // USPS First-Class Mail International:Package:14.11
                 var selectedRate = rates.SingleOrDefault(x => x.Name == "USFCI" && x.PackageType == "Package");
 
-                var shipmentOptions = new ShipmentOptions(PackageType.FromName(selectedRate.PackageType).Name, DateTime.Now);
+                var shipmentOptions = new ShipmentOptions(StampsPackageType.FromName(selectedRate.PackageType).Name, DateTime.Now);
 
                 var shipment = new Shipment(origin, address, model.Packages, shipmentOptions);
 

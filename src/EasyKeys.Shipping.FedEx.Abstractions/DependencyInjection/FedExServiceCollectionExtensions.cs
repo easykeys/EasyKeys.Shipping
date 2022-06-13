@@ -9,11 +9,11 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class FedExServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds FedEx Client Service.
+    /// Adds FedEx Client Service with configuration options <see cref="FedExOptions"/>.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="sectionName"></param>
-    /// <param name="configure"></param>
+    /// <param name="services">The DI services.</param>
+    /// <param name="sectionName">The section name for the options.</param>
+    /// <param name="configure">The configuration of options.</param>
     /// <returns></returns>
     public static IServiceCollection AddFedExClient(
         this IServiceCollection services,

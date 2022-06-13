@@ -24,7 +24,7 @@ public static class PackageExtensions
             || totalDimensions > 36;
     }
 
-    public static bool FitsPackageType(this Package package, PackageType packageType, bool isInternational = false)
+    public static bool FitsPackageType(this Package package, StampsPackageType packageType, bool isInternational = false)
     {
         return package.Dimensions.Length <= packageType.Dimensions.Length &&
                package.Dimensions.Width <= packageType.Dimensions.Width &&

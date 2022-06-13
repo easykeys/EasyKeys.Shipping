@@ -4,7 +4,7 @@ using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
-using EasyKeys.Shipping.FedEx.Extensions;
+using EasyKeys.Shipping.FedEx.Rates.Extensions;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -96,9 +96,9 @@ public class FedExRateProvider : IFedExRateProvider
             {
                 ShipTimestamp = shipment.Options.ShippingDate, // Shipping date and time
                 ShipTimestampSpecified = true,
-                DropoffType = DropoffType.REGULAR_PICKUP,           // Drop off types are BUSINESS_SERVICE_CENTER, DROP_BOX, REGULAR_PICKUP, REQUEST_COURIER, STATION
+                DropoffType = FedExDropOffType.FromName(shipment.Options.DropOffType).Name.ToEnum<DropoffType>(),
                 DropoffTypeSpecified = true,
-                PackagingType = shipment.Options.PackagingType,     // "YOUR_PACKAGING",
+                PackagingType = FedExPackageType.FromName(shipment.Options.PackagingType).Name,     // "YOUR_PACKAGING",
                 PackageCount = shipment.Packages.Count.ToString(),
                 RateRequestTypes = GetRateRequestTypes().ToArray(),
                 PreferredCurrency = shipment.Options.GetCurrencyCode(),
@@ -128,7 +128,10 @@ public class FedExRateProvider : IFedExRateProvider
         if (shipment.Options.SaturdayDelivery)
         {
             // include Saturday delivery
-            request.VariableOptions = new[] { ServiceOptionType.SATURDAY_DELIVERY };
+            request.VariableOptions = new[]
+            {
+                ServiceOptionType.SATURDAY_DELIVERY
+            };
         }
 
         SetShipmentDetails(request, shipment);
@@ -166,7 +169,7 @@ public class FedExRateProvider : IFedExRateProvider
         var i = 0;
         foreach (var package in shipment.Packages)
         {
-            request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem()
+            request.RequestedShipment.RequestedPackageLineItems[i] = new RequestedPackageLineItem
             {
                 SequenceNumber = (i + 1).ToString(),
                 GroupPackageCount = "1",
@@ -188,20 +191,24 @@ public class FedExRateProvider : IFedExRateProvider
                     Height = package.Dimensions.RoundedHeight.ToString(),
                     Units = LinearUnits.IN,
                     UnitsSpecified = true
-                }
-            };
+                },
 
-            // package insured value
-            request.RequestedShipment.RequestedPackageLineItems[i].InsuredValue = new Money
-            {
-                Amount = package.InsuredValue,
-                AmountSpecified = package.InsuredValue > 0,
-                Currency = shipment.Options.GetCurrencyCode(),
+                // package insured value
+                InsuredValue = new Money
+                {
+                    Amount = package.InsuredValue,
+                    AmountSpecified = package.InsuredValue > 0,
+                    Currency = shipment.Options.GetCurrencyCode(),
+                }
             };
 
             if (package.SignatureRequiredOnDelivery)
             {
-                var signatureOptionDetail = new SignatureOptionDetail { OptionType = SignatureOptionType.INDIRECT };
+                var signatureOptionDetail = new SignatureOptionDetail
+                {
+                    OptionType = SignatureOptionType.INDIRECT
+                };
+
                 request.RequestedShipment.RequestedPackageLineItems[i].SpecialServicesRequested = new PackageSpecialServicesRequested()
                 {
                     SignatureOptionDetail = signatureOptionDetail

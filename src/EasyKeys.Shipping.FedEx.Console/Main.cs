@@ -93,10 +93,10 @@ public class Main : IMain
             }
 
             // if cod = null then nothing to process.
-            var cod = new CollectOnDelivery
+            var cod = new FedExCollectOnDelivery
             {
                 Amount = 250,
-                CollectionType = "guaranteed_funds",
+                CollectionType = FedExCollectionType.GuaranteedFunds,
                 Currency = "USD"
             };
 
@@ -107,7 +107,7 @@ public class Main : IMain
 
                 TransactionId = "1234-transaction",
 
-                PaymentType = "sender",
+                PaymentType = FedExPaymentType.Sender,
 
                 RateRequestType = "list",
 

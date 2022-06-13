@@ -27,7 +27,7 @@ public static class CreateIndiciumRequestExtensions
 
     public static CreateIndiciumRequest SetCustomsInformation(
         this CreateIndiciumRequest request,
-        ContentType contentType,
+        StampsContentType contentType,
         IList<Commodity> commodities,
         CustomsInformation customsInformation,
         double weightLb)

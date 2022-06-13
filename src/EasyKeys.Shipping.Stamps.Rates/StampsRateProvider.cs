@@ -34,7 +34,7 @@ public class StampsRateProvider : IStampsRateProvider
 
             var rates = await GetRatesAsync(rateRequest, shipment, rateOptions, cancellationToken);
 
-            var packageType = PackageType.FromName(shipment.Options.PackagingType);
+            var packageType = StampsPackageType.FromName(shipment.Options.PackagingType);
 
             foreach (var rate in rates)
             {
@@ -69,7 +69,7 @@ public class StampsRateProvider : IStampsRateProvider
 
             var rates = await GetRatesAsync(rateRequest, shipment, rateOptions, cancellationToken);
 
-            var packageType = PackageType.FromName(shipment.Options.PackagingType);
+            var packageType = StampsPackageType.FromName(shipment.Options.PackagingType);
 
             foreach (var rate in rates)
             {

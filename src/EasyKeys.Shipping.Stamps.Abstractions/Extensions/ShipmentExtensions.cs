@@ -17,7 +17,7 @@ public static class ShipmentExtensions
 
             DeclaredValue = shipment.Packages.Sum(x => x.InsuredValue),
 
-            PackageType = PackageType.FromName(shipment.Options.PackagingType).Value switch
+            PackageType = StampsPackageType.FromName(shipment.Options.PackagingType).Value switch
             {
                 (int)PackageTypeV11.Pak => PackageTypeV11.Pak,
                 (int)PackageTypeV11.Package => PackageTypeV11.Package,

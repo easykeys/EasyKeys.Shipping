@@ -1,4 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Abstractions.Models;
 
 namespace EasyKeys.Shipping.FedEx.Shipment.Models;
 
@@ -66,12 +67,12 @@ public class ShipmentDetails
     /// Default payment type would be sender unless its a COD.
     /// Sender,ThirdParty,Recipient,Account,Collect.
     /// </summary>
-    public string PaymentType { get; set; } = "SENDER";
+    public FedExPaymentType PaymentType { get; set; } = FedExPaymentType.Sender;
 
     /// <summary>
     /// Collect on delivery is defaulted to false.
     /// </summary>
-    public CollectOnDelivery? CollectOnDelivery { get; set; }
+    public FedExCollectOnDelivery? CollectOnDelivery { get; set; }
 
     /// <summary>
     /// FedEx label options.

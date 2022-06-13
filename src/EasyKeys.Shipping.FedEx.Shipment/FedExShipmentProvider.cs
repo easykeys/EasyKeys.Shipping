@@ -1,4 +1,5 @@
-﻿using EasyKeys.Shipping.Abstractions.Extensions;
+﻿using EasyKeys.Shipping.Abstractions;
+using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
@@ -115,7 +116,9 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
                                     TrackingId = packageDetails?.SelectMany(x => x?.TrackingIds)?.Select(x => x?.TrackingNumber)?.Flatten(";") ?? string.Empty,
 
-                                    ImageType = packageDetails?.Select(x => x?.Label.ImageType)?.ToString() ?? string.Empty,
+                                    // ImageType = shipmentDetails.LabelOptions.ImageType,
+
+                                    ImageType = packageDetails?.Select(x => x?.Label.ImageType)?.FirstOrDefault()?.ToString() ?? string.Empty,
 
                                     Bytes = packageDetails.Select(x => x?.Label?.Parts)?.SelectMany(x => x)?.Select(x => x.Image)?.ToList(),
                                 });
@@ -275,13 +278,13 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         ProcessShipmentRequest request,
         ShipmentDetails details)
     {
-        var paymentType = details.PaymentType.ToLower() switch
+        var paymentType = details.PaymentType.Value switch
         {
-            "sender" => PaymentType.SENDER,
-            "recipient" => PaymentType.RECIPIENT,
-            "third_party" => PaymentType.THIRD_PARTY,
-            "account" => PaymentType.ACCOUNT,
-            "collect" => PaymentType.COLLECT,
+            (int)PaymentType.SENDER => PaymentType.SENDER,
+            (int)PaymentType.RECIPIENT => PaymentType.RECIPIENT,
+            (int)PaymentType.THIRD_PARTY => PaymentType.THIRD_PARTY,
+            (int)PaymentType.ACCOUNT => PaymentType.ACCOUNT,
+            (int)PaymentType.COLLECT => PaymentType.COLLECT,
             _ => PaymentType.SENDER
         };
 
@@ -419,24 +422,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray()
         };
 
-        var eventTypes = new NotificationEventType[0];
+        var eventTypes = new List<NotificationEventType>();
 
-        details.EmailNotification.EmailNotificationTypes.ToList().ForEach(x =>
+        foreach (var item in details.EmailNotification.EmailNotificationTypes)
         {
-            _ = x switch
-            {
-                "On_Shipment" => eventTypes.Append(NotificationEventType.ON_SHIPMENT),
-                "On_Delivery" => eventTypes.Append(NotificationEventType.ON_DELIVERY),
-                "On_Estimated_Delivery" => eventTypes.Append(NotificationEventType.ON_ESTIMATED_DELIVERY),
-                "On_Exception" => eventTypes.Append(NotificationEventType.ON_EXCEPTION),
-                "On_Pickup_Driver_Arrived" => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_ARRIVED),
-                "On_Pickup_Driver_Assigned" => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_ASSIGNED),
-                "On_Pickup_Driver_Departed" => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_DEPARTED),
-                "On_Pickup_Driver_In_Route" => eventTypes.Append(NotificationEventType.ON_PICKUP_DRIVER_EN_ROUTE),
-                "On_Tender" => eventTypes.Append(NotificationEventType.ON_TENDER),
-                _ => default
-            };
-        });
+            eventTypes.Add(item.Name.ToEnum<NotificationEventType>());
+        }
 
         request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
         {
@@ -513,16 +504,15 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                                     Value = request.TransactionDetail.CustomerTransactionId
                                 }
                     }
-                }
-            };
+                },
+                CustomsValue = new Money()
+                {
+                    Amount = details.Commodities.Sum(x => x.CustomsValue),
+                    Currency = shipment.Options.GetCurrencyCode(),
+                },
 
-            request.RequestedShipment.CustomsClearanceDetail.CustomsValue = new Money()
-            {
-                Amount = details.Commodities.Sum(x => x.CustomsValue),
-                Currency = shipment.Options.GetCurrencyCode(),
+                DutiesPayment = request.RequestedShipment.ShippingChargesPayment
             };
-
-            request.RequestedShipment.CustomsClearanceDetail.DutiesPayment = request.RequestedShipment.ShippingChargesPayment;
 
             var commodities = new List<ShipClient.v25.Commodity>();
 
@@ -602,12 +592,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         Currency = shipment.Options.PreferredCurrencyCode
                     },
 
-                    CollectionType = details.CollectOnDelivery.CollectionType.ToUpper() switch
+                    CollectionType = details.CollectOnDelivery.CollectionType.Value switch
                     {
-                        "GUARANTEED_FUNDS" => CodCollectionType.GUARANTEED_FUNDS,
-                        "CASH" => CodCollectionType.CASH,
-                        "ANY" => CodCollectionType.ANY,
-                        "COMPANY_CHECK" => CodCollectionType.COMPANY_CHECK,
+                        (int)CodCollectionType.GUARANTEED_FUNDS => CodCollectionType.GUARANTEED_FUNDS,
+                        (int)CodCollectionType.CASH => CodCollectionType.CASH,
+                        (int)CodCollectionType.ANY => CodCollectionType.ANY,
+                        (int)CodCollectionType.COMPANY_CHECK => CodCollectionType.COMPANY_CHECK,
                         _ => CodCollectionType.GUARANTEED_FUNDS
                     }
                 }

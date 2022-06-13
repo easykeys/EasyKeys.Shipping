@@ -40,11 +40,7 @@ public class ShipmentOptions
     public string PackagingType { get; } = "YOUR_PACKAGING";
 
     /// <summary>
-    /// RegularPickup,
-    /// DropBox,
-    /// BusinessServiceCenter,
-    /// RequestCourier,
-    /// Station.
+    /// Based on the provider.
     /// </summary>
-    public string DropOffType { get; set; } = "RegularPickup";
+    public string DropOffType { get; set; } = "REGULAR_PICKUP";
 }
