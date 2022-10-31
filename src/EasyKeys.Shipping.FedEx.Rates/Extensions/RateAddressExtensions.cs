@@ -21,14 +21,14 @@ public static class RateAddressExtensions
 
         return new RateClient.v28.Address
         {
-            StreetLines = address.GetStreetLines(),
-            City = address.City?.Trim(),
+            StreetLines = address?.GetStreetLines(),
+            City = address?.City?.Trim(),
             StateOrProvinceCode = stateOrProvince,
-            PostalCode = address.PostalCode?.Trim(),
-            CountryCode = address.GetCountryCode().Trim(),
-            CountryName = address.GetCountryName(),
-            Residential = address.IsResidential,
-            ResidentialSpecified = address.IsResidential,
+            PostalCode = address?.PostalCode?.Trim(),
+            CountryCode = address?.GetCountryCode().Trim(),
+            CountryName = address?.GetCountryName(),
+            Residential = address?.IsResidential ?? false,
+            ResidentialSpecified = address?.IsResidential ?? false,
         };
     }
 }

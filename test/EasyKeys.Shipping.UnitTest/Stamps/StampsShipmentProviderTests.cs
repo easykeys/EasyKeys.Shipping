@@ -1,5 +1,4 @@
-﻿
-using Bet.Extensions.Testing.Logging;
+﻿using Bet.Extensions.Testing.Logging;
 
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;

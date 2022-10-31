@@ -89,12 +89,12 @@ public class FedExTrackingProvider : IFedExTrackingProvider
             if ((trackingReply.TrackReply?.HighestSeverity != NotificationSeverityType.ERROR)
                     && (trackingReply.TrackReply?.HighestSeverity != NotificationSeverityType.FAILURE))
             {
-                var events = trackingReply?.TrackReply?.CompletedTrackDetails?.SelectMany(x => x?.TrackDetails)
-                                                                             ?.SelectMany(x => x?.Events) ?? new List<TrackEvent>();
+                var events = trackingReply?.TrackReply?.CompletedTrackDetails?.SelectMany(x => x.TrackDetails)
+                                                                             ?.SelectMany(x => x.Events) ?? new List<TrackEvent>();
 
                 var d = trackingReply?.TrackReply?.Notifications.Select(x => x.Message);
 
-                if (d.Any())
+                if (d?.Any() ?? false)
                 {
                     trackingInformation.TrackingEvents.Add(new TrackingEvent()
                     {

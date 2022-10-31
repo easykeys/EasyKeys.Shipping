@@ -274,7 +274,6 @@ public abstract class StampsPackageType : SmartEnum<StampsPackageType>
 
         public override decimal MaxInternationalWeight => 70m;
 
-
         public override decimal MinWeight => 0.001m;
 
         public override string Category => "DefaultPackage";

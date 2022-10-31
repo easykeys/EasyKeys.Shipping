@@ -4,7 +4,6 @@ namespace EasyKeys.Shipping.Stamps.Abstractions.Services;
 
 public interface IStampsClientService
 {
-
     Task<CleanseAddressResponse> CleanseAddressAsync(CleanseAddressRequest request, CancellationToken cancellationToken);
 
     Task<GetRatesResponse> GetRatesAsync(GetRatesRequest request, CancellationToken cancellationToken);

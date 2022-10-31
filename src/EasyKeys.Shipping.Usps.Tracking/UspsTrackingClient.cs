@@ -40,9 +40,9 @@ namespace EasyKeys.Shipping.Usps.Tracking
             {
                 request = new TrackFieldRequest
                 {
-                    USERID = _options.UserId,
+                    USERID = _options?.UserId,
                     Revision = "1",
-                    ClientIp = _options.ClientIp,
+                    ClientIp = _options?.ClientIp,
                     TrackID = input.Skip(index).Take(10).ToList(),
                     SourceId = _options?.SourceId ?? nameof(UspsTrackingClient)
                 };
@@ -61,7 +61,7 @@ namespace EasyKeys.Shipping.Usps.Tracking
 
                 var formData = new FormUrlEncodedContent(new[]
                 {
-                    new KeyValuePair<string,string>("API", "TrackV2"),
+                    new KeyValuePair<string, string>("API", "TrackV2"),
                     new KeyValuePair<string, string>("XML", xml)
                 });
 
@@ -73,7 +73,7 @@ namespace EasyKeys.Shipping.Usps.Tracking
                 {
                     XmlSerializer deserializer = new(typeof(TrackResponse));
                     var ms = new MemoryStream(Encoding.UTF8.GetBytes(content));
-                    var responseJson = (TrackResponse)deserializer.Deserialize(ms);
+                    var responseJson = (TrackResponse)deserializer.Deserialize(ms)!;
 
                     // todo: save response data to correct input data
                     foreach (var trackInfo in responseJson.TrackInfo)
@@ -106,7 +106,7 @@ namespace EasyKeys.Shipping.Usps.Tracking
         {
             List<TrackID> list = new() { new TrackID() { ID = trackingNumber } };
 
-            return (await GetTrackInfoAsync(list, cancellationToken)).FirstOrDefault();
+            return (await GetTrackInfoAsync(list, cancellationToken)).FirstOrDefault()!;
         }
 
         public async Task<List<TrackInfo>> GetTrackInfoAsync(List<string> trackingNumbers, CancellationToken cancellationToken)

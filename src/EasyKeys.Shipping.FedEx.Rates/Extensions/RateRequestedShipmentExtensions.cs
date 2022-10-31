@@ -1,5 +1,4 @@
-﻿
-using RateClient.v28;
+﻿using RateClient.v28;
 
 namespace EasyKeys.Shipping.FedEx.Rates.Extensions;
 

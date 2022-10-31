@@ -176,7 +176,7 @@ public class FedExRateProviderTests
         var packages = new List<Package>
             {
                 // fedex envelope
-                new Package(2m, 4m, 8m, 9m / 16,20)
+                new Package(2m, 4m, 8m, 9m / 16, 20)
             };
 
         var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now);

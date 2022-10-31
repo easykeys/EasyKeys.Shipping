@@ -73,19 +73,20 @@ public class Main : IMain
 
         var models = new List<RateModelDto>();
 
-        //var internationalFileName = "Embeded.intnl-addresses.json";
-        //var internationModels = LoadModels<List<RateModelDto>>(internationalFileName);
-        //models.AddRange(internationModels);
-
+        // var internationalFileName = "Embeded.intnl-addresses.json";
+        // var internationModels = LoadModels<List<RateModelDto>>(internationalFileName);
+        // models.AddRange(internationModels);
         var dometsticFileName = "Embeded.domestic-addresses.json";
         var dometicModels = LoadModels<List<RateModelDto>>(dometsticFileName);
-        models.AddRange(dometicModels);
+        if (dometicModels != null)
+        {
+            models.AddRange(dometicModels);
+        }
 
         await RunConcurrentlyAsync(origin, sender, models, cancellationToken);
 
         // test tasks based execution
         // await RunNoneConcurrentlyAsync(originAddress, sender, models, cancellationToken);
-
         return 0;
     }
 

@@ -46,11 +46,11 @@ public static class ShipmentExtensions
 
             WeightOz = 0.0,
 
-            Length = (double)shipment.Packages.FirstOrDefault().Dimensions.Length,
+            Length = (double)(shipment.Packages.FirstOrDefault()?.Dimensions.Length ?? 0.0m),
 
-            Width = (double)shipment.Packages.FirstOrDefault().Dimensions.Width,
+            Width = (double)(shipment.Packages?.FirstOrDefault()?.Dimensions.Width ?? 0.0m),
 
-            Height = (double)shipment.Packages.FirstOrDefault().Dimensions.Height
+            Height = (double)(shipment.Packages?.FirstOrDefault()?.Dimensions.Height ?? 0.0m)
         };
 
         // priority express & priority express international service types do not except any box package types

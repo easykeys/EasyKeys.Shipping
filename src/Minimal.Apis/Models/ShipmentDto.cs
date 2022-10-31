@@ -13,7 +13,7 @@ public class ShipmentDto
         CountryCode = "US"
     };
 
-    public Address? Destination { get; set; }
+    public Address Destination { get; set; } = new Address();
 
-    public PackageDto? Package { get; set; }
+    public PackageDto Package { get; set; } = new PackageDto();
 }

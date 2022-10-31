@@ -104,7 +104,7 @@ public class Package : ValueObject
     {
         get
         {
-            var poundsAndOunces = new PoundsAndOunces();
+            var poundsAndOunces = default(PoundsAndOunces);
             if (Weight <= 0)
             {
                 return poundsAndOunces;

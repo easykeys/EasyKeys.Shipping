@@ -312,3 +312,6 @@ dotnet_diagnostic.CA1815.severity = silent
 
 # Default severity for analyzer diagnostics with category 'StyleCop.CSharp.MaintainabilityRules'
 dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = silent
+
+# Default severity for all analyzer diagnostics
+dotnet_analyzer_diagnostic.severity = silent

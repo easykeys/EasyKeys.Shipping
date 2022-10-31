@@ -6,5 +6,5 @@ public class AddressValidationDto
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
-    public Address? Address { get; set; }
+    public Address Address { get; set; } = new Address();
 }

@@ -71,7 +71,7 @@ app.MapPost("/stamps/addressValidation", async (
     IStampsAddressValidationProvider addressProvider,
     CancellationToken cancellationToken) =>
 {
-    var address = new ValidateAddress(model.Id, model!.Address);
+    var address = new ValidateAddress(model.Id, model.Address);
     var validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
 
     return Results.Json(validatedAddress, options);
@@ -85,7 +85,7 @@ app.MapPost("/fedex/addressValidation", async (
     IFedExAddressValidationProvider addressProvider,
     CancellationToken cancellationToken) =>
 {
-    var address = new ValidateAddress(model.Id, model!.Address);
+    var address = new ValidateAddress(model.Id, model.Address);
     var validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
 
     return Results.Json(validatedAddress, options);

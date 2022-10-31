@@ -53,20 +53,20 @@ public class ExtensionTests
 
         var mappedAddress = address?.Map(recipient);
 
-        Assert.Equal(mappedAddress.FullName, recipient.FullName);
-        Assert.Equal(mappedAddress.FirstName, recipient.FirstName);
-        Assert.Equal(mappedAddress.LastName, recipient.LastName);
-        Assert.Equal(mappedAddress.PhoneNumber, recipient.PhoneNumber);
-        Assert.Equal(mappedAddress.EmailAddress, recipient.Email);
+        Assert.Equal(mappedAddress?.FullName, recipient.FullName);
+        Assert.Equal(mappedAddress?.FirstName, recipient.FirstName);
+        Assert.Equal(mappedAddress?.LastName, recipient.LastName);
+        Assert.Equal(mappedAddress?.PhoneNumber, recipient.PhoneNumber);
+        Assert.Equal(mappedAddress?.EmailAddress, recipient.Email);
 
-        Assert.Equal(mappedAddress.Address1, address.StreetLine);
-        Assert.Equal(mappedAddress.Address2, address.StreetLine2);
-        Assert.Equal(mappedAddress.City, address.City);
-        Assert.Null(mappedAddress.State);
-        Assert.Equal(mappedAddress.Province, address.StateOrProvince);
-        Assert.Equal(mappedAddress.Country, address.CountryCode);
-        Assert.Null(mappedAddress.ZIPCode);
-        Assert.Equal(mappedAddress.PostalCode, address.PostalCode);
+        Assert.Equal(mappedAddress?.Address1, address?.StreetLine);
+        Assert.Equal(mappedAddress?.Address2, address?.StreetLine2);
+        Assert.Equal(mappedAddress?.City, address?.City);
+        Assert.Null(mappedAddress?.State);
+        Assert.Equal(mappedAddress?.Province, address?.StateOrProvince);
+        Assert.Equal(mappedAddress?.Country, address?.CountryCode);
+        Assert.Null(mappedAddress?.ZIPCode);
+        Assert.Equal(mappedAddress?.PostalCode, address?.PostalCode);
     }
 
     [Theory]

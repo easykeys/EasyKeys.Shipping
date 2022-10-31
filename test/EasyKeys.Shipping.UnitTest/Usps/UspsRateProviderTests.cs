@@ -20,28 +20,49 @@ public class UspsRateProviderTests
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
     }
 
-    public static IEnumerable<object[]> EnvelopeData()
-    {
-        // max for all parameters
-        yield return new object[] { new Package(15m, 12m, 0.75m, 15m / 16, 0m), true, true };
+    public static IEnumerable<object[]> EnvelopeData =>
+       new List<object[]>
+       {
+            // max for all parameters
+            new object[] { new Package(15m, 12m, 0.75m, 15m / 16, 0m), true, true },
 
-        // min for all parameters
-        yield return new object[] { new Package(11.50m, 6.125m, 0.25m, 0.125m, 0m), true, true };
+            // min for all parameters
+            new object[] { new Package(11.50m, 6.125m, 0.25m, 0.125m, 0m), true, true },
 
-        yield return new object[] { new Package(15m, 7m, 0.25m, 0.125m, 0m), true, true };
+            new object[] { new Package(15m, 7m, 0.25m, 0.125m, 0m), true, true },
 
-        // width is false, but weight is true
-        yield return new object[] { new Package(15m, 13m, 0.25m, 0.125m, 0m), false, true };
-        yield return new object[] { new Package(15m, 6m, 0.25m, 0.125m, 0m), false, true };
+            // width is false, but weight is true
+            new object[] { new Package(15m, 13m, 0.25m, 0.125m, 0m), false, true },
+            new object[] { new Package(15m, 6m, 0.25m, 0.125m, 0m), false, true },
 
-        // height (thickness) is false, but weight is true
-        yield return new object[] { new Package(11.5m, 7m, 0.85m, 0.125m, 0m), false, true };
-        yield return new object[] { new Package(11.5m, 7m, 0.15m, 0.125m, 0m), false, true };
+            // height (thickness) is false, but weight is true
+            new object[] { new Package(11.5m, 7m, 0.85m, 0.125m, 0m), false, true },
+            new object[] { new Package(11.5m, 7m, 0.15m, 0.125m, 0m), false, true },
 
-        // length is false and weight is false
-        yield return new object[] { new Package(15.5m, 12m, 0.75m, 0.98m, 0m), false, false };
-        yield return new object[] { new Package(11m, 12m, 0.75m, 0.98m, 0m), false, false };
-    }
+            // length is false and weight is false
+            new object[] { new Package(15.5m, 12m, 0.75m, 0.98m, 0m), false, false },
+            new object[] { new Package(11m, 12m, 0.75m, 0.98m, 0m), false, false },
+       };
+
+    public static IEnumerable<object[]> PriorityData =>
+       new List<object[]>
+       {
+                    new object[] { 1.2M },
+                    new object[] { 2.1M },
+                    new object[] { 3.3M },
+                    new object[] { 3.75M },
+                    new object[] { 33.3M },
+       };
+
+    public static IEnumerable<object[]> FistClassData =>
+        new List<object[]>
+        {
+                        new object[] { 1.0M, 4.95m },
+                        new object[] { 5.0M, 5.90m },
+                        new object[] { 10.0M, 6.20m },
+                        new object[] { 13.0M, 7.55m },
+                        new object[] { 15.0M, 7.55m },
+        };
 
     [Theory]
     [MemberData(nameof(EnvelopeData))]
@@ -51,16 +72,6 @@ public class UspsRateProviderTests
         Assert.Equal(d, package.IsEnvelope());
         Assert.Equal(w, package.IsEvelopeWeight());
     }
-
-    public static IEnumerable<object[]> PriorityData =>
-           new List<object[]>
-           {
-                    new object[] { 1.2M },
-                    new object[] { 2.1M },
-                    new object[] { 3.3M },
-                    new object[] { 3.75M },
-                    new object[] { 33.3M },
-           };
 
     [Theory]
     [MemberData(nameof(PriorityData))]
@@ -115,16 +126,6 @@ public class UspsRateProviderTests
 
         _output.WriteLine($"{rate?.ServiceName} - ${rate?.TotalCharges} - {rate?.TotalCharges2} - {rate?.GuaranteedDelivery}");
     }
-
-    public static IEnumerable<object[]> FistClassData =>
-    new List<object[]>
-    {
-                    new object[] { 1.0M, 4.65m },
-                    new object[] { 5.0M, 5.20m },
-                    new object[] { 10.0M, 5.90m },
-                    new object[] { 13.0M, 7.25m },
-                    new object[] { 15.0M, 7.25m },
-    };
 
     [Theory]
     [MemberData(nameof(FistClassData))]

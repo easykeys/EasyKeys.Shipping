@@ -114,13 +114,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
                                     TotalCharges2 = totalCharges2,
 
-                                    TrackingId = packageDetails?.SelectMany(x => x?.TrackingIds)?.Select(x => x?.TrackingNumber)?.Flatten(";") ?? string.Empty,
+                                    TrackingId = packageDetails?.SelectMany(x => x.TrackingIds)?.Select(x => x.TrackingNumber)?.Flatten(";") ?? string.Empty,
 
                                     // ImageType = shipmentDetails.LabelOptions.ImageType,
+                                    ImageType = packageDetails?.Select(x => x.Label.ImageType)?.FirstOrDefault().ToString() ?? string.Empty,
 
-                                    ImageType = packageDetails?.Select(x => x?.Label.ImageType)?.FirstOrDefault()?.ToString() ?? string.Empty,
-
-                                    Bytes = packageDetails.Select(x => x?.Label?.Parts)?.SelectMany(x => x)?.Select(x => x.Image)?.ToList(),
+                                    Bytes = packageDetails?.Select(x => x.Label.Parts)?.SelectMany(x => x)?.Select(x => x.Image)?.ToList(),
                                 });
 
                     masterTrackingId = reply?.CompletedShipmentDetail.MasterTrackingId;
@@ -478,7 +477,6 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 },
             }
         };
-
 
         if (!shipment.DestinationAddress.IsUnitedStatesAddress())
         {

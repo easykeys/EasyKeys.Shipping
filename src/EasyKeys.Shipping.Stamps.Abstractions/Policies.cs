@@ -35,6 +35,8 @@ public static class Policies
                     logger.LogWarning("Clearing Token, {exType} : {message} was thrown.", ex.GetType().ToString(), ex.Message);
 
                     client.ClearTokens();
+
+                    await Task.CompletedTask;
                 })
                 .WrapAsync(timeoutPolicy);
     }

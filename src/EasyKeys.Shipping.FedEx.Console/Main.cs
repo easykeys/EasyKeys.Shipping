@@ -83,7 +83,7 @@ public class Main : IMain
             var proposedAddress = await ValidateAsync(model.Address, false, cancellationToken);
 
             // 2. get rates based on the package size
-            var shipments = await GetRatesAsync(originAddress, proposedAddress.ProposedAddress, model.Packages[0], cancellationToken);
+            var shipments = await GetRatesAsync(originAddress, proposedAddress.ProposedAddress!, model.Packages[0], cancellationToken);
             var rates = shipments.SelectMany(x => x.Rates);
             var flatRates = rates.Select(x => $"{x.Name}:{x.ServiceName}:{x.PackageType} - {x.TotalCharges} - {x.TotalCharges2}");
 
@@ -134,7 +134,10 @@ public class Main : IMain
                 selectedRate = FedExServiceType.FedExInternationalPriority;
                 shipment = GetShipment(shipments, selectedRate);
 
-                details.Commodities.Add(model.Commodity);
+                if (model.Commodity != null)
+                {
+                    details.Commodities.Add(model.Commodity);
+                }
 
                 // var shipmentOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now, false);
                 // shipment = new Shipping.Abstractions.Models.Shipment(originAddress, proposedAddress.ProposedAddress, model.Packages, shipmentOptions);
@@ -145,7 +148,7 @@ public class Main : IMain
 
             if (result.InternalErrors.Count > 0)
             {
-                _logger.LogWarning("Failed {city} to generate label", proposedAddress.ProposedAddress.City);
+                _logger.LogWarning("Failed {city} to generate label", proposedAddress?.ProposedAddress?.City);
                 continue;
             }
 

@@ -21,19 +21,19 @@
 
         public override string Message => _Exception.Message;
 
-        public override string Source
+        public override string? Source
         {
-            get => _Exception.Source;
+            get => _Exception?.Source;
             set => _Exception.Source = value;
         }
 
-        public override string StackTrace => _Exception.StackTrace;
+        public override string? StackTrace => _Exception?.StackTrace;
 
         public override System.Collections.IDictionary Data => _Exception.Data;
 
-        public override string HelpLink
+        public override string? HelpLink
         {
-            get => _Exception.HelpLink;
+            get => _Exception?.HelpLink;
             set => _Exception.HelpLink = value;
         }
     }

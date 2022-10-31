@@ -88,7 +88,7 @@ public class StampsRateProvider : IStampsRateProvider
         {
             var error = ex?.InnerException?.Message ?? ex?.Message ?? string.Empty;
             _logger.LogError("{name} : {message}", nameof(StampsRateProvider), error);
-            shipment.InternalErrors.Add(ex.Message);
+            shipment.InternalErrors.Add(error);
         }
 
         return shipment;

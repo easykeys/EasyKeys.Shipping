@@ -41,6 +41,7 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
             validateAddress.InternalErrors.Add(ex.Message);
             validateAddress.ValidationBag.Add("CityStateZipOK", "false");
             validateAddress.ValidationBag.Add("AddressMatch", "false");
+            validateAddress.ValidationBag.Add("IsPOBox", "false");
             validateAddress.ValidationBag.Add("ValidationResult", ex.Message);
 
             return validateAddress;
@@ -52,8 +53,8 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
         if (request != null)
         {
             request.ValidationBag.Add("CityStateZipOK", $"{response.CityStateZipOK}");
-
             request.ValidationBag.Add("AddressMatch", $"{response.AddressMatch}");
+            request.ValidationBag.Add("IsPOBox", $"{response.IsPOBox}");
 
             var cleansedAddress = response.CandidateAddresses.FirstOrDefault();
 

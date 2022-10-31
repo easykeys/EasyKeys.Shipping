@@ -12,7 +12,7 @@ public class AddressParseResult
     /// <summary>
     /// The street line.
     /// </summary>
-    private string _streetLine;
+    private string? _streetLine;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AddressParseResult"/> class.
