@@ -1,8 +1,9 @@
 
 # validate the address
-@fileName = address-domestic-2.json
+#@fileName = address-domestic-2.json
 #@fileName =address-intl-1.json
 
+@fileName = address-ste.json
 
 POST https://{{host}}/fedex/addressValidation
 Content-Type: application/json

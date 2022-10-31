@@ -1,0 +1,12 @@
+{
+    "id": "2345465",
+    "address": {
+        "streetLine": "7675 Wellness Way",
+        "streetLine2": "Ste 430",
+        "city": "West Chester",
+        "stateOrProvince": "OH",
+        "postalCode": "",
+        "countryCode": "US",
+        "isResidential": false
+    }
+}

@@ -6,6 +6,14 @@ public static class RateAddressExtensions
     {
         address = address ?? throw new ArgumentNullException(nameof(address));
 
+        string? zipCode = null;
+
+        if (address.IsUnitedStatesAddress()
+            && !string.IsNullOrEmpty(address.PostalCode))
+        {
+            zipCode = address.PostalCode.Substring(0, 5);
+        }
+
         return new StampsClient.v111.Address
         {
             FullName = "This is required for address validation",
@@ -14,7 +22,7 @@ public static class RateAddressExtensions
             City = address.City,
             State = address.IsUnitedStatesAddress() ? address.StateOrProvince : null,
             Province = !address.IsUnitedStatesAddress() ? address.StateOrProvince : null,
-            ZIPCode = address.IsUnitedStatesAddress() ? address.PostalCode.Substring(0, 5) : null,
+            ZIPCode = zipCode,
             PostalCode = (!address.IsUnitedStatesAddress()) ? address.PostalCode : null,
             Country = address.GetCountryCode(),
         };

@@ -50,10 +50,14 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
                 var addressResults = result.AddressResults[0];
                 var effectiveAddress = addressResults.EffectiveAddress;
                 var parsedAddress = addressResults.ParsedAddressPartsDetail;
+
                 var lines = effectiveAddress?.StreetLines ?? new string[1] { string.Empty };
+                var address1 = lines[0];
+                var address2 = lines.Length > 1 ? lines[1] : string.Empty;
 
                 request.ProposedAddress = new Shipping.Abstractions.Models.Address(
-                    lines[0],
+                    address1,
+                    address2,
                     effectiveAddress?.City ?? string.Empty,
                     effectiveAddress?.StateOrProvinceCode ?? string.Empty,
                     effectiveAddress?.PostalCode ?? string.Empty,
@@ -118,7 +122,20 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
 
     private v4.AddressValidationRequest CreateRequest(ValidateAddress request)
     {
-        var address = request.ProposedAddress;
+        var address = request.OriginalAddress;
+
+        var addressToValidate = new v4.AddressToValidate
+        {
+            ClientReferenceId = request.Id,
+            Address = new v4.Address
+            {
+                StreetLines = address?.GetStreetLines(),
+                PostalCode = address?.PostalCode,
+                City = address?.City,
+                StateOrProvinceCode = address?.StateOrProvince,
+                CountryCode = address?.CountryCode
+            }
+        };
 
         return new v4.AddressValidationRequest
         {
@@ -145,18 +162,7 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
             Version = new v4.VersionId(),
             AddressesToValidate = new v4.AddressToValidate[1]
             {
-                    new v4.AddressToValidate
-                    {
-                        ClientReferenceId = request.Id,
-                        Address = new v4.Address
-                        {
-                            StreetLines = address?.GetStreetLines(),
-                            PostalCode = address?.PostalCode,
-                            City = address?.City,
-                            StateOrProvinceCode = address?.StateOrProvince,
-                            CountryCode = address?.CountryCode
-                        }
-                    }
+                   addressToValidate
             },
 
             InEffectAsOfTimestamp = DateTime.Now,

@@ -24,7 +24,7 @@ public class StampsAddressValidationProviderTests
     [Theory]
     [ClassData(typeof(AddressTestData))]
     public async Task Address_Validation_Successfully(
-        EasyKeys.Shipping.Abstractions.Models.Address address,
+        Address address,
         int errorCount,
         int internalErrorCount,
         bool cityStateZipOk,
@@ -76,7 +76,7 @@ public class StampsAddressValidationProviderTests
         {
             yield return new object[]
             {
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             StreetLine = "1550 Central Ave",
                             StreetLine2 = "Apt 35",
@@ -103,7 +103,7 @@ public class StampsAddressValidationProviderTests
             };
             yield return new object[]
             {
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             City = "Riverside",
                             StateOrProvince = "CA",
@@ -128,7 +128,7 @@ public class StampsAddressValidationProviderTests
             };
             yield return new object[]
             {
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             City = "Riverside",
                             StreetLine = "is this a real street",
@@ -155,7 +155,7 @@ public class StampsAddressValidationProviderTests
             yield return new object[]
             {
                  // International Address
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             City = "San Diana",
                             StreetLine = "Strada Gilda 2 Piano 9",
@@ -182,7 +182,7 @@ public class StampsAddressValidationProviderTests
             yield return new object[]
             {
                  // International Address
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             City = "Barrhead",
                             StreetLine = "512 Venture Place",
