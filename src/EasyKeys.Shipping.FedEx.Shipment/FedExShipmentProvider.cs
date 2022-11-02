@@ -72,7 +72,9 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     var totalCharges2 = new ShipmentCharges();
 
                     var packageDetails = reply?.CompletedShipmentDetail?.CompletedPackageDetails?.ToList() ?? new List<CompletedPackageDetail>();
+                    var airWaybillLabels = packageDetails?.FirstOrDefault()?.PackageDocuments.ToList() ?? new List<ShippingDocument>();
                     var rateDetails = reply?.CompletedShipmentDetail?.ShipmentRating?.ShipmentRateDetails?.ToList() ?? new List<ShipmentRateDetail>();
+                    var shipmentDocuments = reply?.CompletedShipmentDetail?.ShipmentDocuments?.ToList() ?? new List<ShippingDocument>();
 
                     // international labels only
                     if (reply?.CompletedShipmentDetail?.ShipmentRating != null)
@@ -103,6 +105,29 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                             totalCharges2.BaseCharge = payerListIntl.Sum(x => x.TotalBaseCharge.Amount);
                             totalCharges2.NetCharge = payerListIntl.Sum(x => x.TotalNetCharge.Amount);
                             totalCharges2.Surcharges = payerListIntl.Sum(x => x.TotalSurcharges.Amount);
+                        }
+
+                        foreach (var document in shipmentDocuments)
+                        {
+                            label.ShippingDocuments.Add(
+                                new Document()
+                                {
+                                    ImageType = document.ImageType.ToString() ?? string.Empty,
+                                    Bytes = document?.Parts?.Select(x => x)?.Select(x => x.Image)?.ToList(),
+                                    DocumentName = document?.Type.ToString() ?? string.Empty,
+                                    CopiesToPrint = document?.CopiesToPrint ?? string.Empty
+                                });
+                        }
+
+                        foreach (var awbLabels in airWaybillLabels)
+                        {
+                            label.Labels.Add(
+                                new PackageLabelDetails
+                                {
+                                    TrackingId = "FEDEX AWB COPY - PLEASE PLACE IN POUCH",
+                                    ImageType = awbLabels.ImageType.ToString(),
+                                    Bytes = awbLabels.Parts.Select(x => x.Image)?.ToList()
+                                });
                         }
                     }
 
@@ -486,21 +511,21 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 {
                     CustomerReferences = new CustomerReference[]
                     {
-                                new CustomerReference
-                                {
-                                    CustomerReferenceType = details.CustomerReferenceType.ToLower() switch
-                                                        {
-                                                            "customer_reference" => CustomerReferenceType.CUSTOMER_REFERENCE,
-                                                            "department_number" => CustomerReferenceType.DEPARTMENT_NUMBER,
-                                                            "intracountry_regulatory_reference" => CustomerReferenceType.INTRACOUNTRY_REGULATORY_REFERENCE,
-                                                            "invoice_number" => CustomerReferenceType.INVOICE_NUMBER,
-                                                            "po_number" => CustomerReferenceType.P_O_NUMBER,
-                                                            "rma_association" => CustomerReferenceType.RMA_ASSOCIATION,
-                                                            "shipment_integrity" => CustomerReferenceType.SHIPMENT_INTEGRITY,
-                                                            _ => CustomerReferenceType.CUSTOMER_REFERENCE
-                                                        },
-                                    Value = request.TransactionDetail.CustomerTransactionId
-                                }
+                        new CustomerReference
+                        {
+                            CustomerReferenceType = details.CustomerReferenceType.ToLower() switch
+                            {
+                                "customer_reference" => CustomerReferenceType.CUSTOMER_REFERENCE,
+                                "department_number" => CustomerReferenceType.DEPARTMENT_NUMBER,
+                                "intracountry_regulatory_reference" => CustomerReferenceType.INTRACOUNTRY_REGULATORY_REFERENCE,
+                                "invoice_number" => CustomerReferenceType.INVOICE_NUMBER,
+                                "po_number" => CustomerReferenceType.P_O_NUMBER,
+                                "rma_association" => CustomerReferenceType.RMA_ASSOCIATION,
+                                "shipment_integrity" => CustomerReferenceType.SHIPMENT_INTEGRITY,
+                                _ => CustomerReferenceType.CUSTOMER_REFERENCE
+                            },
+                            Value = request.TransactionDetail.CustomerTransactionId
+                        }
                     }
                 },
                 CustomsValue = new Money()
@@ -508,9 +533,84 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     Amount = details.Commodities.Sum(x => x.CustomsValue),
                     Currency = shipment.Options.GetCurrencyCode(),
                 },
-
-                DutiesPayment = request.RequestedShipment.ShippingChargesPayment
+                PartiesToTransactionAreRelated = false,
+                PartiesToTransactionAreRelatedSpecified = true,
+                DutiesPayment = new Payment()
+                {
+                    PaymentType = PaymentType.RECIPIENT,
+                    Payor = new Payor()
+                    {
+                        ResponsibleParty = request.RequestedShipment.ShippingChargesPayment.Payor.ResponsibleParty
+                    }
+                }
             };
+
+            request.RequestedShipment.ShippingDocumentSpecification = new ShippingDocumentSpecification
+            {
+                ShippingDocumentTypes = new RequestedShippingDocumentType[0],
+                CommercialInvoiceDetail = new CommercialInvoiceDetail()
+                {
+                    Format = new ShippingDocumentFormat()
+                    {
+                        ImageType = ShippingDocumentImageType.PDF,
+                        ImageTypeSpecified = true,
+                        StockType = ShippingDocumentStockType.PAPER_LETTER,
+                        StockTypeSpecified = true
+                    },
+                    CustomerImageUsages = new CustomerImageUsage[2]
+                    {
+                        new CustomerImageUsage()
+                        {
+                            Type = CustomerImageUsageType.LETTER_HEAD,
+                            TypeSpecified = true
+                        },
+                        new CustomerImageUsage()
+                        {
+                            Type = CustomerImageUsageType.SIGNATURE,
+                            TypeSpecified = true
+                        }
+                    }
+                }
+            };
+            var documentTypes = new List<RequestedShippingDocumentType>();
+
+            foreach (var docType in details.RequestedDocumentTypes)
+            {
+                documentTypes.Add(
+                    docType.Value switch
+                    {
+                        (int)RequestedShippingDocumentType.COMMERCIAL_INVOICE => RequestedShippingDocumentType.COMMERCIAL_INVOICE,
+                        (int)RequestedShippingDocumentType.PRO_FORMA_INVOICE => RequestedShippingDocumentType.PRO_FORMA_INVOICE,
+                        (int)RequestedShippingDocumentType.CERTIFICATE_OF_ORIGIN => RequestedShippingDocumentType.CERTIFICATE_OF_ORIGIN,
+                        _ => RequestedShippingDocumentType.COMMERCIAL_INVOICE
+                    });
+
+                documentTypes.Distinct();
+
+                if (docType == FedExRequestedDocumentType.CertificateOfOrigin)
+                {
+                    request.RequestedShipment.ShippingDocumentSpecification.CertificateOfOrigin = new CertificateOfOriginDetail()
+                    {
+                        DocumentFormat = new ShippingDocumentFormat()
+                        {
+                            ImageType = ShippingDocumentImageType.PDF,
+                            ImageTypeSpecified = true,
+                            StockType = ShippingDocumentStockType.PAPER_LETTER,
+                            StockTypeSpecified = true
+                        }
+                    };
+                }
+            }
+
+            var totalValue = details.Commodities.Sum(x => x.CustomsValue);
+
+            if ((shipment.DestinationAddress.IsCanadaAddress() && totalValue <= 3300m) ||
+                (shipment.DestinationAddress.IsMexicoAddress() && totalValue <= 1000m))
+            {
+                request.RequestedShipment.CustomsClearanceDetail.CommercialInvoice.SpecialInstructions = "Simplified Low Value Certification/Statement (LVS): I hereby certify that the goods covered by this shipment qualify as an originating good for the purposes of preferential tariff treatment under USMCA/T-MEC/CUSMA";
+            }
+
+            request.RequestedShipment.ShippingDocumentSpecification.ShippingDocumentTypes = documentTypes.ToArray();
 
             var commodities = new List<ShipClient.v25.Commodity>();
 

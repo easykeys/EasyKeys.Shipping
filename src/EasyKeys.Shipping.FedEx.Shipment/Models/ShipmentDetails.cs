@@ -22,6 +22,24 @@ public class ShipmentDetails
     public IList<Commodity> Commodities { get; } = new List<Commodity>();
 
     /// <summary>
+    /// <para>Required for International Shipments Only.</para>
+    /// <para>Defaults to commercial_invoice for international shipments.</para>
+    /// <para>Indicates the types of shipping documents requested by the shipper returned in pdf format with paper letter sizing.</para>
+    ///  <list type="bullet">
+    /// <item>
+    /// <description>commercial_invoice</description>
+    /// </item>
+    /// <item>
+    /// <description>pro_forma_invoice</description>
+    /// </item>
+    /// <item>
+    /// <description>certificate_of_origin</description>
+    /// </item>
+    /// </list>
+    /// </summary>
+    public IList<FedExRequestedDocumentType> RequestedDocumentTypes { get; set; } = new List<FedExRequestedDocumentType>() { FedExRequestedDocumentType.CommercialInvoice };
+
+    /// <summary>
     /// Custom transaction id passed to the request.
     /// </summary>
     public string TransactionId { get; set; } = Guid.NewGuid().ToString();

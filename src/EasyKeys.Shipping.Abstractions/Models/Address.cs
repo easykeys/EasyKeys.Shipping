@@ -133,6 +133,11 @@ public class Address : ValueObject
         return !string.IsNullOrEmpty(CountryCode) && string.Equals(CountryCode, "CA", StringComparison.OrdinalIgnoreCase);
     }
 
+    public bool IsMexicoAddress()
+    {
+        return !string.IsNullOrEmpty(CountryCode) && string.Equals(CountryCode, "MX", StringComparison.OrdinalIgnoreCase);
+    }
+
     /// <summary>
     ///     Returns true if the CountryCode matches US or one of the US territories.
     /// </summary>
