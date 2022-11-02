@@ -3,6 +3,11 @@
 public class ShipmentLabel
 {
     /// <summary>
+    /// (non-label) shipping documents produced with a specific shipment.Commercial Invoice automatically generated for international shipments.
+    /// </summary>
+    public IList<Document> ShippingDocuments { get; set; } = new List<Document>();
+
+    /// <summary>
     /// Labels for the <see cref="Package"/>.
     /// </summary>
     public IList<PackageLabelDetails> Labels { get; set; } = new List<PackageLabelDetails>();
