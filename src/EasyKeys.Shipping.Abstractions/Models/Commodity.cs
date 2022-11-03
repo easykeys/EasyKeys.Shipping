@@ -118,4 +118,9 @@ public class Commodity
     /// Valid values are BUSINESS and CONSUMER.
     /// </summary>
     public string Purpose { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Weight of commodity in lbs.
+    /// </summary>
+    public decimal Weight { get; set; }
 }
