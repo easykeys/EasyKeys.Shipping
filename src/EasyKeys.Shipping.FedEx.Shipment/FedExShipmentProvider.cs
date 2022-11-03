@@ -72,7 +72,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     var totalCharges2 = new ShipmentCharges();
 
                     var packageDetails = reply?.CompletedShipmentDetail?.CompletedPackageDetails?.ToList() ?? new List<CompletedPackageDetail>();
-                    var airWaybillLabels = packageDetails?.FirstOrDefault()?.PackageDocuments.ToList() ?? new List<ShippingDocument>();
+                    var airWaybillLabels = packageDetails?.FirstOrDefault()?.PackageDocuments?.ToList() ?? new List<ShippingDocument>();
                     var rateDetails = reply?.CompletedShipmentDetail?.ShipmentRating?.ShipmentRateDetails?.ToList() ?? new List<ShipmentRateDetail>();
                     var shipmentDocuments = reply?.CompletedShipmentDetail?.ShipmentDocuments?.ToList() ?? new List<ShippingDocument>();
 
@@ -630,7 +630,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     Weight = new Weight()
                     {
                         Units = WeightUnits.LB,
-                        Value = shipment.GetTotalWeight(),
+                        Value = commodity.Weight
                     },
 
                     Quantity = commodity.Quantity,

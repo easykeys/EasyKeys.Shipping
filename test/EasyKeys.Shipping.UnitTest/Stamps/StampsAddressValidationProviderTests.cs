@@ -1,24 +1,22 @@
 ﻿using System.Collections;
 
-using Bet.Extensions.Testing.Logging;
-
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.AddressValidation;
 
-using Microsoft.Extensions.Configuration;
+using EasyKeysShipping.UnitTest.TestHelpers;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyKeysShipping.UnitTest.Stamps;
 
 public class StampsAddressValidationProviderTests
 {
-    private readonly ITestOutputHelper _output;
     private readonly IStampsAddressValidationProvider _validator;
 
     public StampsAddressValidationProviderTests(ITestOutputHelper output)
     {
-        _output = output;
-        _validator = GetAddressValidator();
+        _validator = ShippingProvider.GetStampsServices(output)
+            .GetRequiredService<IStampsAddressValidationProvider>();
     }
 
     [Theory]
@@ -48,26 +46,6 @@ public class StampsAddressValidationProviderTests
         Assert.Equal(Convert.ToBoolean(result.ValidationBag["CityStateZipOK"]), cityStateZipOk);
         Assert.Equal(Convert.ToBoolean(result.ValidationBag["AddressMatch"]), addressMatch);
         Assert.Equal(result.ValidationBag["ValidationResult"], validationResult);
-    }
-
-    private IStampsAddressValidationProvider GetAddressValidator()
-    {
-        var services = new ServiceCollection();
-
-        var dic = new Dictionary<string, string>
-        {
-            { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
-        };
-
-        var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
-        configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
-
-        services.AddLogging(builder => builder.AddXunit(_output));
-        services.AddSingleton<IConfiguration>(configBuilder.Build());
-        services.AddStampsAddressProvider();
-
-        var sp = services.BuildServiceProvider();
-        return sp.GetRequiredService<IStampsAddressValidationProvider>();
     }
 
     private class AddressTestData : IEnumerable<object[]>
