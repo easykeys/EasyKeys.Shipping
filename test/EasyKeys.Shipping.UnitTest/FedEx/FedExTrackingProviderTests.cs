@@ -1,8 +1,7 @@
-﻿using Bet.Extensions.Testing.Logging;
+﻿using EasyKeys.Shipping.FedEx.Tracking;
 
-using EasyKeys.Shipping.FedEx.Tracking;
+using EasyKeysShipping.UnitTest.TestHelpers;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyKeysShipping.UnitTest.FedEx;
@@ -15,7 +14,8 @@ public class FedExTrackingProviderTests
     public FedExTrackingProviderTests(ITestOutputHelper output)
     {
         _output = output;
-        _trackingProvider = GetTrackingProvider();
+        _trackingProvider = ShippingProvider.GetFedExServices(output)
+            .GetRequiredService<IFedExTrackingProvider>();
     }
 
     [Theory]
@@ -29,26 +29,5 @@ public class FedExTrackingProviderTests
         var result = await _trackingProvider.TrackShipmentAsync(trackingId, CancellationToken.None);
 
         Assert.NotNull(result.TrackingEvents);
-    }
-
-    private IFedExTrackingProvider GetTrackingProvider()
-    {
-        var services = new ServiceCollection();
-
-        var dic = new Dictionary<string, string>
-        {
-            { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
-        };
-
-        var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
-        configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
-
-        services.AddLogging(builder => builder.AddXunit(_output));
-        services.AddSingleton<IConfiguration>(configBuilder.Build());
-
-        services.AddFedExTrackingProvider();
-
-        var sp = services.BuildServiceProvider();
-        return sp.GetRequiredService<IFedExTrackingProvider>();
     }
 }

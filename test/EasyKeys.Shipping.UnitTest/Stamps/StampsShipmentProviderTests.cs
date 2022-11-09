@@ -1,6 +1,5 @@
 ﻿using Bet.Extensions.Testing.Logging;
 
-using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Rates.Models;
 using EasyKeys.Shipping.Stamps.Shipment;
@@ -12,6 +11,8 @@ using EasyKeysShipping.UnitTest.TestHelpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using Commodity = EasyKeys.Shipping.Abstractions.Models.Commodity;
+
 namespace EasyKeysShipping.UnitTest.Stamps;
 
 public class StampsShipmentProviderTests
@@ -22,7 +23,7 @@ public class StampsShipmentProviderTests
     public StampsShipmentProviderTests(ITestOutputHelper output)
     {
         _output = output;
-        _shipmentProvider = GetShipmentProvider();
+        _shipmentProvider = ShippingProvider.GetStampsServices(output).GetRequiredService<IStampsShipmentProvider>();
     }
 
     [Fact]

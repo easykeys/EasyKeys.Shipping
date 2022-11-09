@@ -3,6 +3,8 @@
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.AddressValidation;
 
+using EasyKeysShipping.UnitTest.TestHelpers;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +18,8 @@ public class FedExAddressValidationProviderTests
     public FedExAddressValidationProviderTests(ITestOutputHelper output)
     {
         _output = output;
-        _validator = GetAddressValidator();
+        _validator = ShippingProvider.GetFedExServices(output)
+            .GetRequiredService<IFedExAddressValidationProvider>();
     }
 
     [Fact]

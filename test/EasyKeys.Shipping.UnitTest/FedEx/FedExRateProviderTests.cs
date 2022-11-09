@@ -5,6 +5,8 @@ using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 
+using EasyKeysShipping.UnitTest.TestHelpers;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,13 +18,13 @@ public class FedExRateProviderTests
 
     private readonly Address _origin;
 
-    private readonly ServiceProvider _sp;
+    private readonly IServiceProvider _sp;
 
     public FedExRateProviderTests(ITestOutputHelper output)
     {
         _output = output;
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
-        _sp = GetServices();
+        _sp = ShippingProvider.GetFedExServices(output);
     }
 
     public static IEnumerable<object[]> Data =>
