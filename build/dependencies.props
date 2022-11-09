@@ -3,16 +3,15 @@
 	<PropertyGroup>
 		<NetCoreVersion>3.1.*</NetCoreVersion>
 		<BetCommonVersion>4.0.1</BetCommonVersion>
-		<ServiceModelVersion>4.4.*</ServiceModelVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net5.0'">
-		<NetCoreVersion>5.0.*</NetCoreVersion>
+		<ServiceModelVersion>4.10.*</ServiceModelVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
 		<NetCoreVersion>6.0.*</NetCoreVersion>
-		<ServiceModelVersion>4.9.*</ServiceModelVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net7.0'">
+		<NetCoreVersion>7.0.*</NetCoreVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -29,7 +28,7 @@
 		<PackageReference Update="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
 		<PackageReference Update="Microsoft.Azure.ServiceBus" Version="5.1.0" />
 		<PackageReference Update="Microsoft.Azure.Storage.Blob" Version="11.2.2" />
-		<PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.*" />
+		<PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.*" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -50,16 +49,16 @@
 	<ItemGroup Label="Others">
 		<PackageReference Update="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Update="Ardalis.SmartEnum" Version="2.1.0" />
-	    <PackageReference Update="Swashbuckle.AspNetCore" Version="6.2.3" />
+	    <PackageReference Update="Swashbuckle.AspNetCore" Version="6.4.*" />
 	</ItemGroup>
 
 	<ItemGroup Label="Unit Tests">
-		<PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+		<PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.4.*" />
 		<PackageReference Update="Microsoft.AspNetCore.TestHost" Version="$(NetCoreVersion)" />
-		<PackageReference Update="Moq" Version="4.17.2" />
-		<PackageReference Update="xunit" Version="2.4.1" />
-		<PackageReference Update="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="All" />
-		<PackageReference Update="coverlet.collector" Version="3.1.2" PrivateAssets="All" />
+		<PackageReference Update="Moq" Version="4.18.*" />
+		<PackageReference Update="xunit" Version="2.4.*" />
+		<PackageReference Update="xunit.runner.visualstudio" Version="2.4.*" PrivateAssets="All" />
+		<PackageReference Update="coverlet.collector" Version="3.2.*" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup Label="SourceLink">

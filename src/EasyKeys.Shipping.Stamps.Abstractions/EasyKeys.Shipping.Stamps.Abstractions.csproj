@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net6.0;net7.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Nuget Package Settings">
@@ -17,7 +17,7 @@
 		<PackageReference Include="System.ServiceModel.NetTcp" />
 		<PackageReference Include="System.ServiceModel.Security" />
 		<PackageReference Include="Bet.Extensions.Options" />
-		<PackageReference Include="Ardalis.SmartEnum" Version="2.0.1" />
+		<PackageReference Include="Ardalis.SmartEnum" />
 	</ItemGroup>
 
 	<ItemGroup>
