@@ -31,7 +31,7 @@ public static class AddressValidationServiceExtensions
 
         services.TryAddTransient<IFedExAddressValidationProvider, FedExAddressValidationProvider>();
 
-        services.TryAddTransient<IAddressValidationProvider, FedExAddressValidationProvider>();
+        services.AddTransient<IAddressValidationProvider, FedExAddressValidationProvider>();
 
         return services;
     }

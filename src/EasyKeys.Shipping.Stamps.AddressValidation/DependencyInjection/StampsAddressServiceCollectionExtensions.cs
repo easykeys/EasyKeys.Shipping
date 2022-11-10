@@ -25,7 +25,7 @@ public static class StampsAddressServiceCollectionExtensions
 
         services.TryAddTransient<IStampsAddressValidationProvider, StampsAddressValidationProvider>();
 
-        services.TryAddTransient<IAddressValidationProvider, StampsAddressValidationProvider>();
+        services.AddTransient<IAddressValidationProvider, StampsAddressValidationProvider>();
 
         return services;
     }
