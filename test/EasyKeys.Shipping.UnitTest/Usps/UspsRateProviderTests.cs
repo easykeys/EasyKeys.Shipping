@@ -58,7 +58,7 @@ public class UspsRateProviderTests
         new List<object[]>
         {
                         new object[] { 1.0M, 4.95m },
-                        new object[] { 5.0M, 5.90m },
+                        new object[] { 5.0M, 5.50m },
                         new object[] { 10.0M, 6.20m },
                         new object[] { 13.0M, 7.55m },
                         new object[] { 15.0M, 7.55m },
@@ -93,7 +93,7 @@ public class UspsRateProviderTests
         Assert.NotNull(rate);
 
         // usps rate
-        Assert.Equal(9.45m, rate?.TotalCharges);
+        Assert.Equal(10.40m, rate?.TotalCharges);
 
         // stamps.com rate
         Assert.Equal(7.90m, config.StampsRate);
@@ -121,7 +121,7 @@ public class UspsRateProviderTests
         var rate = result.Rates.FirstOrDefault();
 
         Assert.NotNull(rate);
-        Assert.Equal(16.10m, rate?.TotalCharges);
+        Assert.Equal(17.05m, rate?.TotalCharges);
         Assert.Equal(13.75m, config.StampsRate);
 
         _output.WriteLine($"{rate?.ServiceName} - ${rate?.TotalCharges} - {rate?.TotalCharges2} - {rate?.GuaranteedDelivery}");
@@ -199,7 +199,7 @@ public class UspsRateProviderTests
         var rate = result.Rates.FirstOrDefault();
 
         Assert.NotNull(rate);
-        Assert.Equal(4.65m, rate?.TotalCharges);
+        Assert.Equal(4.95m, rate?.TotalCharges);
         _output.WriteLine($"{rate?.ServiceName} - ${rate?.TotalCharges} - {rate?.GuaranteedDelivery}");
     }
 

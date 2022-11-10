@@ -6,7 +6,7 @@
 
 @isSample = false
 
-@fileName=rates-stamps-domestic-2.json
+@fileName=rates-stamps-domestic-3.json
 
 POST https://{{host}}/stamps/createShipment?serviceType={{serviceType}}&packageType={{packageType}}&orderId={{orderId}}&isSample={{isSample}}
 Content-Type: application/json

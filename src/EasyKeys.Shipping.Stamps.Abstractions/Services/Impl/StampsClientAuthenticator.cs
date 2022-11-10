@@ -49,7 +49,8 @@ internal class StampsClientAuthenticator : IStampsClientAuthenticator
 
         var token = authResponse.Authenticator;
 
-        // _logger.LogDebug("{createdToken}", token);
+        _logger.LogDebug("[Stamps.com][CreateToken] - authentication token returned {createdToken}", token);
+
         return token;
     }
 
@@ -65,7 +66,7 @@ internal class StampsClientAuthenticator : IStampsClientAuthenticator
             return token;
         }
 
-        _logger.LogDebug("[GetToken]- requesting new token.");
+        _logger.LogDebug("[Stamps.com][GetToken]- requesting new authetntication token.");
 
         return CreateTokenAsync().GetAwaiter().GetResult();
     }

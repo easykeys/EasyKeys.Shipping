@@ -1,4 +1,6 @@
-﻿using AddressValidationClient.v4;
+﻿using System.Diagnostics;
+
+using AddressValidationClient.v4;
 
 using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Models;
@@ -12,7 +14,7 @@ using v4 = AddressValidationClient.v4;
 
 namespace EasyKeys.Shipping.FedEx.AddressValidation;
 
-public class FedExAddressValidationProvider : IFedExAddressValidationProvider
+public class FedExAddressValidationProvider : IFedExAddressValidationProvider, IAddressValidationProvider
 {
     private readonly ILogger<FedExAddressValidationProvider> _logger;
     private readonly AddressValidationPortType _addressValidationClient;
@@ -32,8 +34,12 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    public string Name => nameof(FedExAddressValidationProvider);
+
     public async Task<ValidateAddress> ValidateAddressAsync(ValidateAddress request, CancellationToken cancellationToken = default)
     {
+        var watch = ValueStopwatch.StartNew();
+
         try
         {
             var client = _addressValidationClient;
@@ -116,6 +122,8 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
             _logger.LogError(ex, "{providerName} failed", nameof(FedExAddressValidationProvider));
             request.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExAddressValidationProvider)} failed");
         }
+
+        _logger.LogDebug("[FedEx][ValidateAddressAsync] completed: {mil}", watch.GetElapsedTime().TotalMilliseconds);
 
         return request;
     }

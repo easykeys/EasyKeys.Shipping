@@ -15,7 +15,7 @@ public static class Policies
     {
         var logger = loggerFactory.CreateLogger("Polices");
 
-        var timeoutPolicy = Policy.TimeoutAsync(50, TimeoutStrategy.Pessimistic);
+        var timeoutPolicy = Policy.TimeoutAsync(30, TimeoutStrategy.Pessimistic);
 
         var jitterer = new Random();
 
@@ -24,7 +24,7 @@ public static class Policies
               .Or<FaultException>(x => x.Message == "Invalid conversation token.")
               .Or<FaultException>(x => x.Message == "Authentication failed.")
               .WaitAndRetryAsync(
-                retryCount: 5,
+                retryCount: 3,
                 sleepDurationProvider: (retryAttempt, context) =>
                 {
                     return TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
@@ -32,7 +32,7 @@ public static class Policies
                 },
                 onRetryAsync: async (ex, count, context) =>
                 {
-                    logger.LogWarning("Clearing Token, {exType} : {message} was thrown.", ex.GetType().ToString(), ex.Message);
+                    logger.LogWarning("[Stamps.com] - Clearing Authorization Token, {exType} : {message} was thrown.", ex.GetType().ToString(), ex.Message);
 
                     client.ClearTokens();
 

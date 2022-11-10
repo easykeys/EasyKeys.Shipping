@@ -16,6 +16,7 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             var dic = new Dictionary<string, string>
             {
                 { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
+                { "FedExOptions:IsDevelopment", "true" },
             };
 
             var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
@@ -41,6 +42,8 @@ namespace EasyKeysShipping.UnitTest.TestHelpers
             var dic = new Dictionary<string, string>
                 {
                     { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
+                    { "StampsOptions:IsDevelopment", "true" },
+                    { "StampsOptions:UseAuthenticator", "true" },
                 };
 
             var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);

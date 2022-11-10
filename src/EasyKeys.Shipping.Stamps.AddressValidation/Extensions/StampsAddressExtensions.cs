@@ -1,6 +1,6 @@
 ﻿namespace EasyKeys.Shipping.Stamps.AddressValidation.Extensions;
 
-public static class RateAddressExtensions
+public static class StampsAddressExtensions
 {
     public static StampsClient.v111.Address GetStampsAddress(this Shipping.Abstractions.Models.Address address)
     {

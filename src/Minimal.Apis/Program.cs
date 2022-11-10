@@ -237,9 +237,14 @@ app.MapPost("/stamps/createShipment", async (
         ServiceType = StampsServiceType.FromName(serviceType)
     };
 
-    var label = await shipmentProvider.CreateDomesticShipmentAsync(correctShipment, rateOptions, shipmentDetails, cancellationToken);
+    var labels = await shipmentProvider.CreateDomesticShipmentAsync(correctShipment, rateOptions, shipmentDetails, cancellationToken);
 
-    return Results.Json(label, options);
+    foreach (var label in labels.Labels)
+    {
+        await File.WriteAllBytesAsync($"{label.ProviderLabelId}.{label.ImageType}", label.Bytes[0], cancellationToken);
+    }
+
+    return Results.Json(labels, options);
 })
 .Accepts<StampsShipmentDto>("application/json")
 .Produces<ShipmentLabel>(StatusCodes.Status200OK, "application/json")
@@ -311,9 +316,14 @@ app.MapPost("/fedex/createShipment", async (
         return Results.Json($"No Shipment Found: {serviceType}");
     }
 
-    var label = await shipmentProvider.CreateShipmentAsync(stype, correctShipment, shipmentDetails, cancellationToken);
+    var labels = await shipmentProvider.CreateShipmentAsync(stype, correctShipment, shipmentDetails, cancellationToken);
 
-    return Results.Json(label, options);
+    foreach (var label in labels.Labels)
+    {
+        await File.WriteAllBytesAsync($"{label.ProviderLabelId}.{label.ImageType}", label.Bytes[0], cancellationToken);
+    }
+
+    return Results.Json(labels, options);
 })
 .Accepts<FedExShipmentDto>("application/json")
 .Produces<ShipmentLabel>(StatusCodes.Status200OK, "application/json")
