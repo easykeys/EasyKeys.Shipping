@@ -11,6 +11,7 @@ public static class ShipmentExtensions
     {
         var rate = new RateV40
         {
+            // take date passed and then add at least a day to it
             ShipDate = shipment.Options.ShippingDate,
 
             InsuredValue = shipment.Packages.Sum(x => x.InsuredValue),

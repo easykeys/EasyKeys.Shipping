@@ -111,10 +111,10 @@ app.MapPost("/stamps/getRates", async (
     model.Package.SignatureRequiredOnDelivery);
 
     var configurator = new StampsRateConfigurator(
-    model.Origin!,
-    model.Destination!,
-    package,
-    model.Package.ShipDate);
+        model.Origin!,
+        model.Destination!,
+        package,
+        model.Package.ShipDate);
 
     foreach (var shipment in configurator.Shipments)
     {
@@ -186,6 +186,12 @@ app.MapPost("/fedex/getRates", async (
     foreach (var (shipment, serviceType) in config.Shipments)
     {
         var response = await rateProvider.GetRatesAsync(shipment, serviceType, cancellationToken);
+
+        foreach (var err in response.Errors)
+        {
+            app.Logger.LogError("{num}{desc}", err.Number, err.Description);
+        }
+
         result.AddRange(response.Rates);
     }
 
