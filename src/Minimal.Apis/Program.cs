@@ -169,7 +169,7 @@ app.MapPost("/fedex/getRates", async (
     CancellationToken cancellationToken) =>
 {
     // create a package
-    var package = new Package(
+    var defaultPackage = new Package(
         model!.Package!.Length,
         model.Package.Width,
         model.Package.Height,
@@ -177,9 +177,7 @@ app.MapPost("/fedex/getRates", async (
         model.Package.InsuredValue,
         model.Package.SignatureRequiredOnDelivery);
 
-    var defaultPackage = new Package(package.Dimensions, package.Weight, package.InsuredValue, package.SignatureRequiredOnDelivery);
-
-    var config = new FedExRateConfigurator(model.Origin, model.Destination, defaultPackage);
+    var config = new FedExRateConfigurator(model.Origin, model?.Destination!, defaultPackage);
 
     var result = new List<Rate>();
 
