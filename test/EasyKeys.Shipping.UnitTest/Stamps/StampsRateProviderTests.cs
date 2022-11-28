@@ -20,7 +20,7 @@ public class StampsRateProviderTests
     [Fact]
     public async Task Return_Shipment_With_Rates_Successfully()
     {
-        var result = await _rateProvider.GetDomesticRatesAsync(TestShipments.CreateDomesticShipment(), new RateOptions(), CancellationToken.None);
+        var result = await _rateProvider.GetRatesAsync(TestShipments.CreateDomesticShipment(), new RateOptions(), CancellationToken.None);
 
         Assert.NotNull(result);
 
