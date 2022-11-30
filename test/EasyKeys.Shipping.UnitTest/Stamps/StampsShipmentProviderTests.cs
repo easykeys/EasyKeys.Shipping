@@ -40,7 +40,7 @@ public class StampsShipmentProviderTests
             ServiceType = StampsServiceType.Priority
         };
 
-        var labels = await _shipmentProvider.CreateDomesticShipmentAsync(
+        var labels = await _shipmentProvider.CreateShipmentAsync(
               TestShipments.CreateDomesticShipment(),
               rateOptions,
               shipmentDetails,
@@ -57,12 +57,12 @@ public class StampsShipmentProviderTests
 
         var shipmentDetails = new ShipmentDetails();
 
-        var customsInformation = new CustomsInformation()
+        shipmentDetails.CustomsInformation = new CustomsInformation()
         {
             CustomsSigner = "brandon moffett"
         };
 
-        var rateOptions = new RateInternationalOptions()
+        var rateOptions = new RateOptions()
         {
             Sender = sender,
             Recipient = recipient,
@@ -70,28 +70,23 @@ public class StampsShipmentProviderTests
             DeclaredValue = 1
         };
 
-        var commodities = new List<Commodity>
+        shipmentDetails.Commodities.Add(new Commodity()
         {
-            new Commodity()
-            {
-                Description = "ekjs",
-                CountryOfManufacturer = "US",
-                PartNumber = "kjsdf",
-                Amount = 10m,
-                CustomsValue = 1m,
-                NumberOfPieces = 1,
-                Quantity = 1,
-                ExportLicenseNumber = "dsdfs",
-                Name = "sdkfsdf",
-            }
-        };
+            Description = "ekjs",
+            CountryOfManufacturer = "US",
+            PartNumber = "kjsdf",
+            Amount = 10m,
+            CustomsValue = 1m,
+            NumberOfPieces = 1,
+            Quantity = 1,
+            ExportLicenseNumber = "dsdfs",
+            Name = "sdkfsdf",
+        });
 
-        var labels = await _shipmentProvider.CreateInternationalShipmentAsync(
+        var labels = await _shipmentProvider.CreateShipmentAsync(
               TestShipments.CreateInternationalShipment(),
               rateOptions,
               shipmentDetails,
-              commodities,
-              customsInformation,
               CancellationToken.None);
 
         Assert.NotNull(labels);

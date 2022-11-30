@@ -126,7 +126,7 @@ app.MapPost("/stamps/getRates", async (
                 Recipient = model.Recipient!,
             };
 
-            var result = await rateProvider.GetDomesticRatesAsync(shipment, rateOptions, cancellationToken);
+            var result = await rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
 
             foreach (var rate in result.Rates)
             {
@@ -139,13 +139,13 @@ app.MapPost("/stamps/getRates", async (
         }
         else
         {
-            var rateOptions = new RateInternationalOptions
+            var rateOptions = new RateOptions
             {
                 Sender = model.Sender,
                 Recipient = model.Recipient!,
             };
 
-            var result = await rateProvider.GetInternationalRatesAsync(shipment, rateOptions, cancellationToken);
+            var result = await rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
             foreach (var rate in result.Rates)
             {
                 var found = listOfRates.FirstOrDefault(x => x.Name == rate.Name && x.PackageType == rate.PackageType);
@@ -243,7 +243,7 @@ app.MapPost("/stamps/createShipment", async (
         ServiceType = StampsServiceType.FromName(serviceType)
     };
 
-    var labels = await shipmentProvider.CreateDomesticShipmentAsync(correctShipment, rateOptions, shipmentDetails, cancellationToken);
+    var labels = await shipmentProvider.CreateShipmentAsync(correctShipment, rateOptions, shipmentDetails, cancellationToken);
 
     foreach (var label in labels.Labels)
     {
@@ -363,15 +363,13 @@ app.MapPost("/stamps/createInternationalShipment", async (
     var shipmentDetails = new ShipmentDetails();
     shipmentDetails.LabelOptions.Memo = orderId;
     shipmentDetails.IsSample = isSample;
-
-    var commodities = new List<Commodity>
-    {
-        model.Commodity,
-    };
+    shipmentDetails.Commodities.Add(model.Commodity);
+    shipmentDetails.CustomsInformation.InvoiceNumber = orderId;
+    shipmentDetails.CustomsInformation.CustomsSigner = "Easykeys.com employee";
 
     shipmentDetails.LabelOptions.Memo = "This will be orderId";
 
-    var rateOptions = new RateInternationalOptions
+    var rateOptions = new RateOptions
     {
         Sender = model.Sender,
         Recipient = model.Recipient,
@@ -384,16 +382,10 @@ app.MapPost("/stamps/createInternationalShipment", async (
         return Results.Json($"No Shipment Found with PackageType: {packageType}");
     }
 
-    var label = await shipmentProvider.CreateInternationalShipmentAsync(
+    var label = await shipmentProvider.CreateShipmentAsync(
         correctShipment,
         rateOptions,
         shipmentDetails,
-        commodities,
-        new CustomsInformation
-        {
-            InvoiceNumber = orderId,
-            CustomsSigner = "EasyKeys.com employee"
-        },
         cancellationToken);
 
     return Results.Json(label, options);

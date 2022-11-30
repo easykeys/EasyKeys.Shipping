@@ -90,6 +90,14 @@ public class Main : IMain
         return 0;
     }
 
+    private static T? LoadModels<T>(string fileName) where T : class
+    {
+        using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly(fileName);
+        var models = JsonSerializer.Deserialize(stream!, typeof(T), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip }) as T;
+
+        return models;
+    }
+
     private async Task RunNoneConcurrentlyAsync(
         Address originAddress,
         ContactInfo sender,
@@ -216,7 +224,7 @@ public class Main : IMain
                     ServiceType = StampsServiceType.FromName(selectedRate.Name)
                 };
 
-                result = await _shipmentProvider.CreateDomesticShipmentAsync(shipment, rateOptions, shipmentDetails, cancellationToken);
+                result = await _shipmentProvider.CreateShipmentAsync(shipment, rateOptions, shipmentDetails, cancellationToken);
             }
             else
             {
@@ -227,30 +235,21 @@ public class Main : IMain
 
                 var shipment = new Shipment(origin, address, model.Packages, shipmentOptions);
 
-                var customsInformation = new CustomsInformation()
-                {
-                    CustomsSigner = "brandon moffett",
-                    InvoiceNumber = "123234",
-                };
+                shipmentDetails.CustomsInformation.CustomsSigner = "brandon moffett";
+                shipmentDetails.CustomsInformation.InvoiceNumber = "12322432";
+                shipmentDetails.Commodities.Add(model.Commodity);
 
-                var commodities = new List<Commodity>
-                {
-                    model.Commodity
-                };
-
-                var rateOptions = new RateInternationalOptions
+                var rateOptions = new RateOptions
                 {
                     Sender = sender,
                     Recipient = model.Contact,
                     ServiceType = StampsServiceType.FromName(selectedRate.Name)
                 };
 
-                result = await _shipmentProvider.CreateInternationalShipmentAsync(
+                result = await _shipmentProvider.CreateShipmentAsync(
                     shipment,
                     rateOptions,
                     shipmentDetails,
-                    commodities,
-                    customsInformation,
                     cancellationToken);
             }
 
@@ -278,14 +277,6 @@ public class Main : IMain
 
             var cancelReponse = await _shipmentProvider.CancelShipmentAsync(label.TrackingId, cancellationToken);
         }
-    }
-
-    private static T? LoadModels<T>(string fileName) where T : class
-    {
-        using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly(fileName);
-        var models = JsonSerializer.Deserialize(stream, typeof(T), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip }) as T;
-
-        return models;
     }
 
     private async Task<(Address address, bool valid)> ValidateAsync(Address destination, bool debug = false, CancellationToken cancellationToken = default)
@@ -345,7 +336,7 @@ public class Main : IMain
             isValidated = true;
         }
 
-        return (result.ProposedAddress, isValidated);
+        return (result?.ProposedAddress, isValidated);
     }
 
     private async Task<IEnumerable<Shipment>> GetRatesAsync(
@@ -377,17 +368,17 @@ public class Main : IMain
                 };
 
                 // 2.2. call the services for specified mail.
-                result = await _rateProvider.GetDomesticRatesAsync(shipment, rateOptions, cancellationToken);
+                result = await _rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
             }
             else
             {
-                var rateOptions = new RateInternationalOptions
+                var rateOptions = new RateOptions
                 {
                     Sender = sender,
                     Recipient = receiver,
                 };
 
-                result = await _rateProvider.GetInternationalRatesAsync(shipment, rateOptions, cancellationToken);
+                result = await _rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
             }
 
             if (result.Errors.Count > 0)
@@ -422,6 +413,6 @@ public class Main : IMain
 
         var shipmentDetails = new ShipmentDetails();
 
-        return await _shipmentProvider.CreateDomesticShipmentAsync(config.Shipments[0], rateOptions, shipmentDetails, cancellationToken);
+        return await _shipmentProvider.CreateShipmentAsync(config.Shipments[0], rateOptions, shipmentDetails, cancellationToken);
     }
 }

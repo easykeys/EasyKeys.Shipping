@@ -23,49 +23,14 @@ public class StampsRateProvider : IStampsRateProvider
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<Shipment> GetInternationalRatesAsync(
-        Shipment shipment,
-        RateInternationalOptions rateOptions,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            var rateRequest = shipment.MapToInternationalRate(rateOptions);
-
-            var rates = await GetRatesAsync(rateRequest, shipment, rateOptions, cancellationToken);
-
-            var packageType = StampsPackageType.FromName(shipment.Options.PackagingType);
-
-            foreach (var rate in rates)
-            {
-                shipment.Rates.Add(new Rate(
-                    $"{rate.ServiceType}",
-                    $"{rate.ServiceDescription}",
-                    $"{rate.PackageType}",
-                    rate.Amount,
-                    rate.DeliveryDate)
-                { TotalCharges2 = rate.Amount });
-
-                _logger.LogDebug($"{rate.ServiceType} - {rate.ServiceDescription} => Packaging: {rate.PackageType} => Amount: {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("{name} : {message}", nameof(StampsRateProvider), ex.Message);
-            shipment.InternalErrors.Add(ex.Message);
-        }
-
-        return shipment;
-    }
-
-    public async Task<Shipment> GetDomesticRatesAsync(
+    public async Task<Shipment> GetRatesAsync(
         Shipment shipment,
         RateOptions rateOptions,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var rateRequest = shipment.MapToDomesticRate(rateOptions);
+            var rateRequest = new RateV40().MapToRate(shipment, rateOptions);
 
             var rates = await GetRatesAsync(rateRequest, shipment, rateOptions, cancellationToken);
 
