@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup Label="Basic Settings">
-	<VersionPrefix>2.0.1-preview3</VersionPrefix>
+	<VersionPrefix>2.0.1-preview4</VersionPrefix>
 	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 	<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
 	<NoWarn>$(NoWarn);CS1591;NU1605;DS126858;DS137138</NoWarn>

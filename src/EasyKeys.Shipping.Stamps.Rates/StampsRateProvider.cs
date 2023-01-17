@@ -38,13 +38,17 @@ public class StampsRateProvider : IStampsRateProvider
 
             foreach (var rate in rates)
             {
-                shipment.Rates.Add(new Rate(
-                    $"{rate.ServiceType}",
-                    $"{rate.ServiceDescription}",
-                    $"{rate.PackageType}",
+                var rateReturned = new Rate(
+                    rate.ServiceType.ToString(),
+                    rate.ServiceDescription,
+                    rate.PackageType.ToString(),
                     rate.Amount,
                     rate.DeliveryDate)
-                { TotalCharges2 = rate.Amount });
+                {
+                    TotalCharges2 = rate.Amount
+                };
+
+                shipment.Rates.Add(rateReturned);
 
                 _logger.LogDebug($"{rate.ServiceType} - {rate.ServiceDescription} => Packaging: {rate.PackageType} => Amount: {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
             }
@@ -116,7 +120,11 @@ public class StampsRateProvider : IStampsRateProvider
                     }
                     else
                     {
-                        addOns.Add(new AddOnV17() { AddOnDescription = "Delivery Confirmation", AddOnType = AddOnTypeV17.USADC });
+                        addOns.Add(new AddOnV17()
+                        {
+                            AddOnDescription = "Delivery Confirmation",
+                            AddOnType = AddOnTypeV17.USADC
+                        });
                         rate.Amount += rate.AddOns.FirstOrDefault(x => x.AddOnType == AddOnTypeV17.USASC)?.Amount ?? 0m;
                     }
                 }

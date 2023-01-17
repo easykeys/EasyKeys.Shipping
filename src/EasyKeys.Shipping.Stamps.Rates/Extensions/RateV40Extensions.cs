@@ -4,9 +4,13 @@ using EasyKeys.Shipping.Stamps.Abstractions.Extensions;
 using StampsClient.v111;
 
 namespace EasyKeys.Shipping.Stamps.Rates.Extensions;
+
 public static class RateV40Extensions
 {
-    public static RateV40 MapToRate(this RateV40 rate, Shipping.Abstractions.Models.Shipment shipment, Models.RateOptions rateOptions)
+    public static RateV40 MapToRate(
+        this RateV40 rate,
+        Shipping.Abstractions.Models.Shipment shipment,
+        Models.RateOptions rateOptions)
     {
         // take date passed and then add at least a day to it
         rate.ShipDate = shipment.Options.ShippingDate;

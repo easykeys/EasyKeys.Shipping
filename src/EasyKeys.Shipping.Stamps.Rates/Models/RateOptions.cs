@@ -3,6 +3,9 @@ using EasyKeys.Shipping.Stamps.Abstractions.Models;
 
 namespace EasyKeys.Shipping.Stamps.Rates.Models;
 
+/// <summary>
+/// Stamps.com configure rates request.
+/// </summary>
 public class RateOptions
 {
     public ContactInfo Sender { get; set; } = new ContactInfo();

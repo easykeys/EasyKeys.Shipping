@@ -116,43 +116,26 @@ app.MapPost("/stamps/getRates", async (
         package,
         model.Package.ShipDate);
 
+    var rateOptions = new RateOptions
+    {
+        Sender = model.Sender,
+        Recipient = model.Recipient!,
+    };
+
     foreach (var shipment in configurator.Shipments)
     {
         if (shipment?.DestinationAddress?.IsUnitedStatesAddress() ?? false)
         {
-            var rateOptions = new RateOptions
-            {
-                Sender = model.Sender,
-                Recipient = model.Recipient!,
-            };
-
-            var result = await rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
-
-            foreach (var rate in result.Rates)
-            {
-                var found = listOfRates.FirstOrDefault(x => x.Name == rate.Name && x.PackageType == rate.PackageType);
-                if (found is null)
-                {
-                    listOfRates.Add(rate);
-                }
-            }
+            rateOptions.DeclaredValue = model.Package.InsuredValue;
         }
-        else
-        {
-            var rateOptions = new RateOptions
-            {
-                Sender = model.Sender,
-                Recipient = model.Recipient!,
-            };
 
-            var result = await rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
-            foreach (var rate in result.Rates)
+        var result = await rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
+        foreach (var rate in result.Rates)
+        {
+            var found = listOfRates.FirstOrDefault(x => x.Name == rate.Name && x.PackageType == rate.PackageType);
+            if (found is null)
             {
-                var found = listOfRates.FirstOrDefault(x => x.Name == rate.Name && x.PackageType == rate.PackageType);
-                if (found is null)
-                {
-                    listOfRates.Add(rate);
-                }
+                listOfRates.Add(rate);
             }
         }
     }
