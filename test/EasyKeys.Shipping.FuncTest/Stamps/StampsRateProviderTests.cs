@@ -1,11 +1,11 @@
 ﻿using EasyKeys.Shipping.Stamps.Rates;
 using EasyKeys.Shipping.Stamps.Rates.Models;
 
-using EasyKeysShipping.UnitTest.TestHelpers;
+using EasyKeysShipping.FuncTest.TestHelpers;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeysShipping.UnitTest.Stamps;
+namespace EasyKeysShipping.FuncTest.Stamps;
 
 public class StampsRateProviderTests
 {
@@ -13,7 +13,7 @@ public class StampsRateProviderTests
 
     public StampsRateProviderTests(ITestOutputHelper output)
     {
-        _rateProvider = ShippingProvider.GetStampsServices(output)
+        _rateProvider = ServiceProviderInstance.GetStampsServices(output)
             .GetRequiredService<IStampsRateProvider>();
     }
 

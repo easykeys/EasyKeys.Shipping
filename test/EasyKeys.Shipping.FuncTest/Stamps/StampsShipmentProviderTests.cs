@@ -6,14 +6,14 @@ using EasyKeys.Shipping.Stamps.Shipment;
 using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 
-using EasyKeysShipping.UnitTest.TestHelpers;
+using EasyKeysShipping.FuncTest.TestHelpers;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using Commodity = EasyKeys.Shipping.Abstractions.Models.Commodity;
 
-namespace EasyKeysShipping.UnitTest.Stamps;
+namespace EasyKeysShipping.FuncTest.Stamps;
 
 public class StampsShipmentProviderTests
 {
@@ -23,7 +23,7 @@ public class StampsShipmentProviderTests
     public StampsShipmentProviderTests(ITestOutputHelper output)
     {
         _output = output;
-        _shipmentProvider = ShippingProvider.GetStampsServices(output).GetRequiredService<IStampsShipmentProvider>();
+        _shipmentProvider = ServiceProviderInstance.GetStampsServices(output).GetRequiredService<IStampsShipmentProvider>();
     }
 
     [Fact]

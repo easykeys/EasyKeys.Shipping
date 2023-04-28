@@ -1,0 +1,46 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Api",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-api",
+            "program": "${workspaceFolder}/src/Minimal.Apis/bin/Debug/net7.0/Minimal.Apis.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Minimal.Apis/",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Stamps.Console",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-stamps-console",
+            "program": "${workspaceFolder}/src/EasyKeys.Shipping.Stamps.Console/bin/Debug/net7.0/EasyKeys.Shipping.Stamps.Console.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/EasyKeys.Shipping.Stamps.Console",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "FedEx.Console",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-fedex-console",
+            "program": "${workspaceFolder}/src/EasyKeys.Shipping.FedEx.Console/bin/Debug/net7.0/EasyKeys.Shipping.FedEx.Console.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/EasyKeys.Shipping.FedEx.Console",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}

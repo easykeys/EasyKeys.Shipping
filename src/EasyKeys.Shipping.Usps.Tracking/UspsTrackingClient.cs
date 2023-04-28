@@ -85,6 +85,8 @@ namespace EasyKeys.Shipping.Usps.Tracking
                                 trackInfo.Error.Number,
                                 trackInfo.Error.Description,
                                 requestGuid);
+
+                            output.Add(trackInfo);
                         }
                         else
                         {

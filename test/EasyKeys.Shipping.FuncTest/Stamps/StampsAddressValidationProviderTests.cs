@@ -3,11 +3,11 @@
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.AddressValidation;
 
-using EasyKeysShipping.UnitTest.TestHelpers;
+using EasyKeysShipping.FuncTest.TestHelpers;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeysShipping.UnitTest.Stamps;
+namespace EasyKeysShipping.FuncTest.Stamps;
 
 public class StampsAddressValidationProviderTests
 {
@@ -15,7 +15,7 @@ public class StampsAddressValidationProviderTests
 
     public StampsAddressValidationProviderTests(ITestOutputHelper output)
     {
-        _validator = ShippingProvider.GetStampsServices(output)
+        _validator = ServiceProviderInstance.GetStampsServices(output)
             .GetRequiredService<IStampsAddressValidationProvider>();
     }
 

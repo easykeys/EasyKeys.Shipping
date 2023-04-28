@@ -13,12 +13,9 @@ using EasyKeysShipping.UnitTest.TestHelpers;
 using StampsClient.v111;
 
 namespace EasyKeysShipping.UnitTest.Stamps;
+
 public class ExtensionTests
 {
-    public ExtensionTests()
-    {
-    }
-
     [Fact]
     public void Map_DomesticAddress_Successfully()
     {

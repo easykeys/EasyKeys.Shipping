@@ -73,7 +73,7 @@ app.MapPost("/stamps/addressValidation", async (
 {
     var address = new ValidateAddress(model.Id, model.Address);
     var validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
-
+    app.Logger.LogInformation("test");
     return Results.Json(validatedAddress, options);
 })
 .Accepts<ShipmentDto>("application/json")

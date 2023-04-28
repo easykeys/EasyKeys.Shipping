@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net7.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Nuget Package Settings">
@@ -14,7 +14,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\EasyKeys.Shipping.Usps.Abstractions\EasyKeys.Shipping.Usps.Abstractions.csproj" />
+		<ProjectReference
+			Include="..\EasyKeys.Shipping.Usps.Abstractions\EasyKeys.Shipping.Usps.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

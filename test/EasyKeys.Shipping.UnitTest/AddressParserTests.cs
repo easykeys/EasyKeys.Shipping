@@ -6,7 +6,7 @@ namespace EasyKeysShipping.UnitTest;
 
 public class AddressParserTests
 {
-    private IAddressParser _parser;
+    private readonly IAddressParser _parser;
 
     public AddressParserTests()
     {

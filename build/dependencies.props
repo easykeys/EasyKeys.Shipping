@@ -2,15 +2,12 @@
 
 	<PropertyGroup>
 		<NetCoreVersion>3.1.*</NetCoreVersion>
-		<BetCommonVersion>4.0.1</BetCommonVersion>
+		<BetCommonVersion>4.0.*</BetCommonVersion>
 		<ServiceModelVersion>4.10.*</ServiceModelVersion>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
-		<NetCoreVersion>6.0.*</NetCoreVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net7.0'">
+	<PropertyGroup
+		Condition="'$(TargetFramework)' == 'net7.0' Or '$(TargetFramework)' == 'netstandard2.0'">
 		<NetCoreVersion>7.0.*</NetCoreVersion>
 	</PropertyGroup>
 
@@ -48,12 +45,12 @@
 
 	<ItemGroup Label="Others">
 		<PackageReference Update="Newtonsoft.Json" Version="12.0.3" />
-		<PackageReference Update="Ardalis.SmartEnum" Version="2.1.0" />
-	    <PackageReference Update="Swashbuckle.AspNetCore" Version="6.4.*" />
+		<PackageReference Update="Ardalis.SmartEnum" Version="7.0.*" />
+	    <PackageReference Update="Swashbuckle.AspNetCore" Version="6.5.*" />
 	</ItemGroup>
 
 	<ItemGroup Label="Unit Tests">
-		<PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.4.*" />
+		<PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.5.*" />
 		<PackageReference Update="Microsoft.AspNetCore.TestHost" Version="$(NetCoreVersion)" />
 		<PackageReference Update="Moq" Version="4.18.*" />
 		<PackageReference Update="xunit" Version="2.4.*" />

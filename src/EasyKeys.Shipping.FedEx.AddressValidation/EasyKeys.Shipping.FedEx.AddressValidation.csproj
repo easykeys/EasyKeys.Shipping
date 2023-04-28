@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net7.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Nuget Package Settings">
-		<Description>DotNetCore Implementation of FedEx Web Services 2020 for AddressValidation Endpoint.</Description>
+		<Description>DotNetCore Implementation of FedEx Web Services 2020 for AddressValidation
+			Endpoint.</Description>
 		<PackageTags>DotNetCore, Address Validation, FedEx 2020 WCF</PackageTags>
 	</PropertyGroup>
 
@@ -15,8 +16,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
-		<ProjectReference Include="..\EasyKeys.Shipping.FedEx.Abstractions\EasyKeys.Shipping.FedEx.Abstractions.csproj" />
+		<ProjectReference
+			Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+		<ProjectReference
+			Include="..\EasyKeys.Shipping.FedEx.Abstractions\EasyKeys.Shipping.FedEx.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

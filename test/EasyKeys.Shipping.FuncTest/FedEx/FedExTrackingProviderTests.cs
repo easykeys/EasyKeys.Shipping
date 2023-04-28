@@ -1,10 +1,10 @@
 ﻿using EasyKeys.Shipping.FedEx.Tracking;
 
-using EasyKeysShipping.UnitTest.TestHelpers;
+using EasyKeysShipping.FuncTest.TestHelpers;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeysShipping.UnitTest.FedEx;
+namespace EasyKeysShipping.FuncTest.FedEx;
 
 public class FedExTrackingProviderTests
 {
@@ -14,7 +14,7 @@ public class FedExTrackingProviderTests
     public FedExTrackingProviderTests(ITestOutputHelper output)
     {
         _output = output;
-        _trackingProvider = ShippingProvider.GetFedExServices(output)
+        _trackingProvider = ServiceProviderInstance.GetFedExServices(output)
             .GetRequiredService<IFedExTrackingProvider>();
     }
 

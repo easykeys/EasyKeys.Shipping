@@ -3,11 +3,12 @@ using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
 
-using EasyKeysShipping.UnitTest.TestHelpers;
+using EasyKeysShipping.FuncTest.TestHelpers;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeysShipping.UnitTest.FedEx;
+namespace EasyKeysShipping.FuncTest.FedEx;
+
 public class FedExShipmentProviderTests
 {
     private readonly Address _origin;
@@ -20,7 +21,7 @@ public class FedExShipmentProviderTests
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
         _domestic = new Address("1550 central ave", "Riverside", "CA", "92507", "US");
         _international = new Address("12 Margaret street Sefton Park", "SEFTON PARK", "", "5083", "AU");
-        _provider = ShippingProvider.GetFedExServices(output)
+        _provider = ServiceProviderInstance.GetFedExServices(output)
             .GetRequiredService<IFedExShipmentProvider>();
     }
 

@@ -50,7 +50,7 @@ public static class PackageExtensions
     /// </summary>
     /// <param name="package"></param>
     /// <returns></returns>
-    public static bool IsEvelopeWeight(this Package package)
+    public static bool IsEnvelopeWeight(this Package package)
     {
         package = package ?? throw new ArgumentNullException(nameof(package));
 
