@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "adrianwilczynski.asp-net-core-snippet-pack",
+        "formulahendry.dotnet-test-explorer",
+        "visualstudioonlineapplicationinsights.application-insights",
+        "ms-dotnettools.csharp",
+        "humao.rest-client"
+    ]
+}

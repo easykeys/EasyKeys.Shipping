@@ -1,5 +1,30 @@
 {
   "version": 1,
   "isRoot": true,
-  "tools": {}
+  "tools": {
+    "dotnet-outdated-tool": {
+      "version": "4.5.1",
+      "commands": [
+        "dotnet-outdated"
+      ]
+    },
+    "gitversion.tool": {
+      "version": "5.12.0",
+      "commands": [
+        "dotnet-gitversion"
+      ]
+    },
+    "roslynator.dotnet.cli": {
+      "version": "0.6.0",
+      "commands": [
+        "roslynator"
+      ]
+    },
+    "csharpier": {
+      "version": "0.24.1",
+      "commands": [
+        "dotnet-csharpier"
+      ]
+    }
+  }
 }

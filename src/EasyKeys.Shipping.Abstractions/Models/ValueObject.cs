@@ -10,7 +10,9 @@ public abstract class ValueObject
 
     public static bool operator !=(ValueObject one, ValueObject two) => NotEqualOperator(one, two);
 
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
     public override bool Equals(object obj)
+#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
     {
         if (obj == null || obj.GetType() != GetType())
         {
@@ -36,7 +38,7 @@ public abstract class ValueObject
             return false;
         }
 
-        return ReferenceEquals(left, null) || left.Equals(right);
+        return ReferenceEquals(left, null) || left.Equals(right!);
     }
 
     protected static bool NotEqualOperator(ValueObject left, ValueObject right)

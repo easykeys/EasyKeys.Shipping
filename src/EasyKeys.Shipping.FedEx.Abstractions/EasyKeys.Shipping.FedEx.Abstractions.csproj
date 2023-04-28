@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>net7.0</TargetFrameworks>
+		<NoWarn>$(NoWarn);CS0108</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Nuget Package Settings">
@@ -19,7 +20,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+		<ProjectReference
+			Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

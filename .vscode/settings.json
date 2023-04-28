@@ -13,4 +13,5 @@
         "*.tasks": "xml",
         "Dockerfile*": "dockerfile",
     },
+    "dotnet-test-explorer.enableTelemetry": false
 }

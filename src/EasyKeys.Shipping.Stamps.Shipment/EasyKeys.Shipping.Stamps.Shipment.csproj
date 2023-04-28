@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>net7.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Nuget Package Settings">
@@ -10,13 +10,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Ardalis.SmartEnum" Version="2.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
-		<ProjectReference Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
-		<ProjectReference Include="..\EasyKeys.Shipping.Stamps.Rates\EasyKeys.Shipping.Stamps.Rates.csproj" />
+		<ProjectReference
+			Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+		<ProjectReference
+			Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
+		<ProjectReference
+			Include="..\EasyKeys.Shipping.Stamps.Rates\EasyKeys.Shipping.Stamps.Rates.csproj" />
 	</ItemGroup>
 
 </Project>

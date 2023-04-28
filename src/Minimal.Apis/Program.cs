@@ -71,9 +71,9 @@ app.MapPost("/stamps/addressValidation", async (
     IStampsAddressValidationProvider addressProvider,
     CancellationToken cancellationToken) =>
 {
-    var address = new ValidateAddress(model.Id, model!.Address);
+    var address = new ValidateAddress(model.Id, model.Address);
     var validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
-
+    app.Logger.LogInformation("test");
     return Results.Json(validatedAddress, options);
 })
 .Accepts<ShipmentDto>("application/json")
@@ -85,7 +85,7 @@ app.MapPost("/fedex/addressValidation", async (
     IFedExAddressValidationProvider addressProvider,
     CancellationToken cancellationToken) =>
 {
-    var address = new ValidateAddress(model.Id, model!.Address);
+    var address = new ValidateAddress(model.Id, model.Address);
     var validatedAddress = await addressProvider.ValidateAddressAsync(address, cancellationToken);
 
     return Results.Json(validatedAddress, options);
@@ -111,48 +111,31 @@ app.MapPost("/stamps/getRates", async (
     model.Package.SignatureRequiredOnDelivery);
 
     var configurator = new StampsRateConfigurator(
-    model.Origin!,
-    model.Destination!,
-    package,
-    model.Package.ShipDate);
+        model.Origin!,
+        model.Destination!,
+        package,
+        model.Package.ShipDate);
+
+    var rateOptions = new RateOptions
+    {
+        Sender = model.Sender,
+        Recipient = model.Recipient!,
+    };
 
     foreach (var shipment in configurator.Shipments)
     {
         if (shipment?.DestinationAddress?.IsUnitedStatesAddress() ?? false)
         {
-            var rateOptions = new RateOptions
-            {
-                Sender = model.Sender,
-                Recipient = model.Recipient!,
-            };
-
-            var result = await rateProvider.GetDomesticRatesAsync(shipment, rateOptions, cancellationToken);
-
-            foreach (var rate in result.Rates)
-            {
-                var found = listOfRates.FirstOrDefault(x => x.Name == rate.Name && x.PackageType == rate.PackageType);
-                if (found is null)
-                {
-                    listOfRates.Add(rate);
-                }
-            }
+            rateOptions.DeclaredValue = model.Package.InsuredValue;
         }
-        else
-        {
-            var rateOptions = new RateInternationalOptions
-            {
-                Sender = model.Sender,
-                Recipient = model.Recipient!,
-            };
 
-            var result = await rateProvider.GetInternationalRatesAsync(shipment, rateOptions, cancellationToken);
-            foreach (var rate in result.Rates)
+        var result = await rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
+        foreach (var rate in result.Rates)
+        {
+            var found = listOfRates.FirstOrDefault(x => x.Name == rate.Name && x.PackageType == rate.PackageType);
+            if (found is null)
             {
-                var found = listOfRates.FirstOrDefault(x => x.Name == rate.Name && x.PackageType == rate.PackageType);
-                if (found is null)
-                {
-                    listOfRates.Add(rate);
-                }
+                listOfRates.Add(rate);
             }
         }
     }
@@ -184,6 +167,12 @@ app.MapPost("/fedex/getRates", async (
     foreach (var (shipment, serviceType) in config.Shipments)
     {
         var response = await rateProvider.GetRatesAsync(shipment, serviceType, cancellationToken);
+
+        foreach (var err in response.Errors)
+        {
+            app.Logger.LogError("{num}{desc}", err.Number, err.Description);
+        }
+
         result.AddRange(response.Rates);
     }
 
@@ -235,9 +224,14 @@ app.MapPost("/stamps/createShipment", async (
         ServiceType = StampsServiceType.FromName(serviceType)
     };
 
-    var label = await shipmentProvider.CreateDomesticShipmentAsync(correctShipment, rateOptions, shipmentDetails, cancellationToken);
+    var labels = await shipmentProvider.CreateShipmentAsync(correctShipment, rateOptions, shipmentDetails, cancellationToken);
 
-    return Results.Json(label, options);
+    foreach (var label in labels.Labels)
+    {
+        await File.WriteAllBytesAsync($"{label.ProviderLabelId}.{label.ImageType}", label.Bytes[0], cancellationToken);
+    }
+
+    return Results.Json(labels, options);
 })
 .Accepts<StampsShipmentDto>("application/json")
 .Produces<ShipmentLabel>(StatusCodes.Status200OK, "application/json")
@@ -309,9 +303,14 @@ app.MapPost("/fedex/createShipment", async (
         return Results.Json($"No Shipment Found: {serviceType}");
     }
 
-    var label = await shipmentProvider.CreateShipmentAsync(stype, correctShipment, shipmentDetails, cancellationToken);
+    var labels = await shipmentProvider.CreateShipmentAsync(stype, correctShipment, shipmentDetails, cancellationToken);
 
-    return Results.Json(label, options);
+    foreach (var label in labels.Labels)
+    {
+        await File.WriteAllBytesAsync($"{label.ProviderLabelId}.{label.ImageType}", label.Bytes[0], cancellationToken);
+    }
+
+    return Results.Json(labels, options);
 })
 .Accepts<FedExShipmentDto>("application/json")
 .Produces<ShipmentLabel>(StatusCodes.Status200OK, "application/json")
@@ -345,15 +344,13 @@ app.MapPost("/stamps/createInternationalShipment", async (
     var shipmentDetails = new ShipmentDetails();
     shipmentDetails.LabelOptions.Memo = orderId;
     shipmentDetails.IsSample = isSample;
-
-    var commodities = new List<Commodity>
-    {
-        model.Commodity,
-    };
+    shipmentDetails.Commodities.Add(model.Commodity);
+    shipmentDetails.CustomsInformation.InvoiceNumber = orderId;
+    shipmentDetails.CustomsInformation.CustomsSigner = "Easykeys.com employee";
 
     shipmentDetails.LabelOptions.Memo = "This will be orderId";
 
-    var rateOptions = new RateInternationalOptions
+    var rateOptions = new RateOptions
     {
         Sender = model.Sender,
         Recipient = model.Recipient,
@@ -366,16 +363,10 @@ app.MapPost("/stamps/createInternationalShipment", async (
         return Results.Json($"No Shipment Found with PackageType: {packageType}");
     }
 
-    var label = await shipmentProvider.CreateInternationalShipmentAsync(
+    var label = await shipmentProvider.CreateShipmentAsync(
         correctShipment,
         rateOptions,
         shipmentDetails,
-        commodities,
-        new CustomsInformation
-        {
-            InvoiceNumber = orderId,
-            CustomsSigner = "EasyKeys.com employee"
-        },
         cancellationToken);
 
     return Results.Json(label, options);

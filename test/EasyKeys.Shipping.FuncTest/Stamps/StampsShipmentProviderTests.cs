@@ -1,19 +1,19 @@
-﻿
-using Bet.Extensions.Testing.Logging;
+﻿using Bet.Extensions.Testing.Logging;
 
-using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Rates.Models;
 using EasyKeys.Shipping.Stamps.Shipment;
 using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 
-using EasyKeysShipping.UnitTest.TestHelpers;
+using EasyKeysShipping.FuncTest.TestHelpers;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeysShipping.UnitTest.Stamps;
+using Commodity = EasyKeys.Shipping.Abstractions.Models.Commodity;
+
+namespace EasyKeysShipping.FuncTest.Stamps;
 
 public class StampsShipmentProviderTests
 {
@@ -23,7 +23,7 @@ public class StampsShipmentProviderTests
     public StampsShipmentProviderTests(ITestOutputHelper output)
     {
         _output = output;
-        _shipmentProvider = GetShipmentProvider();
+        _shipmentProvider = ServiceProviderInstance.GetStampsServices(output).GetRequiredService<IStampsShipmentProvider>();
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class StampsShipmentProviderTests
             ServiceType = StampsServiceType.Priority
         };
 
-        var labels = await _shipmentProvider.CreateDomesticShipmentAsync(
+        var labels = await _shipmentProvider.CreateShipmentAsync(
               TestShipments.CreateDomesticShipment(),
               rateOptions,
               shipmentDetails,
@@ -57,12 +57,12 @@ public class StampsShipmentProviderTests
 
         var shipmentDetails = new ShipmentDetails();
 
-        var customsInformation = new CustomsInformation()
+        shipmentDetails.CustomsInformation = new CustomsInformation()
         {
             CustomsSigner = "brandon moffett"
         };
 
-        var rateOptions = new RateInternationalOptions()
+        var rateOptions = new RateOptions()
         {
             Sender = sender,
             Recipient = recipient,
@@ -70,28 +70,23 @@ public class StampsShipmentProviderTests
             DeclaredValue = 1
         };
 
-        var commodities = new List<Commodity>
+        shipmentDetails.Commodities.Add(new Commodity()
         {
-            new Commodity()
-            {
-                Description = "ekjs",
-                CountryOfManufacturer = "US",
-                PartNumber = "kjsdf",
-                Amount = 10m,
-                CustomsValue = 1m,
-                NumberOfPieces = 1,
-                Quantity = 1,
-                ExportLicenseNumber = "dsdfs",
-                Name = "sdkfsdf",
-            }
-        };
+            Description = "ekjs",
+            CountryOfManufacturer = "US",
+            PartNumber = "kjsdf",
+            Amount = 10m,
+            CustomsValue = 1m,
+            NumberOfPieces = 1,
+            Quantity = 1,
+            ExportLicenseNumber = "dsdfs",
+            Name = "sdkfsdf",
+        });
 
-        var labels = await _shipmentProvider.CreateInternationalShipmentAsync(
+        var labels = await _shipmentProvider.CreateShipmentAsync(
               TestShipments.CreateInternationalShipment(),
               rateOptions,
               shipmentDetails,
-              commodities,
-              customsInformation,
               CancellationToken.None);
 
         Assert.NotNull(labels);

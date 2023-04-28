@@ -23,49 +23,14 @@ public class StampsRateProvider : IStampsRateProvider
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<Shipment> GetInternationalRatesAsync(
-        Shipment shipment,
-        RateInternationalOptions rateOptions,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            var rateRequest = shipment.MapToInternationalRate(rateOptions);
-
-            var rates = await GetRatesAsync(rateRequest, shipment, rateOptions, cancellationToken);
-
-            var packageType = StampsPackageType.FromName(shipment.Options.PackagingType);
-
-            foreach (var rate in rates)
-            {
-                shipment.Rates.Add(new Rate(
-                    $"{rate.ServiceType}",
-                    $"{rate.ServiceDescription}",
-                    $"{rate.PackageType}",
-                    rate.Amount,
-                    rate.DeliveryDate)
-                { TotalCharges2 = rate.Amount });
-
-                _logger.LogDebug($"{rate.ServiceType} - {rate.ServiceDescription} => Packaging: {rate.PackageType} => Amount: {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("{name} : {message}", nameof(StampsRateProvider), ex.Message);
-            shipment.InternalErrors.Add(ex.Message);
-        }
-
-        return shipment;
-    }
-
-    public async Task<Shipment> GetDomesticRatesAsync(
+    public async Task<Shipment> GetRatesAsync(
         Shipment shipment,
         RateOptions rateOptions,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            var rateRequest = shipment.MapToDomesticRate(rateOptions);
+            var rateRequest = new RateV40().MapToRate(shipment, rateOptions);
 
             var rates = await GetRatesAsync(rateRequest, shipment, rateOptions, cancellationToken);
 
@@ -73,13 +38,17 @@ public class StampsRateProvider : IStampsRateProvider
 
             foreach (var rate in rates)
             {
-                shipment.Rates.Add(new Rate(
-                    $"{rate.ServiceType}",
-                    $"{rate.ServiceDescription}",
-                    $"{rate.PackageType}",
+                var rateReturned = new Rate(
+                    rate.ServiceType.ToString(),
+                    rate.ServiceDescription,
+                    rate.PackageType.ToString(),
                     rate.Amount,
                     rate.DeliveryDate)
-                { TotalCharges2 = rate.Amount });
+                {
+                    TotalCharges2 = rate.Amount
+                };
+
+                shipment.Rates.Add(rateReturned);
 
                 _logger.LogDebug($"{rate.ServiceType} - {rate.ServiceDescription} => Packaging: {rate.PackageType} => Amount: {rate.Amount}  => Delivery Days : {rate.DeliverDays}");
             }
@@ -88,7 +57,7 @@ public class StampsRateProvider : IStampsRateProvider
         {
             var error = ex?.InnerException?.Message ?? ex?.Message ?? string.Empty;
             _logger.LogError("{name} : {message}", nameof(StampsRateProvider), error);
-            shipment.InternalErrors.Add(ex.Message);
+            shipment.InternalErrors.Add(error);
         }
 
         return shipment;
@@ -151,7 +120,11 @@ public class StampsRateProvider : IStampsRateProvider
                     }
                     else
                     {
-                        addOns.Add(new AddOnV17() { AddOnDescription = "Delivery Confirmation", AddOnType = AddOnTypeV17.USADC });
+                        addOns.Add(new AddOnV17()
+                        {
+                            AddOnDescription = "Delivery Confirmation",
+                            AddOnType = AddOnTypeV17.USADC
+                        });
                         rate.Amount += rate.AddOns.FirstOrDefault(x => x.AddOnType == AddOnTypeV17.USASC)?.Amount ?? 0m;
                     }
                 }

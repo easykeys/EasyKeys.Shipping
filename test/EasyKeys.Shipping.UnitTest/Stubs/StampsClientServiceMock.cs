@@ -1,5 +1,4 @@
-﻿
-using EasyKeys.Shipping.Stamps.Abstractions.Options;
+﻿using EasyKeys.Shipping.Stamps.Abstractions.Options;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.Abstractions.Services.Impl;
 

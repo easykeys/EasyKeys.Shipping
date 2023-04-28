@@ -5,10 +5,12 @@ using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 
+using EasyKeysShipping.FuncTest.TestHelpers;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeysShipping.UnitTest;
+namespace EasyKeysShipping.FuncTest.FedEx;
 
 public class FedExRateProviderTests
 {
@@ -16,13 +18,13 @@ public class FedExRateProviderTests
 
     private readonly Address _origin;
 
-    private readonly ServiceProvider _sp;
+    private readonly IServiceProvider _sp;
 
     public FedExRateProviderTests(ITestOutputHelper output)
     {
         _output = output;
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
-        _sp = GetServices();
+        _sp = ServiceProviderInstance.GetFedExServices(output);
     }
 
     public static IEnumerable<object[]> Data =>
@@ -176,7 +178,7 @@ public class FedExRateProviderTests
         var packages = new List<Package>
             {
                 // fedex envelope
-                new Package(2m, 4m, 8m, 9m / 16,20)
+                new Package(2m, 4m, 8m, 9m / 16, 20)
             };
 
         var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now);
@@ -221,7 +223,8 @@ public class FedExRateProviderTests
         // FEDEX INTERNATIONAL PRIORITY EXPRESS
         // FEDEX INTERNATIONAL PRIORITY - 5 / 6 / 2021 12:00:00 PM - 18.16 - 72.46 - False
         // FEDEX INTERNATIONAL ECONOMY - 5 / 11 / 2021 6:00:00 PM - 23.56 - 109.23 - False
-        Assert.Equal(4, rates.Rates.Count);
+        // FEDEX_INTERNATIONAL_CONNECT_PLUS-11/23/2022 10:00:00 PM-116.98-116.98-False
+        Assert.Equal(5, rates.Rates.Count);
     }
 
     [Fact]

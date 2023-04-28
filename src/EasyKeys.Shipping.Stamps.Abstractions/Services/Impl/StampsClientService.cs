@@ -21,6 +21,8 @@ internal sealed class StampsClientService : IStampsClientService
 
     private SemaphoreSlim _mutex = new SemaphoreSlim(1);
 
+    private object _credentials;
+
     public StampsClientService(
         IOptionsMonitor<StampsOptions> optionsMonitor,
         IStampsClientAuthenticator stampsClientAuthenticator,
@@ -40,6 +42,14 @@ internal sealed class StampsClientService : IStampsClientService
              new EndpointAddress(_options.Url));
 
         _policy = Policies.GetWaitRetryAsyc(stampsClientAuthenticator, loggerFactory);
+
+        // this can be used thru the rest of the instance.
+        _credentials = new Credentials()
+        {
+            IntegrationID = new Guid(_options.IntegrationId),
+            Username = _options.UserName,
+            Password = _options.Password
+        };
     }
 
     public SwsimV111Soap CreateClient()
@@ -55,10 +65,14 @@ internal sealed class StampsClientService : IStampsClientService
                 await _mutex.WaitAsync();
                 try
                 {
-                    request.Item = _stampsClientAuthenticator.GetToken();
+                    request.Item = _options.UseAuthenticator ? _stampsClientAuthenticator.GetToken() : _credentials;
 
                     var respo = await _client.CleanseAddressAsync(request);
-                    _stampsClientAuthenticator.SetToken(respo.Authenticator);
+
+                    if (_options.UseAuthenticator)
+                    {
+                        _stampsClientAuthenticator.SetToken(respo.Authenticator);
+                    }
 
                     return respo;
                 }
@@ -82,10 +96,15 @@ internal sealed class StampsClientService : IStampsClientService
 
                   try
                   {
-                      request.Item = _stampsClientAuthenticator.GetToken();
+
+                      request.Item = _options.UseAuthenticator ? _stampsClientAuthenticator.GetToken() : _credentials;
 
                       var respo = await _client.GetRatesAsync(request);
-                      _stampsClientAuthenticator.SetToken(respo.Authenticator);
+
+                      if (_options.UseAuthenticator)
+                      {
+                          _stampsClientAuthenticator.SetToken(respo.Authenticator);
+                      }
 
                       return respo;
                   }
@@ -109,9 +128,15 @@ internal sealed class StampsClientService : IStampsClientService
 
                   try
                   {
-                      request.Item = _stampsClientAuthenticator.GetToken();
+                      request.Item = _options.UseAuthenticator ? _stampsClientAuthenticator.GetToken() : _credentials;
+
                       var respo = await _client.CreateIndiciumAsync(request);
-                      _stampsClientAuthenticator.SetToken(respo.Authenticator);
+
+                      if (_options.UseAuthenticator)
+                      {
+                          _stampsClientAuthenticator.SetToken(respo.Authenticator);
+                      }
+
                       return respo;
                   }
                   finally
@@ -134,9 +159,15 @@ internal sealed class StampsClientService : IStampsClientService
 
                   try
                   {
-                      request.Item = _stampsClientAuthenticator.GetToken();
+                      request.Item = _options.UseAuthenticator ? _stampsClientAuthenticator.GetToken() : _credentials;
+
                       var respo = await _client.CancelIndiciumAsync(request);
-                      _stampsClientAuthenticator.SetToken(respo.Authenticator);
+
+                      if (_options.UseAuthenticator)
+                      {
+                          _stampsClientAuthenticator.SetToken(respo.Authenticator);
+                      }
+
                       return respo;
                   }
                   finally
@@ -159,9 +190,15 @@ internal sealed class StampsClientService : IStampsClientService
 
                   try
                   {
-                      request.Item = _stampsClientAuthenticator.GetToken();
+                      request.Item = _options.UseAuthenticator ? _stampsClientAuthenticator.GetToken() : _credentials;
+
                       var respo = await _client.TrackShipmentAsync(request);
-                      _stampsClientAuthenticator.SetToken(respo.Authenticator);
+
+                      if (_options.UseAuthenticator)
+                      {
+                          _stampsClientAuthenticator.SetToken(respo.Authenticator);
+                      }
+
                       return respo;
                   }
                   finally

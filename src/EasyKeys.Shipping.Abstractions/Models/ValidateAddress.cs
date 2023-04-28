@@ -10,15 +10,12 @@ public class ValidateAddress
     /// </summary>
     /// <param name="id"></param>
     /// <param name="originalAddress"></param>
-    /// <param name="proposedAddress"></param>
     public ValidateAddress(
         string id,
-        Address originalAddress,
-        Address? proposedAddress = null)
+        Address originalAddress)
     {
         Id = id;
         OriginalAddress = originalAddress;
-        ProposedAddress = proposedAddress ?? originalAddress;
     }
 
     /// <summary>

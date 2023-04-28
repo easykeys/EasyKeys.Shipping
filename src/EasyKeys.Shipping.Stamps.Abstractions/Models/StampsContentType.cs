@@ -1,86 +1,85 @@
 ﻿using Ardalis.SmartEnum;
 
-namespace EasyKeys.Shipping.Stamps.Abstractions.Models
+namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
+
+public abstract class StampsContentType : SmartEnum<StampsContentType>
 {
-    public abstract class StampsContentType : SmartEnum<StampsContentType>
+    public static readonly StampsContentType Other = new OtherType();
+
+    public static readonly StampsContentType ReturnedGoods = new ReturnedGoodsType();
+
+    public static readonly StampsContentType Merchandise = new MerchandiseType();
+
+    public static readonly StampsContentType HumanitarianDonation = new HumanitarianDonationType();
+
+    public static readonly StampsContentType Gift = new GiftType();
+
+    public static readonly StampsContentType Document = new DocumentType();
+
+    public static readonly StampsContentType DangerousGoods = new DangerousGoodsType();
+
+    public static readonly StampsContentType CommcercialSample = new CommercialSampleType();
+
+    protected StampsContentType(string name, int value, string description) : base(name, value)
     {
-        public static readonly StampsContentType Other = new OtherType();
+        Description = description;
+    }
 
-        public static readonly StampsContentType ReturnedGoods = new ReturnedGoodsType();
+    public string Description { get; }
 
-        public static readonly StampsContentType Merchandise = new MerchandiseType();
-
-        public static readonly StampsContentType HumanitarianDonation = new HumanitarianDonationType();
-
-        public static readonly StampsContentType Gift = new GiftType();
-
-        public static readonly StampsContentType Document = new DocumentType();
-
-        public static readonly StampsContentType DangerousGoods = new DangerousGoodsType();
-
-        public static readonly StampsContentType CommcercialSample = new CommercialSampleType();
-
-        protected StampsContentType(string name, int value, string description) : base(name, value)
+    private sealed class OtherType : StampsContentType
+    {
+        public OtherType() : base(StampsClient.v111.ContentTypeV2.Other.ToString(), (int)StampsClient.v111.ContentTypeV2.Other, "Other")
         {
-            Description = description;
         }
+    }
 
-        public string Description { get; }
-
-        private sealed class OtherType : StampsContentType
+    private sealed class ReturnedGoodsType : StampsContentType
+    {
+        public ReturnedGoodsType() : base(StampsClient.v111.ContentTypeV2.ReturnedGoods.ToString(), (int)StampsClient.v111.ContentTypeV2.ReturnedGoods, "Returned Goods")
         {
-            public OtherType() : base(StampsClient.v111.ContentTypeV2.Other.ToString(), (int)StampsClient.v111.ContentTypeV2.Other, "Other")
-            {
-            }
         }
+    }
 
-        private sealed class ReturnedGoodsType : StampsContentType
+    private sealed class MerchandiseType : StampsContentType
+    {
+        public MerchandiseType() : base(StampsClient.v111.ContentTypeV2.Merchandise.ToString(), (int)StampsClient.v111.ContentTypeV2.Merchandise, "Merchandise")
         {
-            public ReturnedGoodsType() : base(StampsClient.v111.ContentTypeV2.ReturnedGoods.ToString(), (int)StampsClient.v111.ContentTypeV2.ReturnedGoods, "Returned Goods")
-            {
-            }
         }
+    }
 
-        private sealed class MerchandiseType : StampsContentType
+    private sealed class HumanitarianDonationType : StampsContentType
+    {
+        public HumanitarianDonationType() : base(StampsClient.v111.ContentTypeV2.HumanitarianDonation.ToString(), (int)StampsClient.v111.ContentTypeV2.HumanitarianDonation, "Humanitarian Donation")
         {
-            public MerchandiseType() : base(StampsClient.v111.ContentTypeV2.Merchandise.ToString(), (int)StampsClient.v111.ContentTypeV2.Merchandise, "Merchandise")
-            {
-            }
         }
+    }
 
-        private sealed class HumanitarianDonationType : StampsContentType
+    private sealed class GiftType : StampsContentType
+    {
+        public GiftType() : base(StampsClient.v111.ContentTypeV2.Gift.ToString(), (int)StampsClient.v111.ContentTypeV2.Gift, "Gift")
         {
-            public HumanitarianDonationType() : base(StampsClient.v111.ContentTypeV2.HumanitarianDonation.ToString(), (int)StampsClient.v111.ContentTypeV2.HumanitarianDonation, "Humanitarian Donation")
-            {
-            }
         }
+    }
 
-        private sealed class GiftType : StampsContentType
+    private sealed class DocumentType : StampsContentType
+    {
+        public DocumentType() : base(StampsClient.v111.ContentTypeV2.Document.ToString(), (int)StampsClient.v111.ContentTypeV2.Document, "Document")
         {
-            public GiftType() : base(StampsClient.v111.ContentTypeV2.Gift.ToString(), (int)StampsClient.v111.ContentTypeV2.Gift, "Gift")
-            {
-            }
         }
+    }
 
-        private sealed class DocumentType : StampsContentType
+    private sealed class DangerousGoodsType : StampsContentType
+    {
+        public DangerousGoodsType() : base(StampsClient.v111.ContentTypeV2.DangerousGoods.ToString(), (int)StampsClient.v111.ContentTypeV2.DangerousGoods, "Dangerous Goods")
         {
-            public DocumentType() : base(StampsClient.v111.ContentTypeV2.Document.ToString(), (int)StampsClient.v111.ContentTypeV2.Document, "Document")
-            {
-            }
         }
+    }
 
-        private sealed class DangerousGoodsType : StampsContentType
+    private sealed class CommercialSampleType : StampsContentType
+    {
+        public CommercialSampleType() : base(StampsClient.v111.ContentTypeV2.CommercialSample.ToString(), (int)StampsClient.v111.ContentTypeV2.CommercialSample, "Commercial Ssample")
         {
-            public DangerousGoodsType() : base(StampsClient.v111.ContentTypeV2.DangerousGoods.ToString(), (int)StampsClient.v111.ContentTypeV2.DangerousGoods, "Dangerous Goods")
-            {
-            }
-        }
-
-        private sealed class CommercialSampleType : StampsContentType
-        {
-            public CommercialSampleType() : base(StampsClient.v111.ContentTypeV2.CommercialSample.ToString(), (int)StampsClient.v111.ContentTypeV2.CommercialSample, "Commercial Ssample")
-            {
-            }
         }
     }
 }

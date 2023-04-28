@@ -1,0 +1,17 @@
+
+POST {{host}}/fedex/addressValidation
+Content-Type: application/json
+
+{
+  "id": "82930258-6424-4c90-87ee-c3abbf0f0ee4",
+  "address": {
+    "countryName": "United States",
+    "streetLine": "725 Ponce de Leon Ave NE",
+    "streetLine2": null,
+    "city": "Atlanta",
+    "stateOrProvince": "GA",
+    "postalCode": "30306",
+    "countryCode": "US",
+    "isResidential": true
+  }
+}

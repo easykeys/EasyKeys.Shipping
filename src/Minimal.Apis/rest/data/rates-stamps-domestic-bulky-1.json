@@ -1,0 +1,51 @@
+{
+    "sender": {
+        "firstName": "EasyKeys.com",
+        "lastName": "Fulfillment Center",
+        "company": "EasyKeys.com",
+        "department": "Warehouse",
+        "email": "info@EasyKeys.com",
+        "extension": null,
+        "phoneNumber": "877.839.5397"
+    },
+
+    "origin": {
+        "streetLine": "11407 Granite Street",
+        "streetLine2": null,
+        "city": "Charlotte",
+        "stateOrProvince": "NC",
+        "postalCode": "28273",
+        "countryCode": "US",
+        "isResidential": false
+    },
+
+    "recipient": {
+        "firstName": "EasyKeys.com",
+        "lastName": "Customer",
+        "company": "",
+        "department": "",
+        "email": "info@easykeys.com",
+        "extension": null    ,
+        "phoneNumber": "877.839.5397"
+    },
+
+    "destination": {
+        "streetLine": "URB SAN GERARDO",
+        "streetLine2": "1647 CALLE ANAPOLIS",
+        "city": "San Juan",
+        "stateOrProvince": "PR",
+        "postalCode": "00926",
+        "countryCode": "US",
+        "isResidential": false
+    },
+
+    "package": {
+        "ShipDate": null,
+        "signatureRequiredOnDelivery": true,
+        "insuredValue": 100,
+        "length": 48.0,
+        "width": 2.0,
+        "height": 1.0,
+        "weight": 0.5625
+    }
+}

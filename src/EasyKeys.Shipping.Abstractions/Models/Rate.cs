@@ -97,7 +97,7 @@ public class Rate : ValueObject
         yield return Name;
         yield return ServiceName;
         yield return PackageType;
-        yield return GuaranteedDelivery;
+        yield return GuaranteedDelivery ?? default;
         yield return SaturdayDelivery;
         yield return TotalCharges;
         yield return TotalCharges2;

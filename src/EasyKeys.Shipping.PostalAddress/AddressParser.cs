@@ -31,7 +31,7 @@ public class AddressParser : IAddressParser
     /// Maps directional names (north, northeast, etc.) to abbreviations (N, NE, etc.).
     /// </summary>
     private readonly Dictionary<string, string> _directionals =
-        new Dictionary<string, string>()
+        new()
         {
                 { "NORTH", "N" },
                 { "NORTHEAST", "NE" },
@@ -48,7 +48,7 @@ public class AddressParser : IAddressParser
     /// postal abbreviations.
     /// </summary>
     private readonly Dictionary<string, string> _states =
-        new Dictionary<string, string>()
+        new()
         {
                 { "ALABAMA", "AL" },
                 { "ALASKA", "AK" },
@@ -558,7 +558,9 @@ public class AddressParser : IAddressParser
     /// Initializes a new instance of the <see cref="AddressParser"/> class.
     /// Initializes the <see cref="AddressParser"/> class.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public AddressParser()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         // Build a combined dictionary of both the ranged and rangeless secondary units.
         // This is used by the Normalize() method to convert the unit into the USPS

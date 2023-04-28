@@ -1,4 +1,6 @@
-﻿using AddressValidationClient.v4;
+﻿using System.Diagnostics;
+
+using AddressValidationClient.v4;
 
 using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Models;
@@ -12,7 +14,7 @@ using v4 = AddressValidationClient.v4;
 
 namespace EasyKeys.Shipping.FedEx.AddressValidation;
 
-public class FedExAddressValidationProvider : IFedExAddressValidationProvider
+public class FedExAddressValidationProvider : IFedExAddressValidationProvider, IAddressValidationProvider
 {
     private readonly ILogger<FedExAddressValidationProvider> _logger;
     private readonly AddressValidationPortType _addressValidationClient;
@@ -32,8 +34,12 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    public string Name => nameof(FedExAddressValidationProvider);
+
     public async Task<ValidateAddress> ValidateAddressAsync(ValidateAddress request, CancellationToken cancellationToken = default)
     {
+        var watch = ValueStopwatch.StartNew();
+
         try
         {
             var client = _addressValidationClient;
@@ -50,10 +56,14 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
                 var addressResults = result.AddressResults[0];
                 var effectiveAddress = addressResults.EffectiveAddress;
                 var parsedAddress = addressResults.ParsedAddressPartsDetail;
+
                 var lines = effectiveAddress?.StreetLines ?? new string[1] { string.Empty };
+                var address1 = lines[0];
+                var address2 = lines.Length > 1 ? lines[1] : string.Empty;
 
                 request.ProposedAddress = new Shipping.Abstractions.Models.Address(
-                    lines[0],
+                    address1,
+                    address2,
                     effectiveAddress?.City ?? string.Empty,
                     effectiveAddress?.StateOrProvinceCode ?? string.Empty,
                     effectiveAddress?.PostalCode ?? string.Empty,
@@ -113,12 +123,27 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
             request.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExAddressValidationProvider)} failed");
         }
 
+        _logger.LogDebug("[FedEx][ValidateAddressAsync] completed: {mil}", watch.GetElapsedTime().TotalMilliseconds);
+
         return request;
     }
 
     private v4.AddressValidationRequest CreateRequest(ValidateAddress request)
     {
-        var address = request.ProposedAddress;
+        var address = request.OriginalAddress;
+
+        var addressToValidate = new v4.AddressToValidate
+        {
+            ClientReferenceId = request.Id,
+            Address = new v4.Address
+            {
+                StreetLines = address?.GetStreetLines(),
+                PostalCode = address?.PostalCode,
+                City = address?.City,
+                StateOrProvinceCode = address?.StateOrProvince,
+                CountryCode = address?.CountryCode
+            }
+        };
 
         return new v4.AddressValidationRequest
         {
@@ -145,18 +170,7 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider
             Version = new v4.VersionId(),
             AddressesToValidate = new v4.AddressToValidate[1]
             {
-                    new v4.AddressToValidate
-                    {
-                        ClientReferenceId = request.Id,
-                        Address = new v4.Address
-                        {
-                            StreetLines = address?.GetStreetLines(),
-                            PostalCode = address?.PostalCode,
-                            City = address?.City,
-                            StateOrProvinceCode = address?.StateOrProvince,
-                            CountryCode = address?.CountryCode
-                        }
-                    }
+                   addressToValidate
             },
 
             InEffectAsOfTimestamp = DateTime.Now,

@@ -1,30 +1,28 @@
 ﻿using System.Collections;
 
-using Bet.Extensions.Testing.Logging;
-
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.AddressValidation;
 
-using Microsoft.Extensions.Configuration;
+using EasyKeysShipping.FuncTest.TestHelpers;
+
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeysShipping.UnitTest.Stamps;
+namespace EasyKeysShipping.FuncTest.Stamps;
 
 public class StampsAddressValidationProviderTests
 {
-    private readonly ITestOutputHelper _output;
     private readonly IStampsAddressValidationProvider _validator;
 
     public StampsAddressValidationProviderTests(ITestOutputHelper output)
     {
-        _output = output;
-        _validator = GetAddressValidator();
+        _validator = ServiceProviderInstance.GetStampsServices(output)
+            .GetRequiredService<IStampsAddressValidationProvider>();
     }
 
     [Theory]
     [ClassData(typeof(AddressTestData))]
     public async Task Address_Validation_Successfully(
-        EasyKeys.Shipping.Abstractions.Models.Address address,
+        Address address,
         int errorCount,
         int internalErrorCount,
         bool cityStateZipOk,
@@ -50,33 +48,13 @@ public class StampsAddressValidationProviderTests
         Assert.Equal(result.ValidationBag["ValidationResult"], validationResult);
     }
 
-    private IStampsAddressValidationProvider GetAddressValidator()
-    {
-        var services = new ServiceCollection();
-
-        var dic = new Dictionary<string, string>
-        {
-            { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
-        };
-
-        var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
-        configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
-
-        services.AddLogging(builder => builder.AddXunit(_output));
-        services.AddSingleton<IConfiguration>(configBuilder.Build());
-        services.AddStampsAddressProvider();
-
-        var sp = services.BuildServiceProvider();
-        return sp.GetRequiredService<IStampsAddressValidationProvider>();
-    }
-
     private class AddressTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
             yield return new object[]
             {
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             StreetLine = "1550 Central Ave",
                             StreetLine2 = "Apt 35",
@@ -103,7 +81,7 @@ public class StampsAddressValidationProviderTests
             };
             yield return new object[]
             {
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             City = "Riverside",
                             StateOrProvince = "CA",
@@ -128,7 +106,7 @@ public class StampsAddressValidationProviderTests
             };
             yield return new object[]
             {
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             City = "Riverside",
                             StreetLine = "is this a real street",
@@ -155,7 +133,7 @@ public class StampsAddressValidationProviderTests
             yield return new object[]
             {
                  // International Address
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             City = "San Diana",
                             StreetLine = "Strada Gilda 2 Piano 9",
@@ -182,7 +160,7 @@ public class StampsAddressValidationProviderTests
             yield return new object[]
             {
                  // International Address
-                 new EasyKeys.Shipping.Abstractions.Models.Address()
+                 new Address()
                         {
                             City = "Barrhead",
                             StreetLine = "512 Venture Place",

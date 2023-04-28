@@ -14,11 +14,11 @@ public static class XElementExtensions
                 .Descendants("Error")
                 .Select(item => new Error()
                 {
-                    Description = item.Element("Description").Value,
-                    Source = item.Element("Source").Value,
-                    HelpContext = item.Element("HelpContext").Value,
-                    HelpFile = item.Element("HelpFile").Value,
-                    Number = item.Element("Number").Value
+                    Description = item?.Element("Description")?.Value ?? string.Empty,
+                    Source = item?.Element("Source")?.Value ?? string.Empty,
+                    HelpContext = item?.Element("HelpContext")?.Value ?? string.Empty,
+                    HelpFile = item?.Element("HelpFile")?.Value ?? string.Empty,
+                    Number = item?.Element("Number")?.Value ?? string.Empty
                 });
 
             foreach (var err in errors)

@@ -13,7 +13,7 @@
     "namespaceMappings": [
       "*, StampsClient.v111"
     ],
-    "targetFramework": "net5.0",
+    "targetFramework": "net7.0",
     "typeReuseMode": "None"
   }
 }

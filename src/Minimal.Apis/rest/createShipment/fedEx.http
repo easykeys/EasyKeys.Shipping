@@ -1,0 +1,54 @@
+
+POST {{host}}/fedex/createShipment?serviceType=PRIORITY_OVERNIGHT&packageType=FEDEX_ENVELOPE&orderId=12345
+Content-Type: application/json
+
+{
+  "origin": {
+    "city": "Charlotte",
+    "countryCode": "US",
+    "countryName": "United States",
+    "streetLine": "11407 Granite Street ",
+    "streetLine2": "Ste B",
+    "postalCode": "28273",
+    "stateOrProvince": "NC",
+    "isResidential": true
+  },
+  "destination": {
+    "countryName": "United States",
+    "streetLine": "725 Ponce de Leon Ave NE",
+    "streetLine2": null,
+    "city": "Atlanta",
+    "stateOrProvince": "GA",
+    "postalCode": "30306",
+    "countryCode": "US",
+    "isResidential": false
+  },
+  "package": {
+    "shipDate": "2023-04-28T00:34:53.365Z",
+    "signatureRequiredOnDelivery": true,
+    "insuredValue": 100,
+    "length": 9.0,
+    "width": 12.0,
+    "height": 1.0,
+    "weight": "0.9375"
+  },
+
+  "sender": {
+    "firstName": "string",
+    "lastName": "string",
+    "company": "string",
+    "department": "string",
+    "email": "customer@email.com",
+    "extension": "string",
+    "phoneNumber": "877.839.5397"
+  },
+  "recipient": {
+    "firstName": "string",
+    "lastName": "string",
+    "company": "string",
+    "department": "string",
+    "email": "info@eaykeys.com",
+    "extension": "string",
+    "phoneNumber": "877.839.5397"
+  }
+}

@@ -89,9 +89,10 @@ public class FedExRateConfigurator
         var shipment = new Shipment(origin, destination, packages, options);
         var serviceType = destination.IsResidential ? FedExServiceType.FedExGroundHomeDelivery : FedExServiceType.FedExGround;
 
-        if (!destination.IsUnitedStatesAddress())
+        if (!destination.IsUnitedStatesAddress() && destination.IsCanadaAddress())
         {
-            // it becomes FedEx International Ground®
+            // fedex international ground is only for US/CA
+            // https://www.fedex.com/en-ca/shipping-services/international/ground-shipping-to-the-us.html
             serviceType = FedExServiceType.FedExGround;
         }
 

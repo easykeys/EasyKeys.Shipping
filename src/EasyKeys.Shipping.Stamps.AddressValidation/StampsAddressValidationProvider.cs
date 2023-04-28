@@ -1,4 +1,7 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿using System.Diagnostics;
+
+using EasyKeys.Shipping.Abstractions;
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Stamps.Abstractions.Services;
 using EasyKeys.Shipping.Stamps.AddressValidation.Extensions;
 
@@ -8,7 +11,7 @@ using StampsClient.v111;
 
 namespace EasyKeys.Shipping.Stamps.AddressValidation;
 
-public class StampsAddressValidationProvider : IStampsAddressValidationProvider
+public class StampsAddressValidationProvider : IStampsAddressValidationProvider, IAddressValidationProvider
 {
     private readonly IStampsClientService _stampsClient;
     private readonly ILogger<StampsAddressValidationProvider> _logger;
@@ -21,6 +24,8 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    public string Name => nameof(StampsAddressValidationProvider);
+
     public async Task<ValidateAddress> ValidateAddressAsync(ValidateAddress validateAddress, CancellationToken cancellationToken)
     {
         var request = new CleanseAddressRequest()
@@ -30,7 +35,11 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
 
         try
         {
+            var watch = ValueStopwatch.StartNew();
+
             var response = await _stampsClient.CleanseAddressAsync(request, cancellationToken);
+
+            _logger.LogDebug("[Stamps.com][ValidateAddressAsync] completed: {mil}", watch.GetElapsedTime().TotalMilliseconds);
 
             return VerifyAddress(response, validateAddress);
         }
@@ -39,8 +48,17 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
             _logger.LogError("{name} : {message}", nameof(StampsAddressValidationProvider), ex.Message);
 
             validateAddress.InternalErrors.Add(ex.Message);
+
+            validateAddress.ValidationBag.Remove("CityStateZipOK");
             validateAddress.ValidationBag.Add("CityStateZipOK", "false");
+
+            validateAddress.ValidationBag.Remove("AddressMatch");
             validateAddress.ValidationBag.Add("AddressMatch", "false");
+
+            validateAddress.ValidationBag.Remove("IsPOBox");
+            validateAddress.ValidationBag.Add("IsPOBox", "false");
+
+            validateAddress.ValidationBag.Remove("ValidationResult");
             validateAddress.ValidationBag.Add("ValidationResult", ex.Message);
 
             return validateAddress;
@@ -51,9 +69,14 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
     {
         if (request != null)
         {
+            request.ValidationBag.Remove("CityStateZipOK");
             request.ValidationBag.Add("CityStateZipOK", $"{response.CityStateZipOK}");
 
+            request.ValidationBag.Remove("AddressMatch");
             request.ValidationBag.Add("AddressMatch", $"{response.AddressMatch}");
+
+            request.ValidationBag.Remove("IsPOBox");
+            request.ValidationBag.Add("IsPOBox", $"{response.IsPOBox}");
 
             var cleansedAddress = response.CandidateAddresses.FirstOrDefault();
 
@@ -84,7 +107,8 @@ public class StampsAddressValidationProvider : IStampsAddressValidationProvider
 
             request.ProposedAddress.IsResidential = request.OriginalAddress.IsResidential;
 
-            request?.ValidationBag.Add("ValidationResult", response?.AddressCleansingResult ?? "No result");
+            request.ValidationBag.Remove("ValidationResult");
+            request.ValidationBag.Add("ValidationResult", response?.AddressCleansingResult ?? "No result");
         }
 
         return request!;

@@ -25,34 +25,19 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<ShipmentLabel> CreateDomesticShipmentAsync(
+    public async Task<ShipmentLabel> CreateShipmentAsync(
         Shipping.Abstractions.Models.Shipment shipment,
         RateOptions rateOptions,
         ShipmentDetails shipmentDetails,
         CancellationToken cancellationToken)
     {
-        var request = shipmentDetails.Map()
-                                     .SetShipmentNotification(shipmentDetails, rateOptions.Recipient);
+        var request = new CreateIndiciumRequest().MapToShipmentRequest(
+            isDomestic: shipment.IsDomestic(),
+            weightLb: (double)shipment.GetTotalWeight(),
+            shipmentDetails: shipmentDetails,
+            rateOptions: rateOptions);
 
-        request.Rate = shipment.MapToDomesticRate(rateOptions);
-        request.RedirectTo = request.Rate.From;
-
-        return await GetLabelAsync(request, shipmentDetails.LabelOptions.ImageType, cancellationToken);
-    }
-
-    public async Task<ShipmentLabel> CreateInternationalShipmentAsync(
-        Shipping.Abstractions.Models.Shipment shipment,
-        RateInternationalOptions rateOptions,
-        ShipmentDetails shipmentDetails,
-        IList<Commodity> commodities,
-        CustomsInformation customsInformation,
-        CancellationToken cancellationToken)
-    {
-        var request = shipmentDetails.Map()
-                      .SetShipmentNotification(shipmentDetails, rateOptions.Recipient)
-                      .SetCustomsInformation(rateOptions.ContentType, commodities, customsInformation, (double)shipment.GetTotalWeight());
-
-        request.Rate = shipment.MapToInternationalRate(rateOptions);
+        request.Rate = new RateV40().MapToRate(shipment, rateOptions);
         request.RedirectTo = request.Rate.From;
 
         return await GetLabelAsync(request, shipmentDetails.LabelOptions.ImageType, cancellationToken);

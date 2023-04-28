@@ -16,28 +16,10 @@ public interface IStampsShipmentProvider
     /// <param name="shipmentDetails"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<ShipmentLabel> CreateDomesticShipmentAsync(
+    Task<ShipmentLabel> CreateShipmentAsync(
         Shipping.Abstractions.Models.Shipment shipment,
         RateOptions rateOptions,
         ShipmentDetails shipmentDetails,
-        CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Creates Shipping Label for the international addresses.
-    /// </summary>
-    /// <param name="shipment"></param>
-    /// <param name="rateOptions"></param>
-    /// <param name="shipmentDetails"></param>
-    /// <param name="commodities"></param>
-    /// <param name="customsInformation"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<ShipmentLabel> CreateInternationalShipmentAsync(
-        Shipping.Abstractions.Models.Shipment shipment,
-        RateInternationalOptions rateOptions,
-        ShipmentDetails shipmentDetails,
-        IList<Commodity> commodities,
-        CustomsInformation customsInformation,
         CancellationToken cancellationToken);
 
     /// <summary>
