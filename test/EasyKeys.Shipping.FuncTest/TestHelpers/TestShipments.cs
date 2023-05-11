@@ -107,7 +107,6 @@ public static class TestShipments
                 LastName = "Moffett",
                 Company = "EasyKeys.com",
                 Email = "TestMe@EasyKeys.com",
-                Department = "Software",
                 PhoneNumber = "951-223-2222"
             },
             new ContactInfo()
@@ -115,7 +114,6 @@ public static class TestShipments
                 FirstName = "Fictitious Character",
                 Company = "Marvel",
                 Email = "FictitiousCharacter@marvel.com",
-                Department = "SuperHero",
                 PhoneNumber = "867-338-2737"
             }
         );

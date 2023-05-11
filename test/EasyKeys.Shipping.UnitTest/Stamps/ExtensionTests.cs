@@ -165,27 +165,15 @@ public class ExtensionTests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { StampsPackageType.Pak };
-
             yield return new object[] { StampsPackageType.Package };
-
-            yield return new object[] { StampsPackageType.OversizedPackage };
 
             yield return new object[] { StampsPackageType.LargePackage };
 
             yield return new object[] { StampsPackageType.PostCard };
 
-            yield return new object[] { StampsPackageType.Documents };
-
             yield return new object[] { StampsPackageType.ThickEnvelope };
 
-            yield return new object[] { StampsPackageType.Envelope };
-
-            yield return new object[] { StampsPackageType.ExpressEnvelope };
-
             yield return new object[] { StampsPackageType.FlatRateEnvelope };
-
-            yield return new object[] { StampsPackageType.LegalFlatRateEnvelope };
 
             yield return new object[] { StampsPackageType.Letter };
 
@@ -193,17 +181,9 @@ public class ExtensionTests
 
             yield return new object[] { StampsPackageType.SmallFlatRateBox };
 
-            yield return new object[] { StampsPackageType.FlatRateBox };
+            yield return new object[] { StampsPackageType.MediumFlatRateBox };
 
             yield return new object[] { StampsPackageType.LargeFlatRateBox };
-
-            yield return new object[] { StampsPackageType.FlatRatePaddedEnvelope };
-
-            yield return new object[] { StampsPackageType.RegionalRateBoxA };
-
-            yield return new object[] { StampsPackageType.RegionalRateBoxB };
-
-            yield return new object[] { StampsPackageType.RegionalRateBoxC };
         }
 
         IEnumerator IEnumerable.GetEnumerator()
