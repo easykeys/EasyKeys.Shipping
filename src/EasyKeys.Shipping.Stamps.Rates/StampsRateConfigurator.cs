@@ -10,6 +10,10 @@ namespace EasyKeys.Shipping.Stamps.Rates;
 public class StampsRateConfigurator
 {
     private readonly PackageWeight _packageWeight;
+    private readonly Address _origin;
+    private readonly Address _destination;
+    private readonly Package _package;
+    private readonly DateTime _shipDate;
 
     public StampsRateConfigurator(
         Address origin,
@@ -21,20 +25,24 @@ public class StampsRateConfigurator
 
         if (package.Dimensions.Girth >= 108)
         {
-            throw new ArgumentException("USPS doesn't support this size package.", nameof(package.Weight));
+            throw new ArgumentException("USPS doesn't support this package size.", nameof(package.Dimensions));
         }
 
+        _origin = origin;
+        _destination = destination;
+        _package = package;
+
         // helpful to make sure we have business days and not regular days.
-        var solidDate = shipDate ?? DateTime.Now;
+        _shipDate = shipDate ?? DateTime.Now;
 
         // configure possible shipments
         if (destination.IsUnitedStatesAddress())
         {
-            CreateDomesticShipments(origin, destination, package, solidDate);
+            CreateDomesticShipments();
         }
         else
         {
-            CreateInternationalShipments(origin, destination, package, solidDate);
+            CreateInternationalShipments();
         }
     }
 
@@ -145,50 +153,64 @@ public class StampsRateConfigurator
         return new Package(StampsPackageType.LargeFlatRateBox.MaxSize, weight, insuredValue, isSignatureRequired);
     }
 
-    private void CreateDomesticShipments(
-        Address origin,
-        Address destination,
-        Package package,
-        DateTime shipDate)
+    /// <summary>
+    /// Sets shipment based on the <see cref="StampsPackageType"/>.
+    /// </summary>
+    /// <param name="packageType"></param>
+    /// <param name="weight"></param>
+    /// <param name="insuredValue"></param>
+    /// <param name="isSignatureRequired"></param>
+    public void SetShipment(
+            StampsPackageType packageType,
+            decimal? weight = null,
+            decimal? insuredValue = null,
+            bool? isSignatureRequired = null)
+    {
+        var package = new Package(
+            packageType.MaxSize,
+            weight ?? _packageWeight.InPounds,
+            insuredValue ?? _package.InsuredValue,
+            isSignatureRequired ?? _package.SignatureRequiredOnDelivery);
+
+        var shipmentOptions = new ShipmentOptions(packageType.Name, _shipDate);
+
+        var packages = new List<Package> { package };
+        var shipment = new Shipment(_origin, _destination, packages, shipmentOptions);
+
+        Shipments.Add(shipment);
+    }
+
+    private void CreateDomesticShipments()
     {
         // get qualified options based on the package weight
         var packageTypes = StampsPackageType.List.Where(x => x.MaxWeight.InPounds >= _packageWeight.InPounds
-                                                        && x.MaxSize.Measurement >= package.Dimensions.Measurement);
-        CreateShipments(origin, destination, package, shipDate, packageTypes);
+                                                            && x.MaxSize.Measurement >= _package.Dimensions.Measurement);
+        CreateShipments(packageTypes);
     }
 
-    private void CreateInternationalShipments(
-        Address origin,
-        Address destination,
-        Package package,
-        DateTime shipDate)
+    private void CreateInternationalShipments()
     {
         // get qualified options based on the package weight
         var packageTypes = StampsPackageType.List.Where(x => x.MaxInternationalWeight.InPounds >= _packageWeight.InPounds
-                                                        && x.MaxSize.Measurement >= package.Dimensions.Measurement);
+                                                                && x.MaxSize.Measurement >= _package.Dimensions.Measurement);
 
-        CreateShipments(origin, destination, package, shipDate, packageTypes);
+        CreateShipments(packageTypes);
     }
 
-    private void CreateShipments(
-         Address origin,
-         Address destination,
-         Package package,
-         DateTime shipDate,
-         IEnumerable<StampsPackageType>? packageTypes)
+    private void CreateShipments(IEnumerable<StampsPackageType>? packageTypes)
     {
         if (packageTypes is null)
         {
             return;
         }
 
-        var packages = new List<Package> { package };
+        var packages = new List<Package> { _package };
 
         foreach (var packageType in packageTypes)
         {
-            var shipmentOptions = new ShipmentOptions(packageType.Name, shipDate);
+            var shipmentOptions = new ShipmentOptions(packageType.Name, _shipDate);
 
-            var shipment = new Shipment(origin, destination, packages, shipmentOptions);
+            var shipment = new Shipment(_origin, _destination, packages, shipmentOptions);
 
             Shipments.Add(shipment);
         }

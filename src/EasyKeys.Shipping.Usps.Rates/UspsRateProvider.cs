@@ -137,7 +137,7 @@ public class UspsRateProvider : IUspsRateProvider
                     writer.WriteElementString("FirstClassMailType", container);
                 }
 
-                writer.WriteElementString("ZipOrigination", shipment.OriginAddress.CountryCode == "US" && shipment.OriginAddress.PostalCode.Length > 5 ? shipment.OriginAddress.PostalCode.Substring(0, 5) : shipment.OriginAddress.PostalCode);
+                writer.WriteElementString("ZipOrigination", shipment!.OriginAddress.CountryCode == "US" && shipment.OriginAddress.PostalCode.Length > 5 ? shipment.OriginAddress.PostalCode.Substring(0, 5) : shipment.OriginAddress.PostalCode);
                 writer.WriteElementString("ZipDestination", shipment.DestinationAddress.CountryCode == "US" && shipment.DestinationAddress.PostalCode.Length > 5 ? shipment.DestinationAddress.PostalCode.Substring(0, 5) : shipment.DestinationAddress.PostalCode);
                 writer.WriteElementString("Pounds", package.PoundsAndOunces.Pounds.ToString());
                 writer.WriteElementString("Ounces", package.PoundsAndOunces.Ounces.ToString());
@@ -188,13 +188,13 @@ public class UspsRateProvider : IUspsRateProvider
         var document = XElement.Parse(response, LoadOptions.None);
 
         var rates = from item in document.Descendants("Postage")
-                    group item by (string)item.Element("MailService")!
+                    group item by (string)item.Element("MailService") !
                     into g
                     select new
                     {
                         Name = g.Key,
-                        TotalCharges = g.Sum(x => decimal.Parse((string)x.Element("Rate")!)),
-                        DeliveryDate = g.Select(x => (string)x.Element("CommitmentDate")!).FirstOrDefault(),
+                        TotalCharges = g.Sum(x => decimal.Parse((string)x.Element("Rate") !)),
+                        DeliveryDate = g.Select(x => (string)x.Element("CommitmentDate") !).FirstOrDefault(),
                         SpecialServices = g.Select(x => x.Element("SpecialServices")).FirstOrDefault()
                     };
 
@@ -210,8 +210,8 @@ public class UspsRateProvider : IUspsRateProvider
                 {
                     foreach (var specialService in specialServices)
                     {
-                        var serviceId = (string)specialService.Element("ServiceID")!;
-                        var price = decimal.Parse((string)specialService.Element("Price")!);
+                        var serviceId = (string)specialService.Element("ServiceID") !;
+                        var price = decimal.Parse((string)specialService.Element("Price") !);
 
                         if (includeSpecialServiceCodes.Contains(serviceId))
                         {
@@ -339,12 +339,12 @@ public class UspsRateProvider : IUspsRateProvider
 
         var rates = document
             .Descendants("Service")
-            .GroupBy(item => (string)item.Element("SvcDescription")!)
+            .GroupBy(item => (string)item.Element("SvcDescription") !)
             .Select(g => new
             {
                 Name = g.Key,
-                DeliveryDate = g.Select(x => (string)x.Element("GuaranteeAvailability")!).FirstOrDefault(),
-                TotalCharges = g.Sum(x => decimal.Parse((string)x.Element("Postage")!))
+                DeliveryDate = g.Select(x => (string)x.Element("GuaranteeAvailability") !).FirstOrDefault(),
+                TotalCharges = g.Sum(x => decimal.Parse((string)x.Element("Postage") !))
             });
 
         foreach (var r in rates)

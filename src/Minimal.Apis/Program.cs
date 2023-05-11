@@ -62,7 +62,6 @@ var app = builder.Build();
 //     app.UseSwagger();
 //     app.UseSwaggerUI();
 // }
-
 app.UseSwagger();
 
 app.UseSwaggerUI();
@@ -133,7 +132,7 @@ app.MapPost("/stamps/getRates", async (
             rateOptions.DeclaredValue = model.Package.InsuredValue;
         }
 
-        var result = await rateProvider.GetRatesAsync(shipment, rateOptions, cancellationToken);
+        var result = await rateProvider.GetRatesAsync(shipment!, rateOptions, cancellationToken);
         foreach (var rate in result.Rates)
         {
             var found = listOfRates.FirstOrDefault(x => x.Name == rate.Name && x.PackageType == rate.PackageType);
@@ -224,7 +223,7 @@ app.MapPost("/stamps/createShipment", async (
     var rateOptions = new RateOptions
     {
         Sender = model.Sender,
-        Recipient = model.Recipient,
+        Recipient = model!.Recipient,
         ServiceType = StampsServiceType.FromName(serviceType)
     };
 
@@ -274,12 +273,12 @@ app.MapPost("/fedex/createShipment", async (
         package
     };
 
-    var correctShipment = new Shipment(model.Origin, model.Destination, packages, shipmentOptions);
+    var correctShipment = new Shipment(model!.Origin, model.Destination, packages, shipmentOptions);
 
     var shipmentDetails = new EasyKeys.Shipping.FedEx.Shipment.Models.ShipmentDetails
     {
         Sender = model.Sender,
-        Recipient = model.Recipient,
+        Recipient = model!.Recipient,
 
         TransactionId = orderId,
 
@@ -348,7 +347,7 @@ app.MapPost("/stamps/createInternationalShipment", async (
     var shipmentDetails = new ShipmentDetails();
     shipmentDetails.LabelOptions.Memo = orderId;
     shipmentDetails.IsSample = isSample;
-    shipmentDetails.Commodities.Add(model.Commodity);
+    shipmentDetails.Commodities.Add(model.Commodity!);
     shipmentDetails.CustomsInformation.InvoiceNumber = orderId;
     shipmentDetails.CustomsInformation.CustomsSigner = "Easykeys.com employee";
 
@@ -357,9 +356,9 @@ app.MapPost("/stamps/createInternationalShipment", async (
     var rateOptions = new RateOptions
     {
         Sender = model.Sender,
-        Recipient = model.Recipient,
+        Recipient = model.Recipient!,
         ServiceType = StampsServiceType.FromName(serviceType),
-        DeclaredValue = model.Commodity.Amount,
+        DeclaredValue = model!.Commodity!.Amount!,
     };
 
     if (correctShipment == null)

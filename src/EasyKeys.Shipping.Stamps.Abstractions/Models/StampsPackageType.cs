@@ -308,6 +308,8 @@ public abstract class StampsPackageType : SmartEnum<StampsPackageType>
                   StampsClient.v111.PackageTypeV11.LargeFlatRateBox.ToString(),
                   (int)StampsClient.v111.PackageTypeV11.LargeFlatRateBox)
         {
+            MinSize = minSize;
+            MaxSize = maxSize;
         }
 
         public override Dimensions MinSize { get; protected set; }

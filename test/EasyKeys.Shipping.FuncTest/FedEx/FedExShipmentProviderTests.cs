@@ -20,7 +20,7 @@ public class FedExShipmentProviderTests
     {
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
         _domestic = new Address("1550 central ave", "Riverside", "CA", "92507", "US");
-        _international = new Address("12 Margaret street Sefton Park", "SEFTON PARK", "", "5083", "AU");
+        _international = new Address("12 Margaret street Sefton Park", "SEFTON PARK", string.Empty, "5083", "AU");
         _provider = ServiceProviderInstance.GetFedExServices(output)
             .GetRequiredService<IFedExShipmentProvider>();
     }

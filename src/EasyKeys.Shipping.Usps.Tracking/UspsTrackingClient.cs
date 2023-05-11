@@ -73,7 +73,7 @@ namespace EasyKeys.Shipping.Usps.Tracking
                 {
                     XmlSerializer deserializer = new(typeof(TrackResponse));
                     var ms = new MemoryStream(Encoding.UTF8.GetBytes(content));
-                    var responseJson = (TrackResponse)deserializer.Deserialize(ms)!;
+                    var responseJson = (TrackResponse)deserializer.Deserialize(ms) !;
 
                     // todo: save response data to correct input data
                     foreach (var trackInfo in responseJson.TrackInfo)
@@ -108,7 +108,7 @@ namespace EasyKeys.Shipping.Usps.Tracking
         {
             List<TrackID> list = new() { new TrackID() { ID = trackingNumber } };
 
-            return (await GetTrackInfoAsync(list, cancellationToken)).FirstOrDefault()!;
+            return (await GetTrackInfoAsync(list, cancellationToken)).FirstOrDefault() !;
         }
 
         public async Task<List<TrackInfo>> GetTrackInfoAsync(List<string> trackingNumbers, CancellationToken cancellationToken)
