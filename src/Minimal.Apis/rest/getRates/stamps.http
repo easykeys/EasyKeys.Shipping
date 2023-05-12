@@ -24,7 +24,7 @@ Content-Type: application/json
     "isResidential": false
   },
   "package": {
-    "shipDate": "2023-05-10T00:34:53.365Z",
+    "shipDate": "2023-05-11T00:34:53.365Z",
     "signatureRequiredOnDelivery": true,
     "insuredValue": 100,
     "length": 8.0,

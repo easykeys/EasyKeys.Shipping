@@ -157,22 +157,53 @@ public class StampsRateConfigurator
     /// Sets shipment based on the <see cref="StampsPackageType"/>.
     /// </summary>
     /// <param name="packageType"></param>
+    /// <param name="useMax"></param>
     /// <param name="weight"></param>
     /// <param name="insuredValue"></param>
     /// <param name="isSignatureRequired"></param>
     public void SetShipment(
             StampsPackageType packageType,
+            bool useMax = false,
             decimal? weight = null,
             decimal? insuredValue = null,
             bool? isSignatureRequired = null)
     {
         var package = new Package(
-            packageType.MaxSize,
+            useMax ? packageType.MaxSize : packageType.MinSize,
             weight ?? _packageWeight.InPounds,
             insuredValue ?? _package.InsuredValue,
             isSignatureRequired ?? _package.SignatureRequiredOnDelivery);
 
         var shipmentOptions = new ShipmentOptions(packageType.Name, _shipDate);
+
+        var packages = new List<Package> { package };
+        var shipment = new Shipment(_origin, _destination, packages, shipmentOptions);
+
+        Shipments.Add(shipment);
+    }
+
+    /// <summary>
+    ///  Allow to set shipment and package without enumerating values.
+    /// </summary>
+    /// <param name="packageName"></param>
+    /// <param name="size"></param>
+    /// <param name="weight"></param>
+    /// <param name="insuredValue"></param>
+    /// <param name="isSignatureRequired"></param>
+    public void SetShipment(
+            string packageName,
+            Dimensions size,
+            decimal? weight = null,
+            decimal? insuredValue = null,
+            bool? isSignatureRequired = null)
+    {
+        var package = new Package(
+                size,
+                weight ?? _packageWeight.InPounds,
+                insuredValue ?? _package.InsuredValue,
+                isSignatureRequired ?? _package.SignatureRequiredOnDelivery);
+
+        var shipmentOptions = new ShipmentOptions(packageName, _shipDate);
 
         var packages = new List<Package> { package };
         var shipment = new Shipment(_origin, _destination, packages, shipmentOptions);
