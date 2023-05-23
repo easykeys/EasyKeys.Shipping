@@ -7,6 +7,5 @@ branches:
   master:
     regex: master
     tag: ""
-    increment: minor
 ignore:
   sha: []
