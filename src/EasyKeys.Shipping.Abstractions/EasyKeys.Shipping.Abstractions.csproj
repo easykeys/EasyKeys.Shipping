@@ -9,4 +9,8 @@
 		<PackageTags>DotNetCore, Shipment Abstractions</PackageTags>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="Humanizer" />
+	</ItemGroup>
+
 </Project>

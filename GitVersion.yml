@@ -1,9 +1,12 @@
 mode: Mainline
-next-version: 3.0.0
+next-version: 3.1.0
 branches:
   feature:
     tag: preview
+    increment: patch
   master:
+    regex: master
     tag: ""
+    increment: minor
 ignore:
   sha: []

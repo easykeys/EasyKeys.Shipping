@@ -39,11 +39,11 @@ public class StampsRateProvider : IStampsRateProvider
             foreach (var rate in rates)
             {
                 var rateReturned = new Rate(
-                    rate.ServiceType.ToString(),
-                    rate.ServiceDescription,
-                    rate.PackageType.ToString(),
-                    rate.Amount,
-                    rate.DeliveryDate)
+                                    rate.ServiceType.ToString(),
+                                    rate.ServiceDescription,
+                                    rate.PackageType.ToString(),
+                                    rate.Amount,
+                                    rate.DeliveryDate)
                 {
                     TotalCharges2 = rate.Amount
                 };

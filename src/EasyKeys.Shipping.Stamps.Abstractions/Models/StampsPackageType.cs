@@ -1,480 +1,323 @@
-﻿using Ardalis.SmartEnum;
+﻿using System.Text;
+
+using Ardalis.SmartEnum;
 
 using EasyKeys.Shipping.Abstractions.Models;
 
+using Humanizer;
+
 namespace EasyKeys.Shipping.Stamps.Abstractions.Models;
 
+/// <summary>
+/// <para>Stamps.com USPS package type more information can be found at:</para>
+/// <para>
+///     <see href="https://pe.usps.com/text/dmm100/mailing-domestic.htm"/>.
+///     <see href="https://pe.usps.com/text/dmm100/mailing-international.htm"/>.
+/// </para>
+/// </summary>
 public abstract class StampsPackageType : SmartEnum<StampsPackageType>
 {
-    /// <summary>
-    /// Postcard. Enabled on request.
-    /// </summary>
-    public static readonly StampsPackageType PostCard = new PostCardType();
+    public static readonly StampsPackageType PostCard = new PostCardType(new Dimensions(5m, 3.25m, 0.007m), new Dimensions(6m, 4.25m, 0.016m));
+
+    public static readonly StampsPackageType Letter = new LetterType(new Dimensions(5m, 3.25m, 0.0076m), new Dimensions(11.5m, 6.125m, 0.25m));
+
+    public static readonly StampsPackageType LargeEnvelopeOrFlat = new LargeEnvelopeOrFlatType(new Dimensions(11.50m, 6.125m, 0.25m), new Dimensions(15m, 12m, 0.75m));
+
+    public static readonly StampsPackageType ThickEnvelope = new ThickEnvelopeType(new Dimensions(6m, 3m, 0.25m), new Dimensions(22m, 15m, 0.75m));
+
+    public static readonly StampsPackageType Package = new PackageType(new Dimensions(6m, 3m, 0.25m), new Dimensions(22m, 15m, 15m));
+
+    public static readonly StampsPackageType LargePackage = new LargePackageType(new Dimensions(24.0625m, 11.825m, 3.125m), new Dimensions(24.0625m, 11.825m, 3.125m));
 
     /// <summary>
-    /// Letter. Enabled on request.
+    /// <see href="https://store.usps.com/store/product/shipping-supplies/priority-mail-flat-rate-envelope-P_EP_14_F"/>.
     /// </summary>
-    public static readonly StampsPackageType Letter = new LetterType();
+    public static readonly StampsPackageType FlatRateEnvelope = new FlatRateEnvelopeType(new Dimensions(12.5m, 9.5m, 0.75m), new Dimensions(12.5m, 9.5m, 0.75m));
 
     /// <summary>
-    /// Large envelope or flat. Has one dimension that is between 11 ½” and 15” long; 6 1/8” and 12” high; or ¼” and ¾ thick.
+    /// <see href="https://store.usps.com/store/product/shipping-supplies/priority-mail-flat-rate-padded-envelope-p_ep14pe"/>.
     /// </summary>
-    public static readonly StampsPackageType LargeEnvelopeOrFlat = new LargeEnvelopeOrFlatType();
+    public static readonly StampsPackageType FlatRatePaddedEnvelope = new FlatRatePaddedEnvelopeType(new Dimensions(12.5m, 9.5m, 0.75m), new Dimensions(12.5m, 9.5m, 0.75m));
 
     /// <summary>
-    /// Thick envelope. Envelopes or flats greater than ¾” at the thickest point.
+    /// <see href="https://store.stamps.com/products/priority-mail-small-flat-rate-box"/>.
     /// </summary>
-    public static readonly StampsPackageType ThickEnvelope = new ThickEnvelopeType();
+    public static readonly StampsPackageType SmallFlatRateBox = new SmallFlatRateBoxType(new Dimensions(8.6875m, 5.475m, 1.75m), new Dimensions(8.6875m, 5.475m, 1.75m));
 
     /// <summary>
-    /// Package. Longest side plus the distance around the thickest part is less than or equal to 84”.
+    /// <see href="https://store.usps.com/store/product/shipping-supplies/priority-mail-flat-rate-medium-box-1-p_o_frb1"/>.
     /// </summary>
-    public static readonly StampsPackageType Package = new Default();
+    public static readonly StampsPackageType MediumFlatRateBox = new MediumFlatRateBoxType(new Dimensions(11.25m, 8.75m, 6m), new Dimensions(11.25m, 8.75m, 6m));
 
-    /// <summary>
-    /// USPS small flat rate box. A special 8-5/8” x 5-3/8” x 1-5/8” USPS box that clearly indicates “Small Flat Rate Box”.
-    /// </summary>
-    public static readonly StampsPackageType SmallFlatRateBox = new SmallFlatRateBoxType();
+    public static readonly StampsPackageType LargeFlatRateBox = new LargeFlatRateBoxType(new Dimensions(12.25m, 12.25m, 6m), new Dimensions(12.25m, 12.25m, 6m));
 
-    /// <summary>
-    /// USPS medium flat rate box. A special 11” x 8 ½” x 5 ½” or 14” x 3.5” x 12” USPS box that clearly indicates “Medium Flat Rate Box”.
-    /// </summary>
-    public static readonly StampsPackageType FlatRateBox = new FlatRateBoxType();
-
-    /// <summary>
-    /// USPS large flat rate box. A special 12” x 12” x 6” USPS box that clearly indicates “Large Flat Rate Box”.
-    /// </summary>
-    public static readonly StampsPackageType LargeFlatRateBox = new LargeFlatRateBoxType();
-
-    /// <summary>
-    /// USPS flat rate envelope. A special cardboard envelope provided by the USPS that clearly indicates “Flat Rate”.
-    /// </summary>
-    public static readonly StampsPackageType FlatRateEnvelope = new FlatRateEnvelopeType();
-
-    /// <summary>
-    /// USPS flat rate padded envelope.
-    /// </summary>
-    public static readonly StampsPackageType FlatRatePaddedEnvelope = new FlatRatePaddedEnvelopeType();
-
-    /// <summary>
-    /// Large package. Longest side plus the distance around the thickest part is over 84” and less than or equal to 108”.
-    /// </summary>
-    public static readonly StampsPackageType LargePackage = new LargePackageType();
-
-    /// <summary>
-    /// Oversized package. Longest side plus the distance around the thickest part is over 108” and less than or equal to 130”.
-    /// </summary>
-    public static readonly StampsPackageType OversizedPackage = new OversizedPackageType();
-
-    /// <summary>
-    /// USPS regional rate box A. A special 10 15/16” x 2 3/8” x 12 13/ 16” or 10” x 7” x 4 3/4” USPS box that clearly indicates “Regional Rate Box A”. 15 lbs maximum weight.
-    /// </summary>
-    public static readonly StampsPackageType RegionalRateBoxA = new RegionalRateBoxAType();
-
-    /// <summary>
-    /// USPS regional rate box B. A special 14 3/8” x 2 2/8” x 15 7/8” or 12” x 10 1/4” x 5” USPS box that clearly indicates “Regional Rate Box B”. 20 lbs maximum weight.
-    /// </summary>
-    public static readonly StampsPackageType RegionalRateBoxB = new RegionalRateBoxBType();
-
-    /// <summary>
-    /// USPS regional rate box C. A special 15” x 12” x 12” USPS box that clearly indicates ”Regional Rate Box C”. 25 lbs maximum weight.
-    /// </summary>
-    public static readonly StampsPackageType RegionalRateBoxC = new RegionalRateBoxCType();
-
-    /// <summary>
-    /// USPS-supplied Priority Mail flat-rate envelope 9 1/2” x 15”. Maximum weight 4 pounds.
-    /// </summary>
-    public static readonly StampsPackageType LegalFlatRateEnvelope = new LegalFlatRateEnvelopeType();
-
-    /// <summary>
-    /// This feature is not available for all integrations.
-    /// </summary>
-    public static readonly StampsPackageType ExpressEnvelope = new ExpressEnvelopeType();
-
-    /// <summary>
-    /// This feature is not available for all integrations.
-    /// </summary>
-    public static readonly StampsPackageType Documents = new DocumentType();
-
-    /// <summary>
-    /// This feature is not available for all integrations.
-    /// </summary>
-    public static readonly StampsPackageType Envelope = new EnvelopeType();
-
-    /// <summary>
-    /// This feature is not available for all integrations.
-    /// </summary>
-    public static readonly StampsPackageType Pak = new PakType();
-
-    protected StampsPackageType(string name, int value, string description) : base(name, value)
+    protected StampsPackageType(string name, int value) : base(name, value)
     {
-        Description = description;
     }
 
-    public abstract Dimensions Dimensions { get; }
+    public abstract Dimensions MinSize { get; protected set; }
 
-    public abstract decimal MaxWeight { get; }
+    public abstract Dimensions MaxSize { get; protected set; }
 
-    public abstract decimal MaxInternationalWeight { get; }
+    public abstract PackageWeight MaxWeight { get; }
 
-    public abstract decimal MinWeight { get; }
+    public abstract PackageWeight MaxInternationalWeight { get; }
 
-    /// <summary>
-    /// Determined by the icons shown in the <b>service</b> dropdown button at <see href="https://print.testing.stamps.com/Webpostage/default2.aspx?"/>.
-    /// </summary>
-    public abstract string Category { get; }
+    public override string ToString()
+    {
+        var builder = new StringBuilder();
+        builder.AppendFormat(
+            "{0} - Min W: {1} x L: {2} x H: {3} " +
+            " Max W: {4} x L: {5} x H: {6}",
+            Name.Humanize(LetterCasing.Title),
+            MinSize.Width,
+            MinSize.Length,
+            MinSize.Height,
+            MaxSize.Width,
+            MaxSize.Length,
+            MaxSize.Height);
 
-    public string Description { get; }
+        return builder.ToString();
+    }
 
     private sealed class PostCardType : StampsPackageType
     {
-        public PostCardType() : base(StampsClient.v111.PackageTypeV11.Postcard.ToString(), (int)StampsClient.v111.PackageTypeV11.Postcard, "Postcard Package Type")
+        public PostCardType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.Postcard.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.Postcard)
         {
+            MinSize = minSize;
+            MaxSize = maxSize;
         }
 
-        public override Dimensions Dimensions => new Dimensions(6m, 0.016m, 4.5m);
+        public override Dimensions MinSize { get; protected set; }
 
-        public override decimal MaxWeight => .0625m;
+        public override Dimensions MaxSize { get; protected set; }
 
-        public override decimal MaxInternationalWeight => 4m;
+        public override PackageWeight MaxWeight => new PackageWeight(0.11m, isOunce: true);
 
-        public override decimal MinWeight => 0.001m;
 
-        public override string Category => "PostCard";
+        public override PackageWeight MaxInternationalWeight => MaxWeight;
     }
 
     private sealed class LetterType : StampsPackageType
     {
-        public LetterType() : base(StampsClient.v111.PackageTypeV11.Letter.ToString(), (int)StampsClient.v111.PackageTypeV11.Letter, "Letter Package Type")
+        public LetterType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.Letter.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.Letter)
         {
+            MinSize = minSize;
+            MaxSize = maxSize;
         }
 
-        public override Dimensions Dimensions => new Dimensions(11.5m, 0.016m, 6.125m);
+        public override Dimensions MaxSize { get; protected set; }
 
-        public override decimal MaxWeight => .21875m;
+        public override Dimensions MinSize { get; protected set; }
 
-        public override decimal MaxInternationalWeight => 4m;
+        public override PackageWeight MaxWeight => new PackageWeight(3.5m, isOunce: true);
 
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "Letter";
+        public override PackageWeight MaxInternationalWeight => MaxWeight;
     }
 
     private sealed class LargeEnvelopeOrFlatType : StampsPackageType
     {
-        public LargeEnvelopeOrFlatType() : base(StampsClient.v111.PackageTypeV11.LargeEnvelopeorFlat.ToString(), (int)StampsClient.v111.PackageTypeV11.LargeEnvelopeorFlat, "Large Envelope Or Flat Package Type")
+        public LargeEnvelopeOrFlatType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.LargeEnvelopeorFlat.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.LargeEnvelopeorFlat)
         {
+            MinSize = minSize;
+            MaxSize = maxSize;
         }
 
-        public override Dimensions Dimensions => new Dimensions(15.00m, 0.75m, 12m);
+        public override Dimensions MaxSize { get; protected set; }
 
-        public override decimal MaxWeight => .8125m;
+        public override Dimensions MinSize { get; protected set; }
 
-        public override decimal MaxInternationalWeight => 4.4m;
+        public override PackageWeight MaxWeight => new PackageWeight(13m, isOunce: true);
 
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "FlatRateEnvelope";
+        public override PackageWeight MaxInternationalWeight => MaxWeight;
     }
 
     private sealed class ThickEnvelopeType : StampsPackageType
     {
-        public ThickEnvelopeType() : base(StampsClient.v111.PackageTypeV11.ThickEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.ThickEnvelope, "Thick Envelope Package Type")
+        public ThickEnvelopeType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.ThickEnvelope.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.ThickEnvelope)
         {
+            MinSize = minSize;
+            MaxSize = maxSize;
         }
 
-        public override Dimensions Dimensions => new Dimensions(22m, 15m, 15m);
+        public override Dimensions MaxSize { get; protected set; }
 
-        public override decimal MaxWeight => .999375m;
+        public override Dimensions MinSize { get; protected set; }
 
-        public override decimal MaxInternationalWeight => 4m;
+        public override PackageWeight MaxWeight => new PackageWeight(15.99m, isOunce: true);
 
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "LargeEnvelope";
+        public override PackageWeight MaxInternationalWeight => MaxWeight;
     }
 
-    private sealed class SmallFlatRateBoxType : StampsPackageType
+    private sealed class PackageType : StampsPackageType
     {
-        public SmallFlatRateBoxType() : base(StampsClient.v111.PackageTypeV11.SmallFlatRateBox.ToString(), (int)StampsClient.v111.PackageTypeV11.SmallFlatRateBox, "Small Flat Rate Box Package Type")
+        public PackageType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.Package.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.Package)
         {
+            MinSize = minSize;
+            MaxSize = maxSize;
         }
 
-        public override Dimensions Dimensions => new Dimensions(8.6875m, 5.375m, 1.75m);
+        public override Dimensions MaxSize { get; protected set; }
 
-        public override decimal MaxWeight => 70m;
+        public override Dimensions MinSize { get; protected set; }
 
-        public override decimal MaxInternationalWeight => 4m;
+        public override PackageWeight MaxWeight => new PackageWeight(70m, isOunce: false);
 
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "FlatRateBox";
-    }
-
-    private sealed class Default : StampsPackageType
-    {
-        public Default() : base(StampsClient.v111.PackageTypeV11.Package.ToString(), (int)StampsClient.v111.PackageTypeV11.Package, "Default Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(22m, 15m, 15m);
-
-        public override decimal MaxWeight => 70m;
-
-        public override decimal MaxInternationalWeight => 70m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "DefaultPackage";
-    }
-
-    private sealed class FlatRateBoxType : StampsPackageType
-    {
-        public FlatRateBoxType() : base(StampsClient.v111.PackageTypeV11.FlatRateBox.ToString(), (int)StampsClient.v111.PackageTypeV11.FlatRateBox, "Flat Rate Box Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(14m, 3.5m, 12m);
-
-        public override decimal MaxWeight => 70m;
-
-        public override decimal MaxInternationalWeight => 20m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "FlatRateBox";
-    }
-
-    private sealed class FlatRatePaddedEnvelopeType : StampsPackageType
-    {
-        public FlatRatePaddedEnvelopeType() : base(StampsClient.v111.PackageTypeV11.FlatRatePaddedEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.FlatRatePaddedEnvelope, "Flat Rate Padded Envelope Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(12.5m, 0.75m, 9.5m);
-
-        public override decimal MaxWeight => 70m;
-
-        public override decimal MaxInternationalWeight => 4m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "FlatRateEnvelope";
+        public override PackageWeight MaxInternationalWeight => MaxWeight;
     }
 
     private sealed class LargePackageType : StampsPackageType
     {
-        public LargePackageType() : base(StampsClient.v111.PackageTypeV11.LargePackage.ToString(), (int)StampsClient.v111.PackageTypeV11.LargePackage, "Large Package Type")
+        public LargePackageType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.LargePackage.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.LargePackage)
         {
+            MinSize = minSize;
+            MaxSize = maxSize;
         }
 
-        public override Dimensions Dimensions => new Dimensions(24.0625m, 3.125m, 11.825m);
+        public override Dimensions MaxSize { get; protected set; }
 
-        public override decimal MaxWeight => 70m;
+        public override Dimensions MinSize { get; protected set; }
 
-        public override decimal MaxInternationalWeight => 70m;
+        public override PackageWeight MaxWeight => new PackageWeight(70m, isOunce: false);
 
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "DefaultPackage";
-    }
-
-    private sealed class OversizedPackageType : StampsPackageType
-    {
-        public OversizedPackageType() : base(StampsClient.v111.PackageTypeV11.OversizedPackage.ToString(), (int)StampsClient.v111.PackageTypeV11.OversizedPackage, "Oversized Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(30m, 4m, 30m);
-
-        public override decimal MaxWeight => 70m;
-
-        public override decimal MaxInternationalWeight => 70m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "DefaultPackage";
-    }
-
-    private sealed class RegionalRateBoxAType : StampsPackageType
-    {
-        public RegionalRateBoxAType() : base(StampsClient.v111.PackageTypeV11.RegionalRateBoxA.ToString(), (int)StampsClient.v111.PackageTypeV11.RegionalRateBoxA, "Regional Rate Box A Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(12.5m, 4m, 9.5m);
-
-        public override decimal MaxWeight => 15m;
-
-        public override decimal MaxInternationalWeight => 15m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "RegionalRateBox";
-    }
-
-    private sealed class RegionalRateBoxBType : StampsPackageType
-    {
-        public RegionalRateBoxBType() : base(StampsClient.v111.PackageTypeV11.RegionalRateBoxB.ToString(), (int)StampsClient.v111.PackageTypeV11.RegionalRateBoxB, "Regional Rate Box B Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(16.25m, 3m, 14.5m);
-
-        public override decimal MaxWeight => 20m;
-
-        public override decimal MaxInternationalWeight => 20m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "RegionalRateBox";
-    }
-
-    private sealed class RegionalRateBoxCType : StampsPackageType
-    {
-        public RegionalRateBoxCType() : base(StampsClient.v111.PackageTypeV11.RegionalRateBoxC.ToString(), (int)StampsClient.v111.PackageTypeV11.RegionalRateBoxC, "Regional Rate Box C Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(15m, 12m, 12m);
-
-        public override decimal MaxWeight => 25m;
-
-        public override decimal MaxInternationalWeight => 25m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "RegionalRateBox";
-    }
-
-    private sealed class LegalFlatRateEnvelopeType : StampsPackageType
-    {
-        public LegalFlatRateEnvelopeType() : base(StampsClient.v111.PackageTypeV11.LegalFlatRateEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.LegalFlatRateEnvelope, "Legal Flat Rate Envelope Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(15m, 0.75m, 9.5m);
-
-        public override decimal MaxWeight => 4m;
-
-        public override decimal MaxInternationalWeight => 4m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "FlatRateEnvelope";
-    }
-
-    /// <summary>
-    /// Unkown.Enum selection is available from the wsdl but no documentation found on the type.
-    /// </summary>
-    private sealed class ExpressEnvelopeType : StampsPackageType
-    {
-        public ExpressEnvelopeType() : base(StampsClient.v111.PackageTypeV11.ExpressEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.ExpressEnvelope, "Express Envelope Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(1m, 1m, 1m);
-
-        public override decimal MaxWeight => 4m;
-
-        public override decimal MaxInternationalWeight => 4m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "Unknown";
-    }
-
-    /// <summary>
-    /// Unkown.Enum selection is available from the wsdl but no documentation found on the type.
-    /// </summary>
-    private sealed class DocumentType : StampsPackageType
-    {
-        public DocumentType() : base(StampsClient.v111.PackageTypeV11.Documents.ToString(), (int)StampsClient.v111.PackageTypeV11.Documents, "Documents Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(1m, 1m, 1m);
-
-        public override decimal MaxWeight => 4m;
-
-        public override decimal MaxInternationalWeight => 4m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "Unknown";
-    }
-
-    /// <summary>
-    /// Unkown.Enum selection is available from the wsdl but no documentation found on the type.
-    /// </summary>
-    private sealed class EnvelopeType : StampsPackageType
-    {
-        public EnvelopeType() : base(StampsClient.v111.PackageTypeV11.Envelope.ToString(), (int)StampsClient.v111.PackageTypeV11.Envelope, "Envelope Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(1m, 1m, 1m);
-
-        public override decimal MaxWeight => 4m;
-
-        public override decimal MaxInternationalWeight => 4m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "Unknown";
-    }
-
-    /// <summary>
-    /// Unkown.Enum selection is available from the wsdl but no documentation found on the type.
-    /// </summary>
-    private sealed class PakType : StampsPackageType
-    {
-        public PakType() : base(StampsClient.v111.PackageTypeV11.Pak.ToString(), (int)StampsClient.v111.PackageTypeV11.Pak, "Pak Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(1m, 1m, 1m);
-
-        public override decimal MaxWeight => 4m;
-
-        public override decimal MaxInternationalWeight => 4m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "Unknown";
-    }
-
-    private sealed class LargeFlatRateBoxType : StampsPackageType
-    {
-        public LargeFlatRateBoxType() : base(StampsClient.v111.PackageTypeV11.LargeFlatRateBox.ToString(), (int)StampsClient.v111.PackageTypeV11.LargeFlatRateBox, "Large Flat Rate Box Package Type")
-        {
-        }
-
-        public override Dimensions Dimensions => new Dimensions(24.0625m, 3.125m, 11.825m);
-
-        public override decimal MaxWeight => 70m;
-
-        public override decimal MaxInternationalWeight => 20m;
-
-        public override decimal MinWeight => 0.001m;
-
-        public override string Category => "FlatRateBox";
+        public override PackageWeight MaxInternationalWeight => new PackageWeight(4m, isOunce: false);
     }
 
     private sealed class FlatRateEnvelopeType : StampsPackageType
     {
-        public FlatRateEnvelopeType() : base(StampsClient.v111.PackageTypeV11.FlatRateEnvelope.ToString(), (int)StampsClient.v111.PackageTypeV11.FlatRateEnvelope, "Flat Rate Envelope Package Type")
+        public FlatRateEnvelopeType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.FlatRateEnvelope.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.FlatRateEnvelope)
+        {
+            MinSize = minSize;
+            MaxSize = maxSize;
+        }
+
+        public override Dimensions MaxSize { get; protected set; }
+
+        public override Dimensions MinSize { get; protected set; }
+
+        public override PackageWeight MaxWeight => new PackageWeight(70m, isOunce: false);
+
+        public override PackageWeight MaxInternationalWeight => new PackageWeight(4m, isOunce: false);
+    }
+
+    private sealed class FlatRatePaddedEnvelopeType : StampsPackageType
+    {
+        public FlatRatePaddedEnvelopeType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.FlatRatePaddedEnvelope.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.FlatRatePaddedEnvelope)
         {
         }
 
-        public override Dimensions Dimensions => new Dimensions(9.5m, 0.75m, 12.5m);
+        public override Dimensions MaxSize { get; protected set; }
 
-        public override decimal MaxWeight => 70m;
+        public override Dimensions MinSize { get; protected set; }
 
-        public override decimal MaxInternationalWeight => 4m;
+        public override PackageWeight MaxWeight => new PackageWeight(70m, isOunce: false);
 
-        public override decimal MinWeight => 0.001m;
+        public override PackageWeight MaxInternationalWeight => new PackageWeight(4m, isOunce: false);
+    }
 
-        public override string Category => "FlatRateEnvelope";
+    private sealed class SmallFlatRateBoxType : StampsPackageType
+    {
+        public SmallFlatRateBoxType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.SmallFlatRateBox.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.SmallFlatRateBox)
+        {
+            MinSize = minSize;
+            MaxSize = maxSize;
+        }
+
+        public override Dimensions MaxSize { get; protected set; }
+
+        public override Dimensions MinSize { get; protected set; }
+
+        public override PackageWeight MaxWeight => new PackageWeight(70m, isOunce: false);
+
+        public override PackageWeight MaxInternationalWeight => new PackageWeight(4m, isOunce: false);
+    }
+
+    private sealed class MediumFlatRateBoxType : StampsPackageType
+    {
+        public MediumFlatRateBoxType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                StampsClient.v111.PackageTypeV11.FlatRateBox.ToString(),
+                (int)StampsClient.v111.PackageTypeV11.FlatRateBox)
+        {
+            MinSize = minSize;
+            MaxSize = maxSize;
+        }
+
+        public override Dimensions MaxSize { get; protected set; }
+
+        public override Dimensions MinSize { get; protected set; }
+
+        public override PackageWeight MaxWeight => new PackageWeight(70m, isOunce: false);
+
+        public override PackageWeight MaxInternationalWeight => new PackageWeight(20m, isOunce: false);
+    }
+
+    private sealed class LargeFlatRateBoxType : StampsPackageType
+    {
+        public LargeFlatRateBoxType(
+            Dimensions minSize,
+            Dimensions maxSize)
+            : base(
+                  StampsClient.v111.PackageTypeV11.LargeFlatRateBox.ToString(),
+                  (int)StampsClient.v111.PackageTypeV11.LargeFlatRateBox)
+        {
+            MinSize = minSize;
+            MaxSize = maxSize;
+        }
+
+        public override Dimensions MinSize { get; protected set; }
+
+        public override Dimensions MaxSize { get; protected set; }
+
+        public override PackageWeight MaxWeight => new PackageWeight(70m, isOunce: false);
+
+        public override PackageWeight MaxInternationalWeight => new PackageWeight(20m, isOunce: false);
     }
 }

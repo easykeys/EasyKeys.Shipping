@@ -213,7 +213,7 @@ public class Main : IMain
                 // USPS First-Class Mail:Package:3.7200
                 var selectedRate = rates.SingleOrDefault(x => x.Name == "USPM" && x.PackageType == "SmallFlatRateBox");
 
-                var shipmentOptions = new ShipmentOptions(StampsPackageType.FromName(selectedRate.PackageType).Name, DateTime.Now);
+                var shipmentOptions = new ShipmentOptions(StampsPackageType.FromName(selectedRate!.PackageType).Name, DateTime.Now);
 
                 var shipment = new Shipment(origin, address, model.Packages, shipmentOptions);
 
@@ -231,13 +231,13 @@ public class Main : IMain
                 // USPS First-Class Mail International:Package:14.11
                 var selectedRate = rates.SingleOrDefault(x => x.Name == "USFCI" && x.PackageType == "Package");
 
-                var shipmentOptions = new ShipmentOptions(StampsPackageType.FromName(selectedRate.PackageType).Name, DateTime.Now);
+                var shipmentOptions = new ShipmentOptions(StampsPackageType.FromName(selectedRate!.PackageType).Name, DateTime.Now);
 
                 var shipment = new Shipment(origin, address, model.Packages, shipmentOptions);
 
                 shipmentDetails.CustomsInformation.CustomsSigner = "brandon moffett";
                 shipmentDetails.CustomsInformation.InvoiceNumber = "12322432";
-                shipmentDetails.Commodities.Add(model.Commodity);
+                shipmentDetails.Commodities.Add(model.Commodity!);
 
                 var rateOptions = new RateOptions
                 {
@@ -263,7 +263,7 @@ public class Main : IMain
 
             _logger.LogInformation(
                 "{trackingId} - {TotalCharges} - {TotalCharges2}",
-                label.TrackingId,
+                label!.TrackingId,
                 label.TotalCharges.NetCharge,
                 label.TotalCharges2.NetCharge);
 
@@ -336,7 +336,7 @@ public class Main : IMain
             isValidated = true;
         }
 
-        return (result?.ProposedAddress, isValidated);
+        return (result.ProposedAddress!, isValidated);
     }
 
     private async Task<IEnumerable<Shipment>> GetRatesAsync(

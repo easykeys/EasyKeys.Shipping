@@ -14,19 +14,19 @@ Content-Type: application/json
     "isResidential": true
   },
   "destination": {
-    "countryName": "United States",
-    "streetLine": "725 Ponce de Leon Ave NE",
+    "countryName": "CA",
+    "streetLine": "4997 Carling Avenue",
     "streetLine2": null,
-    "city": "Atlanta",
-    "stateOrProvince": "GA",
-    "postalCode": "30306",
-    "countryCode": "US",
+    "city": "Ottawa",
+    "stateOrProvince": "ON",
+    "postalCode": "K1Z 7B5",
+    "countryCode": "CA",
     "isResidential": false
   },
   "package": {
     "shipDate": "2023-04-28T00:34:53.365Z",
-    "signatureRequiredOnDelivery": true,
-    "insuredValue": 100,
+    "signatureRequiredOnDelivery": false,
+    "insuredValue": 0,
     "length": 9.0,
     "width": 12.0,
     "height": 1.0,

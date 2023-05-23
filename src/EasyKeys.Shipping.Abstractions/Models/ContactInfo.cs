@@ -10,11 +10,7 @@ public class ContactInfo
 
     public string Company { get; set; } = string.Empty;
 
-    public string Department { get; set; } = string.Empty;
-
     public string Email { get; set; } = string.Empty;
-
-    public string Extension { get; set; } = string.Empty;
 
     public string PhoneNumber { get; set; } = string.Empty;
 }

@@ -10,7 +10,6 @@ public class StampsShipmentDto : ShipmentDto
         LastName = "Fulfillment Center",
         Company = "EasyKeys.com",
         Email = "info@EasyKeys.com",
-        Department = "Warehouse",
         PhoneNumber = "877.839.5397"
     };
 

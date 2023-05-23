@@ -144,7 +144,7 @@ public class Main : IMain
             }
 
             // 3. get shipment label
-            var result = await _fedExShipmentProvider.CreateShipmentAsync(selectedRate, shipment, details, cancellationToken);
+            var result = await _fedExShipmentProvider.CreateShipmentAsync(selectedRate, shipment!, details, cancellationToken);
 
             if (result.InternalErrors.Count > 0)
             {
@@ -164,7 +164,7 @@ public class Main : IMain
 
             Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Labels"));
 
-            await File.WriteAllBytesAsync(Path.Combine(AppContext.BaseDirectory, "Labels", fileName), label.Bytes[0]);
+            await File.WriteAllBytesAsync(Path.Combine(AppContext.BaseDirectory, "Labels", fileName), label.Bytes[0]!);
 
             var info = await _fedExTrackingProvider.TrackShipmentAsync(label.TrackingId, cancellationToken);
             foreach (var @event in info.TrackingEvents)
@@ -186,7 +186,7 @@ public class Main : IMain
 
             if (rate is not null)
             {
-                item.Rates.Clear();
+                item!.Rates.Clear();
                 item.Rates.Add(rate);
                 return item;
             }
@@ -198,9 +198,9 @@ public class Main : IMain
     private static T LoadModels<T>(string fileName) where T : class
     {
         using var stream = EmbeddedResource.GetAsStreamFromCallingAssembly(fileName);
-        var models = JsonSerializer.Deserialize(stream, typeof(T), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip }) as T;
+        var models = JsonSerializer.Deserialize(stream!, typeof(T), new JsonSerializerOptions { ReadCommentHandling = JsonCommentHandling.Skip }) as T;
 
-        return models;
+        return models!;
     }
 
     private async Task<ValidateAddress> ValidateAsync(Address destination, bool debug = false, CancellationToken cancellationToken = default)

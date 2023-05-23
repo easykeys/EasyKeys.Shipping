@@ -100,24 +100,7 @@ public class Package : ValueObject
 
     public bool SignatureRequiredOnDelivery { get; set; }
 
-    public PoundsAndOunces PoundsAndOunces
-    {
-        get
-        {
-            var poundsAndOunces = default(PoundsAndOunces);
-            if (Weight <= 0)
-            {
-                return poundsAndOunces;
-            }
-
-            poundsAndOunces.Pounds = (int)Math.Truncate(Weight);
-            var decimalPart = (Weight - poundsAndOunces.Pounds) * 16;
-
-            poundsAndOunces.Ounces = (int)Math.Ceiling(decimalPart);
-
-            return poundsAndOunces;
-        }
-    }
+    public PoundsAndOunces PoundsAndOunces => new PackageWeight(Weight, isOunce: false).PoundsAndOunces;
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

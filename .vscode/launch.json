@@ -13,7 +13,10 @@
             "args": [],
             "cwd": "${workspaceFolder}/src/Minimal.Apis/",
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
         },
         {
             "name": "Stamps.Console",

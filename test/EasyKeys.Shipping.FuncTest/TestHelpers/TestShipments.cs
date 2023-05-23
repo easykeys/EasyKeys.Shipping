@@ -16,16 +16,14 @@ public static class TestShipments
             city: "Charlotte",
             stateOrProvince: "NC",
             postalCode: "28273",
-            countryCode: "US"
-        );
+            countryCode: "US");
 
         var destinationAddress = new Address(
             streetLine: "1550 central avenue",
             city: "riverside",
             stateOrProvince: "CA",
             postalCode: "92507",
-            countryCode: "US"
-        );
+            countryCode: "US");
 
         var packages = new List<Package>
         {
@@ -36,8 +34,7 @@ public static class TestShipments
                     Width = 15.00M,
                     Length = 12.00M
                 },
-                .5M
-            ),
+                .5M),
         };
 
         var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
@@ -46,8 +43,7 @@ public static class TestShipments
             originAddress,
             validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
             packages,
-            shipmentOptions
-        );
+            shipmentOptions);
     }
 
     /// <summary>
@@ -60,16 +56,14 @@ public static class TestShipments
             city: "Charlotte",
             stateOrProvince: "NC",
             postalCode: "28273",
-            countryCode: "US"
-        );
+            countryCode: "US");
 
         var destinationAddress = new Address(
             streetLine: "24 Sussex Drive",
             city: "Ottawa",
             stateOrProvince: "ON",
             postalCode: "K1M 1M4",
-            countryCode: "CA"
-        );
+            countryCode: "CA");
 
         var packages = new List<Package>
         {
@@ -82,8 +76,7 @@ public static class TestShipments
                 },
                 3m,
                 10m,
-                false
-            ),
+                false),
         };
         var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
         var shipmentOptions = new ShipmentOptions(StampsPackageType.Package.Name, DateTime.Now);
@@ -92,8 +85,7 @@ public static class TestShipments
             originAddress,
             validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,
             packages,
-            shipmentOptions
-        );
+            shipmentOptions);
 
         return shipment;
     }
@@ -107,7 +99,6 @@ public static class TestShipments
                 LastName = "Moffett",
                 Company = "EasyKeys.com",
                 Email = "TestMe@EasyKeys.com",
-                Department = "Software",
                 PhoneNumber = "951-223-2222"
             },
             new ContactInfo()
@@ -115,9 +106,7 @@ public static class TestShipments
                 FirstName = "Fictitious Character",
                 Company = "Marvel",
                 Email = "FictitiousCharacter@marvel.com",
-                Department = "SuperHero",
                 PhoneNumber = "867-338-2737"
-            }
-        );
+            });
     }
 }

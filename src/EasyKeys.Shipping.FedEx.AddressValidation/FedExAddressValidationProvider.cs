@@ -48,6 +48,7 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
             var serviceRequest = new v4.addressValidationRequest1(wrap);
 
             var reply = await client.addressValidationAsync(serviceRequest);
+
             if (reply.AddressValidationReply.HighestSeverity == NotificationSeverityType.SUCCESS
                 || reply.AddressValidationReply.HighestSeverity == NotificationSeverityType.NOTE
                 || reply.AddressValidationReply.HighestSeverity == NotificationSeverityType.WARNING)
