@@ -158,7 +158,8 @@ public class FedExRateProvider : IFedExRateProvider
     {
         request.RequestedShipment.Shipper = new Party
         {
-            Address = shipment.OriginAddress.GetFedExAddress()
+            Address = shipment.OriginAddress.GetFedExAddress(),
+            AccountNumber = shipment.Options.CustomerFedexAccountNumber
         };
     }
 

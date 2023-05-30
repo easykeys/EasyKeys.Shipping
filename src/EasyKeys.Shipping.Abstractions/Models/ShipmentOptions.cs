@@ -43,4 +43,9 @@ public class ShipmentOptions
     /// Based on the provider.
     /// </summary>
     public string DropOffType { get; set; } = "REGULAR_PICKUP";
+
+    /// <summary>
+    /// Input fedex account number wished to be used.
+    /// </summary>
+    public string? CustomerFedexAccountNumber { get; set; } = null;
 }

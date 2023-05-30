@@ -47,7 +47,7 @@ public class ShipmentDetails
     /// <summary>
     /// Recipient Account Number.
     /// </summary>
-    public string AccountNumber { get; set; } = string.Empty;
+    public string? AccountNumber { get; set; } = null;
 
     /// <summary>
     /// Direct,

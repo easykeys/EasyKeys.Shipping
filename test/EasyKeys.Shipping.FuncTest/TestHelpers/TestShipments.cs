@@ -74,7 +74,7 @@ public static class TestShipments
                     Width = 1.500M,
                     Length = 1.200M
                 },
-                3m,
+                .625m,
                 10m,
                 false),
         };
