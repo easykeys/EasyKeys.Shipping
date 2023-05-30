@@ -34,7 +34,7 @@ public static class TestShipments
                     Width = 15.00M,
                     Length = 12.00M
                 },
-                .5M),
+                .0625M),
         };
 
         var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
