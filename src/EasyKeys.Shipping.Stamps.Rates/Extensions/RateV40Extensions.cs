@@ -44,7 +44,7 @@ public static class RateV40Extensions
             _ => PackageTypeV11.Package
         };
 
-        rate.WeightLb = 0;
+        rate.WeightLb = shipment.Packages.Sum(x => x.PoundsAndOunces.Pounds);
 
         rate.WeightOz = shipment.Packages.Sum(x => x.PoundsAndOunces.Ounces);
 
