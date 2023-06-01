@@ -102,6 +102,13 @@ public class StampsRateProvider : IStampsRateProvider
                 rate.Amount += addOns.Select(x => x.Amount).Sum();
             }
 
+            if (shipment.Packages.Any(x => x.InsuredValue > 0.0m))
+            {
+                var insuranceCharge = rate.AddOns.FirstOrDefault(x => x.AddOnType.Equals(AddOnTypeV17.SCAINS))?.Amount;
+
+                rate.Amount += insuranceCharge ?? 0.0m;
+            }
+
             if (shipment.DestinationAddress.IsUnitedStatesAddress())
             {
                 // can only chose on or the other unless addon "Registered Mail" is added.
