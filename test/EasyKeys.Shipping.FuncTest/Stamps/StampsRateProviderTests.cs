@@ -10,9 +10,11 @@ namespace EasyKeysShipping.FuncTest.Stamps;
 public class StampsRateProviderTests
 {
     private readonly IStampsRateProvider _rateProvider;
+    private readonly ITestOutputHelper _output;
 
     public StampsRateProviderTests(ITestOutputHelper output)
     {
+        _output = output;
         _rateProvider = ServiceProviderInstance.GetStampsServices(output)
             .GetRequiredService<IStampsRateProvider>();
     }
@@ -27,5 +29,10 @@ public class StampsRateProviderTests
         Assert.NotNull(result.Rates);
 
         Assert.Empty(result.InternalErrors);
+
+        foreach (var rate in result.Rates)
+        {
+            _output.WriteLine($"{rate.ServiceName} - {rate.TotalCharges} / {rate.TotalCharges2}");
+        }
     }
 }
