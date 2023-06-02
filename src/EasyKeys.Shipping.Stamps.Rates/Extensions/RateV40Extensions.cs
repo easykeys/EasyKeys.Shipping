@@ -111,6 +111,16 @@ public static class RateV40Extensions
             rate.MaxDimensions = rateOptions.MaxDimensions;
         }
 
+        if (shipment?.Packages?.Sum(x => x.InsuredValue) > 0)
+        {
+            var addons = new AddOnV17[0];
+
+            rate.AddOns = addons.Append(new AddOnV17()
+            {
+                AddOnType = AddOnTypeV17.PGAINS
+            }).ToArray();
+        }
+
         return rate;
     }
 }

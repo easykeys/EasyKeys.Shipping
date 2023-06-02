@@ -104,7 +104,7 @@ public class StampsRateProvider : IStampsRateProvider
 
             if (shipment.Packages.Any(x => x.InsuredValue > 0.0m))
             {
-                var insuranceCharge = rate.AddOns.FirstOrDefault(x => x.AddOnType.Equals(AddOnTypeV17.SCAINS))?.Amount;
+                var insuranceCharge = rate.AddOns.FirstOrDefault(x => x.AddOnType.Equals(AddOnTypeV17.PGAINS))?.Amount;
 
                 rate.Amount += insuranceCharge ?? 0.0m;
             }
