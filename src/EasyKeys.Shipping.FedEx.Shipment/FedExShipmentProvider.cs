@@ -553,9 +553,9 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 {
                     Format = new ShippingDocumentFormat()
                     {
-                        ImageType = ShippingDocumentImageType.PDF,
+                        ImageType = ShippingDocumentImageType.PNG,
                         ImageTypeSpecified = true,
-                        StockType = ShippingDocumentStockType.PAPER_LETTER,
+                        StockType = ShippingDocumentStockType.STOCK_4X6,
                         StockTypeSpecified = true
                     },
                     CustomerImageUsages = new CustomerImageUsage[2]
@@ -594,9 +594,9 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     {
                         DocumentFormat = new ShippingDocumentFormat()
                         {
-                            ImageType = ShippingDocumentImageType.PDF,
+                            ImageType = ShippingDocumentImageType.PNG,
                             ImageTypeSpecified = true,
-                            StockType = ShippingDocumentStockType.PAPER_LETTER,
+                            StockType = ShippingDocumentStockType.STOCK_4X6,
                             StockTypeSpecified = true
                         }
                     };
