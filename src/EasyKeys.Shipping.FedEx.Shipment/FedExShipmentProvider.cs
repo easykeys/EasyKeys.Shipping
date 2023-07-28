@@ -282,8 +282,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         request.RequestedShipment.Shipper = new Party
         {
             Contact = details.Sender.Map(),
-            Address = shipment.OriginAddress.GetFedExAddress(),
-            AccountNumber = details.AccountNumber
+            Address = shipment.OriginAddress.GetFedExAddress()
         };
     }
 
