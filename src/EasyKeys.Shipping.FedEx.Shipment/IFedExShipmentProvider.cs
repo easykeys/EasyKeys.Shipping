@@ -29,4 +29,6 @@ public interface IFedExShipmentProvider
         Shipping.Abstractions.Models.Shipment shipment,
         ShipmentDetails shipmentDetails,
         CancellationToken cancellationToken = default);
+
+    Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken = default);
 }
