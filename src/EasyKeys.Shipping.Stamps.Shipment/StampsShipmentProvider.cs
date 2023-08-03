@@ -43,14 +43,26 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         return await GetLabelAsync(request, shipmentDetails.LabelOptions.ImageType, cancellationToken);
     }
 
-    public async Task<CancelIndiciumResponse> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken)
+    public async Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken)
     {
-        var request = new CancelIndiciumRequest()
+        var result = new ShipmentCancelledResult();
+        try
         {
-            Item1 = trackingId
-        };
+            var request = new CancelIndiciumRequest()
+            {
+                Item1 = trackingId
+            };
 
-        return await _stampsClient.CancelIndiciumAsync(request, cancellationToken);
+            await _stampsClient.CancelIndiciumAsync(request, cancellationToken);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            result.Errors.Add(ex.Message);
+        }
+
+        return result;
     }
 
     private async Task<ShipmentLabel> GetLabelAsync(CreateIndiciumRequest request, Models.ImageType imageType, CancellationToken cancellationToken)

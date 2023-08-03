@@ -28,5 +28,5 @@ public interface IStampsShipmentProvider
     /// <param name="trackingId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<CancelIndiciumResponse> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken);
+    Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken);
 }

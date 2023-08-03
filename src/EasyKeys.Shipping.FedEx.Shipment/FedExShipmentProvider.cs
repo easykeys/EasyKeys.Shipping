@@ -7,6 +7,8 @@ using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Shipment.Extensions;
 using EasyKeys.Shipping.FedEx.Shipment.Models;
 
+using Humanizer;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -32,6 +34,36 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         _shipmentClient = fedExClientService.CreateShipClient();
 
         _logger = logger ?? throw new ArgumentException(nameof(logger));
+    }
+
+    public async Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken = default)
+    {
+        var client = _shipmentClient;
+        var result = new ShipmentCancelledResult();
+        try
+        {
+            // Create the delete shipment request
+            var request = CreateDeleteShipmentRequest(trackingId);
+            var deleteShipmentRequest = new deleteShipmentRequest1(request);
+
+            var response = await client.deleteShipmentAsync(deleteShipmentRequest);
+
+            // Handle the response
+            if (response.ShipmentReply.HighestSeverity == NotificationSeverityType.SUCCESS)
+            {
+                return result;
+            }
+            else
+            {
+                result.Errors.Add("Code: {0} , Message: {1}".FormatWith(response.ShipmentReply.HighestSeverity, response.ShipmentReply.Notifications.Select(x => x.Message).Flatten(",")));
+            }
+        }
+        catch (Exception ex)
+        {
+            result.Errors.Add(ex.Message);
+        }
+
+        return result;
     }
 
     public async Task<ShipmentLabel> CreateShipmentAsync(
@@ -178,7 +210,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         ShipmentDetails details,
         int sequenceNumber)
     {
-        var request = CreateRequest(details);
+        var request = CreateProcessShipmentRequest(details);
 
         SetShipmentDetails(
             request,
@@ -195,7 +227,36 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         return request;
     }
 
-    private ProcessShipmentRequest CreateRequest(ShipmentDetails details)
+    private DeleteShipmentRequest CreateDeleteShipmentRequest(string trackingNumber)
+    {
+        return new DeleteShipmentRequest
+        {
+            WebAuthenticationDetail = new WebAuthenticationDetail
+            {
+                UserCredential = new WebAuthenticationCredential
+                {
+                    Key = _options.FedExKey,
+                    Password = _options.FedExPassword
+                }
+            },
+            ClientDetail = new ClientDetail
+            {
+                AccountNumber = _options.FedExAccountNumber,
+                MeterNumber = _options.FedExMeterNumber
+            },
+            Version = new VersionId(),
+            ShipTimestamp = DateTime.Now,
+            TrackingId = new TrackingId
+            {
+                TrackingNumber = trackingNumber,
+                TrackingIdType = TrackingIdType.FEDEX,
+                TrackingIdTypeSpecified = true
+            },
+            DeletionControl = DeletionControlType.DELETE_ALL_PACKAGES
+        };
+    }
+
+    private ProcessShipmentRequest CreateProcessShipmentRequest(ShipmentDetails details)
     {
         return new ProcessShipmentRequest
         {
