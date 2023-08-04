@@ -1,4 +1,6 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿using System.Collections;
+
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
@@ -138,11 +140,9 @@ public class FedExShipmentProviderTests
             });
 
         var label = await _provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
-
         Assert.NotNull(label);
 
         Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
-
         // sometimes dev env doesnt send documents
         // Assert.True(label?.Labels.Count > 1);
 
