@@ -1,4 +1,6 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿using System.Collections;
+
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
@@ -65,7 +67,6 @@ public class FedExShipmentProviderTests
             {
                 LabelFormatType = "COMMON2D",
                 ImageType = "PNG",
-                Memo = "23232323232"
             }
         };
 
@@ -74,6 +75,7 @@ public class FedExShipmentProviderTests
         Assert.NotNull(label);
 
         Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
+        File.WriteAllBytes("C:\\Users\\BrandonMoffett-EasyK\\Downloads\\test.png", label.Labels.First().Bytes.First());
 
         var result = await _provider.CancelShipmentAsync(label.Labels.First().TrackingId, CancellationToken.None);
         Assert.True(result.Succeeded);

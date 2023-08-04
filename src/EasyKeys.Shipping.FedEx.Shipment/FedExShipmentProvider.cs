@@ -481,10 +481,20 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             },
             CustomerReferences = new CustomerReference[]
             {
-                new CustomerReference()
+                new CustomerReference
                 {
-                    CustomerReferenceType = CustomerReferenceType.CUSTOMER_REFERENCE,
-                    Value = details.LabelOptions.Memo
+                    CustomerReferenceType = details.CustomerReferenceType.ToLower() switch
+                    {
+                        "customer_reference" => CustomerReferenceType.CUSTOMER_REFERENCE,
+                        "department_number" => CustomerReferenceType.DEPARTMENT_NUMBER,
+                        "intracountry_regulatory_reference" => CustomerReferenceType.INTRACOUNTRY_REGULATORY_REFERENCE,
+                        "invoice_number" => CustomerReferenceType.INVOICE_NUMBER,
+                        "po_number" => CustomerReferenceType.P_O_NUMBER,
+                        "rma_association" => CustomerReferenceType.RMA_ASSOCIATION,
+                        "shipment_integrity" => CustomerReferenceType.SHIPMENT_INTEGRITY,
+                        _ => CustomerReferenceType.CUSTOMER_REFERENCE
+                    },
+                    Value = request.TransactionDetail.CustomerTransactionId
                 }
             }
         };
