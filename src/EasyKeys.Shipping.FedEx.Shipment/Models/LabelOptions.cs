@@ -17,4 +17,6 @@ public class LabelOptions
     /// "4x675","4x8","Paper_Letter".
     /// </summary>
     public string LabelSize { get; set; } = "4x6";
+
+    public string Memo { get; set; } = string.Empty;
 }

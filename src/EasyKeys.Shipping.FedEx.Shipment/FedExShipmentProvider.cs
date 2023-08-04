@@ -478,6 +478,14 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             {
                 Amount = shipment.Packages[sequenceNumber].InsuredValue,
                 Currency = shipment.Options.GetCurrencyCode()
+            },
+            CustomerReferences = new CustomerReference[]
+            {
+                new CustomerReference()
+                {
+                    CustomerReferenceType = CustomerReferenceType.CUSTOMER_REFERENCE,
+                    Value = details.LabelOptions.Memo
+                }
             }
         };
 

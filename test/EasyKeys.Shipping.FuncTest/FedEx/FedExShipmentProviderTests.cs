@@ -65,6 +65,7 @@ public class FedExShipmentProviderTests
             {
                 LabelFormatType = "COMMON2D",
                 ImageType = "PNG",
+                Memo = "23232323232"
             }
         };
 
@@ -138,7 +139,6 @@ public class FedExShipmentProviderTests
             });
 
         var label = await _provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
-
         Assert.NotNull(label);
 
         Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
