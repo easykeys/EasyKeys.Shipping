@@ -13,7 +13,7 @@ public static class AddressExtensions
             LastName = contactInfo.LastName,
             PhoneNumber = contactInfo.PhoneNumber,
             EmailAddress = contactInfo.Email,
-
+            Company = contactInfo.Company,
             Address1 = address.StreetLine,
             Address2 = address.StreetLine2,
             City = address.City,
