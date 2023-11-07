@@ -7,6 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\ek_logo_main4 %28Custom%29.gif" />
+    <None Remove="Images\signature.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\ek_logo_main4 (Custom).gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\signature.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
@@ -27,6 +41,7 @@
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.FedEx.Rates\EasyKeys.Shipping.FedEx.Rates.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.FedEx.Shipment\EasyKeys.Shipping.FedEx.Shipment.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.FedEx.Tracking\EasyKeys.Shipping.FedEx.Tracking.csproj" />
+    <ProjectReference Include="..\..\src\EasyKeys.Shipping.FedEx.UploadDocument\EasyKeys.Shipping.FedEx.UploadDocument.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.PostalAddress\EasyKeys.Shipping.PostalAddress.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.Stamps.AddressValidation\EasyKeys.Shipping.Stamps.AddressValidation.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.Stamps.Rates\EasyKeys.Shipping.Stamps.Rates.csproj" />

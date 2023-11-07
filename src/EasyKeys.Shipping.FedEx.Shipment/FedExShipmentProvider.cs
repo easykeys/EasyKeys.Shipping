@@ -522,7 +522,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         request.RequestedShipment.RequestedPackageLineItems[0].SpecialServicesRequested = new PackageSpecialServicesRequested()
         {
             SignatureOptionDetail = signatureOptionDetail,
-            SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray()
+            SpecialServiceTypes = specialServiceTypes.Append("SIGNATURE_OPTION").ToArray(),
         };
 
         var eventTypes = new List<NotificationEventType>();
@@ -584,6 +584,24 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
         if (!shipment.DestinationAddress.IsUnitedStatesAddress())
         {
+            if (details.LabelOptions.EnableEtd)
+            {
+                request.RequestedShipment.EdtRequestType = EdtRequestType.ALL;
+                request.RequestedShipment.EdtRequestTypeSpecified = true;
+
+                request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
+                {
+                    SpecialServiceTypes = specialServiceTypes.Append("ELECTRONIC_TRADE_DOCUMENTS").ToArray(),
+                    EtdDetail = new EtdDetail
+                    {
+                        RequestedDocumentCopies = new RequestedShippingDocumentType[]
+                        {
+                            RequestedShippingDocumentType.COMMERCIAL_INVOICE
+                        }
+                    }
+                };
+            }
+
             request.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
             {
                 CommercialInvoice = new CommercialInvoice
@@ -641,12 +659,16 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         new CustomerImageUsage()
                         {
                             Type = CustomerImageUsageType.LETTER_HEAD,
-                            TypeSpecified = true
+                            TypeSpecified = true,
+                            Id = (ImageId)details.LabelOptions.LetterHeadImageId,
+                            IdSpecified = details.LabelOptions.EnableEtd
                         },
                         new CustomerImageUsage()
                         {
                             Type = CustomerImageUsageType.SIGNATURE,
-                            TypeSpecified = true
+                            TypeSpecified = true,
+                            Id = (ImageId)details.LabelOptions.SignatureImageId,
+                            IdSpecified = details.LabelOptions.EnableEtd
                         }
                     }
                 }
@@ -761,6 +783,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             request.RequestedShipment.SpecialServicesRequested = new ShipmentSpecialServicesRequested
             {
                 SpecialServiceTypes = specialServiceTypes.Append("COD").ToArray(),
+
                 CodDetail = new CodDetail()
                 {
                     CodCollectionAmount = new Money()

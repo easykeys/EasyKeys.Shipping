@@ -17,4 +17,10 @@ public class LabelOptions
     /// "4x675","4x8","Paper_Letter".
     /// </summary>
     public string LabelSize { get; set; } = "4x6";
+
+    public bool EnableEtd { get; set; } = true;
+
+    public int LetterHeadImageId { get; set; } = 0;
+
+    public int SignatureImageId { get; set; } = 1;
 }

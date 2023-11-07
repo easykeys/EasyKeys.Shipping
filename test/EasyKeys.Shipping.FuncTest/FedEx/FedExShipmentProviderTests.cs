@@ -1,12 +1,8 @@
-﻿using System.Collections;
-
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
-
 using EasyKeysShipping.FuncTest.TestHelpers;
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyKeysShipping.FuncTest.FedEx;
@@ -89,13 +85,6 @@ public class FedExShipmentProviderTests
                FedExRateConfigurator.GetFedExEnvelop(0.05M, insuredValue: 18m),
             };
 
-        var configurator = new FedExRateConfigurator(
-               _origin,
-               new Address("47 PEDMORE VALLEY", "NOTTINGHAM", string.Empty, "NG5 5NZ", "GB", isResidential: true),
-               packages.First(),
-               true,
-               DateTime.Now);
-
         var stype = FedExServiceType.FedExInternationalPriority;
         var ptype = FedExPackageType.FedExEnvelope;
 
@@ -120,23 +109,26 @@ public class FedExShipmentProviderTests
             {
                 LabelFormatType = "COMMON2D",
                 ImageType = "PNG",
+                EnableEtd = true
             }
         };
 
         shipmentDetails.Commodities.Add(
             new Commodity()
             {
-                Name = "test",
+                Name = "non-thread rivets",
                 NumberOfPieces = 10,
-                Description = "test me",
+                Description = "description",
                 CountryOfManufacturer = "US",
-                HarmonizedCode = "123445",
+                CIMarksandNumbers = "87123",
+                ExportLicenseNumber = "26456",
+                HarmonizedCode = "8301.70.000000",
                 Quantity = 2,
                 QuantityUnits = "EA",
                 UnitPrice = 10,
                 CustomsValue = 18,
                 Amount = 18,
-                PartNumber = "string",
+                PartNumber = "167",
             });
 
         var label = await _provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
