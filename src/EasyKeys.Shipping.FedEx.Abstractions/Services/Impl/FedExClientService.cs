@@ -10,6 +10,8 @@ using ShipClient.v25;
 
 using TrackClient.v19;
 
+using UploadDocumentService_v19;
+
 namespace EasyKeys.Shipping.FedEx.Abstractions.Services.Impl;
 
 internal sealed class FedExClientService : IFedExClientService
@@ -40,5 +42,10 @@ internal sealed class FedExClientService : IFedExClientService
     public TrackPortType CreateTrackClient()
     {
         return new TrackPortTypeClient(TrackPortTypeClient.EndpointConfiguration.TrackServicePort, _fedExOptions.Url);
+    }
+
+    public UploadDocumentPortType CreateUploadDocumentClient()
+    {
+        return new UploadDocumentPortTypeClient(UploadDocumentPortTypeClient.EndpointConfiguration.UploadDocumentServicePort, _fedExOptions.Url + "/uploaddocument");
     }
 }

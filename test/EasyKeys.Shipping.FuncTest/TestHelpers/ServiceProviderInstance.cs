@@ -25,6 +25,7 @@ public static class ServiceProviderInstance
         services.AddLogging(x => x.AddXunit(output));
 
         services.AddSingleton<IConfiguration>(configBuilder.Build());
+        services.AddFedExDocumentProvider();
         services.AddFedExRateProvider();
         services.AddFedExAddressValidation();
         services.AddFedExClient();
