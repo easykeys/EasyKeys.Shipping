@@ -1,7 +1,7 @@
 {
   "ExtendedData": {
     "inputs": [
-      "../../../../../../../Downloads/UploadDocumentService_v19 (1)/UploadDocumentService/Upload Document/UploadDocumentService_v19.wsdl"
+      "../../wsdls/UploadDocumentService_v19.wsdl"
     ],
     "collectionTypes": [
       "System.Array",

@@ -27,6 +27,7 @@ public class FedExDocumentProvider : IFedExDocumentsProvider
 
     public async Task<UploadImageResult> UploadImageAsync(byte[] image, int imageId)
     {
+        var result = new UploadImageResult(true, string.Empty);
         try
         {
             var request = new uploadImagesRequest1()
@@ -81,14 +82,17 @@ public class FedExDocumentProvider : IFedExDocumentsProvider
             if ((reply?.HighestSeverity == NotificationSeverityType.ERROR)
                         || (reply?.HighestSeverity == NotificationSeverityType.FAILURE))
             {
-                return new UploadImageResult(false, reply.Notifications.Select(x => x.Message).Flatten(","));
+                result.Success = false;
+                result.Message = reply.Notifications.Select(x => x.Message).Flatten(",");
             }
         }
         catch (Exception ex)
         {
+            result.Success = false;
+            result.Message = ex.Message;
             _logger.LogError(ex, "{providerName} failed", nameof(FedExDocumentProvider));
         }
 
-        return new UploadImageResult(true, string.Empty);
+        return result;
     }
 }

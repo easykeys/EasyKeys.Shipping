@@ -44,6 +44,9 @@ public class FedExUploadDocumentProviderTests
 
         var fileContent = File.ReadAllBytes(filePath);
 
-        await documentProvider.UploadImageAsync(fileContent, 5);
+        var result = await documentProvider.UploadImageAsync(fileContent, 4);
+
+        Assert.NotNull(result);
+        Assert.True(result.Success);
     }
 }
