@@ -1,6 +1,10 @@
 ﻿using EasyKeys.Shipping.Abstractions;
+using EasyKeys.Shipping.FedEx.Abstractions.Api.Middleware;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
-using EasyKeys.Shipping.FedEx.AddressValidation;
+using EasyKeys.Shipping.FedEx.AddressValidation.Api.V1;
+using EasyKeys.Shipping.FedEx.AddressValidation.Api.V1.Impl;
+using EasyKeys.Shipping.FedEx.AddressValidation.WebServices;
+using EasyKeys.Shipping.FedEx.AddressValidation.WebServices.Impl;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -32,6 +36,27 @@ public static class AddressValidationServiceExtensions
         services.TryAddTransient<IFedExAddressValidationProvider, FedExAddressValidationProvider>();
 
         services.AddTransient<IAddressValidationProvider, FedExAddressValidationProvider>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddFedExAddressValidationApiV1(
+    this IServiceCollection services,
+    string sectionName = nameof(FedExApiOptions),
+    Action<FedExApiOptions, IServiceProvider>? configOptions = null)
+    {
+        services.AddChangeTokenOptions<FedExApiOptions>(
+            sectionName: sectionName,
+            configureAction: (options, sp) => configOptions?.Invoke(options, sp));
+
+        services.AddLogging();
+
+        services.AddFedExAuthApiClient();
+
+        services.AddHttpClient<IFedExAddressValidationApiClient, FedExAddressValidationApiClient>()
+            .AddHttpMessageHandler<AuthRequestMiddleware>();
+
+        services.AddTransient<IAddressValidationProvider, FedExAddressValidationApiClient>();
 
         return services;
     }

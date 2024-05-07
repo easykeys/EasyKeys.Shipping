@@ -2,7 +2,7 @@ using System.Text.Json;
 
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
-using EasyKeys.Shipping.FedEx.AddressValidation;
+using EasyKeys.Shipping.FedEx.AddressValidation.WebServices;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
 using EasyKeys.Shipping.Stamps.Abstractions.Models;

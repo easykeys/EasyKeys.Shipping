@@ -1,31 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
-
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <UserSecretsId>dotnet-easykeys.shipping.fedex.console-a96b3bea-52eb-4aea-aefc-913b782d749a</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="..\data\RateModelDto.cs" Link="Models\RateModelDto.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="..\data\domestic-addresses.json" Link="Embeded\domestic-addresses.json" />
   </ItemGroup>
-
-
   <ItemGroup>
     <EmbeddedResource Include="..\data\intnl-addresses.json" Link="Embeded\intnl-addresses.json" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Bet.Extensions.Templating.Console" Version="2.0.*" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\EasyKeys.Shipping.FedEx.AddressValidation\EasyKeys.Shipping.FedEx.AddressValidation.csproj" />
     <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Rates\EasyKeys.Shipping.FedEx.Rates.csproj" />
@@ -34,5 +26,4 @@
     <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
     <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Rates\EasyKeys.Shipping.Stamps.Rates.csproj" />
   </ItemGroup>
-
 </Project>

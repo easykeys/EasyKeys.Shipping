@@ -1,21 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFrameworks>net7.0</TargetFrameworks>
-	</PropertyGroup>
-
-	<PropertyGroup Label="Nuget Package Settings">
-		<Description>DotNetCore Implementation of Stamps.com SWS/IM API.</Description>
-		<PackageTags>DotNetCore,Address Validatio, Address Cleansing, Stamps.com WCF, Stamps.com
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Label="Nuget Package Settings">
+    <Description>DotNetCore Implementation of Stamps.com SWS/IM API.</Description>
+    <PackageTags>DotNetCore,Address Validatio, Address Cleansing, Stamps.com WCF, Stamps.com
 			SWS/IM API</PackageTags>
-	</PropertyGroup>
-
-
-	<ItemGroup>
-		<ProjectReference
-			Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
-		<ProjectReference
-			Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
-	</ItemGroup>
-
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+    <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
+  </ItemGroup>
 </Project>

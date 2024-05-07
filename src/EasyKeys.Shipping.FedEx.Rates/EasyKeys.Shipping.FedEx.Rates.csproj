@@ -1,26 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFrameworks>net7.0</TargetFrameworks>
-		<NoWarn>$(NoWarn);CS0108</NoWarn>
-	</PropertyGroup>
-
-	<PropertyGroup Label="Nuget Package Settings">
-		<Description>DotNetCore Implementation of FedEx Web Services 2020 for Rates Available
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <NoWarn>$(NoWarn);CS0108</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Label="Nuget Package Settings">
+    <Description>DotNetCore Implementation of FedEx Web Services 2020 for Rates Available
 			Endpoint.</Description>
-		<PackageTags>DotNetCore, FedEx Shipment Rates, FedEx 2020 WCF</PackageTags>
-	</PropertyGroup>
-
-
-	<ItemGroup>
-		<PackageReference Include="Bet.Extensions.Options" />
-		<PackageReference Include="Microsoft.Extensions.Logging" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference
-			Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
-		<ProjectReference
-			Include="..\EasyKeys.Shipping.FedEx.Abstractions\EasyKeys.Shipping.FedEx.Abstractions.csproj" />
-	</ItemGroup>
-
+    <PackageTags>DotNetCore, FedEx Shipment Rates, FedEx 2020 WCF</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bet.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Logging"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+    <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Abstractions\EasyKeys.Shipping.FedEx.Abstractions.csproj" />
+  </ItemGroup>
 </Project>

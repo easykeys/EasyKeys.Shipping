@@ -1,43 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFrameworks>net7.0</TargetFrameworks>
-		<NoWarn>$(NoWarn);CS0108</NoWarn>
-	</PropertyGroup>
-
-	<PropertyGroup Label="Nuget Package Settings">
-		<Description>DotNetCore Implementation of Stamps.com SWS/IM API.</Description>
-		<PackageTags>DotNetCore, Stamps.com WCF, Stamps.com SWS/IM API</PackageTags>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Http.Polly" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-		<PackageReference Include="System.ServiceModel.Duplex" />
-		<PackageReference Include="System.ServiceModel.Http" />
-		<PackageReference Include="System.ServiceModel.NetTcp" />
-		<PackageReference Include="System.ServiceModel.Security" />
-		<PackageReference Include="Bet.Extensions.Options" />
-		<PackageReference Include="Ardalis.SmartEnum" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<InternalsVisibleTo Include="EasyKeys.Shipping.Stamps.Rates" />
-		<InternalsVisibleTo Include="EasyKeys.Shipping.Stamps.Shipment" />
-		<InternalsVisibleTo Include="EasyKeysShipping.UnitTest" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference
-			Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="System.ServiceModel" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<WCFMetadata Include="Connected Services" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <NoWarn>$(NoWarn);CS0108</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Label="Nuget Package Settings">
+    <Description>DotNetCore Implementation of Stamps.com SWS/IM API.</Description>
+    <PackageTags>DotNetCore, Stamps.com WCF, Stamps.com SWS/IM API</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.ServiceModel.Duplex" />
+    <PackageReference Include="System.ServiceModel.Http" />
+    <PackageReference Include="System.ServiceModel.NetTcp" />
+    <PackageReference Include="System.ServiceModel.Security" />
+    <PackageReference Include="Bet.Extensions.Options" />
+    <PackageReference Include="Ardalis.SmartEnum" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="EasyKeys.Shipping.Stamps.Rates" />
+    <InternalsVisibleTo Include="EasyKeys.Shipping.Stamps.Shipment" />
+    <InternalsVisibleTo Include="EasyKeysShipping.UnitTest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
 </Project>

@@ -7,8 +7,8 @@
 	</PropertyGroup>
 
 	<PropertyGroup
-		Condition="'$(TargetFramework)' == 'net7.0' Or '$(TargetFramework)' == 'netstandard2.0'">
-		<NetCoreVersion>7.0.*</NetCoreVersion>
+		Condition="'$(TargetFramework)' == 'net8.0' Or '$(TargetFramework)' == 'netstandard2.0'">
+		<NetCoreVersion>8.0.*</NetCoreVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

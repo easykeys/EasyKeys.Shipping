@@ -1,7 +1,8 @@
 ﻿using Bet.Extensions.Testing.Logging;
 
 using EasyKeys.Shipping.Abstractions.Models;
-using EasyKeys.Shipping.FedEx.AddressValidation;
+using EasyKeys.Shipping.FedEx.AddressValidation.Api.V1;
+using EasyKeys.Shipping.FedEx.AddressValidation.WebServices;
 
 using EasyKeysShipping.FuncTest.TestHelpers;
 
@@ -14,12 +15,15 @@ public class FedExAddressValidationProviderTests
 {
     private readonly ITestOutputHelper _output;
     private readonly IFedExAddressValidationProvider _validator;
+    private readonly IFedExAddressValidationApiClient _apiClient;
 
     public FedExAddressValidationProviderTests(ITestOutputHelper output)
     {
         _output = output;
         _validator = ServiceProviderInstance.GetFedExServices(output)
             .GetRequiredService<IFedExAddressValidationProvider>();
+        _apiClient = ServiceProviderInstance.GetFedExServices(output)
+            .GetRequiredService<IFedExAddressValidationApiClient>();
     }
 
     [Fact]
@@ -37,9 +41,12 @@ public class FedExAddressValidationProviderTests
                false));
 
         var result = await _validator.ValidateAddressAsync(request);
+        var apiResult = await _apiClient.ValidateAddressAsync(request);
+
         var proposed = result.ProposedAddress;
 
         Assert.NotNull(proposed);
+        Assert.Equal(proposed, apiResult.ProposedAddress);
         Assert.Equal(string.Empty, proposed?.StreetLine);
         Assert.Equal(string.Empty, proposed?.StreetLine2);
         Assert.Equal("52722", proposed?.PostalCode);
@@ -71,9 +78,12 @@ public class FedExAddressValidationProviderTests
                 false));
 
         var result = await _validator.ValidateAddressAsync(request);
+        var apiResult = await _apiClient.ValidateAddressAsync(request);
+
         var proposed = result.ProposedAddress;
 
         Assert.NotNull(proposed);
+        Assert.Equal(proposed, apiResult.ProposedAddress);
         Assert.Equal("11435 W BUCKEYE RD", proposed?.StreetLine);
         Assert.Equal("STE 104-118", proposed?.StreetLine2);
         Assert.Equal("85323-6812", proposed?.PostalCode);
@@ -105,9 +115,12 @@ public class FedExAddressValidationProviderTests
                 false));
 
         var result = await _validator.ValidateAddressAsync(request);
+        var apiResult = await _apiClient.ValidateAddressAsync(request);
+
         var proposed = result.ProposedAddress;
 
         Assert.NotNull(proposed);
+        Assert.Equal(proposed, apiResult.ProposedAddress);
         Assert.Equal("5 HOOD RD", proposed?.StreetLine);
         Assert.Equal(string.Empty, proposed?.StreetLine2);
         Assert.Equal("03038-2012", proposed?.PostalCode);
@@ -139,9 +152,12 @@ public class FedExAddressValidationProviderTests
                 false));
 
         var result = await _validator.ValidateAddressAsync(request);
+        var apiResult = await _apiClient.ValidateAddressAsync(request);
+
         var proposed = result.ProposedAddress;
 
         Assert.NotNull(proposed);
+        Assert.Equal(proposed, apiResult.ProposedAddress);
         Assert.Equal("39W210 E BURNHAM LN", proposed?.StreetLine);
         Assert.Equal(string.Empty, proposed?.StreetLine2);
         Assert.Equal("60134-4915", proposed?.PostalCode);
@@ -173,9 +189,12 @@ public class FedExAddressValidationProviderTests
                 false));
 
         var result = await _validator.ValidateAddressAsync(request);
+        var apiResult = await _apiClient.ValidateAddressAsync(request);
+
         var proposed = result.ProposedAddress;
 
         Assert.NotNull(proposed);
+        Assert.Equal(proposed, apiResult.ProposedAddress);
         Assert.Equal("W2155 COUNTY ROAD HH", proposed?.StreetLine);
         Assert.Equal(string.Empty, proposed?.StreetLine2);
 
@@ -206,9 +225,12 @@ public class FedExAddressValidationProviderTests
                 false));
 
         var result = await _validator.ValidateAddressAsync(request);
+        var apiResult = await _apiClient.ValidateAddressAsync(request);
         var proposed = result.ProposedAddress;
 
         Assert.NotNull(proposed);
+        Assert.Equal(proposed, apiResult.ProposedAddress);
+
         Assert.Equal("2139 45TH RD", proposed?.StreetLine);
         Assert.Equal("FL 1", proposed?.StreetLine2);
 
@@ -224,7 +246,7 @@ public class FedExAddressValidationProviderTests
         Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
     }
 
-    private IFedExAddressValidationProvider GetAddressValidator()
+    private EasyKeys.Shipping.FedEx.AddressValidation.WebServices.IFedExAddressValidationProvider GetAddressValidator()
     {
         var services = new ServiceCollection();
 
@@ -242,6 +264,6 @@ public class FedExAddressValidationProviderTests
         services.AddFedExAddressValidation();
 
         var sp = services.BuildServiceProvider();
-        return sp.GetRequiredService<IFedExAddressValidationProvider>();
+        return sp.GetRequiredService<EasyKeys.Shipping.FedEx.AddressValidation.WebServices.IFedExAddressValidationProvider>();
     }
 }

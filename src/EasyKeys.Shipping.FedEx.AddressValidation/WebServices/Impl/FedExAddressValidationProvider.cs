@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 using v4 = AddressValidationClient.v4;
 
-namespace EasyKeys.Shipping.FedEx.AddressValidation;
+namespace EasyKeys.Shipping.FedEx.AddressValidation.WebServices.Impl;
 
 public class FedExAddressValidationProvider : IFedExAddressValidationProvider, IAddressValidationProvider
 {
@@ -45,7 +45,7 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
             var client = _addressValidationClient;
             var wrap = CreateRequest(request);
 
-            var serviceRequest = new v4.addressValidationRequest1(wrap);
+            var serviceRequest = new addressValidationRequest1(wrap);
 
             var reply = await client.addressValidationAsync(serviceRequest);
 
@@ -129,11 +129,11 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
         return request;
     }
 
-    private v4.AddressValidationRequest CreateRequest(ValidateAddress request)
+    private AddressValidationRequest CreateRequest(ValidateAddress request)
     {
         var address = request.OriginalAddress;
 
-        var addressToValidate = new v4.AddressToValidate
+        var addressToValidate = new AddressToValidate
         {
             ClientReferenceId = request.Id,
             Address = new v4.Address
@@ -146,30 +146,30 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
             }
         };
 
-        return new v4.AddressValidationRequest
+        return new AddressValidationRequest
         {
-            WebAuthenticationDetail = new v4.WebAuthenticationDetail
+            WebAuthenticationDetail = new WebAuthenticationDetail
             {
-                UserCredential = new v4.WebAuthenticationCredential
+                UserCredential = new WebAuthenticationCredential
                 {
                     Key = _options.FedExKey,
                     Password = _options.FedExPassword
                 }
             },
 
-            ClientDetail = new v4.ClientDetail
+            ClientDetail = new ClientDetail
             {
                 AccountNumber = _options.FedExAccountNumber,
                 MeterNumber = _options.FedExMeterNumber
             },
 
-            TransactionDetail = new v4.TransactionDetail
+            TransactionDetail = new TransactionDetail
             {
                 CustomerTransactionId = nameof(FedExAddressValidationProvider)
             },
 
-            Version = new v4.VersionId(),
-            AddressesToValidate = new v4.AddressToValidate[1]
+            Version = new VersionId(),
+            AddressesToValidate = new AddressToValidate[1]
             {
                    addressToValidate
             },

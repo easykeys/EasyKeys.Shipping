@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31825.309
@@ -80,7 +80,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Minimal.Apis", "src\Minimal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.FuncTest", "test\EasyKeys.Shipping.FuncTest\EasyKeys.Shipping.FuncTest.csproj", "{48385BA3-B5AE-47E6-9C41-189EE6334D1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.FedEx.UploadDocument", "src\EasyKeys.Shipping.FedEx.UploadDocument\EasyKeys.Shipping.FedEx.UploadDocument.csproj", "{CCFE77D6-0A82-4EC9-AB2F-6FCD885FC489}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyKeys.Shipping.FedEx.UploadDocument", "src\EasyKeys.Shipping.FedEx.UploadDocument\EasyKeys.Shipping.FedEx.UploadDocument.csproj", "{CCFE77D6-0A82-4EC9-AB2F-6FCD885FC489}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
