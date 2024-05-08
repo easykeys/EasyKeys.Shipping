@@ -4,8 +4,8 @@
     <NoWarn>$(NoWarn);CS0108</NoWarn>
   </PropertyGroup>
   <PropertyGroup Label="Nuget Package Settings">
-    <Description>DotNetCore Implementation of FedEx Web Services 2020 of WCF.</Description>
-    <PackageTags>DotNetCore, FedEx 2020 WCF</PackageTags>
+    <Description>DotNetCore Implementation of FedEx Authorization Api and Web Services 2020 of WCF.</Description>
+    <PackageTags>DotNetCore, FedEx 2020 WCF, FedEx v1 API, FedEx Authorization Api</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Ardalis.SmartEnum" />

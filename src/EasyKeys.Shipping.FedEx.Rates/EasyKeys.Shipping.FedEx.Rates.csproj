@@ -4,9 +4,13 @@
     <NoWarn>$(NoWarn);CS0108</NoWarn>
   </PropertyGroup>
   <PropertyGroup Label="Nuget Package Settings">
-    <Description>DotNetCore Implementation of FedEx Web Services 2020 for Rates Available
+    <Description>
+			DotNetCore Implementation of FedEx Rate and Transit times V1 Api
+			and Web Services 2020 for Rates Available
 			Endpoint.</Description>
-    <PackageTags>DotNetCore, FedEx Shipment Rates, FedEx 2020 WCF</PackageTags>
+    <PackageTags>
+			DotNetCore, FedEx Shipment Rates, FedEx 2020 WCF, FedEx Api v1, Rate and Transit times V1
+		</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bet.Extensions.Options" />

@@ -3,9 +3,9 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Label="Nuget Package Settings">
-    <Description>DotNetCore Implementation of FedEx Web Services 2020 for AddressValidation
+    <Description>DotNetCore Implementation of FedEx Address Validation Api and Web Services 2020 for AddressValidation
 			Endpoint.</Description>
-    <PackageTags>DotNetCore, Address Validation, FedEx 2020 WCF</PackageTags>
+    <PackageTags>DotNetCore, Address Validation, FedEx 2020 WCF, FedEx Api v1, Address Validation API</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bet.Extensions.Options" />
