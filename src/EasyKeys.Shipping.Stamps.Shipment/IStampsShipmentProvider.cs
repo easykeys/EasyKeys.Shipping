@@ -2,8 +2,6 @@
 using EasyKeys.Shipping.Stamps.Rates.Models;
 using EasyKeys.Shipping.Stamps.Shipment.Models;
 
-using StampsClient.v111;
-
 namespace EasyKeys.Shipping.Stamps.Shipment;
 
 public interface IStampsShipmentProvider

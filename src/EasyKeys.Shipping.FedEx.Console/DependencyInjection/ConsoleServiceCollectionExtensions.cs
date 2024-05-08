@@ -7,8 +7,8 @@ public static class ConsoleServiceCollectionExtensions
     public static void ConfigureServices(HostBuilderContext hostBuilder, IServiceCollection services)
     {
         services.AddScoped<IMain, Main>();
-        services.AddFedExAddressValidation();
-        services.AddFedExRateProvider();
+        services.AddWebServicesFedExAddressValidation();
+        services.AddWebServicesFedExRateProvider();
         services.AddFedExShipmenProvider();
         services.AddFedExTrackingProvider();
     }

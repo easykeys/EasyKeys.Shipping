@@ -2,7 +2,9 @@
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
+
 using EasyKeysShipping.FuncTest.TestHelpers;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyKeysShipping.FuncTest.FedEx;
@@ -72,7 +74,7 @@ public class FedExShipmentProviderTests
 
         Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
 
-        var result = await _provider.CancelShipmentAsync(label.Labels.First().TrackingId, CancellationToken.None);
+        var result = await _provider.CancelShipmentAsync(label!.Labels.First().TrackingId, CancellationToken.None);
         Assert.True(result.Succeeded);
     }
 
@@ -135,6 +137,7 @@ public class FedExShipmentProviderTests
         Assert.NotNull(label);
 
         Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
+
         // sometimes dev env doesnt send documents
         // Assert.True(label?.Labels.Count > 1);
 

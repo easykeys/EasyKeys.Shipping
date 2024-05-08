@@ -1,6 +1,6 @@
-﻿using EasyKeys.Shipping.FedEx.Abstractions.Api.Middleware;
-using EasyKeys.Shipping.FedEx.Abstractions.Api.V1.Auth;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.Api.V1.Auth;
 using EasyKeys.Shipping.FedEx.Abstractions.Api.V1.Auth.Impl;
+using EasyKeys.Shipping.FedEx.Abstractions.Middleware;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Abstractions.Services.Impl;
@@ -31,7 +31,7 @@ public static class FedExServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Adds FedEx Api Client Service with configuration options <see cref="FedExOptions"/>.
+    /// Adds <see cref="IFedExAuthClient"/> and <see cref="AuthRequestMiddleware"/> with configuration options <see cref="FedExApiOptions"/>.
     /// </summary>
     /// <param name="services">The DI services.</param>
     /// <param name="sectionName">The section name for the options.</param>

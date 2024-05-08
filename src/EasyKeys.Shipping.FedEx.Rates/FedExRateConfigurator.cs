@@ -1,6 +1,6 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
-using EasyKeys.Shipping.FedEx.Rates.Extensions;
+using EasyKeys.Shipping.FedEx.Rates.WebServices.Extensions;
 
 namespace EasyKeys.Shipping.FedEx.Rates;
 

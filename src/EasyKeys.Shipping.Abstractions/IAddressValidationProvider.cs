@@ -15,5 +15,5 @@ public interface IAddressValidationProvider
     /// <param name="validateAddress"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<ValidateAddress> ValidateAddressAsync(ValidateAddress validateAddress, CancellationToken cancellationToken);
+    Task<ValidateAddress> ValidateAddressAsync(ValidateAddress validateAddress, CancellationToken cancellationToken = default);
 }

@@ -84,7 +84,7 @@ public class StampsShipmentProviderTests
         });
 
         var labels = await _shipmentProvider.CreateShipmentAsync(
-              TestShipments.CreateInternationalShipment()!,
+              TestShipments.CreateInternationalShipment() !,
               rateOptions,
               shipmentDetails,
               CancellationToken.None);
