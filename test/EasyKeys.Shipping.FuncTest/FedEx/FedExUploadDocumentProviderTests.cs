@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
-using EasyKeys.Shipping.Abstractions.Models;
-using EasyKeys.Shipping.FedEx.Abstractions.Models;
-using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.UploadDocument;
 
 using EasyKeysShipping.FuncTest.TestHelpers;

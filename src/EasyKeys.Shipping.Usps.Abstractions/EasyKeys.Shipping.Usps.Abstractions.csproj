@@ -1,12 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFrameworks>net7.0</TargetFrameworks>
-	</PropertyGroup>
-
-	<PropertyGroup Label="Nuget Package Settings">
-		<Description>DotNetCore Implementation of USPS WCF API.</Description>
-		<PackageTags>DotNetCore, USPS WCF</PackageTags>
-	</PropertyGroup>
-
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Label="Nuget Package Settings">
+    <Description>DotNetCore Implementation of USPS WCF API.</Description>
+    <PackageTags>DotNetCore, USPS WCF</PackageTags>
+  </PropertyGroup>
 </Project>

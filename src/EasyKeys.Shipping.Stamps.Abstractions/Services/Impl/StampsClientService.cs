@@ -96,7 +96,6 @@ internal sealed class StampsClientService : IStampsClientService
 
                   try
                   {
-
                       request.Item = _options.UseAuthenticator ? _stampsClientAuthenticator.GetToken() : _credentials;
 
                       var respo = await _client.GetRatesAsync(request);

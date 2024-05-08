@@ -38,9 +38,9 @@ builder.Services.AddStampsShipmentProvider();
 builder.Services.AddStampsTrackingProvider();
 
 // add fedex libraries
-builder.Services.AddFedExAddressValidation();
+builder.Services.AddWebServicesFedExAddressValidation();
 
-builder.Services.AddFedExRateProvider();
+builder.Services.AddWebServicesFedExRateProvider();
 
 builder.Services.AddFedExShipmenProvider();
 
@@ -223,7 +223,7 @@ app.MapPost("/stamps/createShipment", async (
     var rateOptions = new RateOptions
     {
         Sender = model.Sender,
-        Recipient = model!.Recipient,
+        Recipient = model!.Recipient!,
         ServiceType = StampsServiceType.FromName(serviceType)
     };
 
@@ -278,7 +278,7 @@ app.MapPost("/fedex/createShipment", async (
     var shipmentDetails = new EasyKeys.Shipping.FedEx.Shipment.Models.ShipmentDetails
     {
         Sender = model.Sender,
-        Recipient = model!.Recipient,
+        Recipient = model!.Recipient!,
 
         TransactionId = orderId,
 

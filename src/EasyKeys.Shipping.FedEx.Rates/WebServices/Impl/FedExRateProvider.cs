@@ -4,14 +4,14 @@ using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
-using EasyKeys.Shipping.FedEx.Rates.Extensions;
+using EasyKeys.Shipping.FedEx.Rates.WebServices.Extensions;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using RateClient.v28;
 
-namespace EasyKeys.Shipping.FedEx.Rates;
+namespace EasyKeys.Shipping.FedEx.Rates.WebServices.Impl;
 
 public class FedExRateProvider : IFedExRateProvider
 {

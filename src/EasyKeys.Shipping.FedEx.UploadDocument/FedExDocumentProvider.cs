@@ -1,6 +1,4 @@
-﻿using System.Xml.Serialization;
-
-using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
 
 using Microsoft.Extensions.Logging;

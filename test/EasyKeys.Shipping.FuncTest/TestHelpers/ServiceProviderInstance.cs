@@ -15,8 +15,9 @@ public static class ServiceProviderInstance
         var services = new ServiceCollection();
         var dic = new Dictionary<string, string>
         {
-            { "AzureVault:BaseUrl", "https://easykeys.vault.azure.net/" },
+            { "AzureVault:BaseUrl", "https://easykeysshipping.vault.azure.net/" },
             { "FedExOptions:IsDevelopment", "true" },
+            { "FedExApiOptions:IsDevelopment", "true" }
         };
 
         var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
@@ -26,12 +27,15 @@ public static class ServiceProviderInstance
 
         services.AddSingleton<IConfiguration>(configBuilder.Build());
         services.AddFedExDocumentProvider();
-        services.AddFedExRateProvider();
-        services.AddFedExAddressValidation();
+        services.AddWebServicesFedExRateProvider();
+        services.AddWebServicesFedExAddressValidation();
         services.AddFedExClient();
         services.AddFedExShipmenProvider();
         services.AddFedExTrackingProvider();
 
+        // adress validation apis
+        services.AddRestApiFedExAddressValidation();
+        services.AddRestApiFedExRateProvider();
         return services.BuildServiceProvider();
     }
 

@@ -47,8 +47,8 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 builder.AddTransientHttpErrorPolicy(p =>
                 {
-                   return p.WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
-                                      .WithPolicyKey($"{nameof(UspsTrackingClient)}-WaitAndRetryAsync");
+                    return p.WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
+                                       .WithPolicyKey($"{nameof(UspsTrackingClient)}-WaitAndRetryAsync");
                 });
             }
 

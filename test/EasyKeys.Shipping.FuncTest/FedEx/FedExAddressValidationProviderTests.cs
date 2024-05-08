@@ -13,13 +13,12 @@ namespace EasyKeysShipping.FuncTest.FedEx;
 public class FedExAddressValidationProviderTests
 {
     private readonly ITestOutputHelper _output;
-    private readonly IFedExAddressValidationProvider _validator;
+    private readonly IEnumerable<IFedExAddressValidationProvider> _validators;
 
     public FedExAddressValidationProviderTests(ITestOutputHelper output)
     {
         _output = output;
-        _validator = ServiceProviderInstance.GetFedExServices(output)
-            .GetRequiredService<IFedExAddressValidationProvider>();
+        _validators = ServiceProviderInstance.GetFedExServices(output).GetServices<IFedExAddressValidationProvider>();
     }
 
     [Fact]
@@ -36,24 +35,27 @@ public class FedExAddressValidationProviderTests
                "US",
                false));
 
-        var result = await _validator.ValidateAddressAsync(request);
-        var proposed = result.ProposedAddress;
+        foreach (var validator in _validators)
+        {
+            var result = await validator.ValidateAddressAsync(request);
 
-        Assert.NotNull(proposed);
-        Assert.Equal(string.Empty, proposed?.StreetLine);
-        Assert.Equal(string.Empty, proposed?.StreetLine2);
-        Assert.Equal("52722", proposed?.PostalCode);
+            var proposed = result.ProposedAddress;
+            Assert.NotNull(proposed);
+            Assert.Equal(string.Empty, proposed?.StreetLine);
+            Assert.Equal(string.Empty, proposed?.StreetLine2);
+            Assert.Equal("52722", proposed?.PostalCode);
 
-        // BUSINESS, RESIDENTIAL
-        // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
-        // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
-        Assert.Equal("UNKNOWN", result.ValidationBag.GetValueOrDefault("Classification"));
+            // BUSINESS, RESIDENTIAL
+            // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
+            // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
+            Assert.Equal("UNKNOWN", result.ValidationBag.GetValueOrDefault("Classification"));
 
-        // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
-        // DPV = True are present, then the address is likely a valid one.
-        Assert.Equal("NORMALIZED", result.ValidationBag.GetValueOrDefault("State"));
-        Assert.False(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
-        Assert.False(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+            // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
+            // DPV = True are present, then the address is likely a valid one.
+            Assert.Equal("NORMALIZED", result.ValidationBag.GetValueOrDefault("State"));
+            Assert.False(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
+            Assert.False(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+        }
     }
 
     [Fact]
@@ -70,24 +72,27 @@ public class FedExAddressValidationProviderTests
                 "US",
                 false));
 
-        var result = await _validator.ValidateAddressAsync(request);
-        var proposed = result.ProposedAddress;
+        foreach (var validator in _validators)
+        {
+            var result = await validator.ValidateAddressAsync(request);
 
-        Assert.NotNull(proposed);
-        Assert.Equal("11435 W BUCKEYE RD", proposed?.StreetLine);
-        Assert.Equal("STE 104-118", proposed?.StreetLine2);
-        Assert.Equal("85323-6812", proposed?.PostalCode);
+            var proposed = result.ProposedAddress;
+            Assert.NotNull(proposed);
+            Assert.Equal("11435 W BUCKEYE RD", proposed?.StreetLine);
+            Assert.Equal("STE 104-118", proposed?.StreetLine2);
+            Assert.Equal("85323-6812", proposed?.PostalCode);
 
-        // BUSINESS, RESIDENTIAL
-        // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
-        // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
-        Assert.Equal("UNKNOWN", result.ValidationBag.GetValueOrDefault("Classification"));
+            // BUSINESS, RESIDENTIAL
+            // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
+            // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
+            Assert.Equal("UNKNOWN", result.ValidationBag.GetValueOrDefault("Classification"));
 
-        // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
-        // DPV = True are present, then the address is likely a valid one.
-        Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+            // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
+            // DPV = True are present, then the address is likely a valid one.
+            Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+        }
     }
 
     [Fact]
@@ -104,24 +109,28 @@ public class FedExAddressValidationProviderTests
                 "US",
                 false));
 
-        var result = await _validator.ValidateAddressAsync(request);
-        var proposed = result.ProposedAddress;
+        foreach (var validator in _validators)
+        {
+            var result = await validator.ValidateAddressAsync(request);
 
-        Assert.NotNull(proposed);
-        Assert.Equal("5 HOOD RD", proposed?.StreetLine);
-        Assert.Equal(string.Empty, proposed?.StreetLine2);
-        Assert.Equal("03038-2012", proposed?.PostalCode);
+            var proposed = result.ProposedAddress;
 
-        // BUSINESS, RESIDENTIAL
-        // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
-        // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
-        Assert.Equal("BUSINESS", result.ValidationBag.GetValueOrDefault("Classification"));
+            Assert.NotNull(proposed);
+            Assert.Equal("5 HOOD RD", proposed?.StreetLine);
+            Assert.Equal(string.Empty, proposed?.StreetLine2);
+            Assert.Equal("03038-2012", proposed?.PostalCode);
 
-        // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
-        // DPV = True are present, then the address is likely a valid one.
-        Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+            // BUSINESS, RESIDENTIAL
+            // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
+            // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
+            Assert.Equal("BUSINESS", result.ValidationBag.GetValueOrDefault("Classification"));
+
+            // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
+            // DPV = True are present, then the address is likely a valid one.
+            Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+        }
     }
 
     [Fact]
@@ -138,24 +147,28 @@ public class FedExAddressValidationProviderTests
                 "US",
                 false));
 
-        var result = await _validator.ValidateAddressAsync(request);
-        var proposed = result.ProposedAddress;
+        foreach (var validator in _validators)
+        {
+            var result = await validator.ValidateAddressAsync(request);
 
-        Assert.NotNull(proposed);
-        Assert.Equal("39W210 E BURNHAM LN", proposed?.StreetLine);
-        Assert.Equal(string.Empty, proposed?.StreetLine2);
-        Assert.Equal("60134-4915", proposed?.PostalCode);
+            var proposed = result.ProposedAddress;
 
-        // BUSINESS, RESIDENTIAL
-        // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
-        // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
-        Assert.Equal("RESIDENTIAL", result.ValidationBag.GetValueOrDefault("Classification"));
+            Assert.NotNull(proposed);
+            Assert.Equal("39W210 E BURNHAM LN", proposed?.StreetLine);
+            Assert.Equal(string.Empty, proposed?.StreetLine2);
+            Assert.Equal("60134-4915", proposed?.PostalCode);
 
-        // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
-        // DPV = True are present, then the address is likely a valid one.
-        Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+            // BUSINESS, RESIDENTIAL
+            // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
+            // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
+            Assert.Equal("RESIDENTIAL", result.ValidationBag.GetValueOrDefault("Classification"));
+
+            // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
+            // DPV = True are present, then the address is likely a valid one.
+            Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+        }
     }
 
     [Fact]
@@ -172,23 +185,27 @@ public class FedExAddressValidationProviderTests
                 "US",
                 false));
 
-        var result = await _validator.ValidateAddressAsync(request);
-        var proposed = result.ProposedAddress;
+        foreach (var validator in _validators)
+        {
+            var result = await validator.ValidateAddressAsync(request);
 
-        Assert.NotNull(proposed);
-        Assert.Equal("W2155 COUNTY ROAD HH", proposed?.StreetLine);
-        Assert.Equal(string.Empty, proposed?.StreetLine2);
+            var proposed = result.ProposedAddress;
 
-        // BUSINESS, RESIDENTIAL
-        // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
-        // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
-        Assert.Equal("RESIDENTIAL", result.ValidationBag.GetValueOrDefault("Classification"));
+            Assert.NotNull(proposed);
+            Assert.Equal("W2155 COUNTY ROAD HH", proposed?.StreetLine);
+            Assert.Equal(string.Empty, proposed?.StreetLine2);
 
-        // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
-        // DPV = True are present, then the address is likely a valid one.
-        Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+            // BUSINESS, RESIDENTIAL
+            // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
+            // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
+            Assert.Equal("RESIDENTIAL", result.ValidationBag.GetValueOrDefault("Classification"));
+
+            // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
+            // DPV = True are present, then the address is likely a valid one.
+            Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+        }
     }
 
     [Fact]
@@ -205,23 +222,27 @@ public class FedExAddressValidationProviderTests
                 "US",
                 false));
 
-        var result = await _validator.ValidateAddressAsync(request);
-        var proposed = result.ProposedAddress;
+        foreach (var validator in _validators)
+        {
+            var result = await validator.ValidateAddressAsync(request);
 
-        Assert.NotNull(proposed);
-        Assert.Equal("2139 45TH RD", proposed?.StreetLine);
-        Assert.Equal("FL 1", proposed?.StreetLine2);
+            var proposed = result.ProposedAddress;
+            Assert.NotNull(proposed);
 
-        // BUSINESS, RESIDENTIAL
-        // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
-        // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
-        Assert.Equal("RESIDENTIAL", result.ValidationBag.GetValueOrDefault("Classification"));
+            Assert.Equal("2139 45TH RD", proposed?.StreetLine);
+            Assert.Equal("FL 1", proposed?.StreetLine2);
 
-        // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
-        // DPV = True are present, then the address is likely a valid one.
-        Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
-        Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+            // BUSINESS, RESIDENTIAL
+            // MIXED (If it is a multi-tenant based address and contains both business and residential units.)
+            // UNKNOWN (If just a zip code is provided, Address Validation Service returns 'unknown' for the business/residential classification)
+            Assert.Equal("RESIDENTIAL", result.ValidationBag.GetValueOrDefault("Classification"));
+
+            // If the address returned includes the address state of "Standardized" and also if the attributes of Resolved = True,
+            // DPV = True are present, then the address is likely a valid one.
+            Assert.Equal("STANDARDIZED", result.ValidationBag.GetValueOrDefault("State"));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("Resolved")));
+            Assert.True(Convert.ToBoolean(result.ValidationBag.GetValueOrDefault("DPV")));
+        }
     }
 
     private IFedExAddressValidationProvider GetAddressValidator()
@@ -239,7 +260,7 @@ public class FedExAddressValidationProviderTests
         services.AddLogging(builder => builder.AddXunit(_output));
         services.AddSingleton<IConfiguration>(configBuilder.Build());
 
-        services.AddFedExAddressValidation();
+        services.AddWebServicesFedExAddressValidation();
 
         var sp = services.BuildServiceProvider();
         return sp.GetRequiredService<IFedExAddressValidationProvider>();

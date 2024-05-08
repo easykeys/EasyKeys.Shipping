@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class FedExUploadDocumentServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds <see cref="IFedExTrackingProvider"/> implementation.
+    /// Adds <see cref="IFedExDocumentsProvider"/> implementation.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="sectionName"></param>

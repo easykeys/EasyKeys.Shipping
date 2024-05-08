@@ -1,17 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFrameworks>net7.0</TargetFrameworks>
-	</PropertyGroup>
-
-	<PropertyGroup Label="Nuget Package Settings">
-		<Description>DotNetCore Implementation of Stamps.com SWS/IM API.</Description>
-		<PackageTags>DotNetCore, Stamps.com tracking service, Stamps.com WCF, Stamps.com SWS/IM API</PackageTags>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<ProjectReference
-			Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Label="Nuget Package Settings">
+    <Description>DotNetCore Implementation of Stamps.com SWS/IM API.</Description>
+    <PackageTags>DotNetCore, Stamps.com tracking service, Stamps.com WCF, Stamps.com SWS/IM API</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EasyKeys.Shipping.Stamps.Abstractions\EasyKeys.Shipping.Stamps.Abstractions.csproj" />
+  </ItemGroup>
 </Project>
