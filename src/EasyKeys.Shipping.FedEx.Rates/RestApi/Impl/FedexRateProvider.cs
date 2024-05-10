@@ -1,26 +1,31 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿using System.Runtime;
+using System.Text.Json;
+
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.RatesAndTransitTimes;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
-using EasyKeys.Shipping.FedEx.Rates.Client.V1;
-using EasyKeys.Shipping.FedEx.Rates.Client.V1.Models.Request;
+using EasyKeys.Shipping.FedEx.Abstractions.Services;
+using EasyKeys.Shipping.FedEx.Rates.WebServices.Impl;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using Address = EasyKeys.Shipping.FedEx.Rates.Client.V1.Models.Request.Address;
-
 namespace EasyKeys.Shipping.FedEx.Rates.RestApi.Impl;
 public class FedexRateProvider : IFedExRateProvider
 {
-    private readonly IFedexRatesAndTransitTimesClient _client;
+    private readonly RatesAndTransientTimesApi _client;
+    private readonly IFedexApiAuthenticatorService _authService;
     private readonly ILogger<FedexRateProvider> _logger;
     private readonly FedExApiOptions _options;
 
     public FedexRateProvider(
+        IFedexApiAuthenticatorService authService,
         IOptionsMonitor<FedExApiOptions> optionsMonitor,
-        IFedexRatesAndTransitTimesClient client,
+        RatesAndTransientTimesApi client,
         ILogger<FedexRateProvider> logger)
     {
+        _authService = authService;
         _options = optionsMonitor.CurrentValue;
         _client = client;
         _logger = logger;
@@ -28,118 +33,130 @@ public class FedexRateProvider : IFedExRateProvider
 
     public async Task<Shipment> GetRatesAsync(Shipment shipment, FedExServiceType? serviceType = null, CancellationToken cancellationToken = default)
     {
-        var ratesRequest = new RequestRoot
+        try
         {
-            AccountNumber = new AccountNumber { Value = shipment.Options.CustomerFedexAccountNumber ?? _options.FedExAccountNumber },
-            CarrierCodes = new List<string> { "FDXE", "FDXG" },
-            RateRequestControlParameters = new RateRequestControlParameters
+            var specialServicesList = new List<string>();
+
+            if (shipment.Options.PackagingType != FedExPackageType.YourPackaging.Name && shipment.DestinationAddress.IsUnitedStatesAddress())
             {
-                ReturnTransitTimes = true,
-            },
-            RequestedShipment = new RequestedShipment
-            {
-                Shipper = new Shipper
-                {
-                    Address = new Address
-                    {
-                        PostalCode = shipment.OriginAddress.PostalCode,
-                        CountryCode = shipment.OriginAddress.CountryCode,
-                        Residential = shipment.OriginAddress.IsResidential
-                    }
-                },
-                Recipient = new Recipient
-                {
-                    Address = new Address
-                    {
-                        PostalCode = shipment.DestinationAddress.PostalCode,
-                        CountryCode = shipment.DestinationAddress.CountryCode,
-                        Residential = shipment.DestinationAddress.IsResidential
-                    }
-                },
-                ShipDateStamp = shipment.Options.ShippingDate.ToString("yyyy-MM-dd"),
-                PackagingType = shipment.Options.PackagingType,
-                PickupType = "USE_SCHEDULED_PICKUP",
-                RateRequestType = ["ACCOUNT", "LIST"],
-                RequestedPackageLineItems = shipment.Packages.Select(x => new RequestedPackageLineItem
-                {
-                    Weight = new Weight
-                    {
-                        Units = "LB",
-                        Value = (int)x.RoundedWeight
-                    },
-                    DeclaredValue = new DeclaredValue
-                    {
-                        Currency = "USD",
-                        Amount = x.InsuredValue.ToString()
-                    }
-                }).ToList(),
+                specialServicesList.Add("FEDEX_ONE_RATE");
             }
-        };
-        if (shipment.DestinationAddress.IsUnitedStatesAddress() is not true)
-        {
-            ratesRequest.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
+
+            var ratesRequest = new Full_Schema_Quote_Rate
             {
-                Commodities = shipment.Packages.Select(x => new Client.V1.Models.Request.Commodity
+                AccountNumber = new AccountNumber { Value = shipment.Options.CustomerFedexAccountNumber ?? _options.FedExAccountNumber },
+                CarrierCodes = new List<string> { "FDXE", "FDXG" },
+                RateRequestControlParameters = new RateRequestControlParameters
                 {
-                    NumberOfPieces = 1,
-                    Description = "keys and locks",
-                    CountryOfManufacture = "US",
-                    Weight = new Weight
+                    ReturnTransitTimes = true
+                },
+                RequestedShipment = new RequestedShipment
+                {
+                    Shipper = new RateParty
                     {
-                        Units = "LB",
-                        Value = (int)x.RoundedWeight
+                        Address = new RateAddress
+                        {
+                            PostalCode = shipment.OriginAddress.PostalCode,
+                            CountryCode = shipment.OriginAddress.CountryCode,
+                            Residential = shipment.OriginAddress.IsResidential
+                        }
                     },
-                    Quantity = 1,
-                    QuantityUnits = "EA",
-                    UnitPrice = new UnitPrice
+                    Recipient = new RateParty
                     {
-                        Currency = "USD",
-                        Amount = x.InsuredValue.ToString()
+                        Address = new RateAddress
+                        {
+                            PostalCode = shipment.DestinationAddress.PostalCode,
+                            CountryCode = shipment.DestinationAddress.CountryCode,
+                            Residential = shipment.DestinationAddress.IsResidential
+                        }
                     },
-                    CustomsValue = new CustomsValue
+                    ShipmentSpecialServices = specialServicesList.Count > 0 ? new RequestedShipmentSpecialServicesRequested { SpecialServiceTypes = specialServicesList } : null,
+                    ShipDateStamp = shipment.Options.ShippingDate.AddDays(3).ToString("yyyy-MM-dd"),
+                    PackagingType = shipment.Options.PackagingType,
+                    PickupType = RequestedShipmentPickupType.USE_SCHEDULED_PICKUP,
+                    RateRequestType = [RateRequestType.ACCOUNT, RateRequestType.LIST],
+                    TotalPackageCount = 1,
+                    TotalWeight = (double)shipment.Packages.Sum(x => x.RoundedWeight),
+                    RequestedPackageLineItems = shipment.Packages.Select(x => new RequestedPackageLineItem
                     {
-                        Currency = "USD",
-                        Amount = x.InsuredValue.ToString()
-                    }
-                }).ToList()
+                        Weight = new Weight_2
+                        {
+                            Units = "LB",
+                            Value = (int)x.RoundedWeight
+                        },
+                        DeclaredValue = new Money
+                        {
+                            Currency = "USD",
+                            Amount = (double)x.InsuredValue
+                        }
+                    }).ToList(),
+                }
             };
-        }
-
-        if (shipment.Options.PackagingType != FedExPackageType.YourPackaging.Name && shipment.DestinationAddress.IsUnitedStatesAddress())
-        {
-            ratesRequest.RequestedShipment.ShipmentSpecialServices = new ShipmentSpecialServices
+            if (shipment.DestinationAddress.IsUnitedStatesAddress() is not true)
             {
-                SpecialServiceTypes = new List<string> { "FEDEX_ONE_RATE" }
-            };
-        }
+                ratesRequest.RequestedShipment.CustomsClearanceDetail = new RequestedShipmentCustomsClearanceDetail
+                {
+                    Commodities = shipment.Packages.Select(x => new Abstractions.OpenApis.V1.RatesAndTransitTimes.Commodity
+                    {
+                        NumberOfPieces = 1,
+                        Description = "keys and locks",
+                        CountryOfManufacture = "US",
+                        Weight = new Weight_2
+                        {
+                            Units = "LB",
+                            Value = (int)x.RoundedWeight
+                        },
+                        Quantity = 1,
+                        QuantityUnits = "EA",
+                        UnitPrice = new UnitPrice
+                        {
+                            Currency = "USD",
+                            Amount = (double)x.InsuredValue
+                        },
+                        CustomsValue = new Money
+                        {
+                            Currency = "USD",
+                            Amount = (double)x.InsuredValue
+                        },
+                    }).ToList()
+                };
+            }
 
-        var rates = await _client.GetRatesAsync(ratesRequest, cancellationToken);
+            var token = await _authService.GetTokenAsync(cancellationToken);
 
-        foreach (var error in rates.Errors)
-        {
-            shipment.Errors.Add(new Error
+            var rates = await _client.Rate_and_Transit_timesAsync(
+                ratesRequest,
+                Guid.NewGuid().ToString(),
+                "application/json",
+                "en_US",
+                token,
+                cancellationToken);
+
+            foreach (var rateDetail in rates.Output!.RateReplyDetails!)
             {
-                Description = error.Message
-            });
+                try
+                {
+                    var rate = new Rate(
+                            rateDetail!.ServiceType!,
+                            rateDetail!.ServiceName!,
+                            rateDetail!.PackagingType!,
+                            (decimal)rateDetail!.RatedShipmentDetails!.First(x => x.RateType == RatedShipmentDetailRateType.ACCOUNT).TotalNetCharge,
+                            (decimal)rateDetail!.RatedShipmentDetails!.First(x => x.RateType == RatedShipmentDetailRateType.LIST).TotalNetCharge,
+                            DateTime.TryParse(rateDetail!.Commit!.DateDetail!.DayFormat, out var dateResult) ? dateResult : DateTime.MinValue);
+                    shipment.Rates.Add(rate);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "{providerName} rate adding failed.", nameof(FedExRateProvider));
+                }
+            }
         }
-
-        if (shipment.Errors.Any() || rates.Output?.RateReplyDetails == null)
+        catch (Exception ex)
         {
-            return shipment;
+            _logger.LogError(ex, "{providerName} failed", nameof(FedExRateProvider));
+            shipment.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExRateProvider)} failed");
         }
-
-        foreach (var rateDetail in rates.Output.RateReplyDetails)
-        {
-            var rate = new Rate(
-                rateDetail.ServiceType,
-                rateDetail.ServiceName,
-                rateDetail.PackagingType,
-                (decimal)rateDetail.RatedShipmentDetails.First(x => x.RateType == "ACCOUNT").TotalNetCharge,
-                (decimal)rateDetail.RatedShipmentDetails.First(x => x.RateType == "LIST").TotalNetCharge,
-                rateDetail.OperationalDetail.CommitDate);
-            shipment.Rates.Add(rate);
-        }
-
+   
         return shipment;
     }
 }

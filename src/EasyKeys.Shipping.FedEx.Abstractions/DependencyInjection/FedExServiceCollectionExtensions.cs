@@ -1,6 +1,8 @@
-﻿using EasyKeys.Shipping.FedEx.Abstractions.Api.V1.Auth;
-using EasyKeys.Shipping.FedEx.Abstractions.Api.V1.Auth.Impl;
-using EasyKeys.Shipping.FedEx.Abstractions.Middleware;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.Middleware;
+using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation;
+using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Authorization;
+using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.RatesAndTransitTimes;
+using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Abstractions.Services.Impl;
@@ -31,21 +33,25 @@ public static class FedExServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Adds <see cref="IFedExAuthClient"/> and <see cref="AuthRequestMiddleware"/> with configuration options <see cref="FedExApiOptions"/>.
+    /// Adds <see cref="AuthorizationApi"/>, <see cref="AddressValidationApi"/>, <see cref="RatesAndTransientTimesApi"/>,<see cref="ShipApi"/>,<see cref="IFedexApiAuthenticatorService"/> with configuration options <see cref="FedExApiOptions"/>.
     /// </summary>
     /// <param name="services">The DI services.</param>
     /// <param name="sectionName">The section name for the options.</param>
     /// <param name="configure">The configuration of options.</param>
     /// <returns></returns>
-    public static IServiceCollection AddFedExAuthApiClient(
+    public static IServiceCollection AddFedExApiClients(
         this IServiceCollection services,
         string sectionName = nameof(FedExApiOptions),
         Action<FedExApiOptions, IServiceProvider>? configure = null)
     {
         services.AddChangeTokenOptions<FedExApiOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
-        services.AddHttpClient(name: nameof(IFedExAuthClient));
-        services.AddTransient<AuthRequestMiddleware>();
-        services.AddSingleton<IFedExAuthClient, FedExAuthClient>();
+        services.AddSingleton<IFedexApiAuthenticatorService, FedexApiAuthenticatorService>();
+
+        // add generated api clients
+        services.AddHttpClient<AuthorizationApi>();
+        services.AddHttpClient<AddressValidationApi>();
+        services.AddHttpClient<RatesAndTransientTimesApi>();
+        services.AddHttpClient<ShipApi>();
 
         return services;
     }

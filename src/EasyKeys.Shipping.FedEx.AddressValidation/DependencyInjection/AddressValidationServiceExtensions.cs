@@ -1,10 +1,7 @@
 ﻿using EasyKeys.Shipping.Abstractions;
-using EasyKeys.Shipping.FedEx.Abstractions.Api.V1.Auth;
 using EasyKeys.Shipping.FedEx.Abstractions.Middleware;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.AddressValidation;
-using EasyKeys.Shipping.FedEx.AddressValidation.Client.V1;
-using EasyKeys.Shipping.FedEx.AddressValidation.Client.V1.Impl;
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -60,10 +57,7 @@ public static class AddressValidationServiceExtensions
 
         services.AddLogging();
 
-        services.AddFedExAuthApiClient();
-
-        services.AddHttpClient<IFedexAddressValidationClient, FedExAddressValidationClient>()
-            .AddHttpMessageHandler<AuthRequestMiddleware>();
+        services.AddFedExApiClients();
 
         services.AddTransient<IFedExAddressValidationProvider, EasyKeys.Shipping.FedEx.AddressValidation.RestApi.Impl.FedExAddressValidationProvider>();
 

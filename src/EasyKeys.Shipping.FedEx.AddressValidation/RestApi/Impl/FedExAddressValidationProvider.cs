@@ -2,15 +2,12 @@
 
 using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Models;
-using EasyKeys.Shipping.FedEx.Abstractions.Options;
-using EasyKeys.Shipping.FedEx.AddressValidation.Client.V1;
-using EasyKeys.Shipping.FedEx.AddressValidation.Client.V1.Models.Request;
+using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation;
+using EasyKeys.Shipping.FedEx.Abstractions.Services;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-using Address = EasyKeys.Shipping.FedEx.AddressValidation.Client.V1.Models.Request.Address;
-using AddressToValidate = EasyKeys.Shipping.FedEx.AddressValidation.Client.V1.Models.Request.AddressesToValidate;
+using Address = EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation.Address;
 
 namespace EasyKeys.Shipping.FedEx.AddressValidation.RestApi.Impl;
 
@@ -19,16 +16,16 @@ namespace EasyKeys.Shipping.FedEx.AddressValidation.RestApi.Impl;
 /// </summary>
 public class FedExAddressValidationProvider : IFedExAddressValidationProvider, IAddressValidationProvider
 {
-    private readonly IFedexAddressValidationClient _client;
-    private readonly FedExApiOptions _options;
+    private readonly AddressValidationApi _client;
+    private readonly IFedexApiAuthenticatorService _authService;
     private readonly ILogger<FedExAddressValidationProvider> _logger;
 
     public FedExAddressValidationProvider(
-        IFedexAddressValidationClient client,
-        IOptionsMonitor<FedExApiOptions> optionsMonitor,
+        AddressValidationApi client,
+        IFedexApiAuthenticatorService authService,
         ILogger<FedExAddressValidationProvider> logger)
     {
-        _options = optionsMonitor.CurrentValue;
+        _authService = authService;
         _client = client;
         _logger = logger;
     }
@@ -41,16 +38,16 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
 
         try
         {
-            var apiRequest = new RequestRoot
+            var apiRequest = new Full_Schema_Validate_Address
             {
                 InEffectAsOfTimestamp = "2019-09-06",
-                ValidateAddressControlParameters = new ValidateAddressControlParameters
+                ValidateAddressControlParameters = new AddressResolutionControlParameters
                 {
                     IncludeResolutionTokens = true
                 },
-                AddressesToValidate = new List<AddressToValidate>
+                AddressesToValidate = new List<ResolveContactAndAddress>
                 {
-                    new AddressToValidate
+                    new ResolveContactAndAddress
                     {
                         Address = new Address
                         {
@@ -64,24 +61,18 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
                     }
                 }
             };
-            var response = await _client.ValidateAddressAsync(apiRequest, cancellationToken);
-
-            foreach (var error in response.Errors)
-            {
-                request.Errors.Add(new Error
-                {
-                    Description = error.Message
-                });
-            }
-
-            if (request.Errors.Any() || response.Output == null)
-            {
-                return request;
-            }
+            var token = await _authService.GetTokenAsync(cancellationToken);
+            var response = await _client.Validate_AddressAsync(
+                apiRequest,
+                Guid.NewGuid().ToString(),
+                "application/json",
+                "en_US",
+                token,
+                cancellationToken);
 
             var lines = response.Output.ResolvedAddresses?.FirstOrDefault()?.StreetLinesToken ?? [string.Empty];
             var address1 = lines.FirstOrDefault() ?? string.Empty;
-            var address2 = lines.Length > 1 ? lines[1] : string.Empty;
+            var address2 = lines.Count > 1 ? lines.Last() : string.Empty;
 
             request.ProposedAddress = new Shipping.Abstractions.Models.Address(
                 address1,
@@ -90,34 +81,16 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
                 response.Output.ResolvedAddresses?.FirstOrDefault()?.StateOrProvinceCode ?? string.Empty,
                 response.Output.ResolvedAddresses?.FirstOrDefault()?.PostalCodeToken?.Value ?? string.Empty,
                 response.Output.ResolvedAddresses?.FirstOrDefault()?.CountryCode ?? string.Empty,
-                response.Output.ResolvedAddresses?.FirstOrDefault()?.Classification == "RESIDENTIAL");
+                response.Output.ResolvedAddresses?.FirstOrDefault()?.Classification == ResolvedAddressClassification.RESIDENTIAL);
 
-            if (lines.Length == 2)
-            {
-                request.ProposedAddress.StreetLine2 = lines[1];
-            }
+            var dictionary = ConvertAttributesToDictionary(response.Output.ResolvedAddresses?.FirstOrDefault()?.Attributes ?? new Attributes());
 
-            foreach (var a in response.Output.ResolvedAddresses?.FirstOrDefault()?.Attributes ?? new ())
+            foreach (var a in dictionary)
             {
                 if (!request.ValidationBag.ContainsKey(a.Key))
                 {
                     request.ValidationBag.Add(a.Key, a.Value?.ToString() ?? string.Empty);
                 }
-            }
-
-            if (response.Output.Alerts != null)
-            {
-                foreach (var notification in response.Output.Alerts)
-                {
-                    request.Errors.Add(new Error
-                    {
-                        Source = notification.AlertType,
-                        Number = notification.Code,
-                        Description = notification.Message
-                    });
-                }
-
-                _logger.LogWarning("{providerName} alerts: {errors} ", nameof(FedExAddressValidationProvider), request.Errors.Select(x => x.Description).Flatten(","));
             }
         }
         catch (Exception ex)
@@ -128,5 +101,48 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
 
         _logger.LogDebug("[FedEx][ValidateAddressAsync] completed: {mil}", watch.GetElapsedTime().TotalMilliseconds);
         return request;
+    }
+
+    private Dictionary<string, string> ConvertAttributesToDictionary(Attributes attributes)
+    {
+        var dictionary = new Dictionary<string, string>
+        {
+            // Adding boolean properties as strings
+            { nameof(attributes.POBox), attributes.POBox.ToString() },
+            { nameof(attributes.POBoxOnlyZIP), attributes.POBoxOnlyZIP.ToString() },
+            { nameof(attributes.SplitZip), attributes.SplitZip.ToString() },
+            { nameof(attributes.SuiteRequiredButMissing), attributes.SuiteRequiredButMissing.ToString() },
+            { nameof(attributes.InvalidSuiteNumber), attributes.InvalidSuiteNumber.ToString() },
+            { nameof(attributes.DPV), attributes.DPV.ToString() },
+            { nameof(attributes.CountrySupported), attributes.CountrySupported.ToString() },
+            { nameof(attributes.ValidlyFormed), attributes.ValidlyFormed.ToString() },
+            { nameof(attributes.Matched), attributes.Matched.ToString() },
+            { nameof(attributes.Resolved), attributes.Resolved.ToString() },
+            { nameof(attributes.Inserted), attributes.Inserted.ToString() },
+            { nameof(attributes.MultiUnitBase), attributes.MultiUnitBase.ToString() },
+            { nameof(attributes.ZIP11Match), attributes.ZIP11Match.ToString() },
+            { nameof(attributes.ZIP4Match), attributes.ZIP4Match.ToString() },
+            { nameof(attributes.UniqueZIP), attributes.UniqueZIP.ToString() },
+            { nameof(attributes.StreetAddress), attributes.StreetAddress.ToString() },
+            { nameof(attributes.RRConversion), attributes.RRConversion.ToString() },
+            { nameof(attributes.ValidMultiUnit), attributes.ValidMultiUnit.ToString() },
+            { nameof(attributes.MultipleMatches), attributes.MultipleMatches.ToString() },
+
+            // Adding string properties directly
+            { nameof(attributes.ResolutionInput), attributes.ResolutionInput },
+            { nameof(attributes.ResolutionMethod), attributes.ResolutionMethod },
+            { nameof(attributes.DataVintage), attributes.DataVintage },
+            { nameof(attributes.MatchSource), attributes.MatchSource },
+            { nameof(attributes.AddressType), attributes.AddressType },
+            { nameof(attributes.AddressPrecision), attributes.AddressPrecision }
+        };
+
+        // Additional properties can also be added if needed
+        foreach (var additional in attributes.AdditionalProperties)
+        {
+            dictionary.Add(additional.Key, additional.Value.ToString());
+        }
+
+        return dictionary;
     }
 }

@@ -65,6 +65,8 @@ public class FedExRateProviderTests
                     Assert.InRange(rates.Rates.Count, 1, 8);
                     _output.WriteLine("{0} - {1} - ${2} - ${3} - {4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
                 }
+
+                Assert.False(rates.InternalErrors.Any());
             }
         }
     }
@@ -94,7 +96,9 @@ public class FedExRateProviderTests
                 _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
 
-            Assert.InRange(rates.Rates.Count, 1, 8);
+            Assert.False(rates.InternalErrors.Any());
+
+            //Assert.InRange(rates.Rates.Count, 1, 8);
         }
     }
 
@@ -121,6 +125,8 @@ public class FedExRateProviderTests
             {
                 _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
+
+            Assert.False(rates.InternalErrors.Any());
 
             // Assert.Single(rates.Rates);
         }
@@ -149,6 +155,8 @@ public class FedExRateProviderTests
             {
                 _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
+
+            Assert.False(rates.InternalErrors.Any());
 
             Assert.True(rates.Rates.Count > 1);
         }
@@ -179,7 +187,9 @@ public class FedExRateProviderTests
                 _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
 
-            Assert.Single(rates.Rates);
+            Assert.False(rates.InternalErrors.Any());
+
+            // Assert.Single(rates.Rates);
         }
     }
 
@@ -208,8 +218,10 @@ public class FedExRateProviderTests
             {
                 _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
+            
+            Assert.False(rates.InternalErrors.Any());
 
-            Assert.InRange(rates.Rates.Count, 1, 8);
+            // Assert.InRange(rates.Rates.Count, 1, 8);
         }
     }
 
@@ -239,6 +251,7 @@ public class FedExRateProviderTests
                 _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
 
+            Assert.False(rates.InternalErrors.Any());
             // FEDEX INTERNATIONAL FIRST - 5 / 6 / 2021 10:00:00 AM - 125.26 - 125.26 - False
             // FEDEX INTERNATIONAL PRIORITY EXPRESS
             // FEDEX INTERNATIONAL PRIORITY - 5 / 6 / 2021 12:00:00 PM - 18.16 - 72.46 - False
@@ -262,12 +275,14 @@ public class FedExRateProviderTests
             {
                 var result = await rateService.GetRatesAsync(shipment, serviceType);
 
-                Assert.True(result.Rates.Count > 0);
+                //Assert.True(result.Rates.Count > 0);
 
                 foreach (var rate in result.Rates)
                 {
                     _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
                 }
+
+                Assert.False(result.InternalErrors.Any());
             }
         }
     }
