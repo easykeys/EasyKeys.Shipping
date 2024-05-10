@@ -8,8 +8,29 @@
     <PackageTags>DotNetCore, FedEx 2020 WCF, FedEx v1 API, FedEx Authorization Api</PackageTags>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="OpenApis\authorization.json" />
+    <None Remove="OpenApis\V1\AddressValidation\address-validation.json" />
+    <None Remove="OpenApis\V1\RatesAndTransitTimes\rate.json" />
+    <None Remove="OpenApis\V1\Ship\ship.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <OpenApiReference Include="OpenApis\V1\AddressValidation\address-validation.json" CodeGenerator="NSwagCSharp" ClassName="AddressValidationApi" />
+    <OpenApiReference Include="OpenApis\V1\Authorization\authorization.json" CodeGenerator="NSwagCSharp" ClassName="AuthorizationApi" />
+    <OpenApiReference Include="OpenApis\V1\RatesAndTransitTimes\rate.json" CodeGenerator="NSwagCSharp" ClassName="RatesAndTransitTimesApi" />
+    <OpenApiReference Include="OpenApis\V1\Ship\ship.json" CodeGenerator="NSwagCSharp" ClassName="ShipApi" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Ardalis.SmartEnum" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NSwag.ApiDescription.Client" Version="13.18.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.ServiceModel.Http" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using Newtonsoft.Json;
+
 namespace EasyKeys.Shipping.FedEx.Abstractions.Options;
 
 public class FedExApiOptions
@@ -15,5 +17,5 @@ public class FedExApiOptions
 
     public bool IsDevelopment { get; set; }
 
-    public JsonSerializerOptions JsonSerializerOptions { get; set; } = new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+    public JsonSerializerSettings JsonSerializerOptions { get; set; } = new() { DefaultValueHandling = DefaultValueHandling.Ignore };
 }

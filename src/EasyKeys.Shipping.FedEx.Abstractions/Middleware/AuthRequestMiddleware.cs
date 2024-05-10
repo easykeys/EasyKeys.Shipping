@@ -1,8 +1,7 @@
 ﻿using System.IO.Compression;
 using System.Net;
 using System.Text;
-
-using EasyKeys.Shipping.FedEx.Abstractions.Api.V1.Auth;
+using EasyKeys.Shipping.FedEx.Abstractions.Services;
 
 using Microsoft.Extensions.Logging;
 
@@ -13,11 +12,11 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.Middleware;
 /// </summary>
 public class AuthRequestMiddleware : DelegatingHandler
 {
-    private readonly IFedExAuthClient _authClient;
+    private readonly IFedexApiAuthenticatorService _authClient;
     private ILogger<AuthRequestMiddleware> _logger;
 
     public AuthRequestMiddleware(
-        IFedExAuthClient authClient,
+        IFedexApiAuthenticatorService authClient,
         ILogger<AuthRequestMiddleware> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
