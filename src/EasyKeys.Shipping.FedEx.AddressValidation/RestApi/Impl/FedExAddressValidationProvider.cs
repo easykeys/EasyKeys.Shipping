@@ -70,20 +70,20 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
                 token,
                 cancellationToken);
 
-            var lines = response.Output.ResolvedAddresses?.FirstOrDefault()?.StreetLinesToken ?? [string.Empty];
+            var lines = response.Output?.ResolvedAddresses?.FirstOrDefault()?.StreetLinesToken ?? [string.Empty];
             var address1 = lines.FirstOrDefault() ?? string.Empty;
             var address2 = lines.Count > 1 ? lines.Last() : string.Empty;
 
             request.ProposedAddress = new Shipping.Abstractions.Models.Address(
                 address1,
                 address2,
-                response.Output.ResolvedAddresses?.FirstOrDefault()?.CityToken?.FirstOrDefault()?.Value ?? string.Empty,
-                response.Output.ResolvedAddresses?.FirstOrDefault()?.StateOrProvinceCode ?? string.Empty,
-                response.Output.ResolvedAddresses?.FirstOrDefault()?.PostalCodeToken?.Value ?? string.Empty,
-                response.Output.ResolvedAddresses?.FirstOrDefault()?.CountryCode ?? string.Empty,
-                response.Output.ResolvedAddresses?.FirstOrDefault()?.Classification == ResolvedAddressClassification.RESIDENTIAL);
+                response.Output?.ResolvedAddresses?.FirstOrDefault()?.CityToken?.FirstOrDefault()?.Value ?? string.Empty,
+                response.Output?.ResolvedAddresses?.FirstOrDefault()?.StateOrProvinceCode ?? string.Empty,
+                response.Output?.ResolvedAddresses?.FirstOrDefault()?.PostalCodeToken?.Value ?? string.Empty,
+                response.Output?.ResolvedAddresses?.FirstOrDefault()?.CountryCode ?? string.Empty,
+                response.Output?.ResolvedAddresses?.FirstOrDefault()?.Classification == ResolvedAddressClassification.RESIDENTIAL);
 
-            var dictionary = ConvertAttributesToDictionary(response.Output.ResolvedAddresses?.FirstOrDefault()?.Attributes ?? new Attributes());
+            var dictionary = ConvertAttributesToDictionary(response.Output?.ResolvedAddresses?.FirstOrDefault()?.Attributes ?? new Attributes());
 
             foreach (var a in dictionary)
             {
@@ -129,18 +129,18 @@ public class FedExAddressValidationProvider : IFedExAddressValidationProvider, I
             { nameof(attributes.MultipleMatches), attributes.MultipleMatches.ToString() },
 
             // Adding string properties directly
-            { nameof(attributes.ResolutionInput), attributes.ResolutionInput },
-            { nameof(attributes.ResolutionMethod), attributes.ResolutionMethod },
-            { nameof(attributes.DataVintage), attributes.DataVintage },
-            { nameof(attributes.MatchSource), attributes.MatchSource },
-            { nameof(attributes.AddressType), attributes.AddressType },
-            { nameof(attributes.AddressPrecision), attributes.AddressPrecision }
+            { nameof(attributes.ResolutionInput), attributes.ResolutionInput ?? string.Empty },
+            { nameof(attributes.ResolutionMethod), attributes.ResolutionMethod ?? string.Empty },
+            { nameof(attributes.DataVintage), attributes.DataVintage ?? string.Empty },
+            { nameof(attributes.MatchSource), attributes.MatchSource ?? string.Empty },
+            { nameof(attributes.AddressType), attributes.AddressType ?? string.Empty },
+            { nameof(attributes.AddressPrecision), attributes.AddressPrecision ?? string.Empty }
         };
 
         // Additional properties can also be added if needed
         foreach (var additional in attributes.AdditionalProperties)
         {
-            dictionary.Add(additional.Key, additional.Value.ToString());
+            dictionary.Add(additional.Key, additional.Value?.ToString() ?? string.Empty);
         }
 
         return dictionary;

@@ -34,7 +34,7 @@ public static class FedExShippingServiceCollectionExtensions
     /// <param name="sectionName"></param>
     /// <param name="configOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection AddRestApiFedExRateProvider(
+    public static IServiceCollection AddRestApiFedExShipmentProvider(
         this IServiceCollection services,
         string sectionName = nameof(FedExApiOptions),
         Action<FedExApiOptions, IServiceProvider>? configOptions = null)

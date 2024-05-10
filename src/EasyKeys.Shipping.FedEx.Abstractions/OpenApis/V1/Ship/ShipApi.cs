@@ -1097,7 +1097,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
         {
             if (response == null || response.Content == null)
             {
-                return new ObjectResponseResult<T>(default(T), string.Empty);
+                return new ObjectResponseResult<T>(default(T)!, string.Empty);
             }
 
             if (ReadResponseAsString)
@@ -1106,7 +1106,9 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
                 try
                 {
                     var typedBody = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseText, JsonSerializerSettings);
+#pragma warning disable CS8604 // Possible null reference argument.
                     return new ObjectResponseResult<T>(typedBody, responseText);
+#pragma warning restore CS8604 // Possible null reference argument.
                 }
                 catch (Newtonsoft.Json.JsonException exception)
                 {
@@ -1124,7 +1126,9 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
                     {
                         var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
                         var typedBody = serializer.Deserialize<T>(jsonTextReader);
+#pragma warning disable CS8604 // Possible null reference argument.
                         return new ObjectResponseResult<T>(typedBody, string.Empty);
+#pragma warning restore CS8604 // Possible null reference argument.
                     }
                 }
                 catch (Newtonsoft.Json.JsonException exception)

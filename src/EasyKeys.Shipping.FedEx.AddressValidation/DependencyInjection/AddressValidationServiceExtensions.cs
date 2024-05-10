@@ -39,8 +39,7 @@ public static class AddressValidationServiceExtensions
     }
 
     /// <summary>
-    /// Adds <see cref="IFedExAddressValidationProvider"/>,<see cref="IAddressValidationProvider"/>, <see cref="IFedexAddressValidationClient"/>
-    /// <see cref="IFedExAuthClient"/> and <see cref="AuthRequestMiddleware"/> with configuration options <see cref="FedExApiOptions"/>.
+    /// Adds <see cref="IFedExAddressValidationProvider"/>,<see cref="IAddressValidationProvider"/>.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="sectionName"></param>

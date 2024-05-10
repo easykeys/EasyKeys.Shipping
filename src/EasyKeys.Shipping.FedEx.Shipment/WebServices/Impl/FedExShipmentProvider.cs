@@ -705,8 +705,8 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
             var totalValue = details.Commodities.Sum(x => x.CustomsValue);
 
-            if (shipment.DestinationAddress.IsCanadaAddress() && totalValue <= 3300m ||
-                shipment.DestinationAddress.IsMexicoAddress() && totalValue <= 1000m)
+            if ((shipment.DestinationAddress.IsCanadaAddress() && totalValue <= 3300m) ||
+                (shipment.DestinationAddress.IsMexicoAddress() && totalValue <= 1000m))
             {
                 request.RequestedShipment.CustomsClearanceDetail.CommercialInvoice.SpecialInstructions = "Simplified Low Value Certification/Statement (LVS): I hereby certify that the goods covered by this shipment qualify as an originating good for the purposes of preferential tariff treatment under USMCA/T-MEC/CUSMA";
             }

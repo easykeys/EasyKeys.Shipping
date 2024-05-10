@@ -143,7 +143,9 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
                             var objectResponse_ = await ReadObjectResponseAsync<AdvcResponseVO>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                             }
                             return objectResponse_.Object;
                         }
@@ -153,9 +155,13 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
                             var objectResponse_ = await ReadObjectResponseAsync<ErrorResponseVO>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                             }
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                             throw new ApiException<ErrorResponseVO>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                         }
                         else
                         if (status_ == 401)
@@ -163,9 +169,13 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
                             var objectResponse_ = await ReadObjectResponseAsync<ErrorResponseVO401>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                             }
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                             throw new ApiException<ErrorResponseVO401>("Unauthorized", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                         }
                         else
                         if (status_ == 403)
@@ -173,9 +183,13 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
                             var objectResponse_ = await ReadObjectResponseAsync<ErrorResponseVO403>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                             }
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                             throw new ApiException<ErrorResponseVO403>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                         }
                         else
                         if (status_ == 404)
@@ -183,9 +197,13 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
                             var objectResponse_ = await ReadObjectResponseAsync<ErrorResponseVO404>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                             }
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                             throw new ApiException<ErrorResponseVO404>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                         }
                         else
                         if (status_ == 500)
@@ -193,9 +211,13 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
                             var objectResponse_ = await ReadObjectResponseAsync<ErrorResponseVO500>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                             }
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                             throw new ApiException<ErrorResponseVO500>("Failure", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                         }
                         else
                         if (status_ == 503)
@@ -203,14 +225,14 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
                             var objectResponse_ = await ReadObjectResponseAsync<ErrorResponseVO503>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null!);
                             }
-                            throw new ApiException<ErrorResponseVO503>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new ApiException<ErrorResponseVO503>("Service Unavailable", status_, objectResponse_.Text, headers_, objectResponse_.Object, null!);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_!, headers_, null!);
                         }
                     }
                     finally
@@ -246,7 +268,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
         {
             if (response == null || response.Content == null)
             {
-                return new ObjectResponseResult<T>(default(T), string.Empty);
+                return new ObjectResponseResult<T>(default(T)!, string.Empty);
             }
 
             if (ReadResponseAsString)
@@ -255,7 +277,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
                 try
                 {
                     var typedBody = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseText, JsonSerializerSettings);
-                    return new ObjectResponseResult<T>(typedBody, responseText);
+                    return new ObjectResponseResult<T>(typedBody!, responseText);
                 }
                 catch (Newtonsoft.Json.JsonException exception)
                 {
@@ -273,7 +295,9 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
                     {
                         var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
                         var typedBody = serializer.Deserialize<T>(jsonTextReader);
+#pragma warning disable CS8604 // Possible null reference argument.
                         return new ObjectResponseResult<T>(typedBody, string.Empty);
+#pragma warning restore CS8604 // Possible null reference argument.
                     }
                 }
                 catch (Newtonsoft.Json.JsonException exception)
@@ -1776,7 +1800,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation
             : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
         {
             StatusCode = statusCode;
-            Response = response;
+            Response = response ?? string.Empty;
             Headers = headers;
         }
 
