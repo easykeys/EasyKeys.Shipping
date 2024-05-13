@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace EasyKeys.Shipping.FedEx.Abstractions.Options;
 

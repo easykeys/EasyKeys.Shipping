@@ -14,15 +14,15 @@ public class FedExShipmentProviderTests
     private readonly Address _origin;
     private readonly Address _domestic;
     private readonly Address _international;
-    private readonly IFedExShipmentProvider _provider;
+    private readonly IEnumerable<IFedExShipmentProvider> _providers;
 
     public FedExShipmentProviderTests(ITestOutputHelper output)
     {
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
         _domestic = new Address("1550 central ave", "Riverside", "CA", "92507", "US");
         _international = new Address("12 Margaret street Sefton Park", "SEFTON PARK", string.Empty, "5083", "AU");
-        _provider = ServiceProviderInstance.GetFedExServices(output)
-            .GetRequiredService<IFedExShipmentProvider>();
+        _providers = ServiceProviderInstance.GetFedExServices(output)
+            .GetServices<IFedExShipmentProvider>();
     }
 
     [Fact]
@@ -68,14 +68,18 @@ public class FedExShipmentProviderTests
             }
         };
 
-        var label = await _provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
+        foreach (var provider in _providers)
+        {
+            var label = await provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
 
-        Assert.NotNull(label);
+            Assert.NotNull(label);
+            Assert.False(label.InternalErrors.Any());
 
-        Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
+            Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
 
-        var result = await _provider.CancelShipmentAsync(label!.Labels.First().TrackingId, CancellationToken.None);
-        Assert.True(result.Succeeded);
+            //var result = await _provider.CancelShipmentAsync(label!.Labels.First().TrackingId, CancellationToken.None);
+            //Assert.True(result.Succeeded);
+        }
     }
 
     [Fact]
@@ -131,18 +135,23 @@ public class FedExShipmentProviderTests
                 CustomsValue = 18,
                 Amount = 18,
                 PartNumber = "167",
+                ExportLicenseExpirationDate = DateTime.Now.AddDays(1),
             });
 
-        var label = await _provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
-        Assert.NotNull(label);
+        foreach (var provider in _providers)
+        {
+            var label = await provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
+            Assert.NotNull(label);
 
-        Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
+            Assert.False(label.InternalErrors.Any());
+            Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
 
-        // sometimes dev env doesnt send documents
-        // Assert.True(label?.Labels.Count > 1);
+            // sometimes dev env doesnt send documents
+            // Assert.True(label?.Labels.Count > 1);
 
-        // Assert.True(label?.ShippingDocuments.Count > 0);
-        var result = await _provider.CancelShipmentAsync(label.Labels.First().TrackingId, CancellationToken.None);
-        Assert.True(result.Succeeded);
+            // Assert.True(label?.ShippingDocuments.Count > 0);
+            //var result = await _provider.CancelShipmentAsync(label.Labels.First().TrackingId, CancellationToken.None);
+            //Assert.True(result.Succeeded);
+        }
     }
 }

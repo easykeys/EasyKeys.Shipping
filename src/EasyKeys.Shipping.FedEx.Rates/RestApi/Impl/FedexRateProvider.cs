@@ -1,13 +1,9 @@
-﻿using System.Runtime;
-using System.Text.Json;
-
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.RatesAndTransitTimes;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Rates.WebServices.Impl;
-
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -35,13 +31,6 @@ public class FedexRateProvider : IFedExRateProvider
     {
         try
         {
-            var specialServicesList = new List<string>();
-
-            if (shipment.Options.PackagingType != FedExPackageType.YourPackaging.Name && shipment.DestinationAddress.IsUnitedStatesAddress())
-            {
-                specialServicesList.Add("FEDEX_ONE_RATE");
-            }
-
             var ratesRequest = new Full_Schema_Quote_Rate
             {
                 AccountNumber = new AccountNumber { Value = shipment.Options.CustomerFedexAccountNumber ?? _options.FedExAccountNumber },
@@ -70,8 +59,7 @@ public class FedexRateProvider : IFedExRateProvider
                             Residential = shipment.DestinationAddress.IsResidential
                         }
                     },
-                    ShipmentSpecialServices = specialServicesList.Count > 0 ? new RequestedShipmentSpecialServicesRequested { SpecialServiceTypes = specialServicesList } : null,
-                    ShipDateStamp = shipment.Options.ShippingDate.AddDays(3).ToString("yyyy-MM-dd"),
+                    ShipDateStamp = shipment.Options.ShippingDate.ToString("yyyy-MM-dd"),
                     PackagingType = shipment.Options.PackagingType,
                     PickupType = RequestedShipmentPickupType.USE_SCHEDULED_PICKUP,
                     RateRequestType = [RateRequestType.ACCOUNT, RateRequestType.LIST],
@@ -117,7 +105,7 @@ public class FedexRateProvider : IFedExRateProvider
                         {
                             Currency = "USD",
                             Amount = (double)x.InsuredValue
-                        },
+                        }
                     }).ToList()
                 };
             }
@@ -156,7 +144,7 @@ public class FedexRateProvider : IFedExRateProvider
             _logger.LogError(ex, "{providerName} failed", nameof(FedExRateProvider));
             shipment.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExRateProvider)} failed");
         }
-   
+
         return shipment;
     }
 }

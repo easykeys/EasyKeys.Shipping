@@ -14,9 +14,13 @@
 #pragma warning disable 8603 // Disable "CS8603 Possible null reference return"
 namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Authorization;
 
+using System.IO.Compression;
+
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 
 using Microsoft.Extensions.Options;
+
+using Newtonsoft.Json;
 
 using System = global::System;
 
@@ -219,6 +223,27 @@ public partial class AuthorizationApi
             {
                 var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
                 throw new ApiException(message, (int)response.StatusCode, responseText, headers, exception);
+            }
+        }
+        if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+        {
+            try
+            {
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                using var decompressionStream = new GZipStream(responseStream, CompressionMode.Decompress);
+                using var decompressedStream = new StreamReader(decompressionStream);
+                var jsonString = await decompressedStream.ReadToEndAsync();
+                var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
+                using var jsonReader = new JsonTextReader(decompressedStream);
+                var jsonObject = serializer.Deserialize<T>(jsonReader);
+#pragma warning disable CS8604 // Possible null reference argument.
+                return new ObjectResponseResult<T>(jsonObject, jsonString);
+#pragma warning restore CS8604 // Possible null reference argument.
+            }
+            catch (Newtonsoft.Json.JsonException exception)
+            {
+                var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+                throw new ApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
             }
         }
         else

@@ -28,14 +28,15 @@ public static class ServiceProviderInstance
         services.AddSingleton<IConfiguration>(configBuilder.Build());
         services.AddFedExDocumentProvider();
         services.AddWebServicesFedExRateProvider();
-        services.AddWebServicesFedExAddressValidation();
+        services.AddWebServicesFedExAddressValidationProvider();
         services.AddFedExClient();
         services.AddFedExShipmenProvider();
         services.AddFedExTrackingProvider();
 
         // adress validation apis
-        services.AddRestApiFedExAddressValidation();
+        services.AddRestApiFedExAddressValidationProvider();
         services.AddRestApiFedExRateProvider();
+        services.AddRestApiFedExShipmentProvider();
         return services.BuildServiceProvider();
     }
 
