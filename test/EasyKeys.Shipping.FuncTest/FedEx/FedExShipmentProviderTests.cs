@@ -85,9 +85,8 @@ public class FedExShipmentProviderTests
             // Write the byte array to a file
             File.WriteAllBytes(filePath, label.Labels.First().Bytes.First());
 
-            // Write the byte array to a file
-            //var result = await _provider.CancelShipmentAsync(label!.Labels.First().TrackingId, CancellationToken.None);
-            //Assert.True(result.Succeeded);
+            var result = await provider.CancelShipmentAsync(label.Labels.First().TrackingId, CancellationToken.None);
+            Assert.True(result.Succeeded);
         }
     }
 
@@ -161,12 +160,8 @@ public class FedExShipmentProviderTests
             // Write the byte array to a file
             File.WriteAllBytes(filePath, label.Labels.First().Bytes.First());
 
-            // sometimes dev env doesnt send documents
-            // Assert.True(label?.Labels.Count > 1);
-
-            // Assert.True(label?.ShippingDocuments.Count > 0);
-            //var result = await _provider.CancelShipmentAsync(label.Labels.First().TrackingId, CancellationToken.None);
-            //Assert.True(result.Succeeded);
+            var result = await provider.CancelShipmentAsync(label.Labels.First().TrackingId, CancellationToken.None);
+            Assert.True(result.Succeeded);
         }
     }
 }

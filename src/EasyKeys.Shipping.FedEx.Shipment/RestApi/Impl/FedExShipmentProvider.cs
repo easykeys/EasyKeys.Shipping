@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection.Emit;
+using System.Text;
 using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
@@ -119,6 +120,23 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         LabelFormatType = LabelSpecificationLabelFormatType.COMMON2D,
                         ImageType = LabelSpecificationImageType.PNG,
                         LabelStockType = LabelSpecificationLabelStockType.PAPER_4X6
+                    },
+                    EmailNotificationDetail = new ShipShipmentEMailNotificationDetail
+                    {
+                        AggregationType = ShipShipmentEMailNotificationDetailAggregationType.PER_PACKAGE,
+                        EmailNotificationRecipients =
+                        [
+                            new ShipShipmentEmailNotificationRecipient
+                            {
+                                Name = shipmentDetails.Recipient.FullName,
+                                EmailNotificationRecipientType = ShipShipmentEmailNotificationRecipientEmailNotificationRecipientType.RECIPIENT,
+                                EmailAddress = shipmentDetails.Recipient.Email,
+                                NotificationFormatType = ShipShipmentEmailNotificationRecipientNotificationFormatType.TEXT,
+                                NotificationType = ShipShipmentEmailNotificationRecipientNotificationType.EMAIL,
+                                Locale = "en_US"
+                            }
+
+                        ]
                     }
                 }
             };
@@ -165,7 +183,8 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 {
                     DutiesPayment = new Payment_1
                     {
-                        PaymentType = Payment_1PaymentType.SENDER
+                        PaymentType = shipmentDetails.PaymentType.Name == "SENDER" ?
+                                Payment_1PaymentType.SENDER : Payment_1PaymentType.RECIPIENT
                     },
                     Commodities = shipmentDetails.Commodities.Select(x => new Commodity
                     {
@@ -286,8 +305,34 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         return label;
     }
 
-    public Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken = default)
+    public async Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var cancelledResult = new ShipmentCancelledResult();
+        try
+        {
+            var request = new Full_Schema_Cancel_Shipment
+            {
+                AccountNumber = new ShipperAccountNumber { Value = _options.FedExAccountNumber },
+                TrackingNumber = trackingId,
+                DeletionControl = Full_Schema_Cancel_ShipmentDeletionControl.DELETE_ALL_PACKAGES
+            };
+
+            var token = await _authService.GetTokenAsync(cancellationToken);
+
+            var result = await _client.Cancel_ShipmentAsync(
+                request,
+                Guid.NewGuid().ToString(),
+                "application/json",
+                "en_US",
+                token,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "{providerName} failed", nameof(FedExShipmentProvider));
+            cancelledResult.Errors.Add(ex?.Message ?? $"{nameof(FedExShipmentProvider)} failed");
+        }
+
+        return cancelledResult;
     }
 }
