@@ -86,8 +86,8 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         }
                     },
                     ShipDatestamp = shipment.Options.ShippingDate.ToString("yyyy-MM-dd"),
-                    ServiceType = "FEDEX_INTERNATIONAL_PRIORITY",
-                    PackagingType = "YOUR_PACKAGING",
+                    ServiceType = serviceType.Name,
+                    PackagingType = shipment.Options.PackagingType,
                     TotalPackageCount = shipment.Packages.Count,
                     TotalWeight = (double)shipment.Packages.Sum(x => x.RoundedWeight),
                     RequestedPackageLineItems = shipment.Packages.Select(x => new RequestedPackageLineItem
@@ -102,11 +102,20 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         {
                             Currency = "USD",
                             Amount = (double)x.InsuredValue
+                        },
+                        Dimensions = new Dimensions
+                        {
+                            Length = (int)x.Dimensions.RoundedLength,
+                            Width = (int)x.Dimensions.RoundedWidth,
+                            Height = (int)x.Dimensions.RoundedHeight,
+                            Units = DimensionsUnits.IN
                         }
                     }).ToList(),
                     PickupType = RequestedShipmentPickupType.USE_SCHEDULED_PICKUP,
                     LabelSpecification = new LabelSpecification
                     {
+                        LabelPrintingOrientation = LabelSpecificationLabelPrintingOrientation.BOTTOM_EDGE_OF_TEXT_FIRST,
+                        LabelRotation = LabelSpecificationLabelRotation.NONE,
                         LabelFormatType = LabelSpecificationLabelFormatType.COMMON2D,
                         ImageType = LabelSpecificationImageType.PNG,
                         LabelStockType = LabelSpecificationLabelStockType.PAPER_4X6
@@ -121,10 +130,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     SpecialServiceTypes = ["ELECTRONIC_TRADE_DOCUMENTS"],
                     EtdDetail = new ETDDetail
                     {
-                        RequestedDocumentTypes =
-                        [
-                            RequestedDocumentTypes.COMMERCIAL_INVOICE
-                        ]
+                        RequestedDocumentTypes = [RequestedDocumentTypes.COMMERCIAL_INVOICE]
                     }
                 };
 
@@ -137,28 +143,29 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         {
                             DocType = ShippingDocumentFormatDocType.PDF,
                             StockType = ShippingDocumentFormatStockType.PAPER_LETTER
-                        }
+                        },
+                        CustomerImageUsages =
+                        [
+                            new CustomerImageUsage
+                            {
+                                Type = CustomerImageUsageType.LETTER_HEAD,
+                                Id = CustomerImageUsageId.IMAGE_1
+                            },
+                            new CustomerImageUsage
+                            {
+                                Type = CustomerImageUsageType.SIGNATURE,
+                                Id = CustomerImageUsageId.IMAGE_2
+                            }
+
+                        ]
                     }
                 };
 
                 shipmentRequest.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
                 {
-                    CommercialInvoice = new CommercialInvoice
-                    {
-                        CustomerReferences =
-                        [
-                            new CustomerReference
-                            {
-                                CustomerReferenceType = CustomerReferenceType.INVOICE_NUMBER,
-                                Value = shipmentDetails.TransactionId
-                            }
-
-                        ]
-                    },
-
                     DutiesPayment = new Payment_1
                     {
-                        PaymentType = Payment_1PaymentType.RECIPIENT
+                        PaymentType = Payment_1PaymentType.SENDER
                     },
                     Commodities = shipmentDetails.Commodities.Select(x => new Commodity
                     {
@@ -263,7 +270,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         },
                         TrackingId = piece.TrackingNumber!,
                         ImageType = piece.PackageDocuments!.First().DocType!,
-                        Bytes = [Encoding.UTF8.GetBytes(piece.PackageDocuments!.First().EncodedLabel!)]
+                        Bytes = [piece.PackageDocuments!.First().EncodedLabel!]
                     });
                 }
             }

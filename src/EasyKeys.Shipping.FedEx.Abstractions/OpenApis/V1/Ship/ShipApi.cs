@@ -2826,7 +2826,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
     }
 
     /// <summary>
-    /// These are Special service elements for FedEx Ground Home Delivery shipments. If selected, element homedeliveryPremiumType is mandatory. 
+    /// These are Special service elements for FedEx Ground Home Delivery shipments. If selected, element homedeliveryPremiumType is mandatory.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class HomeDeliveryPremiumDetail
@@ -3111,7 +3111,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
         /// </summary>
         [Newtonsoft.Json.JsonProperty("freightOnValue", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public CustomsClearanceDetailFreightOnValue FreightOnValue { get; set; }
+        public CustomsClearanceDetailFreightOnValue? FreightOnValue { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dutiesPayment", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Payment_1? DutiesPayment { get; set; }
@@ -3399,7 +3399,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
     }
 
     /// <summary>
-    /// Information about the person who is paying for the shipment. Not applicable for credit card payment. 
+    /// Information about the person who is paying for the shipment. Not applicable for credit card payment.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Payor_1
@@ -3895,7 +3895,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
     }
 
     /// <summary>
-    /// Specifies about the statements to be declared for Customs. 
+    /// Specifies about the statements to be declared for Customs.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CustomsDeclarationStatementDetail
@@ -5355,7 +5355,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
     public partial class AlcoholDetail
     {
         /// <summary>
-        /// Specify the Alcohol Recipient Type of the shipment. &lt;br&gt; Example: LICENSEE 
+        /// Specify the Alcohol Recipient Type of the shipment. &lt;br&gt; Example: LICENSEE
         /// </summary>
         [Newtonsoft.Json.JsonProperty("alcoholRecipientType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
@@ -5727,7 +5727,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
         /// Specifies if the document is encoded.&lt;br&gt;Example: encoded label
         /// </summary>
         [Newtonsoft.Json.JsonProperty("encodedLabel", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string? EncodedLabel { get; set; }
+        public byte[] EncodedLabel { get; set; }
 
         /// <summary>
         /// The URL of the shipping document/label&lt;br&gt;Example: https://.../document/v2/document/retrieve/SH,794816968200_Merge/isLabel=true&amp;autoPrint=false&lt;br&gt;&lt;i&gt;Note: The URL once created will be active for 24 hours.&lt;/i&gt;
@@ -6696,7 +6696,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
         public HazardousCommodityOptionDetail01LabelTextOption LabelTextOption { get; set; }
 
         /// <summary>
-        /// 'DG Data Upload Mode:- Optional.,DG Full Validation Mode:- Optional,Text used in labeling the commodity under control of the LabelTextOption field&lt;br&gt;Example:Customer Supplied Label Text' 
+        /// 'DG Data Upload Mode:- Optional.,DG Full Validation Mode:- Optional,Text used in labeling the commodity under control of the LabelTextOption field&lt;br&gt;Example:Customer Supplied Label Text'
         /// <br/>
         /// <br/>
         /// </summary>
@@ -8883,7 +8883,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
     }
 
     /// <summary>
-    /// The request elements required to cancel a shipment. 
+    /// The request elements required to cancel a shipment.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Full_Schema_Cancel_Shipment
@@ -9387,7 +9387,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
         public ShippingDocumentSpecification? ShippingDocumentSpecification { get; set; }
 
         /// <summary>
-        /// Indicate the type of rates to be returned.&lt;br&gt;Following are values:&lt;ul&gt;&lt;li&gt;LIST - Returns published list rates will be returned in addition to account-specific rate (if applicable).&lt;/li&gt;&lt;li&gt;PREFERRED - It returns rates in currency as specified in the PreferredCurrency element.&lt;/li&gt;&lt;li&gt;ACCOUNT - Returns account specific rates. Note: The account specific rates are returned by default if the shipper account number is specified in the shipment.&lt;/li&gt;&lt;li&gt;INCENTIVE - This is one-time discount for incentivizing the customer.&lt;/li&gt;&lt;/ul&gt;Examples: ["ACCOUNT", "PREFERRED"] 
+        /// Indicate the type of rates to be returned.&lt;br&gt;Following are values:&lt;ul&gt;&lt;li&gt;LIST - Returns published list rates will be returned in addition to account-specific rate (if applicable).&lt;/li&gt;&lt;li&gt;PREFERRED - It returns rates in currency as specified in the PreferredCurrency element.&lt;/li&gt;&lt;li&gt;ACCOUNT - Returns account specific rates. Note: The account specific rates are returned by default if the shipper account number is specified in the shipment.&lt;/li&gt;&lt;li&gt;INCENTIVE - This is one-time discount for incentivizing the customer.&lt;/li&gt;&lt;/ul&gt;Examples: ["ACCOUNT", "PREFERRED"]
         /// </summary>
         [Newtonsoft.Json.JsonProperty("rateRequestType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public System.Collections.Generic.ICollection<RateRequestType2>? RateRequestType { get; set; }
@@ -11852,6 +11852,9 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
 
         [System.Runtime.Serialization.EnumMember(Value = @"MERGED_LABELS_ONLY")]
         MERGED_LABELS_ONLY = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TERMS_AND_CONDITIONS")]
+        TERMS_AND_CONDITIONS = 16,
 
     }
 

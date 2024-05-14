@@ -1,4 +1,6 @@
-﻿using EasyKeys.Shipping.Abstractions.Models;
+﻿using System.Collections;
+
+using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
@@ -20,7 +22,7 @@ public class FedExShipmentProviderTests
     {
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
         _domestic = new Address("1550 central ave", "Riverside", "CA", "92507", "US");
-        _international = new Address("12 Margaret street Sefton Park", "SEFTON PARK", string.Empty, "5083", "AU");
+        _international = new Address("80 Fedex Prkwy", "LONDON", string.Empty, "W1T1JY", "GB", isResidential: false);
         _providers = ServiceProviderInstance.GetFedExServices(output)
             .GetServices<IFedExShipmentProvider>();
     }
@@ -77,6 +79,13 @@ public class FedExShipmentProviderTests
 
             Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
 
+            // Path to save the PNG file
+            var filePath = $"{provider}-{provider.GetType().FullName}-domestic-output.png";
+
+            // Write the byte array to a file
+            File.WriteAllBytes(filePath, label.Labels.First().Bytes.First());
+
+            // Write the byte array to a file
             //var result = await _provider.CancelShipmentAsync(label!.Labels.First().TrackingId, CancellationToken.None);
             //Assert.True(result.Succeeded);
         }
@@ -145,6 +154,12 @@ public class FedExShipmentProviderTests
 
             Assert.False(label.InternalErrors.Any());
             Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
+
+            // Path to save the PNG file
+            var filePath = $"{provider}-{provider.GetType().FullName}-international-output.png";
+
+            // Write the byte array to a file
+            File.WriteAllBytes(filePath, label.Labels.First().Bytes.First());
 
             // sometimes dev env doesnt send documents
             // Assert.True(label?.Labels.Count > 1);
