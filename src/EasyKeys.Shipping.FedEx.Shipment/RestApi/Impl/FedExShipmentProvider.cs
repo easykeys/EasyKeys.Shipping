@@ -181,6 +181,10 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
                 shipmentRequest.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
                 {
+                    //CommercialInvoice = new CommercialInvoice
+                    //{
+                    //    SpecialInstructions = "Simplified Low Value Certification/Statement (LVS): I hereby certify that the goods covered by this shipment qualify as an originating good for the purposes of preferential tariff treatment under USMCA/T-MEC/CUSMA"
+                    //},
                     DutiesPayment = new Payment_1
                     {
                         PaymentType = shipmentDetails.PaymentType.Name == "SENDER" ?
