@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 
@@ -312,9 +311,9 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.RatesAndTransitTimes
                     var jsonString = await decompressedStream.ReadToEndAsync();
                     var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
                     using var jsonReader = new JsonTextReader(decompressedStream);
-                    var errorResponse = serializer.Deserialize<T>(jsonReader);
+                    var jsonObject = serializer.Deserialize<T>(jsonReader);
 #pragma warning disable CS8604 // Possible null reference argument.
-                    return new ObjectResponseResult<T>(errorResponse, jsonString);
+                    return new ObjectResponseResult<T>(jsonObject, jsonString);
 #pragma warning restore CS8604 // Possible null reference argument.
                 }
                 catch (Newtonsoft.Json.JsonException exception)

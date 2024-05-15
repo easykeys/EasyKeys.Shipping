@@ -1,5 +1,4 @@
-﻿using EasyKeys.Shipping.FedEx.Abstractions.Middleware;
-using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.AddressValidation;
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Authorization;
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.RatesAndTransitTimes;
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship;

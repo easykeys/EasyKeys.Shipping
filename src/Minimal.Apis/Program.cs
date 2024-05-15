@@ -38,7 +38,7 @@ builder.Services.AddStampsShipmentProvider();
 builder.Services.AddStampsTrackingProvider();
 
 // add fedex libraries
-builder.Services.AddWebServicesFedExAddressValidation();
+builder.Services.AddWebServicesFedExAddressValidationProvider();
 
 builder.Services.AddWebServicesFedExRateProvider();
 

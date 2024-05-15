@@ -1,5 +1,4 @@
-﻿using EasyKeys.Shipping.FedEx.Abstractions.Middleware;
-using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Rates.WebServices.Impl;
 

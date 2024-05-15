@@ -1,5 +1,4 @@
 ﻿using EasyKeys.Shipping.Abstractions;
-using EasyKeys.Shipping.FedEx.Abstractions.Middleware;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.AddressValidation;
 
@@ -18,7 +17,7 @@ public static class AddressValidationServiceExtensions
     /// <param name="sectionName">The section name for the configuration. The default is <see cref="FedExOptions"/>.</param>
     /// <param name="configOptions">The configuration for the <see cref="FedExOptions"/>. The default is null.</param>
     /// <returns></returns>
-    public static IServiceCollection AddWebServicesFedExAddressValidation(
+    public static IServiceCollection AddWebServicesFedExAddressValidationProvider(
         this IServiceCollection services,
         string sectionName = nameof(FedExOptions),
         Action<FedExOptions, IServiceProvider>? configOptions = null)
@@ -45,7 +44,7 @@ public static class AddressValidationServiceExtensions
     /// <param name="sectionName"></param>
     /// <param name="configOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection AddRestApiFedExAddressValidation(
+    public static IServiceCollection AddRestApiFedExAddressValidationProvider(
     this IServiceCollection services,
     string sectionName = nameof(FedExApiOptions),
     Action<FedExApiOptions, IServiceProvider>? configOptions = null)

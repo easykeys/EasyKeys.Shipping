@@ -1,13 +1,9 @@
-﻿using System.Runtime;
-using System.Text.Json;
-
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.RatesAndTransitTimes;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Rates.WebServices.Impl;
-
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -35,16 +31,12 @@ public class FedexRateProvider : IFedExRateProvider
     {
         try
         {
-            var specialServicesList = new List<string>();
-
-            if (shipment.Options.PackagingType != FedExPackageType.YourPackaging.Name && shipment.DestinationAddress.IsUnitedStatesAddress())
-            {
-                specialServicesList.Add("FEDEX_ONE_RATE");
-            }
-
             var ratesRequest = new Full_Schema_Quote_Rate
             {
-                AccountNumber = new AccountNumber { Value = shipment.Options.CustomerFedexAccountNumber ?? _options.FedExAccountNumber },
+                AccountNumber = new AccountNumber
+                {
+                    Value = _options.FedExAccountNumber
+                },
                 CarrierCodes = new List<string> { "FDXE", "FDXG" },
                 RateRequestControlParameters = new RateRequestControlParameters
                 {
@@ -56,6 +48,8 @@ public class FedexRateProvider : IFedExRateProvider
                     {
                         Address = new RateAddress
                         {
+                            StateOrProvinceCode = shipment.OriginAddress.StateOrProvince,
+                            City = shipment.OriginAddress.City,
                             PostalCode = shipment.OriginAddress.PostalCode,
                             CountryCode = shipment.OriginAddress.CountryCode,
                             Residential = shipment.OriginAddress.IsResidential
@@ -65,13 +59,14 @@ public class FedexRateProvider : IFedExRateProvider
                     {
                         Address = new RateAddress
                         {
+                            StateOrProvinceCode = shipment.DestinationAddress.StateOrProvince,
+                            City = shipment.DestinationAddress.City,
                             PostalCode = shipment.DestinationAddress.PostalCode,
                             CountryCode = shipment.DestinationAddress.CountryCode,
                             Residential = shipment.DestinationAddress.IsResidential
                         }
                     },
-                    ShipmentSpecialServices = specialServicesList.Count > 0 ? new RequestedShipmentSpecialServicesRequested { SpecialServiceTypes = specialServicesList } : null,
-                    ShipDateStamp = shipment.Options.ShippingDate.AddDays(3).ToString("yyyy-MM-dd"),
+                    ShipDateStamp = shipment.Options.ShippingDate.ToString("yyyy-MM-dd"),
                     PackagingType = shipment.Options.PackagingType,
                     PickupType = RequestedShipmentPickupType.USE_SCHEDULED_PICKUP,
                     RateRequestType = [RateRequestType.ACCOUNT, RateRequestType.LIST],
@@ -88,10 +83,18 @@ public class FedexRateProvider : IFedExRateProvider
                         {
                             Currency = "USD",
                             Amount = (double)x.InsuredValue
-                        }
-                    }).ToList(),
+                        },
+                        PackageSpecialServices = x.SignatureRequiredOnDelivery ?
+                        new PackageSpecialServicesRequested
+                            {
+                                SignatureOptionType = PackageSpecialServicesRequestedSignatureOptionType.INDIRECT
+                            }
+                        :
+                        null
+                    }).ToList()
                 }
             };
+
             if (shipment.DestinationAddress.IsUnitedStatesAddress() is not true)
             {
                 ratesRequest.RequestedShipment.CustomsClearanceDetail = new RequestedShipmentCustomsClearanceDetail
@@ -117,7 +120,7 @@ public class FedexRateProvider : IFedExRateProvider
                         {
                             Currency = "USD",
                             Amount = (double)x.InsuredValue
-                        },
+                        }
                     }).ToList()
                 };
             }
@@ -156,7 +159,7 @@ public class FedexRateProvider : IFedExRateProvider
             _logger.LogError(ex, "{providerName} failed", nameof(FedExRateProvider));
             shipment.InternalErrors.Add(ex?.Message ?? $"{nameof(FedExRateProvider)} failed");
         }
-   
+
         return shipment;
     }
 }

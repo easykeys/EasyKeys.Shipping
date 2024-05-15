@@ -63,7 +63,7 @@ public class FedExRateProviderTests
                 foreach (var rate in rates.Rates)
                 {
                     Assert.InRange(rates.Rates.Count, 1, 8);
-                    _output.WriteLine("{0} - {1} - ${2} - ${3} - {4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+                    _output.WriteLine("{0}: {1}-{2}-{3}-{4}-{5}-{6}",rateService.GetType().FullName, rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
                 }
 
                 Assert.False(rates.InternalErrors.Any());
@@ -93,7 +93,7 @@ public class FedExRateProviderTests
 
             foreach (var rate in rates.Rates)
             {
-                _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+               _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
 
             Assert.False(rates.InternalErrors.Any());
@@ -123,7 +123,7 @@ public class FedExRateProviderTests
 
             foreach (var rate in rates.Rates)
             {
-                _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+               _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
 
             Assert.False(rates.InternalErrors.Any());
@@ -153,7 +153,7 @@ public class FedExRateProviderTests
 
             foreach (var rate in rates.Rates)
             {
-                _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+               _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
 
             Assert.False(rates.InternalErrors.Any());
@@ -168,7 +168,7 @@ public class FedExRateProviderTests
         var rateServices = _sp.GetServices<IFedExRateProvider>();
         foreach (var rateService in rateServices)
         {
-            var destination = new Address("750 County Road 456", "Jonesboro", "AR", "72404", "US", isResidential: true);
+            var destination = new Address("3000 Perimeter Park Dr", "Morrisville", "NC", "27560", "US", isResidential: false);
 
             var packages = new List<Package>
             {
@@ -176,15 +176,26 @@ public class FedExRateProviderTests
                 FedExRateConfigurator.GetFedExEnvelop(0.03125M)
             };
 
-            var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now.AddBusinessDays(1));
+            var shipOptions = new ShipmentOptions(FedExPackageType.YourPackaging.Name, DateTime.Now);
 
             var shipment = new Shipment(_origin, destination, packages, shipOptions);
 
-            var rates = await rateService.GetRatesAsync(shipment, FedExServiceType.FedExGroundHomeDelivery);
+            var rates = await rateService.GetRatesAsync(shipment);
 
             foreach (var rate in rates.Rates)
             {
-                _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+                _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.Name,rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+            }
+
+            var shipOptions2 = new ShipmentOptions(FedExPackageType.FedExEnvelope.Name, DateTime.Now);
+
+            var shipment2 = new Shipment(_origin, destination, packages, shipOptions2);
+
+            var rates2 = await rateService.GetRatesAsync(shipment2);
+
+            foreach (var rate in rates2.Rates)
+            {
+                _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
 
             Assert.False(rates.InternalErrors.Any());
@@ -216,9 +227,9 @@ public class FedExRateProviderTests
 
             foreach (var rate in rates.Rates)
             {
-                _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+                _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
-            
+
             Assert.False(rates.InternalErrors.Any());
 
             // Assert.InRange(rates.Rates.Count, 1, 8);
@@ -248,7 +259,7 @@ public class FedExRateProviderTests
 
             foreach (var rate in rates.Rates)
             {
-                _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+                _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
             }
 
             Assert.False(rates.InternalErrors.Any());
@@ -279,7 +290,7 @@ public class FedExRateProviderTests
 
                 foreach (var rate in result.Rates)
                 {
-                    _output.WriteLine("{0}-{1}-{2}-{3}-{4}", rate.Name, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+                   _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
                 }
 
                 Assert.False(result.InternalErrors.Any());

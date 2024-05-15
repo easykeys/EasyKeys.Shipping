@@ -260,7 +260,7 @@ public class FedExAddressValidationProviderTests
         services.AddLogging(builder => builder.AddXunit(_output));
         services.AddSingleton<IConfiguration>(configBuilder.Build());
 
-        services.AddWebServicesFedExAddressValidation();
+        services.AddWebServicesFedExAddressValidationProvider();
 
         var sp = services.BuildServiceProvider();
         return sp.GetRequiredService<IFedExAddressValidationProvider>();
