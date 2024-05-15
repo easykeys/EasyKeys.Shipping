@@ -33,7 +33,10 @@ public class FedexRateProvider : IFedExRateProvider
         {
             var ratesRequest = new Full_Schema_Quote_Rate
             {
-                AccountNumber = new AccountNumber { Value = shipment.Options.CustomerFedexAccountNumber ?? _options.FedExAccountNumber },
+                AccountNumber = new AccountNumber
+                {
+                    Value = _options.FedExAccountNumber
+                },
                 CarrierCodes = new List<string> { "FDXE", "FDXG" },
                 RateRequestControlParameters = new RateRequestControlParameters
                 {
@@ -45,6 +48,8 @@ public class FedexRateProvider : IFedExRateProvider
                     {
                         Address = new RateAddress
                         {
+                            StateOrProvinceCode = shipment.OriginAddress.StateOrProvince,
+                            City = shipment.OriginAddress.City,
                             PostalCode = shipment.OriginAddress.PostalCode,
                             CountryCode = shipment.OriginAddress.CountryCode,
                             Residential = shipment.OriginAddress.IsResidential
@@ -54,6 +59,8 @@ public class FedexRateProvider : IFedExRateProvider
                     {
                         Address = new RateAddress
                         {
+                            StateOrProvinceCode = shipment.DestinationAddress.StateOrProvince,
+                            City = shipment.DestinationAddress.City,
                             PostalCode = shipment.DestinationAddress.PostalCode,
                             CountryCode = shipment.DestinationAddress.CountryCode,
                             Residential = shipment.DestinationAddress.IsResidential
@@ -76,10 +83,18 @@ public class FedexRateProvider : IFedExRateProvider
                         {
                             Currency = "USD",
                             Amount = (double)x.InsuredValue
-                        }
-                    }).ToList(),
+                        },
+                        PackageSpecialServices = x.SignatureRequiredOnDelivery ?
+                        new PackageSpecialServicesRequested
+                            {
+                                SignatureOptionType = PackageSpecialServicesRequestedSignatureOptionType.INDIRECT
+                            }
+                        :
+                        null
+                    }).ToList()
                 }
             };
+
             if (shipment.DestinationAddress.IsUnitedStatesAddress() is not true)
             {
                 ratesRequest.RequestedShipment.CustomsClearanceDetail = new RequestedShipmentCustomsClearanceDetail

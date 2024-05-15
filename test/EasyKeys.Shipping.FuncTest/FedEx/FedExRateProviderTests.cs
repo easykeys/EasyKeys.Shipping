@@ -63,7 +63,7 @@ public class FedExRateProviderTests
                 foreach (var rate in rates.Rates)
                 {
                     Assert.InRange(rates.Rates.Count, 1, 8);
-                    _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+                    _output.WriteLine("{0}: {1}-{2}-{3}-{4}-{5}-{6}",rateService.GetType().FullName, rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
                 }
 
                 Assert.False(rates.InternalErrors.Any());
