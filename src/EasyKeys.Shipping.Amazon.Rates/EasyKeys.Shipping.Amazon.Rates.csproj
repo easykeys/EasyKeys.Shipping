@@ -10,4 +10,8 @@
     <ProjectReference Include="..\EasyKeys.Shipping.Amazon.Abstractions\EasyKeys.Shipping.Amazon.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DependencyInjection\" />
+  </ItemGroup>
+
 </Project>

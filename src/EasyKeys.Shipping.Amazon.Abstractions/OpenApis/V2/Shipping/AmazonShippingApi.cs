@@ -3929,7 +3929,7 @@ namespace EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping
         /// The ship date and time (the requested pickup). This defaults to the current date and time.
         /// </summary>
         [Newtonsoft.Json.JsonProperty("shipDate", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset ShipDate { get; set; }
+        public string ShipDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("shipperInstruction", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public ShipperInstruction ShipperInstruction { get; set; }

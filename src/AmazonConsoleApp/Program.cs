@@ -33,6 +33,7 @@ try
 
     var rateRequest = new GetRatesRequest()
     {
+        ShipDate = DateTimeOffset.Now.AddDays(2).ToString("yyyy-MM-dd'T'HH:mm:ss'Z'"),
         ShipTo = new Address()
         {
             Name = "test moffett",
