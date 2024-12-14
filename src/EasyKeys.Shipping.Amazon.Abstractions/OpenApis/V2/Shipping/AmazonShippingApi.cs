@@ -3742,14 +3742,14 @@ namespace EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping
         [Newtonsoft.Json.JsonProperty("requiresAdditionalInputs", Required = Newtonsoft.Json.Required.Always)]
         public bool RequiresAdditionalInputs { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("rateItemList", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("rateItemList", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public RateItemList RateItemList { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("paymentType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("paymentType", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public PaymentType PaymentType { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("benefits", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("benefits", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public Benefits Benefits { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
@@ -3928,7 +3928,7 @@ namespace EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping
         /// <summary>
         /// The ship date and time (the requested pickup). This defaults to the current date and time.
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("shipDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("shipDate", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTimeOffset ShipDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("shipperInstruction", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
