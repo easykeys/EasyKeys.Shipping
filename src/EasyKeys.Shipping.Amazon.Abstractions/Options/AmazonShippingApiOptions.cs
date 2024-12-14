@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace EasyKeys.Shipping.Amazon.Abstractions.Options;
 
-namespace EasyKeys.Shipping.Amazon.Abstractions.Options;
 public class AmazonShippingApiOptions
 {
-    required public string ClientId { get; set; }
+    public string ClientId { get; set; } = string.Empty;
 
-    required public string ClientSecret { get; set; }
-    
-    required public string RefreshToken { get; set; } 
+    public string ClientSecret { get; set; } = string.Empty;
+
+    public string RefreshToken { get; set; } = string.Empty;
 }
