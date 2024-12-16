@@ -1,5 +1,4 @@
 using System.Text.Json;
-
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.AddressValidation;

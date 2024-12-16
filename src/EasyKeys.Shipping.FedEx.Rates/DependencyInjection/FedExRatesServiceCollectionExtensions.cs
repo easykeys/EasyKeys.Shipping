@@ -39,9 +39,6 @@ public static class FedExRatesServiceCollectionExtensions
         string sectionName = nameof(FedExApiOptions),
         Action<FedExApiOptions, IServiceProvider>? configOptions = null)
     {
-        services.AddLogging();
-
-        services.AddFedExApiClients();
 
         services.AddTransient<IFedExRateProvider, EasyKeys.Shipping.FedEx.Rates.RestApi.Impl.FedexRateProvider>();
 

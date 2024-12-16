@@ -315,9 +315,6 @@ dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggesti
 
 # CA1815: Override equals and operator equals on value types
 dotnet_diagnostic.CA1815.severity = silent
-
-# SA1000: Keywords should be spaced correctly
-dotnet_diagnostic.SA1000.severity = silent
 csharp_indent_labels = no_change
 csharp_using_directive_placement = outside_namespace:silent
 csharp_prefer_simple_using_statement = true:suggestion

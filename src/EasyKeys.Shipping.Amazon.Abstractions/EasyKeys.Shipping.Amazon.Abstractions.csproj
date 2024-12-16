@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	<PropertyGroup Label="Nuget Package Settings">
+		<Description>DotNetCore Implementation of Amazon Authorization Api</Description>
+		<PackageTags>
+			DotNetCore, Amazon Shipping,V2, Amazon OAuth API
+		</PackageTags>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Ardalis.SmartEnum" />
+		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="NSwag.ApiDescription.Client" Version="13.18.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.ServiceModel.Http" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Bet.Extensions.Options" />
+	</ItemGroup>
+  <ItemGroup>
+    <None Update="OpenApis\V2\Shipping\amazon-shipping.json" ClassName="AmazonShippingApi" />
+  </ItemGroup>
+
+</Project>

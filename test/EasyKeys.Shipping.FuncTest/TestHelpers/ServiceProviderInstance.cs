@@ -1,5 +1,7 @@
 ﻿using Bet.Extensions.Testing.Logging;
 
+using EasyKeys.Shipping.Amazon.Rates.DependencyInjection;
+using EasyKeys.Shipping.Amazon.Shipment.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Tracking.DependencyInjection;
 
@@ -10,6 +12,28 @@ namespace EasyKeysShipping.FuncTest.TestHelpers;
 
 public static class ServiceProviderInstance
 {
+    public static IServiceProvider GetAmazonServices(ITestOutputHelper output)
+    {
+        var services = new ServiceCollection();
+        var dic = new Dictionary<string, string>
+        {
+            { "AzureVault:BaseUrl", "https://easykeysshipping.vault.azure.net/" },
+            { "AmazonShippingApiOptions:IsDevelopment", "true" }
+        };
+
+        var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
+        configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
+        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development");
+        services.AddLogging(x => x.AddXunit(output));
+
+        services.AddSingleton<IConfiguration>(configBuilder.Build());
+        services.AddAmazonShippingClient();
+        services.AddRestApiAmazonRateProvider();
+        services.AddRestApiAmazonShipmentProvider();
+
+        return services.BuildServiceProvider();
+    }
+
     public static IServiceProvider GetFedExServices(ITestOutputHelper output)
     {
         var services = new ServiceCollection();
@@ -34,9 +58,11 @@ public static class ServiceProviderInstance
         services.AddFedExTrackingProvider();
 
         // adress validation apis
+        services.AddFedExApiClients();
         services.AddRestApiFedExAddressValidationProvider();
         services.AddRestApiFedExRateProvider();
         services.AddRestApiFedExShipmentProvider();
+
         return services.BuildServiceProvider();
     }
 

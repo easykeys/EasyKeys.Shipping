@@ -38,7 +38,7 @@ public static class TestShipments
         };
 
         var validatedAddress = new ValidateAddress(Guid.NewGuid().ToString(), destinationAddress);
-        var shipmentOptions = new ShipmentOptions(StampsPackageType.Package.Name, DateTime.Now);
+        var shipmentOptions = new ShipmentOptions(StampsPackageType.Package.Name, DateTime.Now.AddDays(1));
         return new Shipment(
             originAddress,
             validatedAddress.ProposedAddress ?? validatedAddress.OriginalAddress,

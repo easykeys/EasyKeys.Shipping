@@ -43,6 +43,8 @@ public static class FedExServiceCollectionExtensions
         string sectionName = nameof(FedExApiOptions),
         Action<FedExApiOptions, IServiceProvider>? configure = null)
     {
+        services.AddLogging();
+
         services.AddChangeTokenOptions<FedExApiOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
         services.AddSingleton<IFedexApiAuthenticatorService, FedexApiAuthenticatorService>();
 
