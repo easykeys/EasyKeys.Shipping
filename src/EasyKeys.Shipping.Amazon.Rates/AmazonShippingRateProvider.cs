@@ -19,93 +19,111 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
 
     public async Task<Shipment> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
     {
-        var rateRequest = new GetRatesRequest()
+        try
         {
-            ShipDate = shipment.Options.ShippingDate.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'"),
-            ShipTo = new Abstractions.OpenApis.V2.Shipping.Address()
+            var rateRequest = new GetRatesRequest()
             {
-                Name = "unknown name",
-                AddressLine1 = shipment.DestinationAddress.StreetLine,
-                AddressLine2 = shipment.DestinationAddress.StreetLine2,
-                StateOrRegion = shipment.DestinationAddress.StateOrProvince,
-                City = shipment.DestinationAddress.City,
-                CountryCode = shipment.DestinationAddress.CountryCode,
-                PostalCode = shipment.DestinationAddress.PostalCode,
-                Email = "unknown name",
-                PhoneNumber = "unknown phone number"
-            },
-            ShipFrom = new Abstractions.OpenApis.V2.Shipping.Address()
-            {
-                AddressLine1 = shipment.OriginAddress.StreetLine,
-                AddressLine2 = shipment.OriginAddress.StreetLine2,
-                StateOrRegion = shipment.OriginAddress.StateOrProvince,
-                City = shipment.OriginAddress.City,
-                CountryCode = shipment.OriginAddress.CountryCode,
-                PostalCode = shipment.OriginAddress.PostalCode,
-                Email = "devs@easykeys.com",
-                CompanyName = "EasyKeys",
-                PhoneNumber = "unknown phone number"
-            },
-            Packages = new ()
-        {
-            new ()
-            {
-                Dimensions = new ()
+                ShipDate = shipment.Options.ShippingDate.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+                ShipTo = new Abstractions.OpenApis.V2.Shipping.Address()
                 {
-                    Unit = DimensionsUnit.INCH,
-                    Length = 1,
-                    Width = 1,
-                    Height = 1
+                    Name = "unknown name",
+                    AddressLine1 = shipment.DestinationAddress.StreetLine,
+                    AddressLine2 = shipment.DestinationAddress.StreetLine2,
+                    StateOrRegion = shipment.DestinationAddress.StateOrProvince,
+                    City = shipment.DestinationAddress.City,
+                    CountryCode = shipment.DestinationAddress.CountryCode,
+                    PostalCode = shipment.DestinationAddress.PostalCode,
+                    Email = "unknown name",
+                    PhoneNumber = "unknown phone number"
                 },
-                Weight = new ()
+                ShipFrom = new Abstractions.OpenApis.V2.Shipping.Address()
                 {
-                    Unit = WeightUnit.POUND,
-                    Value = (double)shipment.Packages.Sum(x => x.RoundedWeight)
+                    AddressLine1 = shipment.OriginAddress.StreetLine,
+                    AddressLine2 = shipment.OriginAddress.StreetLine2,
+                    StateOrRegion = shipment.OriginAddress.StateOrProvince,
+                    City = shipment.OriginAddress.City,
+                    CountryCode = shipment.OriginAddress.CountryCode,
+                    PostalCode = shipment.OriginAddress.PostalCode,
+                    Email = "devs@easykeys.com",
+                    CompanyName = "EasyKeys",
+                    PhoneNumber = "unknown phone number"
                 },
-                InsuredValue = new ()
-                {
-                    Value = (double)shipment.Packages.Sum(x => x.InsuredValue),
-                    Unit = "USD"
-                },
-                PackageClientReferenceId = "packageClientReferenceId",
-                Items = new ()
+                Packages = new ()
                 {
                     new ()
                     {
+                        Dimensions = new ()
+                        {
+                            Unit = DimensionsUnit.INCH,
+                            Length = 1,
+                            Width = 1,
+                            Height = 1
+                        },
                         Weight = new ()
                         {
-                            Unit = WeightUnit.POUND
+                            Unit = WeightUnit.POUND,
+                            Value = (double)shipment.Packages.Sum(x => x.RoundedWeight)
                         },
-                        LiquidVolume = new ()
+                        InsuredValue = new ()
                         {
-                            Unit = LiquidVolumeUnit.ML
+                            Value = (double)shipment.Packages.Sum(x => x.InsuredValue),
+                            Unit = "USD"
                         },
-                        Description = "asdf",
-                        Quantity = 1
+                        PackageClientReferenceId = "packageClientReferenceId",
+                        Items = new ()
+                        {
+                            new ()
+                            {
+                                Weight = new ()
+                                {
+                                    Unit = WeightUnit.POUND
+                                },
+                                LiquidVolume = new ()
+                                {
+                                    Unit = LiquidVolumeUnit.ML
+                                },
+                                Description = "asdf",
+                                Quantity = 1
+                            }
+                        }
                     }
+                },
+                ChannelDetails = new ()
+                {
+                    ChannelType = ChannelType.EXTERNAL
                 }
-            }
-        },
-            ChannelDetails = new ()
+            };
+
+            var token = await _authenticatorService.GetTokenAsync(cancellationToken);
+
+            var result = await _shippingApi.GetRatesAsync(token, XAmznShippingBusinessId.AmazonShipping_US, rateRequest);
+
+            foreach (var amazonRate in result.Payload.Rates)
             {
-                ChannelType = ChannelType.EXTERNAL
+                var rate = new Shipping.Abstractions.Models.Rate(
+                        amazonRate.ServiceName,
+                        amazonRate.ServiceName,
+                        amazonRate.CarrierName,
+                        (decimal)amazonRate.TotalCharge.Value,
+                        (decimal)amazonRate.TotalCharge.Value,
+                        amazonRate.Promise.DeliveryWindow.End.UtcDateTime);
+                shipment.Rates.Add(rate);
             }
-        };
-
-        var token = await _authenticatorService.GetTokenAsync(cancellationToken);
-
-        var result = await _shippingApi.GetRatesAsync(token, XAmznShippingBusinessId.AmazonShipping_US, rateRequest);
-
-        foreach (var amazonRate in result.Payload.Rates)
+        }
+        catch (ApiException<ErrorList> ex)
         {
-            var rate = new Shipping.Abstractions.Models.Rate(
-                    amazonRate.ServiceName,
-                    amazonRate.ServiceName,
-                    amazonRate.CarrierName,
-                    (decimal)amazonRate.TotalCharge.Value,
-                    (decimal)amazonRate.TotalCharge.Value,
-                    amazonRate.Promise.DeliveryWindow.End.UtcDateTime);
-            shipment.Rates.Add(rate);
+            foreach (var error in ex.Result.Errors)
+            {
+                shipment.InternalErrors.Add(error.Message);
+            }
+        }
+        catch (ApiException ex)
+        {
+            shipment.InternalErrors.Add(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            shipment.InternalErrors.Add(ex.Message);
         }
 
         return shipment;

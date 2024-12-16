@@ -1,4 +1,4 @@
-﻿
+﻿using System.Collections.ObjectModel;
 using System.Text.Json;
 
 using EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping;
@@ -102,6 +102,97 @@ try
 
     var shippingApi = new AmazonShippingApi(new HttpClient());
     var result = await shippingApi.GetRatesAsync(accessToken.access_token, XAmznShippingBusinessId.AmazonShipping_US, rateRequest);
+    var shipment = await shippingApi.OneClickShipmentAsync
+        (
+        accessToken.access_token,
+        XAmznShippingBusinessId3.AmazonShipping_US,
+        new ()
+        {
+            ShipDate = DateTimeOffset.Now.AddDays(2).ToString("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+            ShipTo = new Address()
+            {
+                Name = "test moffett",
+                AddressLine1 = "22322 Roxford St",
+                StateOrRegion = "Michigan",
+                City = "Detroit",
+                CountryCode = "United States",
+                PostalCode = "48219-2381",
+                Email = "test@gmail.com"
+            },
+            ShipFrom = new Address()
+            {
+                Name = "test moffett",
+                AddressLine1 = "662 Broadway 3fl",
+                StateOrRegion = "New York",
+                City = "Brooklyn",
+                CountryCode = "United States",
+                PostalCode = "11206-4410",
+                Email = "testfrom@gmail.com"
+            },
+            Packages = new()
+        {
+            new()
+            {
+                Dimensions = new()
+                {
+                    Unit = DimensionsUnit.INCH,
+                    Length = 1,
+                    Width = 1,
+                    Height = 1
+                },
+                Weight = new()
+                {
+                    Unit = WeightUnit.OUNCE,
+                    Value = 1
+                },
+                InsuredValue = new()
+                {
+                    Value = 1,
+                    Unit = "USD"
+                },
+                PackageClientReferenceId = "packageClientReferenceId",
+                Items = new()
+                {
+                    new()
+                    {
+                        Weight = new()
+                        {
+                            Unit = WeightUnit.GRAM
+                        },
+                        LiquidVolume = new()
+                        {
+                            Unit = LiquidVolumeUnit.ML
+                        },
+                        Description = "asdf",
+                        Quantity = 1
+                    }
+                }
+            }
+        },
+            ChannelDetails = new()
+            {
+                ChannelType = ChannelType.EXTERNAL
+            },
+            ServiceSelection = new()
+            {
+                ServiceId = new() { "std-us-swa-mfn" },
+            },
+            LabelSpecifications = new()
+            {
+                Format = DocumentFormat.PNG,
+                Size = new()
+                {
+                    Length = 60,
+                    Width = 4,
+                    Unit = DocumentSizeUnit.INCH
+                },
+                Dpi = 300,
+                PageLayout = "DEFAULT",
+                NeedFileJoining = false,
+                RequestedDocumentTypes = new Collection<DocumentType> { DocumentType.LABEL }
+            }
+        }
+        );
 }
 catch (ApiException<ErrorList> ex)
 {
