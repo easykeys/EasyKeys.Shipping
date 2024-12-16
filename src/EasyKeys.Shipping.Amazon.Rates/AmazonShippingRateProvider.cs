@@ -1,5 +1,6 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping;
+using EasyKeys.Shipping.Amazon.Abstractions.Options;
 using EasyKeys.Shipping.Amazon.Abstractions.Services;
 
 namespace EasyKeys.Shipping.Amazon.Rates;
@@ -7,14 +8,18 @@ namespace EasyKeys.Shipping.Amazon.Rates;
 public class AmazonShippingRateProvider : IAmazonShippingRateProvider
 {
     private readonly IAmazonApiAuthenticatorService _authenticatorService;
+    private readonly AmazonShippingApiOptions _options;
     private readonly AmazonShippingApi _shippingApi;
 
     public AmazonShippingRateProvider(
+        AmazonShippingApiOptions options,
         IAmazonApiAuthenticatorService authenticatorService,
         AmazonShippingApi shippingApi)
     {
+        _options = options;
         _authenticatorService = authenticatorService;
         _shippingApi = shippingApi;
+        _shippingApi.BaseUrl = _options.IsDevelopment ? _shippingApi.BaseUrl : "https://sellingpartnerapi-na.amazon.com";
     }
 
     public async Task<Shipment> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)

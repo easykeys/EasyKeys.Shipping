@@ -3,6 +3,7 @@ using System.Text;
 
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping;
+using EasyKeys.Shipping.Amazon.Abstractions.Options;
 using EasyKeys.Shipping.Amazon.Abstractions.Services;
 using EasyKeys.Shipping.Amazon.Shipment.Models;
 
@@ -10,15 +11,19 @@ namespace EasyKeys.Shipping.Amazon.Shipment;
 
 public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
 {
-    private readonly AmazonShippingApi _amazonShippingApi;
+    private readonly AmazonShippingApi _shippingApi;
+    private readonly AmazonShippingApiOptions _options;
     private readonly IAmazonApiAuthenticatorService _authenticatorService;
 
     public AmazonShippingShipmentProvider(
+        AmazonShippingApiOptions options,
         AmazonShippingApi amazonShippingApi,
         IAmazonApiAuthenticatorService amazonApiAuthenticator)
     {
-        _amazonShippingApi = amazonShippingApi;
+        _options = options;
+        _shippingApi = amazonShippingApi;
         _authenticatorService = amazonApiAuthenticator;
+        _shippingApi.BaseUrl = _options.IsDevelopment ? _shippingApi.BaseUrl : "https://sellingpartnerapi-na.amazon.com";
     }
 
     public Task<ShipmentLabel> CreateShipmentAsync(
@@ -144,7 +149,7 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
 
             var accessToken = await _authenticatorService.GetTokenAsync(cancellationToken);
 
-            var shipmentResult = await _amazonShippingApi
+            var shipmentResult = await _shippingApi
                 .OneClickShipmentAsync(
                     accessToken,
                     XAmznShippingBusinessId3.AmazonShipping_US,
@@ -194,7 +199,7 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
         {
             var accessToken = await _authenticatorService.GetTokenAsync(cancellationToken);
 
-            await _amazonShippingApi.CancelShipmentAsync(
+            await _shippingApi.CancelShipmentAsync(
                 shipmentId,
                 accessToken,
                 XAmznShippingBusinessId6.AmazonShipping_US,
