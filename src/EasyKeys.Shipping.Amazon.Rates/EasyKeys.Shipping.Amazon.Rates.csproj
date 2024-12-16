@@ -5,7 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+	<PropertyGroup Label="Nuget Package Settings">
+		<Description>
+			DotNetCore Implementation of Amazon Shipping V2 Api endpoint.
+		</Description>
+		<PackageTags>
+			DotNetCore, Amazon Shipping,V2, Shipping V2 APIs
+		</PackageTags>
+	</PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\EasyKeys.Shipping.Amazon.Abstractions\EasyKeys.Shipping.Amazon.Abstractions.csproj" />
   </ItemGroup>
