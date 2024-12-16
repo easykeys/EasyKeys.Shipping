@@ -55,9 +55,9 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
                         Dimensions = new ()
                         {
                             Unit = DimensionsUnit.INCH,
-                            Length = 1,
-                            Width = 1,
-                            Height = 1
+                            Length = (double)shipment.Packages.Max(x => x.Dimensions.RoundedLength),
+                            Width = (double)shipment.Packages.Max(x => x.Dimensions.RoundedWidth),
+                            Height = (double)shipment.Packages.Max(x => x.Dimensions.RoundedHeight)
                         },
                         Weight = new ()
                         {
@@ -82,7 +82,7 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
                                 {
                                     Unit = LiquidVolumeUnit.ML
                                 },
-                                Description = "asdf",
+                                Description = "Package",
                                 Quantity = 1
                             }
                         }
