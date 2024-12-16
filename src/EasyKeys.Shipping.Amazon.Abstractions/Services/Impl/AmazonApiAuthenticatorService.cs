@@ -67,7 +67,7 @@ public class AmazonApiAuthenticatorService : IAmazonApiAuthenticatorService
 
             _expirationClock.AddOrUpdate(nameof(_expirationClock), (x) => DateTimeOffset.Now.AddSeconds(token.expires_in - 5), (x, y) => y.AddMilliseconds(token.expires_in - 5));
 
-            return $"{token.token_type} {token.access_token}";
+            return token.access_token;
         }
         catch (Exception ex)
         {

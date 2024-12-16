@@ -39,9 +39,6 @@ public static class FedExShippingServiceCollectionExtensions
         string sectionName = nameof(FedExApiOptions),
         Action<FedExApiOptions, IServiceProvider>? configOptions = null)
     {
-        services.AddLogging();
-
-        services.AddFedExApiClients();
 
         services.AddTransient<IFedExShipmentProvider, EasyKeys.Shipping.FedEx.Shipment.RestApi.Impl.FedExShipmentProvider>();
 

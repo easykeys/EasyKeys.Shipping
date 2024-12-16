@@ -32,7 +32,7 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
     public Task<ShipmentLabel> CreateShipmentAsync(
         string RateId,
         Shipping.Abstractions.Models.Shipment shipment,
-        ShippingDetails labelOptions,
+        ShippingDetails shippingDetails,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
@@ -40,7 +40,7 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
 
     public async Task<ShipmentLabel> CreateSmartShipmentAsync(
         Shipping.Abstractions.Models.Shipment shipment,
-        ShippingDetails labelOptions,
+        ShippingDetails shippingDetails,
         CancellationToken cancellationToken = default)
     {
         var label = new ShipmentLabel();
@@ -52,16 +52,16 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
                 ShipDate = shipment.Options.ShippingDate.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'"),
                 ShipTo = new Abstractions.OpenApis.V2.Shipping.Address()
                 {
-                    Name = labelOptions.Recipient.FullName,
-                    CompanyName = labelOptions.Recipient.Company,
+                    Name = shippingDetails.Recipient.FullName,
+                    CompanyName = shippingDetails.Recipient.Company,
                     AddressLine1 = shipment.DestinationAddress.StreetLine,
                     AddressLine2 = shipment.DestinationAddress.StreetLine2,
                     StateOrRegion = shipment.DestinationAddress.StateOrProvince,
                     City = shipment.DestinationAddress.City,
                     CountryCode = shipment.DestinationAddress.CountryCode,
                     PostalCode = shipment.DestinationAddress.PostalCode,
-                    Email = labelOptions.Recipient.Email,
-                    PhoneNumber = labelOptions.Recipient.PhoneNumber
+                    Email = shippingDetails.Recipient.Email,
+                    PhoneNumber = shippingDetails.Recipient.PhoneNumber
                 },
                 ShipFrom = new Abstractions.OpenApis.V2.Shipping.Address()
                 {
@@ -71,10 +71,10 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
                     City = shipment.OriginAddress.City,
                     CountryCode = shipment.OriginAddress.CountryCode,
                     PostalCode = shipment.OriginAddress.PostalCode,
-                    Email = labelOptions.Sender.Email,
-                    CompanyName = labelOptions.Sender.Company,
-                    PhoneNumber = labelOptions.Sender.PhoneNumber,
-                    Name = labelOptions.Sender.FullName
+                    Email = shippingDetails.Sender.Email,
+                    CompanyName = shippingDetails.Sender.Company,
+                    PhoneNumber = shippingDetails.Sender.PhoneNumber,
+                    Name = shippingDetails.Sender.FullName
                 },
                 Packages = new ()
                 {
@@ -122,11 +122,11 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
                 },
                 ServiceSelection = new ()
                 {
-                    ServiceId = new () { labelOptions.ServiceId }
+                    ServiceId = new () { shippingDetails.ServiceId }
                 },
                 LabelSpecifications = new ()
                 {
-                    Format = labelOptions.LabelFormat switch
+                    Format = shippingDetails.LabelFormat switch
                     {
                         "PNG" => DocumentFormat.PNG,
                         "PDF" => DocumentFormat.PDF,
@@ -134,16 +134,16 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
                     },
                     Size = new ()
                     {
-                        Length = (double)labelOptions.LabelDimensions.Length,
-                        Width = (double)labelOptions.LabelDimensions.Width,
-                        Unit = labelOptions.LabelUnit switch
+                        Length = (double)shippingDetails.LabelDimensions.Length,
+                        Width = (double)shippingDetails.LabelDimensions.Width,
+                        Unit = shippingDetails.LabelUnit switch
                         {
                             "INCH" => DocumentSizeUnit.INCH,
                             "CM" => DocumentSizeUnit.CENTIMETER,
                             _ => DocumentSizeUnit.INCH
                         }
                     },
-                    Dpi = labelOptions.LabelDpi,
+                    Dpi = shippingDetails.LabelDpi,
                     PageLayout = "DEFAULT",
                     NeedFileJoining = false,
                     RequestedDocumentTypes = new Collection<DocumentType> { DocumentType.LABEL }

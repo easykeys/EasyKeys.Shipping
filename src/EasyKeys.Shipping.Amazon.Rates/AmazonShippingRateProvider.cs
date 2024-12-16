@@ -43,7 +43,6 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
                     City = shipment.DestinationAddress.City,
                     CountryCode = shipment.DestinationAddress.CountryCode,
                     PostalCode = shipment.DestinationAddress.PostalCode,
-                    Email = "unknown name",
                     PhoneNumber = "unknown phone number"
                 },
                 ShipFrom = new Abstractions.OpenApis.V2.Shipping.Address()
@@ -54,6 +53,7 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
                     City = shipment.OriginAddress.City,
                     CountryCode = shipment.OriginAddress.CountryCode,
                     PostalCode = shipment.OriginAddress.PostalCode,
+                    Name = "Easykeys fullfuilment team",
                     Email = "devs@easykeys.com",
                     CompanyName = "EasyKeys",
                     PhoneNumber = "unknown phone number"
