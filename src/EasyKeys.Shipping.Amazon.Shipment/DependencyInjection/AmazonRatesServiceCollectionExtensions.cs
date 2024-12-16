@@ -17,7 +17,6 @@ public static class AmazonRatesServiceCollectionExtensions
         string sectionName = nameof(AmazonShippingApiOptions),
         Action<AmazonShippingApiOptions, IServiceProvider>? configOptions = null)
     {
-        services.AddLogging();
         services.AddTransient<IAmazonShippingShipmentProvider, AmazonShippingShipmentProvider>();
 
         return services;

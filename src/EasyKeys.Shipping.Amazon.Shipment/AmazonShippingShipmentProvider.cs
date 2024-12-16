@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text;
-
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping;
 using EasyKeys.Shipping.Amazon.Abstractions.Options;
 using EasyKeys.Shipping.Amazon.Abstractions.Services;
 using EasyKeys.Shipping.Amazon.Shipment.Models;
+using Microsoft.Extensions.Logging;
 
 namespace EasyKeys.Shipping.Amazon.Shipment;
 
@@ -14,12 +14,15 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
     private readonly AmazonShippingApi _shippingApi;
     private readonly AmazonShippingApiOptions _options;
     private readonly IAmazonApiAuthenticatorService _authenticatorService;
+    private readonly ILogger<AmazonShippingShipmentProvider> _logger;
 
     public AmazonShippingShipmentProvider(
+        ILogger<AmazonShippingShipmentProvider> logger,
         AmazonShippingApiOptions options,
         AmazonShippingApi amazonShippingApi,
         IAmazonApiAuthenticatorService amazonApiAuthenticator)
     {
+        _logger = logger;
         _options = options;
         _shippingApi = amazonShippingApi;
         _authenticatorService = amazonApiAuthenticator;
@@ -179,14 +182,18 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
             {
                 label.InternalErrors.Add(error.Message);
             }
+
+            _logger.LogError(ex, $"Error creating shipment from Amazon Shipping API: {string.Join(",", ex.Result.Errors)}");
         }
         catch (ApiException ex)
         {
             label.InternalErrors.Add(ex.Message);
+            _logger.LogError(ex, $"Error creating shipment from Amazon Shipping API: {ex.Message}");
         }
         catch (Exception ex)
         {
             label.InternalErrors.Add(ex.Message);
+            _logger.LogError(ex, $"Error creating shipment from Amazon Shipping API: {ex.Message}");
         }
 
         return label;

@@ -3,6 +3,8 @@ using EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping;
 using EasyKeys.Shipping.Amazon.Abstractions.Options;
 using EasyKeys.Shipping.Amazon.Abstractions.Services;
 
+using Microsoft.Extensions.Logging;
+
 namespace EasyKeys.Shipping.Amazon.Rates;
 
 public class AmazonShippingRateProvider : IAmazonShippingRateProvider
@@ -10,12 +12,15 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
     private readonly IAmazonApiAuthenticatorService _authenticatorService;
     private readonly AmazonShippingApiOptions _options;
     private readonly AmazonShippingApi _shippingApi;
+    private readonly ILogger<AmazonShippingRateProvider> _logger;
 
     public AmazonShippingRateProvider(
+        ILogger<AmazonShippingRateProvider> logger,
         AmazonShippingApiOptions options,
         IAmazonApiAuthenticatorService authenticatorService,
         AmazonShippingApi shippingApi)
     {
+        _logger = logger;
         _options = options;
         _authenticatorService = authenticatorService;
         _shippingApi = shippingApi;
@@ -121,14 +126,18 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
             {
                 shipment.InternalErrors.Add(error.Message);
             }
+
+            _logger.LogError(ex, $"Error getting rates from Amazon Shipping API: {string.Join(",",ex.Result.Errors)}");
         }
         catch (ApiException ex)
         {
             shipment.InternalErrors.Add(ex.Message);
+            _logger.LogError(ex, $"Error getting rates from Amazon Shipping API: {ex.Message}");
         }
         catch (Exception ex)
         {
             shipment.InternalErrors.Add(ex.Message);
+            _logger.LogError(ex, $"Error getting rates from Amazon Shipping API: {ex.Message}");
         }
 
         return shipment;
