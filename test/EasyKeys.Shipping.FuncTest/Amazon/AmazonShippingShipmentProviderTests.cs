@@ -45,5 +45,4 @@ public class AmazonShippingShipmentProviderTests
         Assert.NotNull(labels);
         Assert.NotNull(labels.Labels[0].Bytes[0]);
     }
-
 }
