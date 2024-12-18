@@ -97,7 +97,7 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
                             Value = (double)shipment.Packages.Sum(x => x.InsuredValue),
                             Unit = "USD"
                         },
-                        PackageClientReferenceId = "packageClientReferenceId",
+                        PackageClientReferenceId = shippingDetails.ReferenceId,
                         Items = new ()
                         {
                             new ()
@@ -172,7 +172,7 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
                         ProviderLabelId = shipmentResult.Payload.ShipmentId,
                         TrackingId = details.TrackingId,
                         ImageType = "PNG",
-                        Bytes = details.PackageDocuments.Select(x => Encoding.UTF8.GetBytes(x.Contents)).ToList()
+                        Bytes = details.PackageDocuments.Select(x => Convert.FromBase64String(x.Contents)).ToList()
                     });
             }
         }
@@ -180,7 +180,7 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
         {
             foreach (var error in ex.Result.Errors)
             {
-                label.InternalErrors.Add(error.Message);
+                label.InternalErrors.Add($"{error.Message}-{error.Details}");
             }
 
             _logger.LogError(ex, $"Error creating shipment from Amazon Shipping API: {string.Join(",", ex.Result.Errors)}");

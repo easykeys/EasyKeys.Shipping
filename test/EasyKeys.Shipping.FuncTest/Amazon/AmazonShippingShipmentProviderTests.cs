@@ -1,7 +1,5 @@
 ﻿using EasyKeys.Shipping.Amazon.Shipment;
 using EasyKeys.Shipping.Amazon.Shipment.Models;
-using EasyKeys.Shipping.Stamps.Abstractions.Models;
-using EasyKeys.Shipping.Stamps.Rates.Models;
 
 using EasyKeysShipping.FuncTest.TestHelpers;
 
@@ -30,13 +28,6 @@ public class AmazonShippingShipmentProviderTests
         shipmentDetails.Sender = sender;
         shipmentDetails.Recipient = recipient;
 
-        var rateOptions = new RateOptions()
-        {
-            Sender = sender,
-            Recipient = recipient,
-            ServiceType = StampsServiceType.Priority
-        };
-
         var labels = await _shipmentProvider.CreateSmartShipmentAsync(
               TestShipments.CreateDomesticShipment(),
               shipmentDetails,
@@ -44,5 +35,14 @@ public class AmazonShippingShipmentProviderTests
 
         Assert.NotNull(labels);
         Assert.NotNull(labels.Labels[0].Bytes[0]);
+
+        // File path where the bytes will be saved
+        var filePath = $"{_shipmentProvider}-{_shipmentProvider.GetType().FullName}-domestic-output.png";
+
+        // Write the byte array to a file
+        File.WriteAllBytes(filePath, labels.Labels.First().Bytes.First());
+
+        var result = await _shipmentProvider.CancelShipmentAsync
+            (labels.Labels.First().TrackingId, CancellationToken.None);
     }
 }
