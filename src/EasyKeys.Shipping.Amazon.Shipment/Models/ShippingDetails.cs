@@ -4,6 +4,8 @@ namespace EasyKeys.Shipping.Amazon.Shipment.Models;
 
 public class ShippingDetails
 {
+    public string ReferenceId { get; set; } = Guid.NewGuid().ToString();
+
     /// <summary>
     /// Sender Contact Info.
     /// </summary>

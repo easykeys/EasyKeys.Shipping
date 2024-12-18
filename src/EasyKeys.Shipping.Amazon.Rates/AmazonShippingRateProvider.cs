@@ -79,7 +79,7 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
                             Value = (double)shipment.Packages.Sum(x => x.InsuredValue),
                             Unit = "USD"
                         },
-                        PackageClientReferenceId = "packageClientReferenceId",
+                        PackageClientReferenceId = Guid.NewGuid().ToString(),
                         Items = new ()
                         {
                             new ()
@@ -124,7 +124,7 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
         {
             foreach (var error in ex.Result.Errors)
             {
-                shipment.InternalErrors.Add(error.Message);
+                shipment.InternalErrors.Add($"{error.Message}-{error.Details}");
             }
 
             _logger.LogError(ex, $"Error getting rates from Amazon Shipping API: {string.Join(",",ex.Result.Errors)}");
