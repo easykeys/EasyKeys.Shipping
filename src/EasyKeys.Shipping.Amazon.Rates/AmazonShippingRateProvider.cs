@@ -34,7 +34,7 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
         {
             var rateRequest = new GetRatesRequest()
             {
-                ShipDate = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'"),
+                ShipDate = shipment.Options.ShippingDate.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'"),
                 ShipTo = new Abstractions.OpenApis.V2.Shipping.Address()
                 {
                     AddressLine1 = shipment.DestinationAddress.StreetLine,
