@@ -23,8 +23,8 @@ public class AmazonShippingRateProviderTests
     public async Task Return_Shipment_With_Rates_Successfully()
     {
         var shipment = TestShipments.CreateDomesticShipment();
-
-        var result = await _rateProvider.GetRatesAsync(shipment, CancellationToken.None);
+        var (sender, recipient) = TestShipments.CreateContactInfo();
+        var result = await _rateProvider.GetRatesAsync(shipment, new () { SenderContact = sender, RecipientContact = recipient }, CancellationToken.None);
 
         Assert.NotNull(result);
 

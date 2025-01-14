@@ -30,9 +30,9 @@ public static class TestShipments
             new Package(
                 new Dimensions()
                 {
-                    Height = 20.00M,
-                    Width = 15.00M,
-                    Length = 12.00M
+                    Height = 9.00M,
+                    Width = 6.00M,
+                    Length = 1.00M
                 },
                 .0625M),
         };

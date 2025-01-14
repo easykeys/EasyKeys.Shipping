@@ -2,6 +2,7 @@
 using EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping;
 using EasyKeys.Shipping.Amazon.Abstractions.Options;
 using EasyKeys.Shipping.Amazon.Abstractions.Services;
+using EasyKeys.Shipping.Amazon.Rates.Models;
 
 using Microsoft.Extensions.Logging;
 
@@ -27,7 +28,7 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
         _shippingApi.BaseUrl = _options.IsDevelopment ? _shippingApi.BaseUrl : "https://sellingpartnerapi-na.amazon.com";
     }
 
-    public async Task<Shipment> GetRatesAsync(Shipment shipment, CancellationToken cancellationToken = default)
+    public async Task<Shipment> GetRatesAsync(Shipment shipment,RateContactInfo rateContactInfo, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -36,14 +37,16 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
                 ShipDate = shipment.Options.ShippingDate.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'"),
                 ShipTo = new Abstractions.OpenApis.V2.Shipping.Address()
                 {
-                    Name = "unknown name",
                     AddressLine1 = shipment.DestinationAddress.StreetLine,
                     AddressLine2 = shipment.DestinationAddress.StreetLine2,
                     StateOrRegion = shipment.DestinationAddress.StateOrProvince,
                     City = shipment.DestinationAddress.City,
                     CountryCode = shipment.DestinationAddress.CountryCode,
                     PostalCode = shipment.DestinationAddress.PostalCode,
-                    PhoneNumber = "unknown phone number"
+                    Name = rateContactInfo.RecipientContact.FullName,
+                    Email = rateContactInfo.RecipientContact.Email,
+                    CompanyName = rateContactInfo.RecipientContact.Company,
+                    PhoneNumber = rateContactInfo.RecipientContact.PhoneNumber
                 },
                 ShipFrom = new Abstractions.OpenApis.V2.Shipping.Address()
                 {
@@ -53,10 +56,10 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
                     City = shipment.OriginAddress.City,
                     CountryCode = shipment.OriginAddress.CountryCode,
                     PostalCode = shipment.OriginAddress.PostalCode,
-                    Name = "Easykeys fullfuilment team",
-                    Email = "devs@easykeys.com",
-                    CompanyName = "EasyKeys",
-                    PhoneNumber = "unknown phone number"
+                    Name = rateContactInfo.SenderContact.FullName,
+                    Email = rateContactInfo.SenderContact.Email,
+                    CompanyName = rateContactInfo.SenderContact.Company,
+                    PhoneNumber = rateContactInfo.SenderContact.PhoneNumber
                 },
                 Packages = new ()
                 {
@@ -72,7 +75,7 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
                         Weight = new ()
                         {
                             Unit = WeightUnit.POUND,
-                            Value = (double)shipment.Packages.Sum(x => x.RoundedWeight)
+                            Value = (double)shipment.Packages.Sum(x => x.Weight)
                         },
                         InsuredValue = new ()
                         {
@@ -86,7 +89,8 @@ public class AmazonShippingRateProvider : IAmazonShippingRateProvider
                             {
                                 Weight = new ()
                                 {
-                                    Unit = WeightUnit.POUND
+                                    Unit = WeightUnit.POUND,
+                                    Value = (double)shipment.Packages.Sum(x => x.Weight)
                                 },
                                 LiquidVolume = new ()
                                 {
