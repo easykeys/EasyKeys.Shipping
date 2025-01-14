@@ -90,7 +90,7 @@ public class AmazonShippingShipmentProvider : IAmazonShippingShipmentProvider
                         Weight = new ()
                         {
                             Unit = WeightUnit.POUND,
-                            Value = (double)shipment.Packages.Sum(x => x.RoundedWeight)
+                            Value = (double)shipment.Packages.Sum(x => x.Weight)
                         },
                         InsuredValue = new ()
                         {
