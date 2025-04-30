@@ -149,6 +149,13 @@ public class Address : ValueObject
         return usAndTerritories.Contains(CountryCode);
     }
 
+    public bool IsUnitedStatesTerritory()
+    {
+        var usAndTerritories = new List<string> { "AS", "GU", "MP", "PR", "UM", "VI" };
+
+        return usAndTerritories.Contains(StateOrProvince) || usAndTerritories.Contains(CountryCode);
+    }
+
     public override string ToString()
     {
         var builder = new StringBuilder();

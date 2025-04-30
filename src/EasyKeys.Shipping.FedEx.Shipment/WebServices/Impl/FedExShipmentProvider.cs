@@ -582,7 +582,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
             }
         };
 
-        if (!shipment.DestinationAddress.IsUnitedStatesAddress())
+        if (!shipment.DestinationAddress.IsUnitedStatesAddress() || shipment.DestinationAddress.IsUnitedStatesTerritory())
         {
             if (details.LabelOptions.EnableEtd)
             {

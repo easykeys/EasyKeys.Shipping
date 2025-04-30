@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-using System.Text;
-using EasyKeys.Shipping.Abstractions;
+﻿using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
@@ -9,6 +7,7 @@ using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Shipment.Models;
 using Microsoft.Extensions.Logging;
+
 
 using Commodity = EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship.Commodity;
 using Dimensions = EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship.Dimensions;
@@ -86,18 +85,19 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                             }
                         }
                     },
+
                     ShipDatestamp = shipment.Options.ShippingDate.ToString("yyyy-MM-dd"),
                     ServiceType = serviceType.Name,
                     PackagingType = shipment.Options.PackagingType,
                     TotalPackageCount = shipment.Packages.Count,
-                    TotalWeight = (double)shipment.Packages.Sum(x => x.RoundedWeight),
+                    TotalWeight = (double)shipment.GetTotalWeight(),
                     RequestedPackageLineItems = shipment.Packages.Select(x => new RequestedPackageLineItem
                     {
                         CustomerReferences = [new() { CustomerReferenceType = CustomerReference_1CustomerReferenceType.INVOICE_NUMBER, Value = shipmentDetails.TransactionId }],
                         Weight = new Weight
                         {
                             Units = WeightUnits.LB,
-                            Value = (int)x.RoundedWeight
+                            Value = (double)x.Weight
                         },
                         DeclaredValue = new Money
                         {
@@ -110,6 +110,19 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                             Width = (int)x.Dimensions.RoundedWidth,
                             Height = (int)x.Dimensions.RoundedHeight,
                             Units = DimensionsUnits.IN
+                        },
+                        PackageSpecialServices = new PackageSpecialServicesRequested()
+                        {
+                            SignatureOptionType = shipmentDetails.DeliverySignatureOptions.ToLower() switch
+                            {
+                                "service_default" => PackageSpecialServicesRequestedSignatureOptionType.SERVICE_DEFAULT,
+                                "adult" => PackageSpecialServicesRequestedSignatureOptionType.ADULT,
+                                "direct" => PackageSpecialServicesRequestedSignatureOptionType.DIRECT,
+                                "indirect" => PackageSpecialServicesRequestedSignatureOptionType.INDIRECT,
+                                "nosignaturerequired" => PackageSpecialServicesRequestedSignatureOptionType.NO_SIGNATURE_REQUIRED,
+                                _ => PackageSpecialServicesRequestedSignatureOptionType.SERVICE_DEFAULT
+                            },
+                            SpecialServiceTypes = ["SIGNATURE_OPTION"]
                         }
                     }).ToList(),
                     PickupType = RequestedShipmentPickupType.USE_SCHEDULED_PICKUP,
@@ -128,20 +141,30 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         [
                             new ShipShipmentEmailNotificationRecipient
                             {
+                                NotificationEventType = shipmentDetails.EmailNotification.EmailNotificationTypes.Select(x => x.Name.ToEnum<NotificationEventType>()).ToList(),
                                 Name = shipmentDetails.Recipient.FullName,
-                                EmailNotificationRecipientType = ShipShipmentEmailNotificationRecipientEmailNotificationRecipientType.RECIPIENT,
+                                EmailNotificationRecipientType = shipmentDetails.EmailNotification.NotificationRoleType.ToLower() switch
+                                {
+                                    "broker" => ShipShipmentEmailNotificationRecipientEmailNotificationRecipientType.BROKER,
+                                    "third_party" => ShipShipmentEmailNotificationRecipientEmailNotificationRecipientType.THIRD_PARTY,
+                                    "shipper" => ShipShipmentEmailNotificationRecipientEmailNotificationRecipientType.SHIPPER,
+                                    "recipient" => ShipShipmentEmailNotificationRecipientEmailNotificationRecipientType.RECIPIENT,
+                                    "thirdparty" => ShipShipmentEmailNotificationRecipientEmailNotificationRecipientType.THIRD_PARTY,
+                                    _ => ShipShipmentEmailNotificationRecipientEmailNotificationRecipientType.RECIPIENT
+                                },
                                 EmailAddress = shipmentDetails.Recipient.Email,
                                 NotificationFormatType = ShipShipmentEmailNotificationRecipientNotificationFormatType.TEXT,
                                 NotificationType = ShipShipmentEmailNotificationRecipientNotificationType.EMAIL,
                                 Locale = "en_US"
                             }
 
-                        ]
+                        ],
+                        PersonalMessage = shipmentDetails.EmailNotification.PersonalMessage,
                     }
                 }
             };
 
-            if (shipment.DestinationAddress.IsUnitedStatesAddress() is not true)
+            if (shipment.DestinationAddress.IsUnitedStatesAddress() is not true || shipment.DestinationAddress.IsUnitedStatesTerritory())
             {
                 shipmentRequest.RequestedShipment.ShipmentSpecialServices = new ShipmentSpecialServicesRequested
                 {
@@ -183,7 +206,28 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 {
                     CommercialInvoice = new CommercialInvoice
                     {
-                        SpecialInstructions = "Simplified Low Value Certification/Statement (LVS): I hereby certify that the goods covered by this shipment qualify as an originating good for the purposes of preferential tariff treatment under USMCA/T-MEC/CUSMA"
+                        CustomerReferences =
+                        [
+                            new CustomerReference
+                            {
+                                CustomerReferenceType = shipmentDetails.CustomerReferenceType.ToLower() switch
+                                {
+                                    "customer_reference" => CustomerReferenceType.CUSTOMER_REFERENCE,
+                                    "department_number" => CustomerReferenceType.DEPARTMENT_NUMBER,
+                                    "intracountry_regulatory_reference" => CustomerReferenceType.INTRACOUNTRY_REGULATORY_REFERENCE,
+                                    "invoice_number" => CustomerReferenceType.INVOICE_NUMBER,
+                                    "po_number" => CustomerReferenceType.P_O_NUMBER,
+                                    "rma_association" => CustomerReferenceType.RMA_ASSOCIATION,
+                                    _ => CustomerReferenceType.CUSTOMER_REFERENCE
+                                },
+                                Value = shipmentDetails.TransactionId
+                            }
+
+                        ],
+                        SpecialInstructions = (shipment.DestinationAddress.IsCanadaAddress() && shipmentDetails.Commodities.Sum(x => x.CustomsValue) <= 3300m) ||
+                                                (shipment.DestinationAddress.IsMexicoAddress() && shipmentDetails.Commodities.Sum(x => x.CustomsValue) <= 1000m) ?
+                                                "Simplified Low Value Certification/Statement (LVS): I hereby certify that the goods covered by this shipment qualify as an originating good for the purposes of preferential tariff treatment under USMCA/T-MEC/CUSMA"
+                                                : null
                     },
                     DutiesPayment = new Payment_1
                     {
@@ -241,7 +285,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     }).ToList()
                 };
             }
-           
+
             switch (shipmentDetails.PaymentType.Name)
             {
                 case "SENDER":
@@ -280,19 +324,33 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
             foreach (var createdShipment in response.Output!.TransactionShipments!)
             {
-                var netCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.Max(x => x.TotalNetCharge);
-                var surCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.Max(x => x.TotalSurcharges);
+                var baseCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalBaseCharge;
+                var netCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalNetCharge;
+                var surCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalSurcharges;
                 foreach (var piece in createdShipment.PieceResponses!)
                 {
+                    foreach(var doc in piece.PackageDocuments!)
+                    {
+                        label.ShippingDocuments.Add(new Document
+                        {
+                            DocumentName = doc.DocType!,
+                            ImageType = doc.DocType!,
+                            Bytes = [doc.EncodedLabel],
+                            CopiesToPrint = doc.CopiesToPrint.ToString()
+                        });
+                    }
+
                     label.Labels.Add(new PackageLabelDetails
                     {
                         TotalCharges = new ShipmentCharges
                         {
                             NetCharge = netCharge,
-                            Surcharges = surCharge
+                            Surcharges = surCharge,
+                            BaseCharge = baseCharge
                         },
                         TrackingId = piece.TrackingNumber!,
                         ImageType = piece.PackageDocuments!.First().DocType!,
+
                         Bytes = [piece.PackageDocuments!.First().EncodedLabel!]
                     });
                 }
