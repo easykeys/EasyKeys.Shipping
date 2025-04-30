@@ -5,7 +5,7 @@
 ![Nuget](https://img.shields.io/nuget/dt/EasyKeys.Shipping.Abstractions)
 [![feedz.io](https://img.shields.io/badge/endpoint.svg?url=https://f.feedz.io/easykeys/core/shield/EasyKeys.Shipping.Abstractions/latest)](https://f.feedz.io/easykeys/core/packages/EasyKeys.Shipping.Abstractions/latest/download)
 
-[EasyKeys.com](https://easykeys.com) production ready shipment library for FedEx, Stamps and USPS shipping providers.
+[EasyKeys.com](https://easykeys.com) production ready shipment library for Amazon, FedEx, Stamps and USPS shipping providers.
 
 ## Give a Star! :star:
 
@@ -15,6 +15,12 @@ If you like or are using this project please give it a star. Thanks!
 
 - [x] [EasyKeys.Shipping.Abstractions](./src/EasyKeys.Shipping.Abstractions)
 - [x] [EasyKeys.Shipping.PostalAddress](./src/EasyKeys.Shipping.PostalAddress)
+
+## Amazon Shipping
+
+- [x] [EasyKeys.Shipping.Amazon.Abstractions](./src/EasyKeys.Shipping.Amazon.Abstractions)
+- [x] [EasyKeys.Shipping.Amazon.Rates](./src/EasyKeys.Shipping.Amazon.Rates)
+- [x] [EasyKeys.Shipping.Amazon.Shipment](./src/EasyKeys.Shipping.Amazon.Shipment)
 
 ## FedEx Shipping
 

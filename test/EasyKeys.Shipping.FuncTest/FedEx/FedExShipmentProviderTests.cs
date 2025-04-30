@@ -1,18 +1,20 @@
-﻿using System.Collections;
+﻿using System.Text.Json;
 
+using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
+using EasyKeys.Shipping.FedEx.Shipment.Models;
 
 using EasyKeysShipping.FuncTest.TestHelpers;
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyKeysShipping.FuncTest.FedEx;
 
 public class FedExShipmentProviderTests
 {
+    private readonly ITestOutputHelper _output;
     private readonly Address _origin;
     private readonly Address _domestic;
     private readonly Address _international;
@@ -22,9 +24,14 @@ public class FedExShipmentProviderTests
     {
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
         _domestic = new Address("1550 central ave", "Riverside", "CA", "92507", "US");
-        _international = new Address("80 Fedex Prkwy", "LONDON", string.Empty, "W1T1JY", "GB", isResidential: false);
+        _international = new Address("3601 72 Ave Se", "Calgary", "AB", "T2C 2K3", "CA", isResidential: false);
+        //_international = new Address("80 Fedex Prkwy", "LONDON", string.Empty, "W1T1JY", "GB", isResidential: false);
+        //_international = new Address("808 Nelson Street", "Vancouver", "BC", "V6Z 2H1", "CA", isResidential: false);
+        //_international = new Address("Road No. 2 Km 59.2", "BARCELONETA", "PR", "00617", "US");
+
         _providers = ServiceProviderInstance.GetFedExServices(output)
             .GetServices<IFedExShipmentProvider>();
+        _output = output;
     }
 
     [Fact]
@@ -79,6 +86,7 @@ public class FedExShipmentProviderTests
 
             Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
 
+            _output.WriteLine($"net charge : {label.Labels.First().TotalCharges.NetCharge}, surcharge : {label.Labels.First().TotalCharges.Surcharges} , basecharge : {label.Labels.First().TotalCharges.BaseCharge}");
             // Path to save the PNG file
             var filePath = $"{provider}-{provider.GetType().FullName}-domestic-output.png";
 
@@ -136,7 +144,7 @@ public class FedExShipmentProviderTests
                 CountryOfManufacturer = "US",
                 CIMarksandNumbers = "87123",
                 ExportLicenseNumber = "26456",
-                HarmonizedCode = "8301.70.000000",
+                HarmonizedCode = shipment.DestinationAddress.IsCanadaAddress() ? "8301.70.900000" : "8301.70.000000",
                 Quantity = 2,
                 QuantityUnits = "EA",
                 UnitPrice = 10,
@@ -153,6 +161,7 @@ public class FedExShipmentProviderTests
 
             Assert.False(label.InternalErrors.Any());
             Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
+            _output.WriteLine($"net charge : {label.Labels.First().TotalCharges.NetCharge}, surcharge : {label.Labels.First().TotalCharges.Surcharges} , basecharge : {label.Labels.First().TotalCharges.BaseCharge}");
 
             // Path to save the PNG file
             var filePath = $"{provider}-{provider.GetType().FullName}-international-output.png";
