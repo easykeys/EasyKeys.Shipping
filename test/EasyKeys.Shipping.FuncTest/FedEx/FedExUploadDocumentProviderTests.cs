@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 
+using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.TradeDocumentsUpload;
 using EasyKeys.Shipping.FedEx.UploadDocument;
 
 using EasyKeysShipping.FuncTest.TestHelpers;
