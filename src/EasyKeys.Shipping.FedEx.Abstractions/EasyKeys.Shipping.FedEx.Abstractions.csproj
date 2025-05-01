@@ -12,13 +12,17 @@
     <None Remove="OpenApis\V1\AddressValidation\address-validation.json" />
     <None Remove="OpenApis\V1\RatesAndTransitTimes\rate.json" />
     <None Remove="OpenApis\V1\Ship\ship.json" />
-  </ItemGroup>
+		<None Remove="OpenApis\V1\TradeDocumentsUpload\upload-documents.json" />
+
+	</ItemGroup>
   <ItemGroup>
     <OpenApiReference Include="OpenApis\V1\AddressValidation\address-validation.json" CodeGenerator="NSwagCSharp" ClassName="AddressValidationApi" />
     <OpenApiReference Include="OpenApis\V1\Authorization\authorization.json" CodeGenerator="NSwagCSharp" ClassName="AuthorizationApi" />
     <OpenApiReference Include="OpenApis\V1\RatesAndTransitTimes\rate.json" CodeGenerator="NSwagCSharp" ClassName="RatesAndTransitTimesApi" />
     <OpenApiReference Include="OpenApis\V1\Ship\ship.json" CodeGenerator="NSwagCSharp" ClassName="ShipApi" />
-  </ItemGroup>
+		<OpenApiReference Include="OpenApis\V1\TradeDocumentsUpload\upload-documents.json" CodeGenerator="NSwagCSharp" ClassName="TradeDocumentsApi" />
+	</ItemGroup>
+	
   <ItemGroup>
     <PackageReference Include="Ardalis.SmartEnum" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.2">
