@@ -3585,8 +3585,8 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
         /// <summary>
         /// Specify the export license expiration date for the shipment.&lt;br&gt;Format YYYY-MM-DD&lt;br&gt;Example : 2009-04-12
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("exportLicenseExpirationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset ExportLicenseExpirationDate { get; set; }
+        [Newtonsoft.Json.JsonProperty("exportLicenseExpirationDate", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? ExportLicenseExpirationDate { get; set; }
 
         /// <summary>
         /// This is a part number.&lt;br&gt;Example: 167

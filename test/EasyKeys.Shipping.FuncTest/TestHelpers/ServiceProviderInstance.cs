@@ -54,7 +54,7 @@ public static class ServiceProviderInstance
         services.AddWebServicesFedExRateProvider();
         services.AddWebServicesFedExAddressValidationProvider();
         services.AddFedExClient();
-        services.AddFedExShipmenProvider();
+        services.AddWebServicesFedExShipmenProvider();
         services.AddFedExTrackingProvider();
 
         // adress validation apis
