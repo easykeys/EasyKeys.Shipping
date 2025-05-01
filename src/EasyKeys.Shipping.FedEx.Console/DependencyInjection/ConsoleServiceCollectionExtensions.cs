@@ -9,7 +9,7 @@ public static class ConsoleServiceCollectionExtensions
         services.AddScoped<IMain, Main>();
         services.AddWebServicesFedExAddressValidationProvider();
         services.AddWebServicesFedExRateProvider();
-        services.AddFedExShipmenProvider();
+        services.AddWebServicesFedExShipmenProvider();
         services.AddFedExTrackingProvider();
     }
 }

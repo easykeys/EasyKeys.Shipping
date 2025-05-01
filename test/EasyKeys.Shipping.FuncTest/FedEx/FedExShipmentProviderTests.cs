@@ -1,12 +1,7 @@
-﻿using System.Text.Json;
-
-using EasyKeys.Shipping.Abstractions.Extensions;
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 using EasyKeys.Shipping.FedEx.Shipment;
-using EasyKeys.Shipping.FedEx.Shipment.Models;
-
 using EasyKeysShipping.FuncTest.TestHelpers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -88,7 +83,7 @@ public class FedExShipmentProviderTests
 
             _output.WriteLine($"net charge : {label.Labels.First().TotalCharges.NetCharge}, surcharge : {label.Labels.First().TotalCharges.Surcharges} , basecharge : {label.Labels.First().TotalCharges.BaseCharge}");
             // Path to save the PNG file
-            var filePath = $"{provider}-{provider.GetType().FullName}-domestic-output.png";
+            var filePath = $"{provider}-{provider.GetType().FullName}-{stype.ServiceName}-domestic-output.png";
 
             // Write the byte array to a file
             File.WriteAllBytes(filePath, label.Labels.First().Bytes.First());
@@ -107,7 +102,7 @@ public class FedExShipmentProviderTests
                FedExRateConfigurator.GetFedExEnvelop(0.05M, insuredValue: 18m),
             };
 
-        var stype = FedExServiceType.FedExInternationalPriority;
+        var stype = FedExServiceType.FedExInternationalEconomy;
         var ptype = FedExPackageType.FedExEnvelope;
 
         var shipmentOptions = new ShipmentOptions(ptype.Name, DateTime.Now);
@@ -143,15 +138,15 @@ public class FedExShipmentProviderTests
                 Description = "description",
                 CountryOfManufacturer = "US",
                 CIMarksandNumbers = "87123",
-                ExportLicenseNumber = "26456",
-                HarmonizedCode = shipment.DestinationAddress.IsCanadaAddress() ? "8301.70.900000" : "8301.70.000000",
+               // ExportLicenseNumber = "26456",
+                HarmonizedCode = /*shipment.DestinationAddress.IsCanadaAddress() ? "8301.70.900000" :*/ "8301.70.000000",
                 Quantity = 2,
                 QuantityUnits = "EA",
                 UnitPrice = 10,
                 CustomsValue = 18,
                 Amount = 18,
                 PartNumber = "167",
-                ExportLicenseExpirationDate = DateTime.Now.AddDays(1),
+                //ExportLicenseExpirationDate = DateTime.Now.AddDays(1),
             });
 
         foreach (var provider in _providers)
@@ -164,10 +159,17 @@ public class FedExShipmentProviderTests
             _output.WriteLine($"net charge : {label.Labels.First().TotalCharges.NetCharge}, surcharge : {label.Labels.First().TotalCharges.Surcharges} , basecharge : {label.Labels.First().TotalCharges.BaseCharge}");
 
             // Path to save the PNG file
-            var filePath = $"{provider}-{provider.GetType().FullName}-international-output.png";
+            var filePath = $"{provider}-{provider.GetType().FullName}-{stype.ServiceName}-international-output.png";
 
             // Write the byte array to a file
             File.WriteAllBytes(filePath, label.Labels.First().Bytes.First());
+
+            foreach (var doc in label.ShippingDocuments)
+            {
+                var docFilePath = $"{provider}-{provider.GetType().FullName}-{stype.ServiceName}-international-{doc.DocumentName}-output.{doc.ImageType}";
+                // Write the byte array to a file
+                File.WriteAllBytes(docFilePath, doc.Bytes.First());
+            }
 
             var result = await provider.CancelShipmentAsync(label.Labels.First().TrackingId, CancellationToken.None);
             Assert.True(result.Succeeded);
