@@ -300,14 +300,6 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 Units = WeightUnits.LB
             },
 
-            RateRequestTypes = details.RateRequestType.ToLower() switch
-            {
-                "none" => new RateRequestType[1] { RateRequestType.NONE },
-                "list" => new RateRequestType[1] { RateRequestType.LIST },
-                "preferred" => new RateRequestType[1] { RateRequestType.PREFERRED },
-                _ => throw new NotImplementedException(),
-            },
-
             DropoffType = shipment.Options.DropOffType.ToLower() switch
             {
                 "regularpickup" => DropoffType.REGULAR_PICKUP,
