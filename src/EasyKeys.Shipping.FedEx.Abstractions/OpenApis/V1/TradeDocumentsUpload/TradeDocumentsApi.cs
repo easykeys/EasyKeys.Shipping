@@ -1,4 +1,6 @@
-﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
+﻿using System.Text.Json;
+
+using EasyKeys.Shipping.FedEx.Abstractions.Options;
 
 using Microsoft.Extensions.Options;
 

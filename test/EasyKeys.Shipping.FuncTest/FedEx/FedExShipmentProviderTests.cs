@@ -139,7 +139,7 @@ public class FedExShipmentProviderTests
                 CountryOfManufacturer = "US",
                 CIMarksandNumbers = "87123",
                // ExportLicenseNumber = "26456",
-                HarmonizedCode = /*shipment.DestinationAddress.IsCanadaAddress() ? "8301.70.900000" :*/ "8301.70.000000",
+                HarmonizedCode = shipment.DestinationAddress.IsCanadaAddress() ? "8301.70.900000" : "8301.70.000000",
                 Quantity = 2,
                 QuantityUnits = "EA",
                 UnitPrice = 10,

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 using UploadDocumentService_v19;
 
-namespace EasyKeys.Shipping.FedEx.UploadDocument;
+namespace EasyKeys.Shipping.FedEx.UploadDocument.WebServices.Impl;
 public class FedExDocumentProvider : IFedExDocumentsProvider
 {
     private readonly ILogger<FedExDocumentProvider> _logger;
@@ -23,7 +23,7 @@ public class FedExDocumentProvider : IFedExDocumentsProvider
         _options = options.CurrentValue ?? throw new ArgumentNullException(nameof(options));
     }
 
-    public async Task<UploadImageResult> UploadImageAsync(byte[] image, int imageId)
+    public async Task<UploadImageResult> UploadImageAsync(byte[] image, int imageId,CancellationToken cancellationToken)
     {
         var result = new UploadImageResult(true, string.Empty);
         try
@@ -77,8 +77,8 @@ public class FedExDocumentProvider : IFedExDocumentsProvider
 
             var reply = response.UploadImagesReply;
 
-            if ((reply?.HighestSeverity == NotificationSeverityType.ERROR)
-                        || (reply?.HighestSeverity == NotificationSeverityType.FAILURE))
+            if (reply?.HighestSeverity == NotificationSeverityType.ERROR
+                        || reply?.HighestSeverity == NotificationSeverityType.FAILURE)
             {
                 result.Success = false;
                 result.Message = reply.Notifications.Select(x => x.Message).Flatten(",");

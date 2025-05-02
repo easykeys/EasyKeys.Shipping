@@ -11,6 +11,6 @@
         /// <param name="image"></param>
         /// <param name="imageId"></param>
         /// <returns></returns>
-        Task<UploadImageResult> UploadImageAsync(byte[] image, int imageId);
+        Task<UploadImageResult> UploadImageAsync(byte[] image, int imageId, CancellationToken cancellationToken = default);
     }
 }
