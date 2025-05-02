@@ -131,22 +131,8 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         LabelPrintingOrientation = LabelSpecificationLabelPrintingOrientation.BOTTOM_EDGE_OF_TEXT_FIRST,
                         LabelRotation = LabelSpecificationLabelRotation.NONE,
                         LabelFormatType = LabelSpecificationLabelFormatType.COMMON2D,
-                        ImageType = shipmentDetails.LabelOptions.ImageType.ToUpper() switch
-                        {
-                            "PNG" => LabelSpecificationImageType.PNG,
-                            "PDF" => LabelSpecificationImageType.PDF,
-                            "ZPL" => LabelSpecificationImageType.ZPLII,
-                            _ => LabelSpecificationImageType.PNG,
-                        },
-
-                        LabelStockType = shipmentDetails.LabelOptions.LabelSize.ToUpper() switch
-                        {
-                            "PAPER_LETTER" => LabelSpecificationLabelStockType.PAPER_LETTER,
-                            "PAPER_4X6" => LabelSpecificationLabelStockType.PAPER_4X6,
-                            "PAPER_4X8" => LabelSpecificationLabelStockType.PAPER_4X8,
-                            "STOCK_4X6" => LabelSpecificationLabelStockType.STOCK_4X6,
-                            _ => LabelSpecificationLabelStockType.PAPER_4X6
-                        },
+                        ImageType = LabelSpecificationImageType.PNG,
+                        LabelStockType = LabelSpecificationLabelStockType.PAPER_4X6
                     },
                     EmailNotificationDetail = new ShipShipmentEMailNotificationDetail
                     {
@@ -278,7 +264,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
                         ExportLicenseNumber = !string.IsNullOrEmpty(x.ExportLicenseNumber) ? x.ExportLicenseNumber : string.Empty,
 
-                        ExportLicenseExpirationDate = string.IsNullOrEmpty(x.ExportLicenseNumber) ? null : x.ExportLicenseExpirationDate,
+                        ExportLicenseExpirationDate = string.IsNullOrEmpty(x.ExportLicenseNumber) ? default : x.ExportLicenseExpirationDate,
 
                         PartNumber = !string.IsNullOrEmpty(x.PartNumber) ? x.PartNumber : string.Empty,
 
