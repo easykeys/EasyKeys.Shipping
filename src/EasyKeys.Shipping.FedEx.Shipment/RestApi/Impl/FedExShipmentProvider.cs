@@ -264,7 +264,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
                         ExportLicenseNumber = !string.IsNullOrEmpty(x.ExportLicenseNumber) ? x.ExportLicenseNumber : string.Empty,
 
-                        ExportLicenseExpirationDate = string.IsNullOrEmpty(x.ExportLicenseNumber) ? default : x.ExportLicenseExpirationDate,
+                        ExportLicenseExpirationDate = string.IsNullOrEmpty(x.ExportLicenseNumber) ? null : x.ExportLicenseExpirationDate,
 
                         PartNumber = !string.IsNullOrEmpty(x.PartNumber) ? x.PartNumber : string.Empty,
 

@@ -50,7 +50,7 @@ public static class ServiceProviderInstance
         services.AddLogging(x => x.AddXunit(output));
 
         services.AddSingleton<IConfiguration>(configBuilder.Build());
-        services.AddFedExDocumentProvider();
+        services.AddWebServicesFedExDocumentProvider();
         services.AddWebServicesFedExRateProvider();
         services.AddWebServicesFedExAddressValidationProvider();
         services.AddFedExClient();
