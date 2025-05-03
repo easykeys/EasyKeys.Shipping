@@ -69,10 +69,10 @@ public class FedExDocumentProvider : IFedExDocumentsProvider
                         Id = payload.Document.Meta.ImageIndex.ToUpper() switch
                             {
                                 "IMAGE_1" => ImageId.IMAGE_1,
-                                "IMAGE_2" =>  ImageId.IMAGE_1,
-                                "IMAGE_3" =>  ImageId.IMAGE_1,
-                                "IMAGE_4" =>  ImageId.IMAGE_1,
-                                "IMAGE_5" =>  ImageId.IMAGE_1,
+                                "IMAGE_2" => ImageId.IMAGE_1,
+                                "IMAGE_3" => ImageId.IMAGE_1,
+                                "IMAGE_4" => ImageId.IMAGE_1,
+                                "IMAGE_5" => ImageId.IMAGE_1,
                                 _ => throw new ArgumentException($"Invalid image index: {payload.Document.Meta.ImageIndex}"),
                             },
                         IdSpecified = true,
