@@ -1,4 +1,9 @@
-﻿namespace EasyKeys.Shipping.FedEx.UploadDocument
+﻿using System.Net;
+using System.Runtime.Intrinsics.X86;
+
+using EasyKeys.Shipping.FedEx.UploadDocument.Models;
+
+namespace EasyKeys.Shipping.FedEx.UploadDocument
 {
     /// <summary>
     /// upload images.
@@ -6,11 +11,12 @@
     public interface IFedExDocumentsProvider
     {
         /// <summary>
-        /// ImageId can be any number 0 -4.
+        ///         Use this endpoint to upload customized Company Letterhead/Logo and Digital signature images which can be used in the FedEx generated paperwork or reports.
         /// </summary>
-        /// <param name="image"></param>
-        /// <param name="imageId"></param>
+        /// <param name="payload"></param>
+        /// <param name="imageAttachment"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<UploadImageResult> UploadImageAsync(byte[] image, int imageId, CancellationToken cancellationToken = default);
+        Task<UploadImageResult> UploadImageAsync(JsonPayload payload, ImageAttachment imageAttachment, CancellationToken cancellationToken = default);
     }
 }

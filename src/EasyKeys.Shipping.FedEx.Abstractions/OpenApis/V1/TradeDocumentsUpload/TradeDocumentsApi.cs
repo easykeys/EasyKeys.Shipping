@@ -1,8 +1,11 @@
-﻿using System.Text.Json;
+﻿using System.IO.Compression;
+using System.Text.Json;
 
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 
 using Microsoft.Extensions.Options;
+
+using Newtonsoft.Json;
 
 namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.TradeDocumentsUpload
 {
@@ -33,7 +36,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.TradeDocumentsUpload
 
         public TradeDocumentsApi(IOptionsMonitor<FedExApiOptions> options, System.Net.Http.HttpClient httpClient)
         {
-            _baseUrl = options.CurrentValue.Url;
+            _baseUrl = "https://documentapi.prod.fedex.com";
             _httpClient = httpClient;
             _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
         }
@@ -234,7 +237,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.TradeDocumentsUpload
         /// <param name="x_customer_transaction_id">Identifies the transaction ID of the request.&lt;br&gt; Example: "771407-1"</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ImageUploadServiceOutputVO> Image_Upload_Service_InfoAsync(string authorization, string x_customer_transaction_id, System.IO.Stream body)
+        public virtual System.Threading.Tasks.Task<ImageUploadServiceOutputVO> Image_Upload_Service_InfoAsync(string authorization, string x_customer_transaction_id, MultipartFormDataContent body)
         {
             return Image_Upload_Service_InfoAsync(authorization, x_customer_transaction_id, body, System.Threading.CancellationToken.None);
         }
@@ -250,7 +253,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.TradeDocumentsUpload
         /// <param name="x_customer_transaction_id">Identifies the transaction ID of the request.&lt;br&gt; Example: "771407-1"</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ImageUploadServiceOutputVO> Image_Upload_Service_InfoAsync(string authorization, string x_customer_transaction_id, System.IO.Stream body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ImageUploadServiceOutputVO> Image_Upload_Service_InfoAsync(string authorization, string x_customer_transaction_id, MultipartFormDataContent body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/documents/v1/lhsimages/upload");
@@ -269,8 +272,7 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.TradeDocumentsUpload
                     if (x_customer_transaction_id == null)
                         throw new System.ArgumentNullException("x_customer_transaction_id");
                     request_.Headers.TryAddWithoutValidation("x-customer-transaction-id", ConvertToString(x_customer_transaction_id, System.Globalization.CultureInfo.InvariantCulture));
-                    var content_ = new System.Net.Http.StreamContent(body);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("multipart/form-data");
+                    var content_ = body;
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
@@ -753,6 +755,27 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.TradeDocumentsUpload
                     var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
                     throw new ApiException(message, (int)response.StatusCode, responseText, headers, exception);
                 }
+            }
+            if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+            {
+                try
+                {
+                    using var responseStream = await response.Content.ReadAsStreamAsync();
+                    using var decompressionStream = new GZipStream(responseStream, CompressionMode.Decompress);
+                    using var decompressedStream = new StreamReader(decompressionStream);
+                    var jsonString = await decompressedStream.ReadToEndAsync();
+
+                    var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
+                    var jsonObject = serializer.Deserialize<T>(new JsonTextReader(new StringReader(jsonString)));
+
+                    return new ObjectResponseResult<T>(jsonObject, jsonString);
+                }
+                catch (Newtonsoft.Json.JsonException exception)
+                {
+                    var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
+                    throw new ApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                }
+
             }
             else
             {
