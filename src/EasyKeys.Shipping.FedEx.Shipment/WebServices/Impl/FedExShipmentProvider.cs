@@ -290,7 +290,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         request.RequestedShipment = new RequestedShipment
         {
             ShipTimestamp = shipment.Options.ShippingDate,
-            ServiceType = serviceType.Name,
+            ServiceType = serviceType.Value == FedExServiceType.FedExInternationalPriority.Value ? "INTERNATIONAL_PRIORITY" : serviceType.Name,
             PackagingType = shipment.Options.PackagingType,
             PackageCount = shipment.Packages.Count.ToString(),
 
