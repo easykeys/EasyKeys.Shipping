@@ -233,18 +233,18 @@ public partial class AuthorizationApi
                 using var decompressionStream = new GZipStream(responseStream, CompressionMode.Decompress);
                 using var decompressedStream = new StreamReader(decompressionStream);
                 var jsonString = await decompressedStream.ReadToEndAsync();
+
                 var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
-                using var jsonReader = new JsonTextReader(decompressedStream);
-                var jsonObject = serializer.Deserialize<T>(jsonReader);
-#pragma warning disable CS8604 // Possible null reference argument.
+                var jsonObject = serializer.Deserialize<T>(new JsonTextReader(new StringReader(jsonString)));
+
                 return new ObjectResponseResult<T>(jsonObject, jsonString);
-#pragma warning restore CS8604 // Possible null reference argument.
             }
             catch (Newtonsoft.Json.JsonException exception)
             {
                 var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
                 throw new ApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
             }
+
         }
         else
         {

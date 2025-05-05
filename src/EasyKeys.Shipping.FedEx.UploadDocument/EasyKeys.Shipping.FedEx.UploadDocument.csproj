@@ -12,7 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bet.Extensions.Options" />
-    <PackageReference Include="Microsoft.Extensions.Logging"/>
+    <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EasyKeys.Shipping.FedEx.Abstractions\EasyKeys.Shipping.FedEx.Abstractions.csproj" />

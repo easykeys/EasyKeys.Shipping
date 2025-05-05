@@ -1128,18 +1128,18 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
                     using var decompressionStream = new GZipStream(responseStream, CompressionMode.Decompress);
                     using var decompressedStream = new StreamReader(decompressionStream);
                     var jsonString = await decompressedStream.ReadToEndAsync();
+
                     var serializer = Newtonsoft.Json.JsonSerializer.Create(JsonSerializerSettings);
-                    using var jsonReader = new JsonTextReader(decompressedStream);
-                    var jsonObject = serializer.Deserialize<T>(jsonReader);
-#pragma warning disable CS8604 // Possible null reference argument.
+                    var jsonObject = serializer.Deserialize<T>(new JsonTextReader(new StringReader(jsonString)));
+
                     return new ObjectResponseResult<T>(jsonObject, jsonString);
-#pragma warning restore CS8604 // Possible null reference argument.
                 }
                 catch (Newtonsoft.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
                     throw new ApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
                 }
+
             }
             else
             {
@@ -3585,8 +3585,8 @@ namespace EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship
         /// <summary>
         /// Specify the export license expiration date for the shipment.&lt;br&gt;Format YYYY-MM-DD&lt;br&gt;Example : 2009-04-12
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("exportLicenseExpirationDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset ExportLicenseExpirationDate { get; set; }
+        [Newtonsoft.Json.JsonProperty("exportLicenseExpirationDate", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset? ExportLicenseExpirationDate { get; set; }
 
         /// <summary>
         /// This is a part number.&lt;br&gt;Example: 167

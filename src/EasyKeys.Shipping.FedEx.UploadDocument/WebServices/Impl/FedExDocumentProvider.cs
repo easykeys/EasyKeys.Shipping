@@ -1,12 +1,13 @@
 ﻿using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
+using EasyKeys.Shipping.FedEx.UploadDocument.Models;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using UploadDocumentService_v19;
 
-namespace EasyKeys.Shipping.FedEx.UploadDocument;
+namespace EasyKeys.Shipping.FedEx.UploadDocument.WebServices.Impl;
 public class FedExDocumentProvider : IFedExDocumentsProvider
 {
     private readonly ILogger<FedExDocumentProvider> _logger;
@@ -23,7 +24,7 @@ public class FedExDocumentProvider : IFedExDocumentsProvider
         _options = options.CurrentValue ?? throw new ArgumentNullException(nameof(options));
     }
 
-    public async Task<UploadImageResult> UploadImageAsync(byte[] image, int imageId)
+    public async Task<UploadImageResult> UploadImageAsync(JsonPayload payload, ImageAttachment imageAttachment, CancellationToken cancellationToken)
     {
         var result = new UploadImageResult(true, string.Empty);
         try
@@ -65,9 +66,17 @@ public class FedExDocumentProvider : IFedExDocumentsProvider
                 {
                     new UploadImageDetail()
                     {
-                        Id = (ImageId)imageId,
+                        Id = payload.Document.Meta.ImageIndex.ToUpper() switch
+                            {
+                                "IMAGE_1" => ImageId.IMAGE_1,
+                                "IMAGE_2" => ImageId.IMAGE_1,
+                                "IMAGE_3" => ImageId.IMAGE_1,
+                                "IMAGE_4" => ImageId.IMAGE_1,
+                                "IMAGE_5" => ImageId.IMAGE_1,
+                                _ => throw new ArgumentException($"Invalid image index: {payload.Document.Meta.ImageIndex}"),
+                            },
                         IdSpecified = true,
-                        Image = image
+                        Image = imageAttachment.Data
                     }
                 }.ToArray()
                 }
@@ -77,8 +86,8 @@ public class FedExDocumentProvider : IFedExDocumentsProvider
 
             var reply = response.UploadImagesReply;
 
-            if ((reply?.HighestSeverity == NotificationSeverityType.ERROR)
-                        || (reply?.HighestSeverity == NotificationSeverityType.FAILURE))
+            if (reply?.HighestSeverity == NotificationSeverityType.ERROR
+                        || reply?.HighestSeverity == NotificationSeverityType.FAILURE)
             {
                 result.Success = false;
                 result.Message = reply.Notifications.Select(x => x.Message).Flatten(",");

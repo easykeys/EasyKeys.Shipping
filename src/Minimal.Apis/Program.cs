@@ -41,7 +41,7 @@ builder.Services.AddWebServicesFedExAddressValidationProvider();
 
 builder.Services.AddWebServicesFedExRateProvider();
 
-builder.Services.AddFedExShipmenProvider();
+builder.Services.AddWebServicesFedExShipmenProvider();
 
 builder.Services.AddFedExTrackingProvider();
 

@@ -2,6 +2,7 @@
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Authorization;
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.RatesAndTransitTimes;
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship;
+using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.TradeDocumentsUpload;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Abstractions.Services.Impl;
@@ -53,6 +54,7 @@ public static class FedExServiceCollectionExtensions
         services.AddHttpClient<AddressValidationApi>();
         services.AddHttpClient<RatesAndTransientTimesApi>();
         services.AddHttpClient<ShipApi>();
+        services.AddHttpClient<TradeDocumentsApi>();
 
         return services;
     }
