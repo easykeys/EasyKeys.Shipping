@@ -2,6 +2,7 @@
 
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.TradeDocumentsUpload;
 using EasyKeys.Shipping.FedEx.UploadDocument;
+using EasyKeys.Shipping.FedEx.UploadDocument.Models;
 
 using EasyKeysShipping.FuncTest.TestHelpers;
 
@@ -24,6 +25,24 @@ public class FedExUploadDocumentProviderTests
     public async Task Upload_Image_Successfully()
     {
         var documentProvider = _sp.GetRequiredService<IFedExDocumentsProvider>();
+        var jsonPayload = new JsonPayload
+        {
+            Document = new EasyKeys.Shipping.FedEx.UploadDocument.Models.Document
+            {
+                ReferenceId = "1234",
+                Name = "ek_logo_main4.gif",
+                ContentType = "image/gif",
+                Meta = new EasyKeys.Shipping.FedEx.UploadDocument.Models.Meta
+                {
+                    ImageType = "SIGNATURE",
+                    ImageIndex = "IMAGE_2"
+                }
+            },
+            Rules = new Rules
+            {
+                WorkflowName = "LetterheadSignature"
+            }
+        };
 
         // Get the path to the current executable (the .exe file)
         var exePath = Assembly.GetExecutingAssembly().Location;
@@ -37,7 +56,14 @@ public class FedExUploadDocumentProviderTests
 
         var fileContent = File.ReadAllBytes(filePath);
 
-        var result = await documentProvider.UploadImageAsync(fileContent, 4);
+        var imageAttachment = new ImageAttachment
+        {
+            Data = fileContent,
+            Name = "signature.PNG",
+            ContentType = "image/png",
+            ImageType = "SIGNATURE"
+        };
+        var result = await documentProvider.UploadImageAsync(jsonPayload,imageAttachment);
 
         Assert.NotNull(result);
         Assert.True(result.Success);

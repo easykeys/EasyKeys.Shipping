@@ -72,7 +72,7 @@ public class ShipmentDetails
     /// rma_association,
     /// shipment_integrity.
     /// </summary>
-    public string CustomerReferenceType { get; set; } = "customer_reference";
+    public string CustomerReferenceType { get; set; } = "invoice_number";
 
     /// <summary>
     /// LIST,
