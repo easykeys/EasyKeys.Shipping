@@ -120,8 +120,6 @@ public class FedExShipmentProviderTests
 
             PaymentType = FedExPaymentType.Sender,
 
-            RateRequestType = "list",
-
             LabelOptions = new EasyKeys.Shipping.FedEx.Shipment.Models.LabelOptions()
             {
                 LabelFormatType = "COMMON2D",

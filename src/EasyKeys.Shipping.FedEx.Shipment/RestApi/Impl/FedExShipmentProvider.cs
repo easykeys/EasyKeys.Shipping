@@ -6,8 +6,8 @@ using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
 using EasyKeys.Shipping.FedEx.Abstractions.Services;
 using EasyKeys.Shipping.FedEx.Shipment.Models;
-using Microsoft.Extensions.Logging;
 
+using Microsoft.Extensions.Logging;
 
 using Commodity = EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship.Commodity;
 using Dimensions = EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship.Dimensions;
@@ -199,27 +199,29 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                             DocType = ShippingDocumentFormatDocType.PDF,
                             StockType = ShippingDocumentFormatStockType.PAPER_LETTER
                         },
+                        
                         CustomerImageUsages =
                         [
                             new CustomerImageUsage
                             {
-                                Type = CustomerImageUsageType.LETTER_HEAD,
+                                Type = CustomerImageUsageType.SIGNATURE,
                                 Id = CustomerImageUsageId.IMAGE_1
                             },
                             new CustomerImageUsage
                             {
-                                Type = CustomerImageUsageType.SIGNATURE,
+                                Type = CustomerImageUsageType.LETTER_HEAD,
                                 Id = CustomerImageUsageId.IMAGE_2
                             }
 
                         ]
-                    }
+                    },
                 };
 
                 shipmentRequest.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
                 {
                     CommercialInvoice = new CommercialInvoice
                     {
+                        ShipmentPurpose = CommercialInvoiceShipmentPurpose.SOLD,
                         CustomerReferences =
                         [
                             new CustomerReference
@@ -242,11 +244,6 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                                                 (shipment.DestinationAddress.IsMexicoAddress() && shipmentDetails.Commodities.Sum(x => x.CustomsValue) <= 1000m) ?
                                                 "Simplified Low Value Certification/Statement (LVS): I hereby certify that the goods covered by this shipment qualify as an originating good for the purposes of preferential tariff treatment under USMCA/T-MEC/CUSMA"
                                                 : null
-                    },
-                    DutiesPayment = new Payment_1
-                    {
-                        PaymentType = shipmentDetails.PaymentType.Name == "SENDER" ?
-                                Payment_1PaymentType.SENDER : Payment_1PaymentType.RECIPIENT
                     },
                     Commodities = shipmentDetails.Commodities.Select(x => new Commodity
                     {
@@ -298,6 +295,32 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         CIMarksAndNumbers = x.CIMarksandNumbers
                     }).ToList()
                 };
+
+                switch (shipmentDetails.PaymentType.Name)
+                {
+                    case "SENDER":
+                        shipmentRequest.RequestedShipment.CustomsClearanceDetail.DutiesPayment = new Payment_1
+                        {
+                            PaymentType = Payment_1PaymentType.SENDER
+                        };
+                        break;
+                    case "RECIPIENT":
+                        shipmentRequest.RequestedShipment.CustomsClearanceDetail.DutiesPayment = new Payment_1
+                        {
+                            PaymentType = Payment_1PaymentType.RECIPIENT,
+                            Payor = new Payor_1
+                            {
+                                ResponsibleParty = new Party_2
+                                {
+                                    AccountNumber = new PartyAccountNumber
+                                    {
+                                        Value = shipmentDetails.AccountNumber
+                                    }
+                                }
+                            }
+                        };
+                        break;
+                }
             }
 
             switch (shipmentDetails.PaymentType.Name)
@@ -343,11 +366,11 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 var surCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalSurcharges;
                 foreach (var piece in createdShipment.PieceResponses!)
                 {
-                    foreach(var doc in piece.PackageDocuments!)
+                    foreach(var doc in createdShipment.ShipmentDocuments!)
                     {
                         label.ShippingDocuments.Add(new Document
                         {
-                            DocumentName = doc.DocType!,
+                            DocumentName = doc.ContentType.ToString()!,
                             ImageType = doc.DocType!,
                             Bytes = [doc.EncodedLabel],
                             CopiesToPrint = doc.CopiesToPrint.ToString()
