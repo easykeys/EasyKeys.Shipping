@@ -85,7 +85,6 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                             }
                         }
                     },
-
                     ShipDatestamp = shipment.Options.ShippingDate.ToString("yyyy-MM-dd"),
                     ServiceType = serviceType.Name,
                     PackagingType = shipment.Options.PackagingType,
@@ -366,15 +365,18 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 var surCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalSurcharges;
                 foreach (var piece in createdShipment.PieceResponses!)
                 {
-                    foreach(var doc in createdShipment.ShipmentDocuments!)
+                    if(createdShipment?.ShipmentDocuments != null)
                     {
-                        label.ShippingDocuments.Add(new Document
+                        foreach (var doc in createdShipment.ShipmentDocuments!)
                         {
-                            DocumentName = doc.ContentType.ToString()!,
-                            ImageType = doc.DocType!,
-                            Bytes = [doc.EncodedLabel],
-                            CopiesToPrint = doc.CopiesToPrint.ToString()
-                        });
+                            label.ShippingDocuments.Add(new Document
+                            {
+                                DocumentName = doc.ContentType.ToString()!,
+                                ImageType = doc.DocType!,
+                                Bytes = [doc.EncodedLabel],
+                                CopiesToPrint = doc.CopiesToPrint.ToString()
+                            });
+                        }
                     }
 
                     label.Labels.Add(new PackageLabelDetails
