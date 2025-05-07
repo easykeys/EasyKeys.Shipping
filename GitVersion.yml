@@ -1,5 +1,10 @@
-mode: Mainline
-next-version: 6.1.0
+mode: ContinuousDelivery
+next-version: 6.1.1
+increment: Patch
+major-version-bump-message: '\+semver:\s?(breaking|major|release)'
+minor-version-bump-message: '\+semver:\s?(feat|feature|minor)'
+commit-message-incrementing: Enabled
+
 branches:
   feature:
     tag: preview
