@@ -16,6 +16,11 @@ public class ShipmentDetails
     public ContactInfo Recipient { get; set; } = new ContactInfo();
 
     /// <summary>
+    /// Export details for International Shipments.These are export Detail used for US or CA exports.
+    /// </summary>
+    public ExportDetails ExportDetails { get; set; } = new ExportDetails();
+
+    /// <summary>
     /// Required for International Shipments Only.
     /// A collection shipment contents that are considered to be dutiable.
     /// </summary>

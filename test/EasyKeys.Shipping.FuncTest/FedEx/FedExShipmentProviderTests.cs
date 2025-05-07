@@ -20,7 +20,9 @@ public class FedExShipmentProviderTests
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
         _domestic = new Address("1550 central ave", "Riverside", "CA", "92507", "US");
         _international = new Address("3601 72 Ave Se", "Calgary", "AB", "T2C 2K3", "CA", isResidential: false);
-       // _international = new Address("80 Fedex Prkwy", "LONDON", string.Empty, "W1T1JY", "GB", isResidential: false);
+        _international = new Address("285 Wang Fu Jing Avenue", "BEIJING", "", "100006", "CN", isResidential: false);
+
+        // _international = new Address("80 Fedex Prkwy", "LONDON", string.Empty, "W1T1JY", "GB", isResidential: false);
         //_international = new Address("808 Nelson Street", "Vancouver", "BC", "V6Z 2H1", "CA", isResidential: false);
         //_international = new Address("Road No. 2 Km 59.2", "BARCELONETA", "PR", "00617", "US");
 

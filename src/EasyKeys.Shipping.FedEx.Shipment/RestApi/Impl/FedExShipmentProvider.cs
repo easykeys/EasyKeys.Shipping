@@ -218,6 +218,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
                 shipmentRequest.RequestedShipment.CustomsClearanceDetail = new CustomsClearanceDetail
                 {
+                    ExportDetail = GetExportDetail(shipment, shipmentDetails),
                     CommercialInvoice = new CommercialInvoice
                     {
                         ShipmentPurpose = CommercialInvoiceShipmentPurpose.SOLD,
@@ -435,5 +436,19 @@ public class FedExShipmentProvider : IFedExShipmentProvider
         }
 
         return cancelledResult;
+    }
+
+    private ExportDetail? GetExportDetail(Shipping.Abstractions.Models.Shipment shipment, ShipmentDetails shipmentDetails)
+    {
+        if (shipment.OriginAddress.IsUnitedStatesAddress() || shipment.OriginAddress.IsCanadaAddress())
+        {
+            return new ExportDetail
+            {
+                B13AFilingOption = (ExportDetailB13AFilingOption)shipmentDetails.ExportDetails.B13AFilingOption,
+                ExportComplianceStatement = shipmentDetails.ExportDetails.ComplianceStatement
+            };
+        }
+
+        return null;
     }
 }
