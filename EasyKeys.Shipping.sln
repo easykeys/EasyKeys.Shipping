@@ -89,6 +89,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Amazon.Ra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.Amazon.Shipment", "src\EasyKeys.Shipping.Amazon.Shipment\EasyKeys.Shipping.Amazon.Shipment.csproj", "{8B109CC8-6252-4668-983F-B0877710827C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DHL", "DHL", "{BC400693-827F-43C7-AD98-A9FC1E97ADD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyKeys.Shipping.DHL.Abstractions", "src\EasyKeys.Shipping.DHL.Abstractions\EasyKeys.Shipping.DHL.Abstractions.csproj", "{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -387,6 +391,18 @@ Global
 		{8B109CC8-6252-4668-983F-B0877710827C}.Release|x64.Build.0 = Release|Any CPU
 		{8B109CC8-6252-4668-983F-B0877710827C}.Release|x86.ActiveCfg = Release|Any CPU
 		{8B109CC8-6252-4668-983F-B0877710827C}.Release|x86.Build.0 = Release|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Debug|x64.Build.0 = Debug|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Debug|x86.Build.0 = Debug|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Release|x64.ActiveCfg = Release|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Release|x64.Build.0 = Release|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Release|x86.ActiveCfg = Release|Any CPU
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -421,6 +437,8 @@ Global
 		{3B6980FA-333A-46AD-9F33-0D9BFBD853A8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{3668E9A5-CB31-4FC9-9918-B5046B67651A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8B109CC8-6252-4668-983F-B0877710827C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{BC400693-827F-43C7-AD98-A9FC1E97ADD2} = {BCBBDD1A-FF30-41E8-B7C1-9BB2A441FF83}
+		{C3DB5200-3A61-4DB7-9634-E0A0AE04F5C3} = {BC400693-827F-43C7-AD98-A9FC1E97ADD2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0FBE81B8-162F-4342-BABD-0FFFD0C99331}
