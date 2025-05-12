@@ -8,7 +8,7 @@
 	<PropertyGroup Label="Nuget Package Settings">
 		<Description>DotNetCore Implementation of DHL Express Authorization Api</Description>
 		<PackageTags>
-			DotNetCore, DHL Express,V2, DHL Express OAuth API
+			DotNetCore, DHL Express,V2, DHL Express API
 		</PackageTags>
 	</PropertyGroup>
 	<ItemGroup>

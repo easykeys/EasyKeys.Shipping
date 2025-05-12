@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+		<TargetFrameworks>netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	<PropertyGroup Label="Nuget Package Settings">
+		<Description>
+			DotNetCore Implementation of DHL Shipments Api endpoint.
+		</Description>
+		<PackageTags>
+			DotNetCore,DHL, DHL EXPRESS,V2, Shipping
+		</PackageTags>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\EasyKeys.Shipping.DHL.Abstractions\EasyKeys.Shipping.DHL.Abstractions.csproj" />
+	</ItemGroup>
+</Project>
