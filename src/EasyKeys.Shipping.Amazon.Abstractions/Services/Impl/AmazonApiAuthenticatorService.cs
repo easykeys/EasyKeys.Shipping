@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Net.Http.Json;
 
 using EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping;
 using EasyKeys.Shipping.Amazon.Abstractions.Options;
@@ -12,19 +11,16 @@ namespace EasyKeys.Shipping.Amazon.Abstractions.Services.Impl;
 
 public class AmazonApiAuthenticatorService : IAmazonApiAuthenticatorService
 {
-    private readonly AmazonShippingApi _httpClient;
     private readonly AmazonShippingApiOptions _options;
     private readonly ILogger<AmazonApiAuthenticatorService> _logger;
     private readonly ConcurrentDictionary<string, string> _token = new();
     private readonly ConcurrentDictionary<string, DateTimeOffset> _expirationClock = new();
 
     public AmazonApiAuthenticatorService(
-        AmazonShippingApi httpClient,
         IOptionsMonitor<AmazonShippingApiOptions> optionsMonitor,
         ILogger<AmazonApiAuthenticatorService> logger)
     {
         _options = optionsMonitor.CurrentValue;
-        _httpClient = httpClient;
         _logger = logger;
     }
 
@@ -35,7 +31,12 @@ public class AmazonApiAuthenticatorService : IAmazonApiAuthenticatorService
             if (DateTimeOffset.Now < _expirationClock.GetValueOrDefault(nameof(_expirationClock)))
             {
                 _token.TryGetValue(nameof(AmazonToken), out var existingToken);
-                ArgumentNullException.ThrowIfNull(existingToken, nameof(AmazonToken));
+
+                if (existingToken == null)
+                {
+                    throw new ArgumentNullException(nameof(existingToken), "Token is null or expired.");
+                }
+
                 return existingToken;
             }
 
@@ -57,17 +58,21 @@ public class AmazonApiAuthenticatorService : IAmazonApiAuthenticatorService
                 }),
             };
             var response = await client.SendAsync(request);
-            var token = await response.Content.ReadFromJsonAsync<AmazonToken>();
+            var token = await response.Content.ReadAsStringAsync();
+            var tokenResult = System.Text.Json.JsonSerializer.Deserialize<AmazonToken>(token);
 
             _logger.LogDebug("[Amazon][CreateToken] - authentication token returned {createdToken}", token);
 
-            ArgumentNullException.ThrowIfNull(token, nameof(AmazonToken));
+            if (tokenResult == null)
+            {
+                throw new ArgumentNullException(nameof(tokenResult), "Token result is null.");
+            }
 
-            _token.AddOrUpdate(nameof(AmazonToken), $"{token.access_token}", (x, y) => $"{token.access_token}");
+            _token.AddOrUpdate(nameof(AmazonToken), $"{tokenResult.access_token}", (x, y) => $"{tokenResult.access_token}");
 
-            _expirationClock.AddOrUpdate(nameof(_expirationClock), (x) => DateTimeOffset.Now.AddSeconds(token.expires_in - 5), (x, y) => y.AddMilliseconds(token.expires_in - 5));
+            _expirationClock.AddOrUpdate(nameof(_expirationClock), (x) => DateTimeOffset.Now.AddSeconds(tokenResult.expires_in - 5), (x, y) => y.AddMilliseconds(tokenResult.expires_in - 5));
 
-            return token.access_token;
+            return tokenResult.access_token;
         }
         catch (Exception ex)
         {
