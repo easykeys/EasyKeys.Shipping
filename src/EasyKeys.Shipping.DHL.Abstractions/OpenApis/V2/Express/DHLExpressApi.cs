@@ -751,46 +751,6 @@ public partial class DHLExpressApi
         }
     }
 
-    /// <summary>
-    /// Retrieve Rates for a one piece Shipment
-    /// </summary>
-    /// <remarks>
-    /// The Rate request will return DHL's product capabilities and prices (where applicable) based on the input data. Using the shipper and receiver address as well as the dimension and weights of the pieces belonging to a shipment, this operation returns the available products including the shipping price (where applicable)
-    /// </remarks>
-    /// <param name="accountNumber">DHL Express customer account number</param>
-    /// <param name="originCountryCode">A short text string code (see values defined in ISO 3166) specifying the shipment origin country. https://gs1.org/voc/Country, Alpha-2 Code</param>
-    /// <param name="originPostalCode">Text specifying the postal code for an address. https://gs1.org/voc/postalCode</param>
-    /// <param name="originCityName">Text specifying the city name</param>
-    /// <param name="destinationCountryCode">A short text string code (see values defined in ISO 3166) specifying the shipment destination country. https://gs1.org/voc/Country, Alpha-2 Code</param>
-    /// <param name="destinationPostalCode">Text specifying the postal code for an address. https://gs1.org/voc/postalCode</param>
-    /// <param name="destinationCityName">Text specifying the city name</param>
-    /// <param name="weight">Gross weight of the shipment including packaging.</param>
-    /// <param name="length">Total length of the shipment including packaging.</param>
-    /// <param name="width">Total width of the shipment including packaging.</param>
-    /// <param name="height">Total height of the shipment including packaging.</param>
-    /// <param name="plannedShippingDate">Timestamp represents the date you plan to ship your prospected shipment</param>
-    /// <param name="unitOfMeasurement">The UnitOfMeasurement node conveys the unit of measurements used in the operation. This single value corresponds to the units of weight and measurement which are used throughout the message processing.</param>
-    /// <param name="nextBusinessDay">When set to true and there are no products available for given plannedShippingDate then products available for the next possible pickup date are returned</param>
-    /// <param name="message_Reference">Please provide message reference</param>
-    /// <param name="message_Reference_Date">Optional reference date in the  HTTP-date format https://tools.ietf.org/html/rfc7231#section-7.1.1.2</param>
-    /// <param name="plugin_Name">Please provide name of the plugin (applicable to 3PV only)</param>
-    /// <param name="plugin_Version">Please provide version of the plugin (applicable to 3PV only)</param>
-    /// <param name="shipping_System_Platform_Name">Please provide name of the shipping platform(applicable to 3PV only)</param>
-    /// <param name="shipping_System_Platform_Version">Please provide version of the shipping platform (applicable to 3PV only)</param>
-    /// <param name="webstore_Platform_Name">Please provide name of the webstore platform (applicable to 3PV only)</param>
-    /// <param name="webstore_Platform_Version">Please provide version of the webstore platform (applicable to 3PV only)</param>
-    /// <param name="x_version">Interface version - do not change this field value</param>
-    /// <param name="strictValidation">If set to true, indicate strict DCT validation of address details, and validation of product and service(s) combination provided in request.</param>
-    /// <param name="getAllValueAddedServices">Option to return list of all value added services and its rule groups if applicable</param>
-    /// <param name="requestEstimatedDeliveryDate">Option to return Estimated Delivery Date in response</param>
-    /// <param name="estimatedDeliveryDateType">Estimated Delivery Date Type. QDDF: is the fastest transit time as quoted to the customer at booking or shipment creation. When clearance or any other non-transport operational component is expected to impact transit time, QDDF does not constitute DHL's service commitment. QDDC: cconstitutes DHL's service commitment as quoted at booking or shipment creation. QDDC builds in clearance time, and potentially other special operational non-transport component(s), when relevant.</param>
-    /// <returns>Rates found</returns>
-    /// <exception cref="ApiException">A server side error occurred.</exception>
-    public virtual System.Threading.Tasks.Task<SupermodelIoLogisticsExpressRates> ExpApiRatesAsync(string accountNumber, string originCountryCode, string originPostalCode, string originCityName, string destinationCountryCode, string destinationPostalCode, string destinationCityName, double weight, double length, double width, double height, string plannedShippingDate, bool isCustomsDeclarable, UnitOfMeasurement unitOfMeasurement, bool? nextBusinessDay, string message_Reference, string message_Reference_Date, string plugin_Name, string plugin_Version, string shipping_System_Platform_Name, string shipping_System_Platform_Version, string webstore_Platform_Name, string webstore_Platform_Version, string x_version, bool? strictValidation, bool? getAllValueAddedServices, bool? requestEstimatedDeliveryDate, EstimatedDeliveryDateType? estimatedDeliveryDateType)
-    {
-        return ExpApiRatesAsync(accountNumber, originCountryCode, originPostalCode, originCityName, destinationCountryCode, destinationPostalCode, destinationCityName, weight, length, width, height, plannedShippingDate, isCustomsDeclarable, unitOfMeasurement, nextBusinessDay, message_Reference, message_Reference_Date, plugin_Name, plugin_Version, shipping_System_Platform_Name, shipping_System_Platform_Version, webstore_Platform_Name, webstore_Platform_Version, x_version, strictValidation, getAllValueAddedServices, requestEstimatedDeliveryDate, estimatedDeliveryDateType, System.Threading.CancellationToken.None);
-    }
-
     /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
     /// <summary>
     /// Retrieve Rates for a one piece Shipment
@@ -827,7 +787,36 @@ public partial class DHLExpressApi
     /// <param name="estimatedDeliveryDateType">Estimated Delivery Date Type. QDDF: is the fastest transit time as quoted to the customer at booking or shipment creation. When clearance or any other non-transport operational component is expected to impact transit time, QDDF does not constitute DHL's service commitment. QDDC: cconstitutes DHL's service commitment as quoted at booking or shipment creation. QDDC builds in clearance time, and potentially other special operational non-transport component(s), when relevant.</param>
     /// <returns>Rates found</returns>
     /// <exception cref="ApiException">A server side error occurred.</exception>
-    public virtual async System.Threading.Tasks.Task<SupermodelIoLogisticsExpressRates> ExpApiRatesAsync(string accountNumber, string originCountryCode, string originPostalCode, string originCityName, string destinationCountryCode, string destinationPostalCode, string destinationCityName, double weight, double length, double width, double height, string plannedShippingDate, bool isCustomsDeclarable, UnitOfMeasurement unitOfMeasurement, bool? nextBusinessDay, string message_Reference, string message_Reference_Date, string plugin_Name, string plugin_Version, string shipping_System_Platform_Name, string shipping_System_Platform_Version, string webstore_Platform_Name, string webstore_Platform_Version, string x_version, bool? strictValidation, bool? getAllValueAddedServices, bool? requestEstimatedDeliveryDate, EstimatedDeliveryDateType? estimatedDeliveryDateType, System.Threading.CancellationToken cancellationToken)
+    public virtual async System.Threading.Tasks.Task<SupermodelIoLogisticsExpressRates> ExpApiRatesAsync(
+        string accountNumber,
+        string originCountryCode,
+        string originPostalCode,
+        string originCityName,
+        string destinationCountryCode,
+        string destinationPostalCode,
+        string destinationCityName,
+        double weight,
+        double length,
+        double width,
+        double height,
+        string plannedShippingDate,
+        bool isCustomsDeclarable,
+        UnitOfMeasurement unitOfMeasurement,
+        bool? nextBusinessDay,
+        bool? strictValidation,
+        bool? getAllValueAddedServices,
+        bool? requestEstimatedDeliveryDate,
+        EstimatedDeliveryDateType? estimatedDeliveryDateType,
+        string? message_Reference = null,
+        string? message_Reference_Date = null,
+        string? plugin_Name = null,
+        string? plugin_Version = null,
+        string? shipping_System_Platform_Name = null,
+        string? shipping_System_Platform_Version = null,
+        string? webstore_Platform_Name = null,
+        string? webstore_Platform_Version = null,
+        string? x_version = null,
+        System.Threading.CancellationToken cancellationToken = default)
     {
         if (accountNumber == null)
             throw new System.ArgumentNullException("accountNumber");

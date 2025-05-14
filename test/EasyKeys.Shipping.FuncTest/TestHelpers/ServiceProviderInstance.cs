@@ -3,6 +3,7 @@
 using EasyKeys.Shipping.Amazon.Rates.DependencyInjection;
 using EasyKeys.Shipping.Amazon.Shipment.DependencyInjection;
 using EasyKeys.Shipping.DHL.AddressValidation.DependencyInjection;
+using EasyKeys.Shipping.DHL.Rates.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Tracking.DependencyInjection;
 
@@ -50,6 +51,7 @@ public static class ServiceProviderInstance
 
         services.AddSingleton<IConfiguration>(configBuilder.Build());
         services.AddDHLExpressAddressValidationProvider();
+        services.AddDHLExpressRateProvider();
 
         return services.BuildServiceProvider();
     }

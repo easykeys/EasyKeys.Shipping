@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyKeys.Shipping.DHL.AddressValidation.DependencyInjection;
 
-public static class DHLServiceCollectionExtensions
+public static class DHLAddressValidationServiceCollectionExtensions
 {
     /// <summary>
     /// adds the DHLExpressClient to the DI container. required for usage of all dhl express shipping services.
