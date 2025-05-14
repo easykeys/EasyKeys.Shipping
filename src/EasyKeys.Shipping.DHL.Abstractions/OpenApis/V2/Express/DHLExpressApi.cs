@@ -1,6 +1,8 @@
 ﻿namespace EasyKeys.Shipping.DHL.Abstractions.OpenApis.V2.Express;
 
 using System;
+using System.Net.Http.Headers;
+using System.Text;
 
 using EasyKeys.Shipping.DHL.Abstractions.Options;
 
@@ -34,6 +36,7 @@ public partial class DHLExpressApi
     {
         _httpClient = httpClient;
         _options = options.CurrentValue;
+        _baseUrl = _options.BaseUrl;
         _settings = new System.Lazy<Newtonsoft.Json.JsonSerializerSettings>(CreateSerializerSettings);
     }
 
@@ -608,33 +611,6 @@ public partial class DHLExpressApi
         }
     }
 
-    /// <summary>
-    /// Validate DHL Express pickup/delivery capabilities at origin/destination
-    /// </summary>
-    /// <remarks>
-    /// Validates if DHL Express has got pickup/delivery capabilities at origin/destination
-    /// </remarks>
-    /// <param name="countryCode">A short text string code (see values defined in ISO 3166) specifying the shipment origin country. https://gs1.org/voc/Country, Alpha-2 Code</param>
-    /// <param name="postalCode">Text specifying the postal code for an address. https://gs1.org/voc/postalCode</param>
-    /// <param name="cityName">Text specifying the city name</param>
-    /// <param name="countyName">Text specifying the county name</param>
-    /// <param name="strictValidation">If set to true service will return no records when exact valid match not found</param>
-    /// <param name="message_Reference">Please provide message reference</param>
-    /// <param name="message_Reference_Date">Optional reference date in the  HTTP-date format https://tools.ietf.org/html/rfc7231#section-7.1.1.2</param>
-    /// <param name="plugin_Name">Please provide name of the plugin (applicable to 3PV only)</param>
-    /// <param name="plugin_Version">Please provide version of the plugin (applicable to 3PV only)</param>
-    /// <param name="shipping_System_Platform_Name">Please provide name of the shipping platform(applicable to 3PV only)</param>
-    /// <param name="shipping_System_Platform_Version">Please provide version of the shipping platform (applicable to 3PV only)</param>
-    /// <param name="webstore_Platform_Name">Please provide name of the webstore platform (applicable to 3PV only)</param>
-    /// <param name="webstore_Platform_Version">Please provide version of the webstore platform (applicable to 3PV only)</param>
-    /// <param name="x_version">Interface version - do not change this field value</param>
-    /// <returns>Address validated</returns>
-    /// <exception cref="ApiException">A server side error occurred.</exception>
-    public virtual System.Threading.Tasks.Task<SupermodelIoLogisticsExpressAddressValidateResponse> ExpApiAddressValidateAsync(Type2 type, string countryCode, string postalCode, string cityName, string countyName, bool? strictValidation, string message_Reference, string message_Reference_Date, string plugin_Name, string plugin_Version, string shipping_System_Platform_Name, string shipping_System_Platform_Version, string webstore_Platform_Name, string webstore_Platform_Version, string x_version)
-    {
-        return ExpApiAddressValidateAsync(type, countryCode, postalCode, cityName, countyName, strictValidation, message_Reference, message_Reference_Date, plugin_Name, plugin_Version, shipping_System_Platform_Name, shipping_System_Platform_Version, webstore_Platform_Name, webstore_Platform_Version, x_version, System.Threading.CancellationToken.None);
-    }
-
     /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
     /// <summary>
     /// Validate DHL Express pickup/delivery capabilities at origin/destination
@@ -658,7 +634,23 @@ public partial class DHLExpressApi
     /// <param name="x_version">Interface version - do not change this field value</param>
     /// <returns>Address validated</returns>
     /// <exception cref="ApiException">A server side error occurred.</exception>
-    public virtual async System.Threading.Tasks.Task<SupermodelIoLogisticsExpressAddressValidateResponse> ExpApiAddressValidateAsync(Type2 type, string countryCode, string postalCode, string cityName, string countyName, bool? strictValidation, string message_Reference, string message_Reference_Date, string plugin_Name, string plugin_Version, string shipping_System_Platform_Name, string shipping_System_Platform_Version, string webstore_Platform_Name, string webstore_Platform_Version, string x_version, System.Threading.CancellationToken cancellationToken)
+    public virtual async System.Threading.Tasks.Task<SupermodelIoLogisticsExpressAddressValidateResponse> ExpApiAddressValidateAsync(
+        Type2 type,
+        string countryCode,
+        string postalCode,
+        string cityName,
+        string? countyName = null,
+        bool? strictValidation = false,
+        string? message_Reference = null,
+        string? message_Reference_Date = null,
+        string? plugin_Name = null,
+        string? plugin_Version = null,
+        string? shipping_System_Platform_Name = null,
+        string? shipping_System_Platform_Version = null,
+        string? webstore_Platform_Name = null,
+        string? webstore_Platform_Version = null,
+        string? x_version = null,
+        System.Threading.CancellationToken cancellationToken = default)
     {
         if (type == null)
             throw new System.ArgumentNullException("type");
@@ -3624,6 +3616,16 @@ public partial class DHLExpressApi
             throw new System.ArgumentNullException("x_version");
 
         request_.Headers.TryAddWithoutValidation("x-version", ConvertToString(_options.XVersion, System.Globalization.CultureInfo.InvariantCulture));
+
+        if(_options.ApiKey == null)
+            throw new System.ArgumentNullException("apiKey");
+
+        if(_options.ApiSecret == null)
+            throw new System.ArgumentNullException("apiSecret");
+
+        var credentials = Encoding.ASCII.GetBytes($"{_options.ApiKey}:{_options.ApiSecret}");
+        request_.Headers.Authorization =
+            new AuthenticationHeaderValue("Basic", Convert.ToBase64String(credentials));
     }
     protected struct ObjectResponseResult<T>
     {

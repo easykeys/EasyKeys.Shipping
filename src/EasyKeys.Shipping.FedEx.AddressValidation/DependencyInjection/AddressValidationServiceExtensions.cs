@@ -49,6 +49,8 @@ public static class AddressValidationServiceExtensions
     string sectionName = nameof(FedExApiOptions),
     Action<FedExApiOptions, IServiceProvider>? configOptions = null)
     {
+        services.AddFedExApiClients();
+
         services.AddTransient<IFedExAddressValidationProvider, EasyKeys.Shipping.FedEx.AddressValidation.RestApi.Impl.FedExAddressValidationProvider>();
 
         services.AddTransient<IAddressValidationProvider, EasyKeys.Shipping.FedEx.AddressValidation.RestApi.Impl.FedExAddressValidationProvider>();

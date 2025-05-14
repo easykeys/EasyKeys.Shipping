@@ -2,6 +2,7 @@
 
 using EasyKeys.Shipping.Amazon.Rates.DependencyInjection;
 using EasyKeys.Shipping.Amazon.Shipment.DependencyInjection;
+using EasyKeys.Shipping.DHL.AddressValidation.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Shipment.DependencyInjection;
 using EasyKeys.Shipping.Stamps.Tracking.DependencyInjection;
 
@@ -33,6 +34,26 @@ public static class ServiceProviderInstance
 
         return services.BuildServiceProvider();
     }
+
+    public static IServiceProvider GetDHLServices(ITestOutputHelper output)
+    {
+        var services = new ServiceCollection();
+        var dic = new Dictionary<string, string>
+        {
+            { "AzureVault:BaseUrl", "https://easykeysshipping.vault.azure.net/" }
+        };
+
+        var configBuilder = new ConfigurationBuilder().AddInMemoryCollection(dic);
+        configBuilder.AddAzureKeyVault(hostingEnviromentName: "Development", usePrefix: true);
+        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Development");
+        services.AddLogging(x => x.AddXunit(output));
+
+        services.AddSingleton<IConfiguration>(configBuilder.Build());
+        services.AddDHLExpressAddressValidationProvider();
+
+        return services.BuildServiceProvider();
+    }
+
 
     public static IServiceProvider GetFedExServices(ITestOutputHelper output)
     {
