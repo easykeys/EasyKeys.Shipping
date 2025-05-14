@@ -6,13 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<PropertyGroup Label="Nuget Package Settings">
-		<Description>DotNetCore Implementation of Amazon Shipping Shipment Endpoints.</Description>
+		<Description>
+			DotNetCore Implementation of DHL Rates V2 Api endpoint.
+		</Description>
 		<PackageTags>
-			DotNetCore, Amazon Shipping V2, Shipping V2 APIs
+			DotNetCore, DHL Express Rates,V2
 		</PackageTags>
 	</PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EasyKeys.Shipping.Amazon.Abstractions\EasyKeys.Shipping.Amazon.Abstractions.csproj" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<ProjectReference Include="..\EasyKeys.Shipping.DHL.Abstractions\EasyKeys.Shipping.DHL.Abstractions.csproj" />
+	</ItemGroup>
 </Project>

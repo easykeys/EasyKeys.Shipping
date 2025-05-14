@@ -30,7 +30,12 @@ public class FedexApiAuthenticatorService : IFedexApiAuthenticatorService
             if (DateTimeOffset.Now < _expirationClock.GetValueOrDefault(nameof(_expirationClock)))
             {
                 _token.TryGetValue(nameof(Response), out var existingToken);
-                ArgumentNullException.ThrowIfNull(existingToken, nameof(Response));
+
+                if(existingToken == null)
+                {
+                    throw new ArgumentNullException(nameof(Response), "Token is null or expired."); 
+                }
+
                 return existingToken;
             }
 
@@ -41,7 +46,10 @@ public class FedexApiAuthenticatorService : IFedexApiAuthenticatorService
 
             _logger.LogDebug("[Fedex.com][CreateToken] - authentication token returned {createdToken}", token);
 
-            ArgumentNullException.ThrowIfNull(token, nameof(Response));
+            if (token == null)
+            {
+                throw new ArgumentNullException("Token", "Token is null.");
+            }
 
             _token.AddOrUpdate(nameof(Response), $"{token.Token_type} {token.Access_token}", (x, y) => $"{token.Token_type} {token.Access_token}");
 

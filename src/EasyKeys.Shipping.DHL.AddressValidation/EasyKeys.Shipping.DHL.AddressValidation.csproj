@@ -7,14 +7,13 @@
   </PropertyGroup>
 	<PropertyGroup Label="Nuget Package Settings">
 		<Description>
-			DotNetCore Implementation of Amazon Shipping V2 Api endpoint.
+			DotNetCore Implementation of DHL Address Validation Api
+			Endpoint.
 		</Description>
-		<PackageTags>
-			DotNetCore, Amazon Shipping,V2, Shipping V2 APIs
-		</PackageTags>
+		<PackageTags>DotNetCore, Address Validation, DHL,DHL EXPRESS, Address Validation API</PackageTags>
 	</PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EasyKeys.Shipping.Amazon.Abstractions\EasyKeys.Shipping.Amazon.Abstractions.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\EasyKeys.Shipping.DHL.Abstractions\EasyKeys.Shipping.DHL.Abstractions.csproj" />
+	</ItemGroup>
 
 </Project>
