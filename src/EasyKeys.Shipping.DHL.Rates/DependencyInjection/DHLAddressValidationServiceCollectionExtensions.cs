@@ -1,9 +1,5 @@
-﻿using EasyKeys.Shipping.Abstractions;
-using EasyKeys.Shipping.DHL.Abstractions;
-using EasyKeys.Shipping.DHL.Abstractions.DependencyInjection;
-using EasyKeys.Shipping.DHL.Abstractions.OpenApis.V2.Express;
+﻿using EasyKeys.Shipping.DHL.Abstractions.DependencyInjection;
 using EasyKeys.Shipping.DHL.Abstractions.Options;
-using EasyKeys.Shipping.DHL.Rates;
 
 using Microsoft.Extensions.DependencyInjection;
 

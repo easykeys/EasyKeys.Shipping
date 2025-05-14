@@ -53,7 +53,7 @@ public class DHLExpressRateProvider : IDHLExpressRateProvider
             foreach (var product in result.Products)
             {
                 shipment.Rates.Add(new Rate(
-                    product.ProductName,
+                    product.ProductCode,
                     product.ProductName,
                     "UNKWN",
                     (decimal)product.TotalPrice.FirstOrDefault(x => x.CurrencyType == "BILLC").Price,
