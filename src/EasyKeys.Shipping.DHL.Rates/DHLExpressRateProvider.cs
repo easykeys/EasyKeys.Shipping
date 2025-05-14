@@ -56,8 +56,8 @@ public class DHLExpressRateProvider : IDHLExpressRateProvider
                     product.ProductCode,
                     product.ProductName,
                     "UNKWN",
-                    (decimal)product.TotalPrice.FirstOrDefault(x => x.CurrencyType == "BILLC").Price,
-                    (decimal)product.TotalPrice.FirstOrDefault(x => x.CurrencyType == "PULCL").Price,
+                    (decimal)product.TotalPrice.First(x => x.CurrencyType == "BILLC").Price,
+                    (decimal)product.TotalPrice.First(x => x.CurrencyType == "PULCL").Price,
                     DateTime.Parse(product.DeliveryCapabilities.EstimatedDeliveryDateAndTime)));
             }
         }
