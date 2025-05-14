@@ -6,12 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<PropertyGroup Label="Nuget Package Settings">
-		<Description>DotNetCore Implementation of Amazon Authorization Api</Description>
+		<Description>DotNetCore Implementation of DHL Express Authorization Api</Description>
 		<PackageTags>
-			DotNetCore, Amazon Shipping,V2, Amazon OAuth API
+			DotNetCore, DHL Express,V2, DHL Express API
 		</PackageTags>
 	</PropertyGroup>
-	
 	<ItemGroup>
 		<PackageReference Include="Ardalis.SmartEnum" />
 		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.2">
@@ -27,14 +26,13 @@
 		<PackageReference Include="System.ServiceModel.Http" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\EasyKeys.Shipping.Abstractions\EasyKeys.Shipping.Abstractions.csproj" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Bet.Extensions.Options" />
 	</ItemGroup>
-  <ItemGroup>
-    <None Update="OpenApis\V2\Shipping\amazon-shipping.json" ClassName="AmazonShippingApi" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<None Update="OpenApis\V2\Express\dpdhl-express-api-2.13.1_swagger_0.yaml" ClassName="DHLExpressApi" />
+	</ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0</TargetFrameworks>
-    <NoWarn>$(NoWarn);CS0108</NoWarn>
+		<TargetFrameworks>netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+		<NoWarn>$(NoWarn);CS0108</NoWarn>
   </PropertyGroup>
   <PropertyGroup Label="Nuget Package Settings">
     <Description>DotNetCore Implementation of Stamps.com SWS/IM API.</Description>
