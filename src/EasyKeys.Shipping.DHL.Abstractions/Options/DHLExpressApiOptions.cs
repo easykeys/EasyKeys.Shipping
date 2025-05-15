@@ -55,5 +55,8 @@ public class DHLExpressApiOptions
 
     public string ApiSecret { get; set; } = string.Empty;
 
+    // export account number
     public string AccountNumber { get; set; } = string.Empty;
+
+    // import account number
 }

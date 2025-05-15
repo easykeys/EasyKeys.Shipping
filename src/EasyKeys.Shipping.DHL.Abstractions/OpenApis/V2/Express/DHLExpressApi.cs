@@ -2181,34 +2181,6 @@ public partial class DHLExpressApi
         }
     }
 
-    /// <summary>
-    /// Create Shipment
-    /// </summary>
-    /// <remarks>
-    /// ## Create Shipment
-    /// <br/>The ShipmentRequest Operation will allow you to generate an AWB number and piece IDs, generate a shipping label, transmit manifest shipment detail to DHL, and optionally book a courier for the pickup of a shipment. The key elements in the response of the Shipment Request will be a base64 encoded PDF label and the Shipment and Piece identification numbers, which you can use for tracking on the DHL web site.
-    /// <br/>While the RateRequest and ShipmentRequest services can be used independently, DHL recommends the use of RateRequest to first validate the products available for the shipper/receiver. The global product codes which are output during the RateResponse can be used directly as input into the Shipment Request, as both perform similar validations in terms of service capability.
-    /// </remarks>
-    /// <param name="message_Reference">Please provide message reference</param>
-    /// <param name="message_Reference_Date">Optional reference date in the  HTTP-date format https://tools.ietf.org/html/rfc7231#section-7.1.1.2</param>
-    /// <param name="plugin_Name">Please provide name of the plugin (applicable to 3PV only)</param>
-    /// <param name="plugin_Version">Please provide version of the plugin (applicable to 3PV only)</param>
-    /// <param name="shipping_System_Platform_Name">Please provide name of the shipping platform(applicable to 3PV only)</param>
-    /// <param name="shipping_System_Platform_Version">Please provide version of the shipping platform (applicable to 3PV only)</param>
-    /// <param name="webstore_Platform_Name">Please provide name of the webstore platform (applicable to 3PV only)</param>
-    /// <param name="webstore_Platform_Version">Please provide version of the webstore platform (applicable to 3PV only)</param>
-    /// <param name="x_version">Interface version - do not change this field value</param>
-    /// <param name="strictValidation">If set to true, indicate strict DCT validation of address details, and validation of product and service(s) combination provided in request.</param>
-    /// <param name="bypassPLTError">Option to bypass PLT - WY service code lane capability validation</param>
-    /// <param name="validateDataOnly">If set to true, indicate to perform shipment data compliant validation on the shipment information.</param>
-    /// <param name="body">Details about the shipment to be created</param>
-    /// <returns>Shipment Created</returns>
-    /// <exception cref="ApiException">A server side error occurred.</exception>
-    public virtual System.Threading.Tasks.Task<SupermodelIoLogisticsExpressCreateShipmentResponse> ExpApiShipmentsAsync(string message_Reference, string message_Reference_Date, string plugin_Name, string plugin_Version, string shipping_System_Platform_Name, string shipping_System_Platform_Version, string webstore_Platform_Name, string webstore_Platform_Version, string x_version, bool? strictValidation, bool? bypassPLTError, bool? validateDataOnly, SupermodelIoLogisticsExpressCreateShipmentRequest body)
-    {
-        return ExpApiShipmentsAsync(message_Reference, message_Reference_Date, plugin_Name, plugin_Version, shipping_System_Platform_Name, shipping_System_Platform_Version, webstore_Platform_Name, webstore_Platform_Version, x_version, strictValidation, bypassPLTError, validateDataOnly, body, System.Threading.CancellationToken.None);
-    }
-
     /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
     /// <summary>
     /// Create Shipment
@@ -2233,7 +2205,21 @@ public partial class DHLExpressApi
     /// <param name="body">Details about the shipment to be created</param>
     /// <returns>Shipment Created</returns>
     /// <exception cref="ApiException">A server side error occurred.</exception>
-    public virtual async System.Threading.Tasks.Task<SupermodelIoLogisticsExpressCreateShipmentResponse> ExpApiShipmentsAsync(string message_Reference, string message_Reference_Date, string plugin_Name, string plugin_Version, string shipping_System_Platform_Name, string shipping_System_Platform_Version, string webstore_Platform_Name, string webstore_Platform_Version, string x_version, bool? strictValidation, bool? bypassPLTError, bool? validateDataOnly, SupermodelIoLogisticsExpressCreateShipmentRequest body, System.Threading.CancellationToken cancellationToken)
+    public virtual async System.Threading.Tasks.Task<SupermodelIoLogisticsExpressCreateShipmentResponse> ExpApiShipmentsAsync(
+        SupermodelIoLogisticsExpressCreateShipmentRequest body,
+        bool strictValidation = false,
+        bool bypassPLTError = false,
+        bool validateDataOnly = false,
+        string? message_Reference = null,
+        string? message_Reference_Date = null,
+        string? plugin_Name = null,
+        string? plugin_Version = null,
+        string? shipping_System_Platform_Name = null,
+        string? shipping_System_Platform_Version = null,
+        string? webstore_Platform_Name = null,
+        string? webstore_Platform_Version = null,
+        string? x_version = null,
+        System.Threading.CancellationToken cancellationToken = default)
     {
         if (body == null)
             throw new System.ArgumentNullException("body");
@@ -3851,16 +3837,16 @@ public partial class SupermodelIoLogisticsExpressAddressCreateShipmentRequest
     /// <summary>
     /// Please enter address line 2
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("addressLine2", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("addressLine2", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(45, MinimumLength = 1)]
-    public string AddressLine2 { get; set; }
+    public string? AddressLine2 { get; set; }
 
     /// <summary>
     /// Please enter address line 3
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("addressLine3", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("addressLine3", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(45, MinimumLength = 1)]
-    public string AddressLine3 { get; set; }
+    public string? AddressLine3 { get; set; }
 
     /// <summary>
     /// Please enter your suburb or county name
@@ -4796,7 +4782,7 @@ public partial class SupermodelIoLogisticsExpressPackage
     /// <summary>
     /// Please enter package reference number. If package reference number is provided for at least one package, then package reference number must be provided for all packages.
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("referenceNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("referenceNumber", Required = Newtonsoft.Json.Required.DisallowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.Range(1D, 999D)]
     public double ReferenceNumber { get; set; }
 
@@ -7599,7 +7585,7 @@ public partial class OutputImageProperties
     /// Printer DPI Resolution for X-axis and Y-axis (in DPI) for transport label and waybill document output
     /// </summary>
     [Newtonsoft.Json.JsonProperty("printerDPI", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-    public double PrinterDPI { get; set; }
+    public PrinterDPI PrinterDPI { get; set; }
 
     /// <summary>
     /// Customer barcodes to be printed on supported transport label templates
@@ -10419,89 +10405,89 @@ public partial class ImageOptions : object
     /// <summary>
     /// To be used for waybillDoc, invoice, shipment receipt and QRcode. If set to true then the document is provided otherwise not
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("isRequested", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-    public bool IsRequested { get; set; }
+    [Newtonsoft.Json.JsonProperty("isRequested", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    public bool? IsRequested { get; set; }
 
     /// <summary>
     /// To be used for waybillDoc. If set to true then account information will not be printed on the waybillDoc
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("hideAccountNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-    public bool HideAccountNumber { get; set; }
+    [Newtonsoft.Json.JsonProperty("hideAccountNumber", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    public bool? HideAccountNumber { get; set; }
 
     /// <summary>
     /// You can ask up to 2 waybillDoc copies to be provided
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("numberOfCopies", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("numberOfCopies", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling =Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.Range(1D, 2D)]
-    public double NumberOfCopies { get; set; }
+    public double? NumberOfCopies { get; set; }
 
     /// <summary>
     /// Please advise what type of customs documentation is required
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("invoiceType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("invoiceType", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-    public ImageOptionsInvoiceType InvoiceType { get; set; }
+    public ImageOptionsInvoiceType? InvoiceType { get; set; }
 
     /// <summary>
     /// Please enter ISO 3 letters language code for invoice or shipment receipt
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("languageCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("languageCode", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(3, MinimumLength = 3)]
-    public string LanguageCode { get; set; }
+    public string? LanguageCode { get; set; }
 
     /// <summary>
     /// Please enter ISO 2 letters language country code for invoice or shipment receipt
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("languageCountryCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("languageCountryCode", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(2, MinimumLength = 2)]
-    public string LanguageCountryCode { get; set; }
+    public string? LanguageCountryCode { get; set; }
 
     /// <summary>
     /// Please enter ISO 4 letters language script code for shipment receipt
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("languageScriptCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("languageScriptCode", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(4, MinimumLength = 4)]
-    public string LanguageScriptCode { get; set; }
+    public string? LanguageScriptCode { get; set; }
 
     /// <summary>
     /// Please provide the format of the QR Code output format.
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("encodingFormat", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("encodingFormat", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-    public ImageOptionsEncodingFormat EncodingFormat { get; set; }
+    public ImageOptionsEncodingFormat? EncodingFormat { get; set; }
 
     /// <summary>
     /// DHL Logo to be printed in Transport Label or Waybill Document
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("renderDHLLogo", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-    public bool RenderDHLLogo { get; set; }
+    [Newtonsoft.Json.JsonProperty("renderDHLLogo", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    public bool? RenderDHLLogo { get; set; }
 
     /// <summary>
     /// To print respective Transport Label and Waybill document into A4 margin PDF.&lt;BR&gt;                Note: ECOM26_A6_002,ECOM26_84CI_001,ECOM26_84CI_002,ARCH_6X4,ARCH_8X4 template. &lt;BR&gt;                This option is applicable only for PDF encodingFormat selection.&lt;BR&gt;                false: Transport Label and Waybill document will use default margin settings (default behavior) &lt;BR&gt;                true: Transport Label and Waybill document will print into A4 margin PDF
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("fitLabelsToA4", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-    public bool FitLabelsToA4 { get; set; }
+    [Newtonsoft.Json.JsonProperty("fitLabelsToA4", Required = Newtonsoft.Json.Required.AllowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    public bool? FitLabelsToA4 { get; set; }
 
     /// <summary>
     /// Additional customer label free text that can be printed in certain label.Note: Applicable only to ECOM26_A6_002, ECOM_TC_A4 and ECOM26_84CI_001.
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("labelFreeText", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("labelFreeText", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(150)]
-    public string LabelFreeText { get; set; }
+    public string? LabelFreeText { get; set; }
 
     /// <summary>
     /// Additional customer label text that can be printed in certain label.Note: Applicable only to ECOM26_84_A4_001, ECOM_TC_A4 and ECOM26_84CI_001
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("labelCustomerDataText", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("labelCustomerDataText", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(250, MinimumLength = 1)]
-    public string LabelCustomerDataText { get; set; }
+    public string? LabelCustomerDataText { get; set; }
 
     /// <summary>
     /// Declaration text that can be printed in certain shipment receipt template
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("shipmentReceiptCustomerDataText", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("shipmentReceiptCustomerDataText", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(700, MinimumLength = 1)]
-    public string ShipmentReceiptCustomerDataText { get; set; }
+    public string? ShipmentReceiptCustomerDataText { get; set; }
 
 }
 
@@ -13544,7 +13530,7 @@ public partial class LineItems2
     /// <summary>
     /// Please provide monetary value of the line item x quantity
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("preCalculatedLineItemTotalValue", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("preCalculatedLineItemTotalValue", Required = Newtonsoft.Json.Required.DisallowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.Range(0D, 999999999999999D)]
     public double PreCalculatedLineItemTotalValue { get; set; }
 
@@ -13643,8 +13629,8 @@ public partial class Invoice2
     /// <summary>
     /// Please provide pre-calculated total values for total goods value and total invoice value.
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("preCalculatedTotalValues", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-    public PreCalculatedTotalValues2 PreCalculatedTotalValues { get; set; }
+    [Newtonsoft.Json.JsonProperty("preCalculatedTotalValues", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    public PreCalculatedTotalValues2? PreCalculatedTotalValues { get; set; }
 
 }
 
@@ -15427,7 +15413,7 @@ public partial class IndicativeCustomsValues2
     /// <summary>
     /// Please provide pre-calculated total of all line items plus additional charges plus indicativeCustomsValues
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("totalWithImportDutiesAndTaxes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("totalWithImportDutiesAndTaxes", Required = Newtonsoft.Json.Required.DisallowNull, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.Range(0D, 999999999999999D)]
     public double TotalWithImportDutiesAndTaxes { get; set; }
 
@@ -16210,6 +16196,11 @@ public enum CustomsDocuments4TypeCode
     [System.Runtime.Serialization.EnumMember(Value = @"VEX")]
     VEX = 45,
 
+}
+public enum PrinterDPI
+{
+    DPI200 = 200,
+    DPI300 = 300
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.18.2.0 (NJsonSchema v10.8.0.0 (Newtonsoft.Json v11.0.0.0))")]

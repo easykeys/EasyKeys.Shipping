@@ -52,6 +52,7 @@ public static class ServiceProviderInstance
         services.AddSingleton<IConfiguration>(configBuilder.Build());
         services.AddDHLExpressAddressValidationProvider();
         services.AddDHLExpressRateProvider();
+        services.AddDHLExpressShipmentProvider();
 
         return services.BuildServiceProvider();
     }
