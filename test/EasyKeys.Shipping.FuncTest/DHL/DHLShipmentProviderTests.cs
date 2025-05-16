@@ -27,6 +27,7 @@ public class DHLShipmentProviderTests
 
         var label = await _validator.CreateShipmentAsync(TestShipments.CreateInternationalShipment());
 
+        Assert.Empty(label.InternalErrors);
         Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
         var count = 0;
         foreach (var doc in label.Labels)
