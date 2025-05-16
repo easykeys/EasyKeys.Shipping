@@ -979,30 +979,6 @@ public partial class DHLExpressApi
         }
     }
 
-    /// <summary>
-    /// Retrieve Rates for Multi-piece Shipments
-    /// </summary>
-    /// <remarks>
-    /// The Rate request will return DHL's product capabilities and prices (where applicable) based on the input data. Using the shipper and receiver address as well as the dimension and weights of the pieces belonging to a shipment, this operation returns the available products including the shipping price (where applicable)
-    /// </remarks>
-    /// <param name="message_Reference">Please provide message reference</param>
-    /// <param name="message_Reference_Date">Optional reference date in the  HTTP-date format https://tools.ietf.org/html/rfc7231#section-7.1.1.2</param>
-    /// <param name="plugin_Name">Please provide name of the plugin (applicable to 3PV only)</param>
-    /// <param name="plugin_Version">Please provide version of the plugin (applicable to 3PV only)</param>
-    /// <param name="shipping_System_Platform_Name">Please provide name of the shipping platform(applicable to 3PV only)</param>
-    /// <param name="shipping_System_Platform_Version">Please provide version of the shipping platform (applicable to 3PV only)</param>
-    /// <param name="webstore_Platform_Name">Please provide name of the webstore platform (applicable to 3PV only)</param>
-    /// <param name="webstore_Platform_Version">Please provide version of the webstore platform (applicable to 3PV only)</param>
-    /// <param name="x_version">Interface version - do not change this field value</param>
-    /// <param name="strictValidation">If set to true, indicate strict DCT validation of address details, and validation of product and service(s) combination provided in request.</param>
-    /// <param name="body">Details about the requested shipment</param>
-    /// <returns>Rates found</returns>
-    /// <exception cref="ApiException">A server side error occurred.</exception>
-    public virtual System.Threading.Tasks.Task<SupermodelIoLogisticsExpressRates> ExpApiRatesManyAsync(string message_Reference, string message_Reference_Date, string plugin_Name, string plugin_Version, string shipping_System_Platform_Name, string shipping_System_Platform_Version, string webstore_Platform_Name, string webstore_Platform_Version, string x_version, bool? strictValidation, SupermodelIoLogisticsExpressRateRequest body)
-    {
-        return ExpApiRatesManyAsync(message_Reference, message_Reference_Date, plugin_Name, plugin_Version, shipping_System_Platform_Name, shipping_System_Platform_Version, webstore_Platform_Name, webstore_Platform_Version, x_version, strictValidation, body, System.Threading.CancellationToken.None);
-    }
-
     /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
     /// <summary>
     /// Retrieve Rates for Multi-piece Shipments
@@ -1023,7 +999,19 @@ public partial class DHLExpressApi
     /// <param name="body">Details about the requested shipment</param>
     /// <returns>Rates found</returns>
     /// <exception cref="ApiException">A server side error occurred.</exception>
-    public virtual async System.Threading.Tasks.Task<SupermodelIoLogisticsExpressRates> ExpApiRatesManyAsync(string message_Reference, string message_Reference_Date, string plugin_Name, string plugin_Version, string shipping_System_Platform_Name, string shipping_System_Platform_Version, string webstore_Platform_Name, string webstore_Platform_Version, string x_version, bool? strictValidation, SupermodelIoLogisticsExpressRateRequest body, System.Threading.CancellationToken cancellationToken)
+    public virtual async System.Threading.Tasks.Task<SupermodelIoLogisticsExpressRates> ExpApiRatesManyAsync(
+        SupermodelIoLogisticsExpressRateRequest body,
+        bool? strictValidation = false,
+        string? message_Reference = null,
+        string? message_Reference_Date = null,
+        string? plugin_Name = null,
+        string? plugin_Version = null,
+        string? shipping_System_Platform_Name = null,
+        string? shipping_System_Platform_Version = null,
+        string? webstore_Platform_Name = null,
+        string? webstore_Platform_Version = null,
+        string? x_version = null,
+        System.Threading.CancellationToken cancellationToken = default)
     {
         if (body == null)
             throw new System.ArgumentNullException("body");
@@ -3996,9 +3984,9 @@ public partial class SupermodelIoLogisticsExpressAddressRatesRequest
     /// <summary>
     /// Please enter address line 3
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("addressLine2", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("addressLine2", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(45, MinimumLength = 1)]
-    public string AddressLine2 { get; set; }
+    public string? AddressLine2 { get; set; }
 
     /// <summary>
     /// Please enter address line 3
@@ -4986,9 +4974,9 @@ public partial class SupermodelIoLogisticsExpressRateRequest
     /// <summary>
     /// Please use if you wish to filter the response by value added services
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("valueAddedServices", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("valueAddedServices", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.MaxLength(99)]
-    public System.Collections.Generic.ICollection<SupermodelIoLogisticsExpressValueAddedServicesRates> ValueAddedServices { get; set; }
+    public System.Collections.Generic.ICollection<SupermodelIoLogisticsExpressValueAddedServicesRates>? ValueAddedServices { get; set; }
 
     /// <summary>
     /// Please use if you wish to filter the response by product(s) and/or value added services
@@ -5439,30 +5427,30 @@ public partial class SupermodelIoLogisticsExpressValueAddedServicesRates
     /// <summary>
     /// Please enter DHL Express value added local service code. For detailed list of all available service codes for your prospect shipment please invoke /products or /rates
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("localServiceCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("localServiceCode", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(3, MinimumLength = 1)]
-    public string LocalServiceCode { get; set; }
+    public string? LocalServiceCode { get; set; }
 
     /// <summary>
     /// Please enter monetary value of service (e.g. Insured Value)
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.Range(0D, 999999999999999D)]
-    public double Value { get; set; }
+    public double? Value { get; set; }
 
     /// <summary>
     /// Please enter currency code (e.g. Insured Value currency code)
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(3, MinimumLength = 3)]
-    public string Currency { get; set; }
+    public string? Currency { get; set; }
 
     /// <summary>
     /// For future use
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("method", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("method", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-    public SupermodelIoLogisticsExpressValueAddedServicesRatesMethod Method { get; set; }
+    public SupermodelIoLogisticsExpressValueAddedServicesRatesMethod? Method { get; set; }
 
 }
 

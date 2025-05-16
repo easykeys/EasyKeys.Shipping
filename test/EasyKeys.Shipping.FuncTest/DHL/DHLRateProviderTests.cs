@@ -36,6 +36,14 @@ public class DHLRateProviderTests
                 {
                     _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.ServiceName, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
                 }
+
+                request.Rates.Clear();
+
+                rates = await validator.GetRatesManyAsync(request);
+                foreach (var rate in rates.Rates)
+                {
+                    _output.WriteLine("{0}-{1}-{2}-{3}-{4}-{5}", rate.ServiceName, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+                }
             }
         }
     }

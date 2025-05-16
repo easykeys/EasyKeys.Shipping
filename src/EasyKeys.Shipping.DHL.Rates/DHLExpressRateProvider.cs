@@ -15,6 +15,7 @@ public class DHLExpressRateProvider : IDHLExpressRateProvider
     private readonly DHLExpressApi _dhlExpressApi;
 
     public DHLExpressRateProvider(
+
         DHLExpressApi dhlExpressApi,
         DHLExpressApiOptions options,
         ILogger<DHLExpressRateProvider> logger)
@@ -86,5 +87,137 @@ public class DHLExpressRateProvider : IDHLExpressRateProvider
         }
 
         return shipment;
+    }
+
+    public async Task<Shipment> GetRatesManyAsync(Shipment shipment, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var body = new SupermodelIoLogisticsExpressRateRequest
+            {
+                CustomerDetails = new CustomerDetails4
+                {
+                    ShipperDetails = new SupermodelIoLogisticsExpressAddressRatesRequest
+                    {
+                        PostalCode = shipment.OriginAddress.PostalCode,
+                        CityName = shipment.OriginAddress.City,
+                        CountryCode = shipment.OriginAddress.CountryCode,
+                        AddressLine1 = shipment.OriginAddress.StreetLine,
+                        AddressLine2 = string.IsNullOrEmpty(shipment.OriginAddress.StreetLine2) ? null : shipment.OriginAddress.StreetLine2,
+                        AddressLine3 = shipment.OriginAddress.StateOrProvince
+                    },
+                    ReceiverDetails = new SupermodelIoLogisticsExpressAddressRatesRequest
+                    {
+                        PostalCode = shipment.DestinationAddress.PostalCode,
+                        CityName = shipment.DestinationAddress.City,
+                        CountryCode = shipment.DestinationAddress.CountryCode,
+                        AddressLine1 = shipment.DestinationAddress.StreetLine,
+                        AddressLine2 = string.IsNullOrEmpty(shipment.DestinationAddress.StreetLine2) ? null : shipment.DestinationAddress.StreetLine2,
+                        AddressLine3 = shipment.DestinationAddress.StateOrProvince
+                    }
+                },
+                Accounts = new[]
+                {
+                    new SupermodelIoLogisticsExpressAccount
+                    {
+                        Number = shipment.Options.CustomerDHLExpressAccountNumber ?? _options.AccountNumber,
+                        TypeCode = SupermodelIoLogisticsExpressAccountTypeCode.Shipper
+                    }
+                },
+                PlannedShippingDateAndTime = shipment.Options.ShippingDate.ToString("yyyy-MM-dd'T'HH:mm:ss") + " GMT+00:00",
+                UnitOfMeasurement = SupermodelIoLogisticsExpressRateRequestUnitOfMeasurement.Imperial,
+                IsCustomsDeclarable = true,
+                EstimatedDeliveryDate = new EstimatedDeliveryDate3
+                {
+                    IsRequested = true,
+                    TypeCode = EstimatedDeliveryDate3TypeCode.QDDC
+                },
+                ValueAddedServices = AddServices(shipment),
+                Packages = shipment.Packages.Select(x =>
+                {
+                    return new SupermodelIoLogisticsExpressPackageRR
+                    {
+                        Weight = (double)x.RoundedWeight,
+                        Dimensions = new Dimensions3
+                        {
+                            Length = (double)x.Dimensions.Length,
+                            Width = (double)x.Dimensions.Width,
+                            Height = (double)x.Dimensions.Height
+                        }
+                    };
+                }).ToArray(),
+                ProductTypeCode = SupermodelIoLogisticsExpressRateRequestProductTypeCode.All,
+                PayerCountryCode = shipment.OriginAddress.CountryCode,
+                NextBusinessDay = true
+            };
+
+            var result = await _dhlExpressApi.ExpApiRatesManyAsync(body, cancellationToken: cancellationToken);
+
+            foreach (var product in result.Products)
+            {
+                try
+                {
+                    shipment.Rates.Add(new Rate(
+                        product.ProductCode,
+                        product.ProductName,
+                        "UNKWN",
+                        (decimal)product.TotalPrice.First(x => x.CurrencyType == "BILLC").Price,
+                        (decimal)product.TotalPrice.First(x => x.CurrencyType == "PULCL").Price,
+                        DateTime.Parse(product.DeliveryCapabilities.EstimatedDeliveryDateAndTime)));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "{providerName} rate adding failed.", nameof(DHLExpressRateProvider));
+                }
+            }
+        }
+        catch (ApiException<SupermodelIoLogisticsExpressErrorResponse> ex)
+        {
+            var error = ex?.Result.Detail ?? string.Empty;
+            if (ex?.Result?.AdditionalDetails?.Any() ?? false)
+            {
+                error += string.Join(",", ex.Result.AdditionalDetails);
+            }
+
+            _logger.LogError("{name} : {message}", nameof(DHLExpressRateProvider), error);
+            shipment.InternalErrors.Add(error);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "{providerName} failed", nameof(DHLExpressRateProvider));
+            shipment.InternalErrors.Add(ex?.Message ?? $"{nameof(DHLExpressRateProvider)} failed");
+        }
+
+        return shipment;
+    }
+
+    private SupermodelIoLogisticsExpressValueAddedServicesRates[]? AddServices(Shipping.Abstractions.Models.Shipment shipment)
+    {
+        var valueAddedServices = new List<SupermodelIoLogisticsExpressValueAddedServicesRates>();
+
+        if (shipment.Packages.Any(x => x.SignatureRequiredOnDelivery))
+        {
+            _logger.LogInformation("{providerName} : Adding Signature value", nameof(DHLExpressRateProvider));
+            valueAddedServices.Add(new SupermodelIoLogisticsExpressValueAddedServicesRates
+            {
+                ServiceCode = "SF",
+                Value = null,
+                Currency = null
+            });
+        }
+
+        if (shipment.Packages.Any(x => x.InsuredValue > 0m))
+        {
+            _logger.LogInformation("{providerName} : Adding Insurance value of {value}", nameof(DHLExpressRateProvider), shipment.Packages.First(x => x.InsuredValue > 0m).InsuredValue);
+
+            valueAddedServices.Add(new SupermodelIoLogisticsExpressValueAddedServicesRates
+            {
+                ServiceCode = "II",
+                Value = (double)shipment.Packages.First(x => x.InsuredValue > 0m).InsuredValue,
+                Currency = "USD"
+            });
+        }
+
+        return valueAddedServices.Any() ? valueAddedServices.ToArray() : null;
     }
 }
