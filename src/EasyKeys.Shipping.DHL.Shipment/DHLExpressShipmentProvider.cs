@@ -29,8 +29,7 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
     {
         var label = new ShipmentLabel();
         try
-        {
-         
+        {  
             var body = new SupermodelIoLogisticsExpressCreateShipmentRequest
             {
                 PlannedShippingDateAndTime = "2025-05-19T19:19:40 GMT+00:00",
@@ -338,16 +337,22 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
             var result = await _dHLExpressApi.ExpApiShipmentsAsync(body, cancellationToken: cancellationToken);
 
             var billCharges = result.ShipmentCharges.First(x => x.CurrencyType == "BILLC");
+            var nonDiscountCharges = result.ShipmentCharges.First(x => x.CurrencyType == "PULCL");
             foreach (var doc in result.Documents.Where(x => x.TypeCode == ImageOptionsTypeCode.Label.ToString().ToLower()))
             {
                 label.Labels.Add(new PackageLabelDetails
                 {
-                    Bytes = new() { Convert.FromBase64String(doc.Content) },
+                    Bytes = new () { Convert.FromBase64String(doc.Content) },
                     ImageType = doc.ImageFormat,
                     TotalCharges = new Shipping.Abstractions.Models.ShipmentCharges
                     {
                         NetCharge = (decimal)billCharges.Price,
                         SurchargesList = billCharges.ServiceBreakdown.ToDictionary(x => x.Name, x => (decimal)x.Price)
+                    },
+                    TotalCharges2 = new Shipping.Abstractions.Models.ShipmentCharges
+                    {
+                        NetCharge = (decimal)nonDiscountCharges.Price,
+                        SurchargesList = nonDiscountCharges.ServiceBreakdown.ToDictionary(x => x.Name, x => (decimal)x.Price)
                     },
                     ProviderLabelId = result.TrackingUrl,
                     TrackingId = result.ShipmentTrackingNumber
