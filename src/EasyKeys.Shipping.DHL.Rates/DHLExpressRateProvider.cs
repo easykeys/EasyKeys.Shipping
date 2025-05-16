@@ -213,7 +213,7 @@ public class DHLExpressRateProvider : IDHLExpressRateProvider
             valueAddedServices.Add(new SupermodelIoLogisticsExpressValueAddedServicesRates
             {
                 ServiceCode = "II",
-                Value = (double)shipment.Packages.First(x => x.InsuredValue > 0m).InsuredValue,
+                Value = (double)shipment.Packages.Max(x => x.InsuredValue),
                 Currency = "USD"
             });
         }
