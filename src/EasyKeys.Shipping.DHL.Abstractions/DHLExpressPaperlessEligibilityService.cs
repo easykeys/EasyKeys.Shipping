@@ -16,27 +16,8 @@ public class DHLExpressPaperlessEligibilityService : IPaperlessEligibilityServic
     public DHLExpressPaperlessEligibilityService(ILogger<DHLExpressPaperlessEligibilityService> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        // Get path to the current .exe
-        var exePath = Assembly.GetExecutingAssembly().Location;
-        var exeDirectory = Path.GetDirectoryName(exePath);
-
-        var dataFileName = "Data/paperless_countries.json";
-        var dataFilePath = Path.Combine(exeDirectory!, dataFileName);
-
-        if (!File.Exists(dataFilePath))
-        {
-            throw new FileNotFoundException("Paperless country data not found.", dataFilePath);
-        }
-
-        var json = File.ReadAllText(dataFilePath);
-
-        var countries = JsonSerializer.Deserialize<List<CountryPaperlessInfo>>(json, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        }) ?? new List<CountryPaperlessInfo>();
-
         _paperlessData = new ConcurrentDictionary<string, CountryPaperlessInfo>(
-            countries.ToDictionary(x => x.CountryCode.ToUpperInvariant(), x => x));
+             LoadFile().ToDictionary(x => x.CountryCode.ToUpperInvariant(), x => x));
     }
 
     public bool IsPaperlessAvailable(string countryCode, double value)
@@ -65,5 +46,26 @@ public class DHLExpressPaperlessEligibilityService : IPaperlessEligibilityServic
             _logger.LogWarning(ex, "Error checking paperless eligibility for country {CountryCode} with value {Value}", countryCode, value);
             return false;
         }
+    }
+
+    private List<CountryPaperlessInfo> LoadFile()
+    {
+        var exePath = Assembly.GetExecutingAssembly().Location;
+        var exeDirectory = Path.GetDirectoryName(exePath);
+
+        var dataFileName = "Data/paperless_countries.json";
+        var dataFilePath = Path.Combine(exeDirectory!, dataFileName);
+
+        if (!File.Exists(dataFilePath))
+        {
+            throw new FileNotFoundException("Paperless country data not found.", dataFilePath);
+        }
+
+        var json = File.ReadAllText(dataFilePath);
+
+        return JsonSerializer.Deserialize<List<CountryPaperlessInfo>>(json, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        }) ?? new List<CountryPaperlessInfo>();
     }
 }
