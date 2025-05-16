@@ -46,6 +46,17 @@ public class DHLExpressAddressValidationProvider : IDHLExpressAddressValidationP
                     result.Address?.FirstOrDefault()?.CountryCode ?? string.Empty);
             }
         }
+        catch (ApiException<SupermodelIoLogisticsExpressErrorResponse> ex)
+        {
+            var error = ex?.Result.Detail ?? string.Empty;
+            if (ex?.Result?.AdditionalDetails?.Any() ?? false)
+            {
+                error += string.Join(",", ex.Result.AdditionalDetails);
+            }
+
+            _logger.LogError("{name} : {message}", nameof(DHLExpressAddressValidationProvider), error);
+            request.InternalErrors.Add(error);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "{providerName} failed", nameof(DHLExpressAddressValidationProvider));

@@ -139,13 +139,14 @@ public class FedexRateProvider : IFedExRateProvider
             {
                 try
                 {
+                    var listCharges = rateDetail!.RatedShipmentDetails!.FirstOrDefault(x => x.RateType == RatedShipmentDetailRateType.LIST)?.TotalNetCharge;
                     var rate = new Rate(
                             rateDetail!.ServiceType!,
                             rateDetail!.ServiceName!,
                             rateDetail!.PackagingType!,
                             (decimal)rateDetail!.RatedShipmentDetails!.First(x => x.RateType == RatedShipmentDetailRateType.ACCOUNT).TotalNetCharge,
-                            (decimal)rateDetail!.RatedShipmentDetails!.First(x => x.RateType == RatedShipmentDetailRateType.LIST).TotalNetCharge,
-                            DateTime.TryParse(rateDetail!.Commit!.DateDetail!.DayFormat, out var dateResult) ? dateResult : DateTime.MinValue);
+                            (decimal)listCharges.GetValueOrDefault(),
+                            DateTime.TryParse(rateDetail?.Commit?.DateDetail?.DayFormat, out var dateResult) ? dateResult : DateTime.MinValue);
                     shipment.Rates.Add(rate);
                 }
                 catch (Exception ex)

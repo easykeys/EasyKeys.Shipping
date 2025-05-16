@@ -4191,9 +4191,9 @@ public partial class SupermodelIoLogisticsExpressCreateShipmentRequest
     /// <summary>
     /// This section communicates additional shipping services, such as Insurance (or Shipment Value Protection).
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("valueAddedServices", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("valueAddedServices", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.MaxLength(99)]
-    public System.Collections.Generic.ICollection<SupermodelIoLogisticsExpressValueAddedServices> ValueAddedServices { get; set; }
+    public System.Collections.Generic.ICollection<SupermodelIoLogisticsExpressValueAddedServices>? ValueAddedServices { get; set; }
 
     /// <summary>
     /// Here you can modify label, waybillDoc, invoice and shipment receipt properties
@@ -4754,9 +4754,9 @@ public partial class SupermodelIoLogisticsExpressPackage
     /// <summary>
     /// Please enter description of content for each package
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(70, MinimumLength = 1)]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     /// <summary>
     /// This allows you to define up to two bespoke barcodes on the DHL Express Tranport label. To use this feature please set outputImageProperties/imageOptions/templateName as ECOM26_84CI_003 for typeCode=label
@@ -4775,9 +4775,9 @@ public partial class SupermodelIoLogisticsExpressPackage
     /// <summary>
     /// Please enter additional customer description
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("labelDescription", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("labelDescription", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(80, MinimumLength = 1)]
-    public string LabelDescription { get; set; }
+    public string? LabelDescription { get; set; }
 
     /// <summary>
     /// Please enter package reference number. If package reference number is provided for at least one package, then package reference number must be provided for all packages.
@@ -5393,16 +5393,16 @@ public partial class SupermodelIoLogisticsExpressValueAddedServices
     /// <summary>
     /// Please enter monetary value of service (e.g. Insured Value)
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.Range(0D, 999999999999999D)]
-    public double Value { get; set; }
+    public double? Value { get; set; }
 
     /// <summary>
     /// Please enter currency code (e.g. Insured Value currency code)
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(3, MinimumLength = 3)]
-    public string Currency { get; set; }
+    public string? Currency { get; set; }
 
     /// <summary>
     /// Payment method code (e.g. Cash)
@@ -13559,23 +13559,23 @@ public partial class Invoice2
     /// <summary>
     /// Please enter who has signed the invoce
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("signatureName", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("signatureName", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(35)]
-    public string SignatureName { get; set; }
+    public string? SignatureName { get; set; }
 
     /// <summary>
     /// Please provide title of person who has signed the invoice
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("signatureTitle", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("signatureTitle", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(35)]
-    public string SignatureTitle { get; set; }
+    public string? SignatureTitle { get; set; }
 
     /// <summary>
     /// Please provide the signature image
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("signatureImage", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("signatureImage", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(1048576)]
-    public string SignatureImage { get; set; }
+    public string? SignatureImage { get; set; }
 
     /// <summary>
     /// Shipment instructions for customs invoice printing purposes. Printed only when using Customs Invoice template COMMERCIAL_INVOICE_04. If using Customs Invoice template 			COMMERCIAL_INVOICE_04, recommended max length is 120 characters.

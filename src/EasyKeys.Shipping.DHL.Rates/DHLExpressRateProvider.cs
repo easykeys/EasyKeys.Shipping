@@ -36,7 +36,7 @@ public class DHLExpressRateProvider : IDHLExpressRateProvider
                 destinationCityName: shipment.DestinationAddress.City,
                 destinationCountryCode: shipment.DestinationAddress.CountryCode,
                 destinationPostalCode: shipment.DestinationAddress.PostalCode,
-                weight: (double)shipment.GetTotalWeight(),
+                weight: (double)Math.Round(shipment.GetTotalWeight(), 3),
                 unitOfMeasurement: UnitOfMeasurement.Imperial,
                 length: (double)(shipment.Packages.FirstOrDefault()?.Dimensions.Length ?? 0.0m),
                 width: (double)(shipment.Packages.FirstOrDefault()?.Dimensions.Width ?? 0.0m),
@@ -45,25 +45,37 @@ public class DHLExpressRateProvider : IDHLExpressRateProvider
                 isCustomsDeclarable: true,
                 nextBusinessDay: true,
                 strictValidation: false,
-                getAllValueAddedServices: false,
+                getAllValueAddedServices: true,
                 requestEstimatedDeliveryDate: true,
                 estimatedDeliveryDateType: EstimatedDeliveryDateType.QDDC
             );
 
             foreach (var product in result.Products)
             {
-                shipment.Rates.Add(new Rate(
-                    product.ProductCode,
-                    product.ProductName,
-                    "UNKWN",
-                    (decimal)product.TotalPrice.First(x => x.CurrencyType == "BILLC").Price,
-                    (decimal)product.TotalPrice.First(x => x.CurrencyType == "PULCL").Price,
-                    DateTime.Parse(product.DeliveryCapabilities.EstimatedDeliveryDateAndTime)));
+                try
+                {
+                    shipment.Rates.Add(new Rate(
+                        product.ProductCode,
+                        product.ProductName,
+                        "UNKWN",
+                        (decimal)product.TotalPrice.First(x => x.CurrencyType == "BILLC").Price,
+                        (decimal)product.TotalPrice.First(x => x.CurrencyType == "PULCL").Price,
+                        DateTime.Parse(product.DeliveryCapabilities.EstimatedDeliveryDateAndTime)));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "{providerName} rate adding failed.", nameof(DHLExpressRateProvider));
+                }
             }
         }
         catch (ApiException<SupermodelIoLogisticsExpressErrorResponse> ex)
         {
             var error = ex?.Result.Detail ?? string.Empty;
+            if (ex?.Result?.AdditionalDetails?.Any() ?? false)
+            {
+                error += string.Join(",", ex.Result.AdditionalDetails);
+            }
+
             _logger.LogError("{name} : {message}", nameof(DHLExpressRateProvider), error);
             shipment.InternalErrors.Add(error);
         }

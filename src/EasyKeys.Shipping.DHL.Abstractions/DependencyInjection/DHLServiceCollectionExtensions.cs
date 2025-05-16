@@ -23,6 +23,8 @@ public static class DHLServiceCollectionExtensions
 
         services.AddHttpClient<DHLExpressApi>();
 
+        services.AddSingleton<IPaperlessEligibilityService, DHLExpressPaperlessEligibilityService>();
+
         return services;
     }
 }
