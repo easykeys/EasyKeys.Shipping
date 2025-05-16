@@ -18,7 +18,7 @@ public interface IStampsShipmentProvider
         Shipping.Abstractions.Models.Shipment shipment,
         RateOptions rateOptions,
         ShipmentDetails shipmentDetails,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Cancels shipment.
@@ -26,5 +26,5 @@ public interface IStampsShipmentProvider
     /// <param name="trackingId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken);
+    Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken = default);
 }

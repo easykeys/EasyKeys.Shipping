@@ -4717,10 +4717,10 @@ public partial class SupermodelIoLogisticsExpressPackage
     /// <summary>
     /// Please contact your DHL Express representative if you wish to use a DHL specific package otherwise ignore this element.
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("typeCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("typeCode", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(3, MinimumLength = 2)]
     [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-    public SupermodelIoLogisticsExpressPackageTypeCode TypeCode { get; set; }
+    public SupermodelIoLogisticsExpressPackageTypeCode? TypeCode { get; set; }
 
     /// <summary>
     /// The weight of the package.
