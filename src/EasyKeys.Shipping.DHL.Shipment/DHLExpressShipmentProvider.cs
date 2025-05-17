@@ -144,6 +144,7 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
                 },
                 Content = new Content2
                 {
+                    USFilingTypeValue = GetFilingType(shipment, details),
                     IsCustomsDeclarable = true,
                     DeclaredValue = (double)details.Commodities.Sum(x => x.Quantity * x.UnitPrice),
                     DeclaredValueCurrency = "USD",
@@ -276,7 +277,7 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
                         ReceiverId = details.Recipient.Email,
                         LanguageCode = "eng",
                         LanguageCountryCode = "UK",
-                        BespokeMessage = details.CustomShipmentMessage
+                        BespokeMessage = details.CustomShipmentMessage ?? "thank you for your business"
                     }
                 },
                 EstimatedDeliveryDate = new EstimatedDeliveryDate
@@ -305,7 +306,7 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
             {
                 label.Labels.Add(new PackageLabelDetails
                 {
-                    Bytes = new() { Convert.FromBase64String(doc.Content) },
+                    Bytes = new () { Convert.FromBase64String(doc.Content) },
                     ImageType = doc.ImageFormat,
                     TotalCharges = new Shipping.Abstractions.Models.ShipmentCharges
                     {
@@ -355,6 +356,13 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
         }
 
         return label;
+    }
+
+    private string GetFilingType(Shipping.Abstractions.Models.Shipment shipment, ShippingDetails details)
+    {
+        var maxValue = details.Commodities.Max(x => x.Quantity * x.UnitPrice);
+
+        return shipment.DestinationAddress.IsCanadaAddress() ? "FTR: 30.36" : "FTR: 30.37(a)";
     }
 
     private SupermodelIoLogisticsExpressValueAddedServices[]? AddServices(Shipping.Abstractions.Models.Shipment shipment, ShippingDetails details)
