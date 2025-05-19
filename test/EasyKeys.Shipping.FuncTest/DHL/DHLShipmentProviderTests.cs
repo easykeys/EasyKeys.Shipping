@@ -75,24 +75,43 @@ public class DHLShipmentProviderTests
             },
         };
 
+        shipmentDetails.Commodities.Add(
+            new Commodity()
+            {
+                Weight = 0.5m,
+                Name = "key # 1",
+                NumberOfPieces = 1,
+                Description = "cut key",
+                CountryOfManufacturer = "US",
+                CIMarksandNumbers = "87123",
+                // ExportLicenseNumber = "26456",
+                HarmonizedCode = shipment.DestinationAddress.IsCanadaAddress() ? "8301.70.900000" : "8301.70.000000",
+                Quantity = 1,
+                QuantityUnits = "EA",
+                UnitPrice = 8.75m,
+                CustomsValue = 8.75m,
+                Amount = 8.75m,
+                PartNumber = "167",
+                //ExportLicenseExpirationDate = DateTime.Now.AddDays(1),
+            });
 
         shipmentDetails.Commodities.Add(
             new Commodity()
             {
                 Weight = 0.5m,
-                Name = "non-thread rivets",
-                NumberOfPieces = 10,
-                Description = "description",
+                Name = "key # 2",
+                NumberOfPieces = 1,
+                Description = "cut key",
                 CountryOfManufacturer = "US",
                 CIMarksandNumbers = "87123",
                 // ExportLicenseNumber = "26456",
                 HarmonizedCode = shipment.DestinationAddress.IsCanadaAddress() ? "8301.70.900000" : "8301.70.000000",
-                Quantity = 2,
+                Quantity = 1,
                 QuantityUnits = "EA",
-                UnitPrice = 10000,
-                CustomsValue = 18,
-                Amount = 18,
-                PartNumber = "167",
+                UnitPrice = 8.75m,
+                CustomsValue = 8.75m,
+                Amount = 8.75m,
+                PartNumber = "168",
                 //ExportLicenseExpirationDate = DateTime.Now.AddDays(1),
             });
 
