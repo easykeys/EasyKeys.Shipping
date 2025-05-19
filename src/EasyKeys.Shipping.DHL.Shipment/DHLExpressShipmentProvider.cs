@@ -177,11 +177,11 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
                     }).ToArray(),
                     ExportDeclaration = new ExportDeclaration
                     {
-                        LineItems = details.Commodities.Select(x =>
+                        LineItems = details.Commodities.Select((x, i) =>
                         {
                             return new LineItems2
                             {
-                                Number = x.NumberOfPieces,
+                                Number = i + 1,
                                 Description = x.Description,
                                 Price = (double)x.UnitPrice,
                                 Quantity = new Quantity2
