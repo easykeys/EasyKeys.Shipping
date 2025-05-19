@@ -181,7 +181,7 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
                         {
                             return new LineItems2
                             {
-                                Number = i+1,
+                                Number = i + 1,
                                 Description = x.Description,
                                 Price = (double)x.UnitPrice,
                                 Quantity = new Quantity2
