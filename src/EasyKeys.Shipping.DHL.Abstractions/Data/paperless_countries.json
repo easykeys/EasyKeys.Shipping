@@ -1,0 +1,1172 @@
+﻿[
+  {
+    "COUNTRY_CODE": "AD",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 13623.0
+  },
+  {
+    "COUNTRY_CODE": "AF",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 4500.0
+  },
+  {
+    "COUNTRY_CODE": "AI",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AL",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AM",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AO",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 1000.0
+  },
+  {
+    "COUNTRY_CODE": "AS",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AT",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AU",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AW",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "AZ",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BA",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BB",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BD",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BF",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BH",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 1300.0
+  },
+  {
+    "COUNTRY_CODE": "BI",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BJ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 500.0
+  },
+  {
+    "COUNTRY_CODE": "BN",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BO",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BR",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BS",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 1000.0
+  },
+  {
+    "COUNTRY_CODE": "BT",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BW",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BY",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "BZ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 499.0
+  },
+  {
+    "COUNTRY_CODE": "CA",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CD",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CF",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CH",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CI",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CK",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CL",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CN",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CO",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 2000.0
+  },
+  {
+    "COUNTRY_CODE": "CR",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CU",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CV",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CY",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "CZ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "DE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "DJ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "DK",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "DM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "DO",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 3000.0
+  },
+  {
+    "COUNTRY_CODE": "DZ",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "EC",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "EE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "EG",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ER",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ES",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ET",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "FI",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "FJ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "FK",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "FM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "FO",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "FR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GA",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GB",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GD",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GE",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GF",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GH",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GI",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GL",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GN",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GP",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GQ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GT",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GU",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GW",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "GY",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 200.0
+  },
+  {
+    "COUNTRY_CODE": "HK",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "HN",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "HR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "HT",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 100.0
+  },
+  {
+    "COUNTRY_CODE": "HU",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "IC",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ID",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "IE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "IL",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "IN",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "IQ",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "IR",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "IS",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "IT",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "JE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "JM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 3000.0
+  },
+  {
+    "COUNTRY_CODE": "JO",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 1411.0
+  },
+  {
+    "COUNTRY_CODE": "JP",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KG",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KH",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KI",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KN",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KP",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KV",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "KW",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 327.0
+  },
+  {
+    "COUNTRY_CODE": "KY",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 499999.0
+  },
+  {
+    "COUNTRY_CODE": "KZ",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LA",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LB",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LC",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LI",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LK",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LS",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LT",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LU",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LV",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "LY",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MA",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MC",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MD",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ME",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MH",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MK",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ML",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MM",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MN",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MO",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MP",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MQ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 25.0
+  },
+  {
+    "COUNTRY_CODE": "MR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MS",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 1500.0
+  },
+  {
+    "COUNTRY_CODE": "MT",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MU",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MV",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MW",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MX",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MY",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "MZ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NaN",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NC",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NG",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NI",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NL",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NO",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NP",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NU",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "NZ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "OM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 2590.0
+  },
+  {
+    "COUNTRY_CODE": "PA",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PF",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PH",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PK",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PL",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PT",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PW",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "PY",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 1000.0
+  },
+  {
+    "COUNTRY_CODE": "QA",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 1373.0
+  },
+  {
+    "COUNTRY_CODE": "RE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "RO",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "RS",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "RU",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "RW",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SA",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SB",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SC",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SD",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SH",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SI",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SK",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SL",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SM",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SN",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SO",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SR",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 50.0
+  },
+  {
+    "COUNTRY_CODE": "SS",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ST",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SV",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SY",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "SZ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TC",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 1000.0
+  },
+  {
+    "COUNTRY_CODE": "TD",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TH",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TJ",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TL",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TN",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TO",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TR",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TT",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 1000.0
+  },
+  {
+    "COUNTRY_CODE": "TV",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TW",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "TZ",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "UA",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "UG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "US",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "UY",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 200.0
+  },
+  {
+    "COUNTRY_CODE": "UZ",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "VA",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "VC",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "VE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 2000.0
+  },
+  {
+    "COUNTRY_CODE": "VG",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "VI",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "VN",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "VU",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "WS",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "XB",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 100.0
+  },
+  {
+    "COUNTRY_CODE": "XC",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 25.0
+  },
+  {
+    "COUNTRY_CODE": "XE",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": 100.0
+  },
+  {
+    "COUNTRY_CODE": "XM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "XN",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "XS",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "XY",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "YE",
+    "PAPERLESS_AVAILABLE": false,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "YT",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ZA",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ZM",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  },
+  {
+    "COUNTRY_CODE": "ZW",
+    "PAPERLESS_AVAILABLE": true,
+    "VALUE_LIMIT": null
+  }
+]

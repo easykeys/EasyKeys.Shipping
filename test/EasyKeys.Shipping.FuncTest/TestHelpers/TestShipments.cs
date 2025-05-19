@@ -49,7 +49,7 @@ public static class TestShipments
     /// <summary>
     /// Packages dimensions are small enough to fit all service types.
     /// </summary>
-    public static Shipment? CreateInternationalShipment()
+    public static Shipment CreateInternationalShipment()
     {
         var originAddress = new Address(
             streetLine: "11407 Granite Street",
@@ -64,7 +64,7 @@ public static class TestShipments
             stateOrProvince: "ON",
             postalCode: "K1M 1M4",
             countryCode: "CA");
-
+        //destinationAddress = new Address("285 Wang Fu Jing Avenue", "BEIJING", "", "100006", "CN", isResidential: false); 
         var packages = new List<Package>
         {
             new Package(
@@ -74,7 +74,7 @@ public static class TestShipments
                     Width = 1.500M,
                     Length = 1.200M
                 },
-                .625m,
+                .0625m,
                 10m,
                 false),
         };
@@ -99,7 +99,8 @@ public static class TestShipments
                 LastName = "Moffett",
                 Company = "EasyKeys.com",
                 Email = "TestMe@EasyKeys.com",
-                PhoneNumber = "951-223-2222"
+                PhoneNumber = "951-223-2222",
+                TaxId = "26-1234567"
             },
             new ContactInfo()
             {

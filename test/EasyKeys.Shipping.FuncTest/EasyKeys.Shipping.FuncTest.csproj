@@ -33,6 +33,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.Amazon.Rates\EasyKeys.Shipping.Amazon.Rates.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.Amazon.Shipment\EasyKeys.Shipping.Amazon.Shipment.csproj" />
+    <ProjectReference Include="..\..\src\EasyKeys.Shipping.DHL.AddressValidation\EasyKeys.Shipping.DHL.AddressValidation.csproj" />
+    <ProjectReference Include="..\..\src\EasyKeys.Shipping.DHL.Rates\EasyKeys.Shipping.DHL.Rates.csproj" />
+    <ProjectReference Include="..\..\src\EasyKeys.Shipping.DHL.Shipment\EasyKeys.Shipping.DHL.Shipment.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.FedEx.AddressValidation\EasyKeys.Shipping.FedEx.AddressValidation.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.FedEx.Rates\EasyKeys.Shipping.FedEx.Rates.csproj" />
     <ProjectReference Include="..\..\src\EasyKeys.Shipping.FedEx.Shipment\EasyKeys.Shipping.FedEx.Shipment.csproj" />

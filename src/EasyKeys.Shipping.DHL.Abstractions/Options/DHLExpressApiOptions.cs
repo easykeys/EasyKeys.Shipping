@@ -49,8 +49,14 @@ public class DHLExpressApiOptions
     /// </summary>
     public string XVersion => "2.12.0";
 
-    /// <summary>
-    /// Represents the authorization token or credentials. Initialized to an empty string by default.
-    /// </summary>
-    public string Authorization { get; set; } = string.Empty;
+    public string BaseUrl { get; set; } = "https://express.api.dhl.com/mydhlapi/test";
+
+    public string ApiKey { get; set; } = string.Empty;
+
+    public string ApiSecret { get; set; } = string.Empty;
+
+    // export account number
+    public string AccountNumber { get; set; } = string.Empty;
+
+    // import account number
 }

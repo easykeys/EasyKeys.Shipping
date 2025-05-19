@@ -243,7 +243,7 @@ public class FedExRateProviderTests
 
         foreach (var rateService in rateServices)
         {
-            var destination = new Address("47 PEDMORE VALLEY", "NOTTINGHAM", string.Empty, "NG5 5NZ", "GB", isResidential: true);
+            var destination = TestShipments.CreateInternationalShipment().DestinationAddress;
 
             var packages = new List<Package>
             {

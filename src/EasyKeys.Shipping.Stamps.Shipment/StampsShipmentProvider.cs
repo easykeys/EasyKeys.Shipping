@@ -29,7 +29,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         Shipping.Abstractions.Models.Shipment shipment,
         RateOptions rateOptions,
         ShipmentDetails shipmentDetails,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var request = new CreateIndiciumRequest().MapToShipmentRequest(
             isDomestic: shipment.IsDomestic(),
@@ -43,7 +43,7 @@ public class StampsShipmentProvider : IStampsShipmentProvider
         return await GetLabelAsync(request, shipmentDetails.LabelOptions.ImageType, cancellationToken);
     }
 
-    public async Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken)
+    public async Task<ShipmentCancelledResult> CancelShipmentAsync(string trackingId, CancellationToken cancellationToken = default)
     {
         var result = new ShipmentCancelledResult();
         try
