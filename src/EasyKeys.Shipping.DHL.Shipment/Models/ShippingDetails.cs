@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using EasyKeys.Shipping.Abstractions.Models;
+﻿using EasyKeys.Shipping.Abstractions.Models;
 
 namespace EasyKeys.Shipping.DHL.Shipment.Models;
 
@@ -42,12 +38,24 @@ public class ShippingDetails
     /// </summary>
     public Dictionary<string, double?> AddedServices { get; set; } = new Dictionary<string, double?>();
 
+    /// <summary>
+    /// Gets or sets the unique identifier for the invoice.
+    /// </summary>
     public string InvoiceNumber { get; set; } = Guid.NewGuid().ToString();
 
+    /// <summary>
+    /// Gets or sets a custom message to include with the shipment.
+    /// </summary>
     public string? CustomShipmentMessage { get; set; }
 
+    /// <summary>
+    /// Gets or sets the description of the package.
+    /// </summary>
     public string? PackageDescription { get; set; }
 
+    /// <summary>
+    /// Gets or sets the description associated with the label.
+    /// </summary>
     public string? LabelDescription { get; set; }
 
     public bool SplitTransportAndWaybillDocLabls { get; set; } = false;
@@ -60,4 +68,5 @@ public class ShippingDetails
 
     public bool ReceiptAndLabelsInOneImage { get; set; } = false;
 
+    public bool IsPickupRequested { get; set; } = false;
 }

@@ -38,7 +38,7 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
             var body = new SupermodelIoLogisticsExpressCreateShipmentRequest
             {
                 PlannedShippingDateAndTime = shipment.Options.ShippingDate.ToString("yyyy-MM-dd'T'HH:mm:ss") + " GMT+00:00",
-                Pickup = new Pickup { IsRequested = false },
+                Pickup = new Pickup { IsRequested = details.IsPickupRequested },
                 ProductCode = details.ProductCode,
                 LocalProductCode = details.ProductCode,
                 GetRateEstimates = true,
@@ -132,7 +132,8 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
                             CompanyName = details.Sender.Company,
                             FullName = details.Sender.FullName
                         },
-                        RegistrationNumbers = [new SupermodelIoLogisticsExpressRegistrationNumbers {
+                        RegistrationNumbers = [new SupermodelIoLogisticsExpressRegistrationNumbers
+                        {
                             IssuerCountryCode = shipment.OriginAddress.CountryCode,
                             Number = details.Sender.TaxId,
                             TypeCode = SupermodelIoLogisticsExpressRegistrationNumbersTypeCode.VAT
@@ -245,7 +246,7 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
                         ReceiverId = details.Recipient.Email,
                         LanguageCode = "eng",
                         LanguageCountryCode = "UK",
-                        BespokeMessage = details.CustomShipmentMessage ?? "thank you for your business"
+                        BespokeMessage = details.CustomShipmentMessage ?? "Package has shipped!"
                     }
                 },
                 EstimatedDeliveryDate = new EstimatedDeliveryDate

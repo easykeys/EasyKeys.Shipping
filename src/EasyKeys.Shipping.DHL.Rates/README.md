@@ -16,7 +16,7 @@ If you like or are using this project please give it a star. Thanks!
 
 # EasyKeys.Shipping.DHL - Rate Provider
 
-This module provides **rate shopping support** via DHL Express API (v2). It enables shipment cost estimation and delivery date projection for domestic and international shipments using DHL Express services.
+This module provides **rate shopping support** via DHL Express API (v2). It enables shipment cost estimation and delivery date projection for international shipments using DHL Express services.
 
 ## Overview
 
