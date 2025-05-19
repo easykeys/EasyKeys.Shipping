@@ -41,6 +41,7 @@ public static class FedExUploadDocumentServiceCollectionExtensions
         string sectionName = nameof(FedExApiOptions),
         Action<FedExApiOptions, IServiceProvider>? configOptions = null)
     {
+        services.AddFedExApiClients();
 
         services.AddTransient<IFedExDocumentsProvider, EasyKeys.Shipping.FedEx.UploadDocument.RestApi.Impl.FedexDocumentProvider>();
 

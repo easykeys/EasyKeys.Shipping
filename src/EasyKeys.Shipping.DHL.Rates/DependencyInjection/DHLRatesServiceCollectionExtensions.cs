@@ -1,11 +1,11 @@
-﻿using EasyKeys.Shipping.DHL.Abstractions.OpenApis.V2.Express;
+﻿using EasyKeys.Shipping.DHL.Abstractions.DependencyInjection;
 using EasyKeys.Shipping.DHL.Abstractions.Options;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyKeys.Shipping.DHL.Abstractions.DependencyInjection;
+namespace EasyKeys.Shipping.DHL.Rates.DependencyInjection;
 
-public static class DHLServiceCollectionExtensions
+public static class DHLRatesServiceCollectionExtensions
 {
     /// <summary>
     /// adds the DHLExpressClient to the DI container. required for usage of all dhl express shipping services.
@@ -14,16 +14,14 @@ public static class DHLServiceCollectionExtensions
     /// <param name="sectionName"></param>
     /// <param name="configure"></param>
     /// <returns></returns>
-    public static IServiceCollection AddDHLExpressClient(
+    public static IServiceCollection AddDHLExpressRateProvider(
         this IServiceCollection services,
         string sectionName = nameof(DHLExpressApiOptions),
         Action<DHLExpressApiOptions, IServiceProvider>? configure = null)
     {
-        services.AddChangeTokenOptions<DHLExpressApiOptions>(sectionName, null, (options, config) => configure?.Invoke(options, config));
+        services.AddDHLExpressClient();
 
-        services.AddHttpClient<DHLExpressApi>();
-
-        services.AddSingleton<IPaperlessEligibilityService, DHLExpressPaperlessEligibilityService>();
+        services.AddTransient<IDHLExpressRateProvider, DHLExpressRateProvider>();
 
         return services;
     }

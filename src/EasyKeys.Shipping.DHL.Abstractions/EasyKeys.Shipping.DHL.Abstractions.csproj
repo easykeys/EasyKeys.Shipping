@@ -11,6 +11,8 @@
 			DotNetCore, DHL Express,V2, DHL Express API
 		</PackageTags>
 	</PropertyGroup>
+
+
 	<ItemGroup>
 		<PackageReference Include="Ardalis.SmartEnum" />
 		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.2">
@@ -34,5 +36,10 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="OpenApis\V2\Express\dpdhl-express-api-2.13.1_swagger_0.yaml" ClassName="DHLExpressApi" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Data\paperless_countries.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
 	</ItemGroup>
 </Project>

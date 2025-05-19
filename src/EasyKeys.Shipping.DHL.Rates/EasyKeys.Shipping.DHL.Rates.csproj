@@ -7,10 +7,10 @@
   </PropertyGroup>
 	<PropertyGroup Label="Nuget Package Settings">
 		<Description>
-			DotNetCore Implementation of DHL Rates V2 Api endpoint.
+			DotNetCore Implementation of DHL Rates Api endpoint.
 		</Description>
 		<PackageTags>
-			DotNetCore, DHL Express Rates,V2
+			DotNetCore, DHL Express Rates
 		</PackageTags>
 	</PropertyGroup>
 	<ItemGroup>

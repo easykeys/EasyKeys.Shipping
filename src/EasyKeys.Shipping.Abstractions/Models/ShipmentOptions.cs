@@ -48,4 +48,9 @@ public class ShipmentOptions
     /// Input fedex account number wished to be used.
     /// </summary>
     public string? CustomerFedexAccountNumber { get; set; } = null;
+
+    /// <summary>
+    /// Represents the DHL Express account number for a customer. It can be null if not provided.
+    /// </summary>
+    public string? CustomerDHLExpressAccountNumber { get; set; } = null;
 }
