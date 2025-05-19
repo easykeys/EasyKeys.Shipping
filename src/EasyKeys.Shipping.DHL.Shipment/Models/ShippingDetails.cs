@@ -44,10 +44,20 @@ public class ShippingDetails
 
     public string InvoiceNumber { get; set; } = Guid.NewGuid().ToString();
 
-    public string? CustomShipmentMessage { get; set; } 
+    public string? CustomShipmentMessage { get; set; }
 
     public string? PackageDescription { get; set; }
 
     public string? LabelDescription { get; set; }
+
+    public bool SplitTransportAndWaybillDocLabls { get; set; } = false;
+
+    public bool AllDocumentsInOneImage { get; set; } = false;
+
+    public bool SplitDocumentsByPages { get; set; } = false;
+
+    public bool SplitInvoiceAndReceipt { get; set; } = true;
+
+    public bool ReceiptAndLabelsInOneImage { get; set; } = false;
 
 }

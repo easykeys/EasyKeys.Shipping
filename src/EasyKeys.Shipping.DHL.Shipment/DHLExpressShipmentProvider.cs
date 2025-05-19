@@ -87,11 +87,11 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
                             FitLabelsToA4 = false
                         }
                     },
-                    SplitTransportAndWaybillDocLabels = false,
-                    AllDocumentsInOneImage = false,
-                    SplitDocumentsByPages = false,
-                    SplitInvoiceAndReceipt = true,
-                    ReceiptAndLabelsInOneImage = false
+                    SplitTransportAndWaybillDocLabels = details.SplitTransportAndWaybillDocLabls,
+                    AllDocumentsInOneImage = details.AllDocumentsInOneImage,
+                    SplitDocumentsByPages = details.SplitDocumentsByPages,
+                    SplitInvoiceAndReceipt = details.SplitInvoiceAndReceipt,
+                    ReceiptAndLabelsInOneImage = details.ReceiptAndLabelsInOneImage
                 },
                 CustomerDetails = new CustomerDetails
                 {
@@ -232,18 +232,9 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
                             }
                         },
                         Remarks = new[] { new Remarks2 { Value = "Right side up only" } },
-                        RecipientReference = "01291344",
-                        PackageMarks = "Fragile glass bottle",
-                        DeclarationNotes = new[] { new DeclarationNotes { Value = "up to three declaration notes" } },
-                        ExportReference = "export reference",
-                        ExportReason = "export reason",
+                        RecipientReference = details.InvoiceNumber,
                         ExportReasonType = ExportDeclarationExportReasonType.Commercial_purpose_or_sale,
-                        Licenses = new[] { new Licenses { TypeCode = LicensesTypeCode.Export, Value = "123127233" } },
-                        ShipmentType = ExportDeclarationShipmentType.Personal,
-                        CustomsDocuments = new[]
-                            {
-                                new CustomsDocuments3 { TypeCode = CustomsDocuments3TypeCode.INV, Value = "MyDHLAPI - CUSDOC-001" }
-                            }
+                        ShipmentType = ExportDeclarationShipmentType.Commercial
                     }
                 },
                 ShipmentNotification = new[]
@@ -308,7 +299,7 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
             {
                 label.ShippingDocuments.Add(new Document()
                 {
-                    Bytes = new() { Convert.FromBase64String(doc.Content) },
+                    Bytes = new () { Convert.FromBase64String(doc.Content) },
                     ImageType = doc.ImageFormat,
                     DocumentName = doc.TypeCode,
                     CopiesToPrint = "1"
