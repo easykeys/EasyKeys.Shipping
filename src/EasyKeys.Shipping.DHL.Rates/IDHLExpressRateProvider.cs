@@ -5,7 +5,7 @@ namespace EasyKeys.Shipping.DHL.Rates;
 public interface IDHLExpressRateProvider
 {
     /// <summary>
-    /// Gets live rates for a shipment. 
+    /// Gets live rates for a shipment.
     /// </summary>
     /// <param name="shipment"></param>
     /// <param name="cancellationToken"></param>
