@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class AmazonShippingServiceCollectionExtensions
 {
     /// <summary>
-    /// adds the AmazonShippingClient to the DI container. required for usage of all amazon shipping services.
+    /// adds the AmazonShippingClient to the DI container.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="sectionName"></param>

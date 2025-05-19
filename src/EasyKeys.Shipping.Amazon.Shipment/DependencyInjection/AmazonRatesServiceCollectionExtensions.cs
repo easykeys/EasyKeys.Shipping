@@ -6,7 +6,7 @@ namespace EasyKeys.Shipping.Amazon.Shipment.DependencyInjection;
 public static class AmazonRatesServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds the rest API amazon rate provider.Must add AmazonShippingClient to di container.
+    /// Adds the rest API amazon rate provider.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="sectionName"></param>
@@ -17,6 +17,8 @@ public static class AmazonRatesServiceCollectionExtensions
         string sectionName = nameof(AmazonShippingApiOptions),
         Action<AmazonShippingApiOptions, IServiceProvider>? configOptions = null)
     {
+        services.AddAmazonShippingClient();
+
         services.AddTransient<IAmazonShippingShipmentProvider, AmazonShippingShipmentProvider>();
 
         return services;
