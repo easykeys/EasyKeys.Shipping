@@ -635,11 +635,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 PartiesToTransactionAreRelatedSpecified = true,
                 DutiesPayment = new Payment()
                 {
-                    PaymentType = PaymentType.RECIPIENT,
-                    Payor = new Payor()
-                    {
-                        ResponsibleParty = request.RequestedShipment.ShippingChargesPayment.Payor.ResponsibleParty
-                    }
+                    PaymentType = PaymentType.RECIPIENT
                 }
             };
 
