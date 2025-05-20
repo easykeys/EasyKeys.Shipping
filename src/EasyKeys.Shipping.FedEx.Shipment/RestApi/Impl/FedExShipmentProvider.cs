@@ -323,12 +323,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         break;
 
                     case "THIRD_PARTY":
-                        shipmentRequest.RequestedShipment.ShippingChargesPayment = new Payment
+                        shipmentRequest.RequestedShipment.CustomsClearanceDetail.DutiesPayment = new Payment_1
                         {
-                            PaymentType = PaymentType.THIRD_PARTY,
-                            Payor = new Payor
+                            PaymentType = Payment_1PaymentType.THIRD_PARTY,
+                            Payor = new Payor_1
                             {
-                                ResponsibleParty = new ResponsiblePartyParty
+                                ResponsibleParty = new Party_2
                                 {
                                     AccountNumber = new PartyAccountNumber
                                     {
@@ -402,9 +402,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
             foreach (var createdShipment in response.Output!.TransactionShipments!)
             {
-                var baseCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalBaseCharge;
-                var netCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalNetCharge;
-                var surCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalSurcharges;
+                var rateDetail = createdShipment?.CompletedShipmentDetail?.ShipmentRating?.ShipmentRateDetails?.FirstOrDefault();
+
+                var baseCharge = (decimal?)rateDetail?.TotalBaseCharge ?? 0m;
+                var netCharge = (decimal?)rateDetail?.TotalNetCharge ?? 0m;
+                var surCharge = (decimal?)rateDetail?.TotalSurcharges ?? 0m;
+
                 foreach (var piece in createdShipment.PieceResponses!)
                 {
                     if(createdShipment?.ShipmentDocuments != null)
