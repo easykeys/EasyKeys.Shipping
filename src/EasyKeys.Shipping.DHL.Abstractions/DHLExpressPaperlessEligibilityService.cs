@@ -50,7 +50,7 @@ public class DHLExpressPaperlessEligibilityService : IPaperlessEligibilityServic
 
     private List<CountryPaperlessInfo> LoadFile()
     {
-        var assembly = Assembly.GetExecutingAssembly();
+        var assembly = typeof(CountryPaperlessInfo).Assembly;
         var resourceName = "EasyKeys.Shipping.DHL.Abstractions.Data.paperless_countries.json";
 
         using var stream = assembly.GetManifestResourceStream(resourceName);
