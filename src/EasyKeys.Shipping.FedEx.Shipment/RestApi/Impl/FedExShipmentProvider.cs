@@ -296,7 +296,8 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     }).ToList()
                 };
 
-                switch (shipmentDetails.PaymentType.Name)
+                // customs payment type
+                switch (shipmentDetails.CustomsPaymentType.Name)
                 {
                     case "SENDER":
                         shipmentRequest.RequestedShipment.CustomsClearanceDetail.DutiesPayment = new Payment_1
@@ -307,17 +308,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     case "RECIPIENT":
                         shipmentRequest.RequestedShipment.CustomsClearanceDetail.DutiesPayment = new Payment_1
                         {
-                            PaymentType = Payment_1PaymentType.RECIPIENT,
-                            Payor = new Payor_1
-                            {
-                                ResponsibleParty = new Party_2
-                                {
-                                    AccountNumber = new PartyAccountNumber
-                                    {
-                                        Value = shipmentDetails.AccountNumber
-                                    }
-                                }
-                            }
+                            PaymentType = Payment_1PaymentType.RECIPIENT
                         };
                         break;
                 }
