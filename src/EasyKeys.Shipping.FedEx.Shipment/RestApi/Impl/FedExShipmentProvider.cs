@@ -402,9 +402,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
 
             foreach (var createdShipment in response.Output!.TransactionShipments!)
             {
-                var baseCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalBaseCharge;
-                var netCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalNetCharge;
-                var surCharge = (decimal)createdShipment.CompletedShipmentDetail!.ShipmentRating!.ShipmentRateDetails!.First().TotalSurcharges;
+                var rateDetail = createdShipment?.CompletedShipmentDetail?.ShipmentRating?.ShipmentRateDetails?.FirstOrDefault();
+
+                var baseCharge = (decimal?)rateDetail?.TotalBaseCharge ?? 0m;
+                var netCharge = (decimal?)rateDetail?.TotalNetCharge ?? 0m;
+                var surCharge = (decimal?)rateDetail?.TotalSurcharges ?? 0m;
+
                 foreach (var piece in createdShipment.PieceResponses!)
                 {
                     if(createdShipment?.ShipmentDocuments != null)
