@@ -50,18 +50,17 @@ public class DHLExpressPaperlessEligibilityService : IPaperlessEligibilityServic
 
     private List<CountryPaperlessInfo> LoadFile()
     {
-        var exePath = Assembly.GetExecutingAssembly().Location;
-        var exeDirectory = Path.GetDirectoryName(exePath);
+        var assembly = Assembly.GetExecutingAssembly();
+        var resourceName = "EasyKeys.Shipping.DHL.Abstractions.Data.paperless_countries.json";
 
-        var dataFileName = "Data/paperless_countries.json";
-        var dataFilePath = Path.Combine(exeDirectory!, dataFileName);
-
-        if (!File.Exists(dataFilePath))
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        if (stream == null)
         {
-            throw new FileNotFoundException("Paperless country data not found.", dataFilePath);
+            throw new FileNotFoundException("Embedded paperless country data not found.", resourceName);
         }
 
-        var json = File.ReadAllText(dataFilePath);
+        using var reader = new StreamReader(stream);
+        var json = reader.ReadToEnd();
 
         return JsonSerializer.Deserialize<List<CountryPaperlessInfo>>(json, new JsonSerializerOptions
         {
