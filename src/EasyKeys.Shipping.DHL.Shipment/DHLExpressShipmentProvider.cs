@@ -246,7 +246,7 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
                         ReceiverId = details.Recipient.Email,
                         LanguageCode = "eng",
                         LanguageCountryCode = "UK",
-                        BespokeMessage = details.CustomShipmentMessage ?? "Package has shipped!"
+                        BespokeMessage = details.CustomShipmentMessage ?? "Your Package has shipped!"
                     }
                 },
                 EstimatedDeliveryDate = new EstimatedDeliveryDate
@@ -381,6 +381,6 @@ public class DHLExpressShipmentProvider : IDHLExpressShipmentProvider
             valueAddedServices.Add(paperless);
         }
 
-        return valueAddedServices.Any() ? valueAddedServices.ToArray() : null;
+        return valueAddedServices.Any() ? valueAddedServices.Distinct().ToArray() : null;
     }
 }

@@ -32,6 +32,60 @@ public class FedExShipmentProviderTests
     }
 
     [Fact]
+    public async Task CreateDelete_Labels_ChargeRecipient_For_Domestic_Shipments_Async()
+    {
+        var packages = new List<Package>
+            {
+                // fedex envelope
+               FedExRateConfigurator.GetFedExEnvelop(0.05M, 199m),
+            };
+
+        var configurator = new FedExRateConfigurator(
+               _origin,
+               _domestic,
+               packages.First(),
+               true,
+               DateTime.Now);
+
+        var stype = FedExServiceType.FedExStandardOvernight;
+        var ptype = FedExPackageType.FedExEnvelope;
+
+        var shipmentOptions = new ShipmentOptions(ptype.Name, DateTime.Now);
+
+        var shipment = new Shipment(_origin, _domestic, packages, shipmentOptions);
+
+        var (sender, recipient) = TestShipments.CreateContactInfo();
+
+        var shipmentDetails = new EasyKeys.Shipping.FedEx.Shipment.Models.ShipmentDetails
+        {
+            Sender = sender,
+            Recipient = recipient,
+
+            TransactionId = "1234",
+
+            PaymentType = FedExPaymentType.Recipient,
+            CustomsPaymentType = FedExPaymentType.Recipient,
+            AccountNumber = "",
+
+            RateRequestType = "list",
+
+            LabelOptions = new EasyKeys.Shipping.FedEx.Shipment.Models.LabelOptions()
+            {
+                LabelFormatType = "COMMON2D",
+                ImageType = "PNG",
+            }
+        };
+
+        foreach (var provider in _providers)
+        {
+            var label = await provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
+
+            Assert.NotNull(label);
+            Assert.True(label.InternalErrors.Any());
+        }
+    }
+
+    [Fact]
     public async Task CreateDelete_Labels_For_Domestic_Shipments_Async()
     {
         var packages = new List<Package>

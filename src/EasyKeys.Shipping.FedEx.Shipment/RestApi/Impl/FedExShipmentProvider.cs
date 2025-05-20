@@ -198,7 +198,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                             DocType = ShippingDocumentFormatDocType.PDF,
                             StockType = ShippingDocumentFormatStockType.PAPER_LETTER
                         },
-                        
+
                         CustomerImageUsages =
                         [
                             new CustomerImageUsage
@@ -309,7 +309,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         shipmentRequest.RequestedShipment.CustomsClearanceDetail.DutiesPayment = new Payment_1
                         {
                             PaymentType = Payment_1PaymentType.RECIPIENT,
-                            Payor = new Payor_1
+                            Payor = string.IsNullOrEmpty(shipmentDetails.AccountNumber) ? null : new Payor_1
                             {
                                 ResponsibleParty = new Party_2
                                 {
@@ -326,7 +326,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         shipmentRequest.RequestedShipment.CustomsClearanceDetail.DutiesPayment = new Payment_1
                         {
                             PaymentType = Payment_1PaymentType.THIRD_PARTY,
-                            Payor = new Payor_1
+                            Payor = string.IsNullOrEmpty(shipmentDetails.AccountNumber) ? null : new Payor_1
                             {
                                 ResponsibleParty = new Party_2
                                 {
@@ -388,6 +388,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         }
                     };
                     break;
+                default:
+                    shipmentRequest.RequestedShipment.ShippingChargesPayment = new Payment
+                    {
+                        PaymentType = PaymentType.SENDER
+                    };
+                    break;
             }
 
             var token = await _authService.GetTokenAsync(cancellationToken);
@@ -408,7 +414,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 var netCharge = (decimal?)rateDetail?.TotalNetCharge ?? 0m;
                 var surCharge = (decimal?)rateDetail?.TotalSurcharges ?? 0m;
 
-                foreach (var piece in createdShipment.PieceResponses!)
+                foreach (var piece in createdShipment?.PieceResponses!)
                 {
                     if(createdShipment?.ShipmentDocuments != null)
                     {
@@ -416,7 +422,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         {
                             label.ShippingDocuments.Add(new Document
                             {
-                                DocumentName = doc.ContentType.ToString()!,
+                                DocumentName = doc.ContentType.ToString() !,
                                 ImageType = doc.DocType!,
                                 Bytes = [doc.EncodedLabel],
                                 CopiesToPrint = doc.CopiesToPrint.ToString()
