@@ -323,12 +323,12 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                         break;
 
                     case "THIRD_PARTY":
-                        shipmentRequest.RequestedShipment.ShippingChargesPayment = new Payment
+                        shipmentRequest.RequestedShipment.CustomsClearanceDetail.DutiesPayment = new Payment_1
                         {
-                            PaymentType = PaymentType.THIRD_PARTY,
-                            Payor = new Payor
+                            PaymentType = Payment_1PaymentType.THIRD_PARTY,
+                            Payor = new Payor_1
                             {
-                                ResponsibleParty = new ResponsiblePartyParty
+                                ResponsibleParty = new Party_2
                                 {
                                     AccountNumber = new PartyAccountNumber
                                     {
