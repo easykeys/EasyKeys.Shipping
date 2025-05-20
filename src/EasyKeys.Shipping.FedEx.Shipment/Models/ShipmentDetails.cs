@@ -93,6 +93,12 @@ public class ShipmentDetails
     public FedExPaymentType PaymentType { get; set; } = FedExPaymentType.Sender;
 
     /// <summary>
+    /// Default payment type would be recipient unless its a COD.
+    /// Sender,ThirdParty,Recipient,Account,Collect.
+    /// </summary>
+    public FedExPaymentType CustomsPaymentType { get; set; } = FedExPaymentType.Recipient;
+
+    /// <summary>
     /// Collect on delivery is defaulted to false.
     /// </summary>
     public FedExCollectOnDelivery? CollectOnDelivery { get; set; }
