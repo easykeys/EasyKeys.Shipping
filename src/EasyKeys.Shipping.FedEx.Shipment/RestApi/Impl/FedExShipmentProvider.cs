@@ -321,6 +321,29 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                             }
                         };
                         break;
+
+                    case "THIRD_PARTY":
+                        shipmentRequest.RequestedShipment.ShippingChargesPayment = new Payment
+                        {
+                            PaymentType = PaymentType.THIRD_PARTY,
+                            Payor = new Payor
+                            {
+                                ResponsibleParty = new ResponsiblePartyParty
+                                {
+                                    AccountNumber = new PartyAccountNumber
+                                    {
+                                        Value = shipmentDetails.AccountNumber
+                                    }
+                                }
+                            }
+                        };
+                        break;
+                    default:
+                        shipmentRequest.RequestedShipment.CustomsClearanceDetail.DutiesPayment = new Payment_1
+                        {
+                            PaymentType = Payment_1PaymentType.RECIPIENT
+                        };
+                        break;
                 }
             }
 
@@ -336,6 +359,23 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                     shipmentRequest.RequestedShipment.ShippingChargesPayment = new Payment
                     {
                         PaymentType = PaymentType.RECIPIENT,
+                        Payor = new Payor
+                        {
+                            ResponsibleParty = new ResponsiblePartyParty
+                            {
+                                AccountNumber = new PartyAccountNumber
+                                {
+                                    Value = shipmentDetails.AccountNumber
+                                }
+                            }
+                        }
+                    };
+                    break;
+
+                case "THIRD_PARTY":
+                    shipmentRequest.RequestedShipment.ShippingChargesPayment = new Payment
+                    {
+                        PaymentType = PaymentType.THIRD_PARTY,
                         Payor = new Payor
                         {
                             ResponsibleParty = new ResponsiblePartyParty
