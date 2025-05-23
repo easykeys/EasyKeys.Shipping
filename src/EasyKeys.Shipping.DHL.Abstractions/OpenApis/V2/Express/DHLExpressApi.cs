@@ -3979,12 +3979,12 @@ public partial class SupermodelIoLogisticsExpressAddressRatesRequest
     /// </summary>
     [Newtonsoft.Json.JsonProperty("addressLine1", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(45, MinimumLength = 1)]
-    public string AddressLine1 { get; set; }
+    public string? AddressLine1 { get; set; }
 
     /// <summary>
     /// Please enter address line 3
     /// </summary>
-    [Newtonsoft.Json.JsonProperty("addressLine2", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonProperty("addressLine2", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(45, MinimumLength = 1)]
     public string? AddressLine2 { get; set; }
 
@@ -3993,7 +3993,7 @@ public partial class SupermodelIoLogisticsExpressAddressRatesRequest
     /// </summary>
     [Newtonsoft.Json.JsonProperty("addressLine3", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(45, MinimumLength = 1)]
-    public string AddressLine3 { get; set; }
+    public string? AddressLine3 { get; set; }
 
     /// <summary>
     /// Please enter your suburb or county name

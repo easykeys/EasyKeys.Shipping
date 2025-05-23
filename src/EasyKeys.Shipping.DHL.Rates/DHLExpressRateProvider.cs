@@ -111,9 +111,9 @@ public class DHLExpressRateProvider : IDHLExpressRateProvider
                         PostalCode = shipment.DestinationAddress.PostalCode,
                         CityName = shipment.DestinationAddress.City,
                         CountryCode = shipment.DestinationAddress.CountryCode,
-                        AddressLine1 = shipment.DestinationAddress.StreetLine,
+                        AddressLine1 = string.IsNullOrEmpty(shipment.DestinationAddress.StreetLine) ? null : shipment.DestinationAddress.StreetLine,
                         AddressLine2 = string.IsNullOrEmpty(shipment.DestinationAddress.StreetLine2) ? null : shipment.DestinationAddress.StreetLine2,
-                        AddressLine3 = shipment.DestinationAddress.StateOrProvince
+                        AddressLine3 = string.IsNullOrEmpty(shipment.DestinationAddress.StateOrProvince) ? null : shipment.DestinationAddress.StateOrProvince
                     }
                 },
                 Accounts = new[]
