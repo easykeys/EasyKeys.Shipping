@@ -64,7 +64,7 @@ public static class TestShipments
             stateOrProvince: "ON",
             postalCode: "K1M 1M4",
             countryCode: "CA");
-        destinationAddress = new Address("285 Wang Fu Jing Avenue", "BEIJING", "Beijing", "100006", "CN", isResidential: false); 
+        destinationAddress = new Address("285 Wang Fu Jing Avenue", "BEIJING", "", "100006", "CN", isResidential: false);
         var packages = new List<Package>
         {
             new Package(
