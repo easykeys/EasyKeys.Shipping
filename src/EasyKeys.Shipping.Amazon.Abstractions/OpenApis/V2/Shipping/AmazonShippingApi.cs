@@ -5108,7 +5108,7 @@ namespace EasyKeys.Shipping.Amazon.Abstractions.OpenApis.V2.Shipping
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Benefit { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("reasonCodes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("reasonCodes", Required = Newtonsoft.Json.Required.AllowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [System.ComponentModel.DataAnnotations.MinLength(1)]
         public ExcludedBenefitReasonCodes ReasonCodes { get; set; }
 
