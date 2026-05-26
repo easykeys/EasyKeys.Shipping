@@ -74,6 +74,13 @@ public class FedexRateProvider : IFedExRateProvider
                     TotalWeight = (double)shipment.Packages.Sum(x => x.RoundedWeight),
                     RequestedPackageLineItems = shipment.Packages.Select(x => new RequestedPackageLineItem
                     {
+                        Dimensions = new RequestePackageLineItemDimensions
+                        {
+                            Length = (int)x.Dimensions.Length,
+                            Width = (int)x.Dimensions.Width,
+                            Height = (int)x.Dimensions.Height,
+                            Units = "IN"
+                        },
                         Weight = new Weight_2
                         {
                             Units = "LB",
