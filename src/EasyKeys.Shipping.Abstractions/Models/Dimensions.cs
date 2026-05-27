@@ -18,15 +18,15 @@ public struct Dimensions
 
     public decimal Length { get; set; }
 
-    public decimal RoundedLength => Math.Ceiling(Length);
+    public decimal RoundedLength => Math.Max(1, Math.Ceiling(Length));
 
     public decimal Width { get; set; }
 
-    public decimal RoundedWidth => Math.Ceiling(Width);
+    public decimal RoundedWidth => Math.Max(1, Math.Ceiling(Width));
 
     public decimal Height { get; set; }
 
-    public decimal RoundedHeight => Math.Ceiling(Height);
+    public decimal RoundedHeight => Math.Max(1, Math.Ceiling(Height));
 
     /// <summary>
     /// Package measurement is (w*2) + (h*2) + l.

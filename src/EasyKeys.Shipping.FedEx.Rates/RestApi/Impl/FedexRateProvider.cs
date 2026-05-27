@@ -76,9 +76,9 @@ public class FedexRateProvider : IFedExRateProvider
                     {
                         Dimensions = new RequestePackageLineItemDimensions
                         {
-                            Length = (int)x.Dimensions.Length,
-                            Width = (int)x.Dimensions.Width,
-                            Height = (int)x.Dimensions.Height,
+                            Length = (int)x.Dimensions.RoundedLength,
+                            Width = (int)x.Dimensions.RoundedWidth,
+                            Height = (int)x.Dimensions.RoundedHeight,
                             Units = "IN"
                         },
                         Weight = new Weight_2
