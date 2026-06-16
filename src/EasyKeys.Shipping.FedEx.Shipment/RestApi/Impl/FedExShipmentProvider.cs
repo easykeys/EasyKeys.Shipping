@@ -1,6 +1,7 @@
 ﻿using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Extensions;
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Abstractions.Extensions;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.Ship;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
@@ -347,7 +348,7 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 }
             }
 
-            if (shipment.Options.FedexOneRate)
+            if (shipment.Options.FedexOneRate && shipment.IsEligibleForFedExOneRate())
             {
                 if(shipmentRequest.RequestedShipment.ShipmentSpecialServices == null)
                 {

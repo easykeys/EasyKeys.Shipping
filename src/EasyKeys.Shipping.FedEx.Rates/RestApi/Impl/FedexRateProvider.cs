@@ -1,4 +1,5 @@
 ﻿using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Abstractions.Extensions;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Abstractions.OpenApis.V1.RatesAndTransitTimes;
 using EasyKeys.Shipping.FedEx.Abstractions.Options;
@@ -132,7 +133,7 @@ public class FedexRateProvider : IFedExRateProvider
                 };
             }
 
-            if (shipment.Options.FedexOneRate)
+            if (shipment.Options.FedexOneRate && shipment.IsEligibleForFedExOneRate())
             {
                 ratesRequest.RequestedShipment.ShipmentSpecialServices = new RequestedShipmentSpecialServicesRequested
                 {

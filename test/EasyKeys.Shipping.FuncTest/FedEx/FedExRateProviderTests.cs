@@ -2,6 +2,7 @@
 
 using EasyKeys.Shipping.Abstractions;
 using EasyKeys.Shipping.Abstractions.Models;
+using EasyKeys.Shipping.FedEx.Abstractions.Extensions;
 using EasyKeys.Shipping.FedEx.Abstractions.Models;
 using EasyKeys.Shipping.FedEx.Rates;
 
@@ -50,11 +51,12 @@ public class FedExRateProviderTests
             var config = new FedExRateConfigurator(_origin, destination, package, true, DateTime.Now);
             foreach (var (shipment, serviceType) in config.Shipments)
             {
-                shipment.Options.FedexOneRate = shipment.Options.PackagingType != FedExPackageType.YourPackaging.Name;
-                if (!shipment.Options.FedexOneRate)
+                if (!shipment.IsEligibleForFedExOneRate())
                 {
                     continue;
                 }
+
+                shipment.Options.FedexOneRate = true;
 
                 var rates = await rateService.GetRatesAsync(shipment, serviceType);
                 foreach (var rate in rates.Rates)
