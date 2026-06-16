@@ -347,6 +347,21 @@ public class FedExShipmentProvider : IFedExShipmentProvider
                 }
             }
 
+            if (shipment.Options.FedexOneRate)
+            {
+                if(shipmentRequest.RequestedShipment.ShipmentSpecialServices == null)
+                {
+                    shipmentRequest.RequestedShipment.ShipmentSpecialServices = new ShipmentSpecialServicesRequested
+                    {
+                        SpecialServiceTypes = ["FEDEX_ONE_RATE"]
+                    };
+                }
+                else
+                {
+                    shipmentRequest.RequestedShipment.ShipmentSpecialServices?.SpecialServiceTypes?.Add("FEDEX_ONE_RATE");
+                }
+            }
+
             switch (shipmentDetails.PaymentType.Name)
             {
                 case "SENDER":

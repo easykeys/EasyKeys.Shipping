@@ -132,6 +132,14 @@ public class FedexRateProvider : IFedExRateProvider
                 };
             }
 
+            if (shipment.Options.FedexOneRate)
+            {
+                ratesRequest.RequestedShipment.ShipmentSpecialServices = new RequestedShipmentSpecialServicesRequested
+                {
+                    SpecialServiceTypes = new List<string> { "FEDEX_ONE_RATE" }
+                };
+            }
+
             var token = await _authService.GetTokenAsync(cancellationToken);
 
             var rates = await _client.Rate_and_Transit_timesAsync(

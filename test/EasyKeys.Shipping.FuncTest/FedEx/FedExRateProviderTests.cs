@@ -39,6 +39,34 @@ public class FedExRateProviderTests
                         new object[] { 33.3M, 2, FedExPackageType.FedExPak.Name },
         };
 
+    [Fact]
+    public async Task Return_Fedex_One_Rates_Successfully()
+    {
+        var rateServices = _sp.GetServices<IFedExRateProvider>();
+        foreach (var rateService in rateServices)
+        {
+            var destination = new Address("1550 central ave", "Riverside", "CA", "92507", "US", isResidential: true);
+            var package = FedExRateConfigurator.GetFedExEnvelop(0.5M,199m);
+            var config = new FedExRateConfigurator(_origin, destination, package, true, DateTime.Now);
+            foreach (var (shipment, serviceType) in config.Shipments)
+            {
+                shipment.Options.FedexOneRate = shipment.Options.PackagingType != FedExPackageType.YourPackaging.Name;
+                if (!shipment.Options.FedexOneRate)
+                {
+                    continue;
+                }
+
+                var rates = await rateService.GetRatesAsync(shipment, serviceType);
+                foreach (var rate in rates.Rates)
+                {
+                    _output.WriteLine("{0}: {1}-{2}-{3}-{4}-{5}-{6}", rateService.GetType().FullName, rate.Name, rate.PackageType, rate.GuaranteedDelivery, rate.TotalCharges, rate.TotalCharges2, rate.SaturdayDelivery);
+                }
+
+                Assert.False(rates.InternalErrors.Any());
+            }
+        }
+    }
+
     [Theory]
     [MemberData(nameof(Data))]
     public async Task Return_FedEx_Rates_For_Envelope_Or_Pak_Successfully(decimal weight, int count, string packageType)
