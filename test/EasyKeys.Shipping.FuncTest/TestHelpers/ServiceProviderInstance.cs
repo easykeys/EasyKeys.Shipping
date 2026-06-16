@@ -75,10 +75,11 @@ public static class ServiceProviderInstance
 
         services.AddSingleton<IConfiguration>(configBuilder.Build());
         //services.AddWebServicesFedExDocumentProvider();
-        services.AddWebServicesFedExRateProvider();
-        services.AddWebServicesFedExAddressValidationProvider();
+        //services.AddWebServicesFedExRateProvider();
+        //services.AddWebServicesFedExAddressValidationProvider();
+        //services.AddWebServicesFedExShipmenProvider();
+
         services.AddFedExClient();
-        services.AddWebServicesFedExShipmenProvider();
         services.AddFedExTrackingProvider();
 
         // adress validation apis

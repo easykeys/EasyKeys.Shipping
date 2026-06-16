@@ -45,6 +45,11 @@ public class ShipmentOptions
     public string DropOffType { get; set; } = "REGULAR_PICKUP";
 
     /// <summary>
+    /// <para>FedEx One Rate option. If true, the FedEx rate provider will return only FedEx One Rate options.</para>
+    /// </summary>
+    public bool FedexOneRate { get; set; }
+
+    /// <summary>
     /// Input fedex account number wished to be used.
     /// </summary>
     public string? CustomerFedexAccountNumber { get; set; } = null;

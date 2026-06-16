@@ -18,7 +18,7 @@ public class FedExShipmentProviderTests
     public FedExShipmentProviderTests(ITestOutputHelper output)
     {
         _origin = new Address("11407 Granite St", "Charlotte", "NC", "28273", "US");
-        _domestic = new Address("1550 central ave", "Riverside", "CA", "92507", "US");
+        _domestic = new Address("1550 central ave", "Riverside", "CA", "92507", "US", isResidential:true);
         _international = new Address("3601 72 Ave Se", "Calgary", "AB", "T2C 2K3", "CA", isResidential: false);
         _international = new Address("285 Wang Fu Jing Avenue", "BEIJING", "", "100006", "CN", isResidential: false);
 
@@ -81,7 +81,73 @@ public class FedExShipmentProviderTests
             var label = await provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
 
             Assert.NotNull(label);
+            _output.WriteLine($"net charge : {label.Labels.First().TotalCharges.NetCharge}, surcharge : {label.Labels.First().TotalCharges.Surcharges} , basecharge : {label.Labels.First().TotalCharges.BaseCharge}");
+
             Assert.True(label.InternalErrors.Any());
+        }
+    }
+
+    [Fact]
+    public async Task CreateDelete_One_Rate_Labels_For_Domestic_Shipments_Async()
+    {
+        var packages = new List<Package>
+            {
+                // fedex envelope
+               FedExRateConfigurator.GetFedExEnvelop(0.05M,0m),
+            };
+
+        var configurator = new FedExRateConfigurator(
+               _origin,
+               _domestic,
+               packages.First(),
+               true,
+               DateTime.Now);
+
+        var stype = FedExServiceType.FedExSecondDay;
+        var ptype = FedExPackageType.FedExEnvelope;
+
+        var shipmentOptions = new ShipmentOptions(ptype.Name, DateTime.Now);
+        shipmentOptions.FedexOneRate = true;
+        var shipment = new Shipment(_origin, _domestic, packages, shipmentOptions);
+
+        var (sender, recipient) = TestShipments.CreateContactInfo();
+
+        var shipmentDetails = new EasyKeys.Shipping.FedEx.Shipment.Models.ShipmentDetails
+        {
+            Sender = sender,
+            Recipient = recipient,
+
+            TransactionId = "1234",
+
+            PaymentType = FedExPaymentType.Sender,
+
+            RateRequestType = "list",
+
+            LabelOptions = new EasyKeys.Shipping.FedEx.Shipment.Models.LabelOptions()
+            {
+                LabelFormatType = "COMMON2D",
+                ImageType = "PNG",
+            }
+        };
+
+        foreach (var provider in _providers)
+        {
+            var label = await provider.CreateShipmentAsync(stype, shipment, shipmentDetails, CancellationToken.None);
+
+            Assert.NotNull(label);
+            Assert.False(label.InternalErrors.Any());
+
+            Assert.True(label?.Labels.Any(x => x?.Bytes?.Count > 0));
+
+            _output.WriteLine($"net charge : {label.Labels.First().TotalCharges.NetCharge}, surcharge : {label.Labels.First().TotalCharges.Surcharges} , basecharge : {label.Labels.First().TotalCharges.BaseCharge}");
+            // Path to save the PNG file
+            var filePath = $"{provider}-{provider.GetType().FullName}-{stype.ServiceName}-domestic-output.png";
+
+            // Write the byte array to a file
+            File.WriteAllBytes(filePath, label.Labels.First().Bytes.First());
+
+            var result = await provider.CancelShipmentAsync(label.Labels.First().TrackingId, CancellationToken.None);
+            Assert.True(result.Succeeded);
         }
     }
 
@@ -101,7 +167,7 @@ public class FedExShipmentProviderTests
                true,
                DateTime.Now);
 
-        var stype = FedExServiceType.FedExStandardOvernight;
+        var stype = FedExServiceType.FedExSecondDay;
         var ptype = FedExPackageType.FedExEnvelope;
 
         var shipmentOptions = new ShipmentOptions(ptype.Name, DateTime.Now);
